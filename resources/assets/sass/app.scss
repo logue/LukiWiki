@@ -1,6 +1,6 @@
-
+@charset "utf-8";
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import "Yu-Gothic";
 
 // Variables
 @import "variables";
@@ -14,4 +14,9 @@
 @import "~@fortawesome/fontawesome-free-webfonts/scss/fa-regular";
 @import "~@fortawesome/fontawesome-free-webfonts/scss/fa-solid";
 
-@import "sticky-footer-navibar"
+// Sticky footer with fixed navbar
+// https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/
+@import "sticky-footer-navibar";
+
+// overrides
+@import "overrides";
