@@ -1,13 +1,14 @@
-<!doctype html>
-<html lang="{{ app()->getLocale() }}">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ app()->getLocale() }}" xml:lang="{{ app()->getLocale() }}">
 
-<head>
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
 	<meta charset="utf-8" />
-	<meta name="csrf-token" content="{{ csrf_token() }}" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<meta name="csrf-token" content="{{ csrf_token() }}" />
 	<title>{{ config('app.name') }}</title>
-	<link href="{{asset('css/app.css')}}" rel="stylesheet" type="text/css" />
+	<link rel="canonical" href="{{ Request::fullUrl()}}" />
+	<link rel="stylesheet" href="{{ asset('css/app.css') }}" type="text/css" />
 <!--[if IE]>
 	<link href="{{ asset('css/bootstrap-ie9.css') }}" rel="stylesheet" />
 	<script src="{{ asset('js/html5shiv.min.js') }}"></script>
@@ -20,11 +21,11 @@
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark">
 		<a class="navbar-brand" href="#">{{ config('app.name') }}</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar-collapse"
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-content" aria-controls="navbar-collapse-content"
 		 aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<div class="collapse navbar-collapse" id="navbar-collapse">
+		<div class="collapse navbar-collapse" id="navbar-collapse-content">
 			@if (Route::has('login'))
 			<ul class="navbar-nav mr-auto">
 				@auth
@@ -50,7 +51,7 @@
 		</div>
 	</nav>
 
-	<main role="main" class="container" id="app">
+	<main class="container" id="app">
 		<div class="jumbotron text-center mt-3">
 			<h1 class="display-4">Laravel</h1>
 			<p class="display-1">
@@ -82,7 +83,7 @@
 			<span class="text-muted">Place sticky footer content here.</span>
 		</div>
 	</footer>
-	<script src="{{asset('js/app.js')}}"></script>
+	<script src="{{ asset('js/app.js') }}"></script>
 </body>
 
 </html>
