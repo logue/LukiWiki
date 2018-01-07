@@ -1,0 +1,4 @@
+*.min.js
+public/js/
+public/build/
+public/vendor/
