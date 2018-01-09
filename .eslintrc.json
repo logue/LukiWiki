@@ -1,6 +1,0 @@
-{
-    "plugins": [
-        "html"
-    ],
-    "extends": "ponko2"
-}

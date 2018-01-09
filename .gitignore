@@ -2,6 +2,7 @@
 /public/storage
 /storage/*.key
 /.idea
+*.lock
 
 npm-debug.log
 yarn-error.log
@@ -23,5 +24,3 @@ composer.phar
 /.vagrant
 Homestead.yaml
 Homestead.json
-*.lock
-*.json

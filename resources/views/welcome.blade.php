@@ -8,7 +8,7 @@
 	<meta name="csrf-token" content="{{ csrf_token() }}" />
 	<title>{{ config('app.name') }}</title>
 	<link rel="canonical" href="{{ Request::fullUrl()}}" />
-	<link rel="stylesheet" href="{{ asset('css/app.css') }}" type="text/css" />
+	<link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
 <!--[if IE]>
 	<link href="{{ asset('css/bootstrap-ie9.css') }}" rel="stylesheet" />
 	<script src="{{ asset('js/html5shiv.min.js') }}"></script>
@@ -51,7 +51,7 @@
 		</div>
 	</nav>
 
-	<main class="container" id="app">
+	<main class="container">
 		<div class="jumbotron text-center mt-3">
 			<h1 class="display-4">Laravel</h1>
 			<p class="display-1">
@@ -59,6 +59,8 @@
 			</p>
 			<p class="lead">Laravel + Bootstrap4 + Font Awasome Test.</p>
 		</div>
+		
+		<example-component id="app"></example-component>
 
 		<ul class="list-inline">
 			<li class="list-inline-item">
@@ -83,7 +85,7 @@
 			<span class="text-muted">Place sticky footer content here.</span>
 		</div>
 	</footer>
-	<script src="{{ asset('js/app.js') }}"></script>
+	<script src="{{ mix('js/app.js') }}"></script>
 </body>
 
 </html>
