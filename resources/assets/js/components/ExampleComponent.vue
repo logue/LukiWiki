@@ -1,25 +1,22 @@
 <template>
-    <div class="mx-auto my-auto" style="max-width:18rem;">
-        <div class="card card-primary border-light">
-            <h5 class="card-header">Vue Component</h5>
-            <div class="card-body text-center">
-                <h5 class="card-title"><font-awesome-icon size="lg" :icon="['fab', 'vuejs']" size="lg" /></h5>
-                <p class="card-text">I'm an example component!</p>
-            </div>
-        </div>
-    </div>
+    <b-card header="Vue Component" style="max-width: 20rem;" class="mx-auto">
+        <font-awesome-icon size="lg" :icon="['fab', 'vuejs']" />
+        <p class="card-text">I'm an example component!</p>
+    </b-card>
 </template>
 
 <script>
-import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
-import { vuejs } from '@fortawesome/fontawesome-free-brands'
+import FontAwesomeIcon from "@fortawesome/vue-fontawesome";
+import { vuejs } from "@fortawesome/fontawesome-free-brands";
+import bCard from "bootstrap-vue/es/components/card/card";
 
 export default {
   mounted() {
     console.log("Component mounted.");
   },
   components: {
-    FontAwesomeIcon
+    FontAwesomeIcon,
+    bCard
   }
 };
 </script>

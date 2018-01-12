@@ -1,22 +1,19 @@
 @charset "utf-8";
 // Fonts
 @import "Yu-Gothic";
-
 // Variables
 @import "variables";
-
-// Bootstrap
+// Bootstrap: 4;
+// https://getbootstrap.com/
 @import "~bootstrap/scss/bootstrap";
-
-// Fontawasome
+// Fontawasome: 5;
+// https://fontawesome.com/
 @import "~@fortawesome/fontawesome-free-webfonts/scss/fontawesome";
 @import "~@fortawesome/fontawesome-free-webfonts/scss/fa-brands";
 @import "~@fortawesome/fontawesome-free-webfonts/scss/fa-regular";
 @import "~@fortawesome/fontawesome-free-webfonts/scss/fa-solid";
-
 // Sticky footer with fixed navbar
 // https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/
 @import "sticky-footer-navibar";
-
 // overrides
 @import "overrides";

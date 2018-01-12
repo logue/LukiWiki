@@ -170,7 +170,7 @@ body {
   line-height: 1.6;
   color: #212529;
   text-align: left;
-  background-color: transparent;
+  background-color: #FFF;
 }
 
 [tabindex="-1"]:focus {
@@ -625,7 +625,7 @@ mark,
 
 .img-thumbnail {
   padding: 0.25rem;
-  background-color: transparent;
+  background-color: #FFF;
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
   max-width: 100%;
@@ -1995,7 +1995,7 @@ pre code {
 }
 
 .table .table {
-  background-color: transparent;
+  background-color: #FFF;
 }
 
 .table-sm th,
@@ -2161,7 +2161,7 @@ pre code {
 }
 
 .table .thead-dark th {
-  color: transparent;
+  color: #FFF;
   background-color: #212529;
   border-color: #32383e;
 }
@@ -2173,7 +2173,7 @@ pre code {
 }
 
 .table-dark {
-  color: transparent;
+  color: #FFF;
   background-color: #212529;
 }
 
@@ -2573,8 +2573,8 @@ select.form-control-lg:not([size]):not([multiple]),
 
 .was-validated .custom-control-input:valid:focus ~ .custom-control-label::before,
 .custom-control-input.is-valid:focus ~ .custom-control-label::before {
-  -webkit-box-shadow: 0 0 0 1px transparent, 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-          box-shadow: 0 0 0 1px transparent, 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+  -webkit-box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+          box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
 .was-validated .custom-file-input:valid ~ .custom-file-label,
@@ -2683,8 +2683,8 @@ select.form-control-lg:not([size]):not([multiple]),
 
 .was-validated .custom-control-input:invalid:focus ~ .custom-control-label::before,
 .custom-control-input.is-invalid:focus ~ .custom-control-label::before {
-  -webkit-box-shadow: 0 0 0 1px transparent, 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-          box-shadow: 0 0 0 1px transparent, 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  -webkit-box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+          box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
 .was-validated .custom-file-input:invalid ~ .custom-file-label,
@@ -4037,8 +4037,8 @@ tbody.collapse.show {
 }
 
 .custom-control-input:focus ~ .custom-control-label::before {
-  -webkit-box-shadow: 0 0 0 1px transparent, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-          box-shadow: 0 0 0 1px transparent, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  -webkit-box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+          box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .custom-control-input:active ~ .custom-control-label::before {
@@ -4294,8 +4294,8 @@ tbody.collapse.show {
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
   color: #495057;
-  background-color: transparent;
-  border-color: #dee2e6 #dee2e6 transparent;
+  background-color: #FFF;
+  border-color: #dee2e6 #dee2e6 #FFF;
 }
 
 .nav-tabs .dropdown-menu {
@@ -4883,7 +4883,7 @@ tbody.collapse.show {
   word-wrap: break-word;
   background-color: #fff;
   background-clip: border-box;
-  border: 1px solid transparent;
+  border: 1px solid #e6e5e5;
   border-radius: 0.25rem;
 }
 
@@ -4934,7 +4934,7 @@ tbody.collapse.show {
   padding: 0.75rem 1.25rem;
   margin-bottom: 0;
   background-color: rgba(0, 0, 0, 0.03);
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid #e6e5e5;
 }
 
 .card-header:first-child {
@@ -4948,7 +4948,7 @@ tbody.collapse.show {
 .card-footer {
   padding: 0.75rem 1.25rem;
   background-color: rgba(0, 0, 0, 0.03);
-  border-top: 1px solid transparent;
+  border-top: 1px solid #e6e5e5;
 }
 
 .card-footer:last-child {
@@ -5659,7 +5659,7 @@ tbody.collapse.show {
   padding: 0.75rem 1.25rem;
   margin-bottom: -1px;
   background-color: #fff;
-  border: 1px solid transparent;
+  border: 1px solid #e6e5e5;
 }
 
 .list-group-item:first-child {
@@ -11126,6 +11126,10 @@ readers do not read off random characters that represent icons */
   content: "\F052";
 }
 
+.fa-elementor:before {
+  content: "\F430";
+}
+
 .fa-ellipsis-h:before {
   content: "\F141";
 }
@@ -13374,6 +13378,10 @@ readers do not read off random characters that represent icons */
   content: "\F167";
 }
 
+.fa-youtube-square:before {
+  content: "\F431";
+}
+
 .sr-only {
   border: 0;
   clip: rect(0, 0, 0, 0);
@@ -13399,8 +13407,8 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Brands';
   font-style: normal;
   font-weight: normal;
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?5277835b44987ee487a1d5ede55afdd8);
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?5277835b44987ee487a1d5ede55afdd8) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff2?5f34d4e65ca4376aa996a4b98e720ad2) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff?78a06ad9eef69db966e4f0274dbf5fff) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.ttf?5840422c84e236bd3be7053c7a830a25) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.svg?b4aff634c511cce7302b200da258c295) format("svg");
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?2ed66b239be495935204ed9836b061d0);
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?2ed66b239be495935204ed9836b061d0) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff2?99fcc0ef5fbca0b83242c0485634e154) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff?ce6931e6bb6cc13f730d26e57e0c7e2f) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.ttf?3a13f3ed12fecc804332bd0548926b77) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.svg?02f4ea3568cb9734a231c9645bc30b25) format("svg");
 }
 
 .fab {
@@ -13411,8 +13419,8 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 400;
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?27c4f087b75b0c67c1d1fd04858fb620);
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?27c4f087b75b0c67c1d1fd04858fb620) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff2?acd2b3a76fdfe4fc9e39b7df520cb3ac) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff?dc83047d8925f1e1911049795db90a50) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.ttf?6581bb576891ce357244b950fbb0bc40) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.svg?8a761b52df9f6692c8fa271dbe57c238) format("svg");
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?846eb59ab6375b9cbcdf9a3852aa0c00);
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?846eb59ab6375b9cbcdf9a3852aa0c00) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff2?ddbfc9339502fceaf0338859f392dfa7) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff?b9932d1cb34c2d75edeae5cc9b06d7a5) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.ttf?692ee8728ad91bd17ee2378661c8d839) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.svg?20b5db50de44f16197c5d024af4ef4a9) format("svg");
 }
 
 .far {
@@ -13424,8 +13432,8 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 900;
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?f650ff9ced3afb2f51b5e5a557a941ac);
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?f650ff9ced3afb2f51b5e5a557a941ac) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff2?8f88d72c252ae86b3a317f8a9bfa2b0b) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff?503c8480049b0c38c7ae9cbe745d3f1b) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.ttf?28e59523ba1b18d942c79213ae1e0d2f) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.svg?b67472366f4686218695ebf239edcbb2) format("svg");
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?d4fbe2f2309c39fa8f06cf0741a91e6a);
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?d4fbe2f2309c39fa8f06cf0741a91e6a) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff2?c37991871c5882694673f8c62b6c2f9f) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff?d9fc90a33156c202315246c697544d66) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.ttf?d5ace083a5c5c4065005a5a77546776b) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.svg?8002f5a758e11415baf67128c44f20cc) format("svg");
 }
 
 .fa,

@@ -1,12 +1,9 @@
 // Body
-$body-bg: transparent;
-
+$body-bg: #FFF;
 // Borders
 $laravel-border-color: darken($body-bg, 10%);
 $list-group-border-color: $laravel-border-color;
-
 $card-border-color: $laravel-border-color;
-
 // Typography
 $font-family-sans-serif: -apple-system,
 BlinkMacSystemFont,
@@ -21,10 +18,8 @@ sans-serif;
 //$font-size-base: .875rem; // 14px
 $line-height-base: 1.6;
 $text-color: #636b6f;
-
 // Inputs
 $input-border-color: lighten($text-color, 40%);
 $input-placeholder-color: lighten($text-color, 30%);
-
 // misc
 $footer-height: 64px;
