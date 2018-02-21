@@ -165,7 +165,7 @@ section {
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", YuGothic, Verdana, Meiryo, "M+ 1p", sans-serif;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.6;
   color: #212529;
@@ -491,36 +491,36 @@ h6,
 
 h1,
 .h1 {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
 }
 
 h2,
 .h2 {
-  font-size: 2rem;
+  font-size: 1.8rem;
 }
 
 h3,
 .h3 {
-  font-size: 1.75rem;
+  font-size: 1.575rem;
 }
 
 h4,
 .h4 {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
 }
 
 h5,
 .h5 {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
 }
 
 h6,
 .h6 {
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .lead {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 300;
 }
 
@@ -592,7 +592,7 @@ mark,
 
 .blockquote {
   margin-bottom: 1rem;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
 }
 
 .blockquote-footer {
@@ -2314,12 +2314,12 @@ pre code {
   display: block;
   width: 100%;
   padding: 0.375rem 0.75rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
   line-height: 1.6;
   color: #495057;
   background-color: #fff;
   background-clip: padding-box;
-  border: 1px solid #ccd0d2;
+  border: 1px solid #ced4da;
   border-radius: 0.25rem;
   -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
@@ -2342,22 +2342,22 @@ pre code {
 }
 
 .form-control::-webkit-input-placeholder {
-  color: #b1b7ba;
+  color: #6c757d;
   opacity: 1;
 }
 
 .form-control:-ms-input-placeholder {
-  color: #b1b7ba;
+  color: #6c757d;
   opacity: 1;
 }
 
 .form-control::-ms-input-placeholder {
-  color: #b1b7ba;
+  color: #6c757d;
   opacity: 1;
 }
 
 .form-control::placeholder {
-  color: #b1b7ba;
+  color: #6c757d;
   opacity: 1;
 }
 
@@ -2368,7 +2368,7 @@ pre code {
 }
 
 select.form-control:not([size]):not([multiple]) {
-  height: calc(2.35rem + 2px);
+  height: calc(2.19rem + 2px);
 }
 
 select.form-control:focus::-ms-value {
@@ -2393,14 +2393,14 @@ select.form-control:focus::-ms-value {
 .col-form-label-lg {
   padding-top: calc(0.5rem + 1px);
   padding-bottom: calc(0.5rem + 1px);
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: 1.5;
 }
 
 .col-form-label-sm {
   padding-top: calc(0.25rem + 1px);
   padding-bottom: calc(0.25rem + 1px);
-  font-size: 0.875rem;
+  font-size: 0.7875rem;
   line-height: 1.5;
 }
 
@@ -2439,7 +2439,7 @@ select.form-control:focus::-ms-value {
 .input-group-sm > .input-group-prepend > .btn,
 .input-group-sm > .input-group-append > .btn {
   padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.7875rem;
   line-height: 1.5;
   border-radius: 0.2rem;
 }
@@ -2450,7 +2450,7 @@ select.form-control-sm:not([size]):not([multiple]),
 .input-group-sm > .input-group-append > select.input-group-text:not([size]):not([multiple]),
 .input-group-sm > .input-group-prepend > select.btn:not([size]):not([multiple]),
 .input-group-sm > .input-group-append > select.btn:not([size]):not([multiple]) {
-  height: calc(1.8125rem + 2px);
+  height: calc(1.68125rem + 2px);
 }
 
 .form-control-lg,
@@ -2460,7 +2460,7 @@ select.form-control-sm:not([size]):not([multiple]),
 .input-group-lg > .input-group-prepend > .btn,
 .input-group-lg > .input-group-append > .btn {
   padding: 0.5rem 1rem;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: 1.5;
   border-radius: 0.3rem;
 }
@@ -2471,7 +2471,7 @@ select.form-control-lg:not([size]):not([multiple]),
 .input-group-lg > .input-group-append > select.input-group-text:not([size]):not([multiple]),
 .input-group-lg > .input-group-prepend > select.btn:not([size]):not([multiple]),
 .input-group-lg > .input-group-append > select.btn:not([size]):not([multiple]) {
-  height: calc(2.875rem + 2px);
+  height: calc(2.6875rem + 2px);
 }
 
 .form-group {
@@ -2880,7 +2880,7 @@ select.form-control-lg:not([size]):not([multiple]),
           user-select: none;
   border: 1px solid transparent;
   padding: 0.375rem 0.75rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
   line-height: 1.6;
   border-radius: 0.25rem;
   -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
@@ -3589,7 +3589,7 @@ fieldset:disabled a.btn {
 .btn-lg,
 .btn-group-lg > .btn {
   padding: 0.5rem 1rem;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: 1.5;
   border-radius: 0.3rem;
 }
@@ -3597,7 +3597,7 @@ fieldset:disabled a.btn {
 .btn-sm,
 .btn-group-sm > .btn {
   padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.7875rem;
   line-height: 1.5;
   border-radius: 0.2rem;
 }
@@ -3683,7 +3683,7 @@ tbody.collapse.show {
   min-width: 10rem;
   padding: 0.5rem 0;
   margin: 0.125rem 0 0;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #212529;
   text-align: left;
   list-style: none;
@@ -3826,7 +3826,7 @@ tbody.collapse.show {
   display: block;
   padding: 0.5rem 1.5rem;
   margin-bottom: 0;
-  font-size: 0.875rem;
+  font-size: 0.7875rem;
   color: #6c757d;
   white-space: nowrap;
 }
@@ -4093,14 +4093,14 @@ tbody.collapse.show {
           align-items: center;
   padding: 0.375rem 0.75rem;
   margin-bottom: 0;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.6;
   color: #495057;
   text-align: center;
   white-space: nowrap;
   background-color: #e9ecef;
-  border: 1px solid #ccd0d2;
+  border: 1px solid #ced4da;
   border-radius: 0.25rem;
 }
 
@@ -4252,14 +4252,14 @@ tbody.collapse.show {
 .custom-select {
   display: inline-block;
   width: 100%;
-  height: calc(2.35rem + 2px);
+  height: calc(2.19rem + 2px);
   padding: 0.375rem 1.75rem 0.375rem 0.75rem;
   line-height: 1.6;
   color: #495057;
   vertical-align: middle;
   background: #fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right 0.75rem center;
   background-size: 8px 10px;
-  border: 1px solid #ccd0d2;
+  border: 1px solid #ced4da;
   border-radius: 0.25rem;
   -webkit-appearance: none;
      -moz-appearance: none;
@@ -4295,14 +4295,14 @@ tbody.collapse.show {
 }
 
 .custom-select-sm {
-  height: calc(1.8125rem + 2px);
+  height: calc(1.68125rem + 2px);
   padding-top: 0.375rem;
   padding-bottom: 0.375rem;
   font-size: 75%;
 }
 
 .custom-select-lg {
-  height: calc(2.875rem + 2px);
+  height: calc(2.6875rem + 2px);
   padding-top: 0.375rem;
   padding-bottom: 0.375rem;
   font-size: 125%;
@@ -4312,7 +4312,7 @@ tbody.collapse.show {
   position: relative;
   display: inline-block;
   width: 100%;
-  height: calc(2.35rem + 2px);
+  height: calc(2.19rem + 2px);
   margin-bottom: 0;
 }
 
@@ -4320,7 +4320,7 @@ tbody.collapse.show {
   position: relative;
   z-index: 2;
   width: 100%;
-  height: calc(2.35rem + 2px);
+  height: calc(2.19rem + 2px);
   margin: 0;
   opacity: 0;
 }
@@ -4345,12 +4345,12 @@ tbody.collapse.show {
   right: 0;
   left: 0;
   z-index: 1;
-  height: calc(2.35rem + 2px);
+  height: calc(2.19rem + 2px);
   padding: 0.375rem 0.75rem;
   line-height: 1.6;
   color: #495057;
   background-color: #fff;
-  border: 1px solid #ccd0d2;
+  border: 1px solid #ced4da;
   border-radius: 0.25rem;
 }
 
@@ -4361,13 +4361,13 @@ tbody.collapse.show {
   bottom: 0;
   z-index: 3;
   display: block;
-  height: calc(calc(2.35rem + 2px) - 1px * 2);
+  height: calc(calc(2.19rem + 2px) - 1px * 2);
   padding: 0.375rem 0.75rem;
   line-height: 1.6;
   color: #495057;
   content: "Browse";
   background-color: #e9ecef;
-  border-left: 1px solid #ccd0d2;
+  border-left: 1px solid #ced4da;
   border-radius: 0 0.25rem 0.25rem 0;
 }
 
@@ -4501,10 +4501,10 @@ tbody.collapse.show {
 
 .navbar-brand {
   display: inline-block;
-  padding-top: 0.3rem;
-  padding-bottom: 0.3rem;
+  padding-top: 0.32rem;
+  padding-bottom: 0.32rem;
   margin-right: 1rem;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: inherit;
   white-space: nowrap;
 }
@@ -4556,7 +4556,7 @@ tbody.collapse.show {
 
 .navbar-toggler {
   padding: 0.25rem 0.75rem;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: 1;
   background-color: transparent;
   border: 1px solid transparent;
@@ -5013,7 +5013,7 @@ tbody.collapse.show {
   word-wrap: break-word;
   background-color: #fff;
   background-clip: border-box;
-  border: 1px solid #e6e5e5;
+  border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem;
 }
 
@@ -5064,7 +5064,7 @@ tbody.collapse.show {
   padding: 0.75rem 1.25rem;
   margin-bottom: 0;
   background-color: rgba(0, 0, 0, 0.03);
-  border-bottom: 1px solid #e6e5e5;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .card-header:first-child {
@@ -5078,7 +5078,7 @@ tbody.collapse.show {
 .card-footer {
   padding: 0.75rem 1.25rem;
   background-color: rgba(0, 0, 0, 0.03);
-  border-top: 1px solid #e6e5e5;
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .card-footer:last-child {
@@ -5373,7 +5373,7 @@ tbody.collapse.show {
 
 .pagination-lg .page-link {
   padding: 0.75rem 1.5rem;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: 1.5;
 }
 
@@ -5389,7 +5389,7 @@ tbody.collapse.show {
 
 .pagination-sm .page-link {
   padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.7875rem;
   line-height: 1.5;
 }
 
@@ -5562,7 +5562,7 @@ tbody.collapse.show {
 }
 
 .alert-dismissible {
-  padding-right: 4rem;
+  padding-right: 3.85rem;
 }
 
 .alert-dismissible .close {
@@ -5711,7 +5711,7 @@ tbody.collapse.show {
   display: flex;
   height: 1rem;
   overflow: hidden;
-  font-size: 0.75rem;
+  font-size: 0.675rem;
   background-color: #e9ecef;
   border-radius: 0.25rem;
 }
@@ -5795,7 +5795,7 @@ tbody.collapse.show {
   padding: 0.75rem 1.25rem;
   margin-bottom: -1px;
   background-color: #fff;
-  border: 1px solid #e6e5e5;
+  border: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .list-group-item:first-child {
@@ -5980,7 +5980,7 @@ tbody.collapse.show {
 
 .close {
   float: right;
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
   line-height: 1;
   color: #000;
@@ -6198,7 +6198,7 @@ button.close {
   word-spacing: normal;
   white-space: normal;
   line-break: auto;
-  font-size: 0.875rem;
+  font-size: 0.7875rem;
   word-wrap: break-word;
   opacity: 0;
 }
@@ -6323,7 +6323,7 @@ button.close {
   word-spacing: normal;
   white-space: normal;
   line-break: auto;
-  font-size: 0.875rem;
+  font-size: 0.7875rem;
   word-wrap: break-word;
   background-color: #fff;
   background-clip: padding-box;
@@ -6485,7 +6485,7 @@ button.close {
 .popover-header {
   padding: 0.5rem 0.75rem;
   margin-bottom: 0;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: inherit;
   background-color: #f7f7f7;
   border-bottom: 1px solid #ebebeb;
@@ -10087,7 +10087,7 @@ a.text-dark:focus {
 }
 
 /*!
- * Font Awesome Free 5.0.2 by @fontawesome - http://fontawesome.com
+ * Font Awesome Free 5.0.5 by @fontawesome - http://fontawesome.com
  * License - http://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 
@@ -10599,6 +10599,14 @@ readers do not read off random characters that represent icons */
   content: "\F0C9";
 }
 
+.fa-baseball-ball:before {
+  content: "\F433";
+}
+
+.fa-basketball-ball:before {
+  content: "\F434";
+}
+
 .fa-bath:before {
   content: "\F2CD";
 }
@@ -10721,6 +10729,10 @@ readers do not read off random characters that represent icons */
 
 .fa-bookmark:before {
   content: "\F02E";
+}
+
+.fa-bowling-ball:before {
+  content: "\F436";
 }
 
 .fa-braille:before {
@@ -10917,6 +10929,38 @@ readers do not read off random characters that represent icons */
 
 .fa-check-square:before {
   content: "\F14A";
+}
+
+.fa-chess:before {
+  content: "\F439";
+}
+
+.fa-chess-bishop:before {
+  content: "\F43A";
+}
+
+.fa-chess-board:before {
+  content: "\F43C";
+}
+
+.fa-chess-king:before {
+  content: "\F43F";
+}
+
+.fa-chess-knight:before {
+  content: "\F441";
+}
+
+.fa-chess-pawn:before {
+  content: "\F443";
+}
+
+.fa-chess-queen:before {
+  content: "\F445";
+}
+
+.fa-chess-rook:before {
+  content: "\F447";
 }
 
 .fa-chevron-circle-down:before {
@@ -11459,6 +11503,10 @@ readers do not read off random characters that represent icons */
   content: "\F16E";
 }
 
+.fa-flipboard:before {
+  content: "\F44D";
+}
+
 .fa-fly:before {
   content: "\F417";
 }
@@ -11493,6 +11541,10 @@ readers do not read off random characters that represent icons */
 
 .fa-fonticons-fi:before {
   content: "\F3A2";
+}
+
+.fa-football-ball:before {
+  content: "\F44E";
 }
 
 .fa-fort-awesome:before {
@@ -11613,6 +11665,10 @@ readers do not read off random characters that represent icons */
 
 .fa-gofore:before {
   content: "\F3A7";
+}
+
+.fa-golf-ball:before {
+  content: "\F450";
 }
 
 .fa-goodreads:before {
@@ -11759,12 +11815,20 @@ readers do not read off random characters that represent icons */
   content: "\F21E";
 }
 
+.fa-hips:before {
+  content: "\F452";
+}
+
 .fa-hire-a-helper:before {
   content: "\F3B0";
 }
 
 .fa-history:before {
   content: "\F1DA";
+}
+
+.fa-hockey-puck:before {
+  content: "\F453";
 }
 
 .fa-home:before {
@@ -12391,6 +12455,10 @@ readers do not read off random characters that represent icons */
   content: "\F2A0";
 }
 
+.fa-php:before {
+  content: "\F457";
+}
+
 .fa-pied-piper:before {
   content: "\F2AE";
 }
@@ -12493,6 +12561,14 @@ readers do not read off random characters that represent icons */
 
 .fa-question-circle:before {
   content: "\F059";
+}
+
+.fa-quidditch:before {
+  content: "\F458";
+}
+
+.fa-quinscape:before {
+  content: "\F459";
 }
 
 .fa-quora:before {
@@ -12847,6 +12923,10 @@ readers do not read off random characters that represent icons */
   content: "\F0C8";
 }
 
+.fa-square-full:before {
+  content: "\F45C";
+}
+
 .fa-stack-exchange:before {
   content: "\F18D";
 }
@@ -12981,6 +13061,10 @@ readers do not read off random characters that represent icons */
 
 .fa-table:before {
   content: "\F0CE";
+}
+
+.fa-table-tennis:before {
+  content: "\F45D";
 }
 
 .fa-tablet:before {
@@ -13343,6 +13427,10 @@ readers do not read off random characters that represent icons */
   content: "\F40B";
 }
 
+.fa-volleyball-ball:before {
+  content: "\F45F";
+}
+
 .fa-volume-down:before {
   content: "\F027";
 }
@@ -13512,8 +13600,8 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Brands';
   font-style: normal;
   font-weight: normal;
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?2ed66b239be495935204ed9836b061d0);
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?2ed66b239be495935204ed9836b061d0) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff2?99fcc0ef5fbca0b83242c0485634e154) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff?ce6931e6bb6cc13f730d26e57e0c7e2f) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.ttf?3a13f3ed12fecc804332bd0548926b77) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.svg?02f4ea3568cb9734a231c9645bc30b25) format("svg");
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?9e18a02ed6dda4a9940892fcd9822e1e);
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?9e18a02ed6dda4a9940892fcd9822e1e) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff2?255b0c33d43f1d56415ffb24feeb8c3b) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff?83cd1635a00e9e52cbb32e6c898ce540) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.ttf?fa5daef09950d89da09e8ff55fb19e65) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.svg?149e28f6450aad3538d99519b21978e8) format("svg");
 }
 
 .fab {
@@ -13524,8 +13612,8 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 400;
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?846eb59ab6375b9cbcdf9a3852aa0c00);
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?846eb59ab6375b9cbcdf9a3852aa0c00) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff2?ddbfc9339502fceaf0338859f392dfa7) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff?b9932d1cb34c2d75edeae5cc9b06d7a5) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.ttf?692ee8728ad91bd17ee2378661c8d839) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.svg?20b5db50de44f16197c5d024af4ef4a9) format("svg");
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?2ba2495442600b56570876cc4f2ded96);
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?2ba2495442600b56570876cc4f2ded96) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff2?0479ffa5d852b08d1982b3a4912b7783) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff?97fcb1227e9e15cb7d6525caaad17af2) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.ttf?7d00728b9899f87cbe9c13b9555449d0) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.svg?a32a550634fd2fcf451b0c013c8d1b3a) format("svg");
 }
 
 .far {
@@ -13537,8 +13625,8 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 900;
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?d4fbe2f2309c39fa8f06cf0741a91e6a);
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?d4fbe2f2309c39fa8f06cf0741a91e6a) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff2?c37991871c5882694673f8c62b6c2f9f) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff?d9fc90a33156c202315246c697544d66) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.ttf?d5ace083a5c5c4065005a5a77546776b) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.svg?8002f5a758e11415baf67128c44f20cc) format("svg");
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?d1292a5668df46420903f8c7bf49fcd9);
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?d1292a5668df46420903f8c7bf49fcd9) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff2?847e29976058fc705da43283c420f75e) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff?645080129ce48e5c75e161a61ce4e639) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.ttf?2a4adaf9c7f249227ba544a3f80f5b8f) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.svg?4ea4d678cefebf94978464f9a052c0fd) format("svg");
 }
 
 .fa,

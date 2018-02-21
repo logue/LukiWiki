@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 	<meta name="csrf-token" content="{{ csrf_token() }}" />
 	<title>{{ config('app.name') }}</title>
-	<link rel="canonical" href="{{ Request::fullUrl()}}" />
+	<link rel="canonical" href="{{ Request::fullUrl() }}" />
 	<link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
 <!--[if IE]>
 	<link href="{{ asset('css/bootstrap-ie9.css') }}" rel="stylesheet" />
@@ -62,7 +62,7 @@
 		
 		<example-component id="app"></example-component>
 
-		<ul class="list-inline">
+		<ul class="list-inline text-center">
 			<li class="list-inline-item">
 				<a href="https://laravel.com/docs">Documentation</a>
 			</li>
