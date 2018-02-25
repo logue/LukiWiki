@@ -11,6 +11,8 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/{page?}', 'WikiController');
+
+Route::get('/:{cmd}', function () {
     return view('welcome');
 });
