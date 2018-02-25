@@ -16,9 +16,9 @@ namespace App\LukiWiki\Inline;
 // Inline plugins
 class InlinePlugin extends Inline
 {
-    public $pattern;
-    public $plain;
-    public $param;
+    protected $pattern;
+    protected $plain;
+    protected $param;
 
     public function __construct($start)
     {
@@ -58,8 +58,7 @@ class InlinePlugin extends Inline
 
         // Re-get true plugin name and patameters (for PHP 4.1.2)
         $matches = [];
-        if (preg_match('/^'.$this->pattern.'/x', $all, $matches)
-            && $matches[1] != $this->plain) {
+        if (preg_match('/^'.$this->pattern.'/x', $all, $matches) && $matches[1] !== $this->plain) {
             list(, $this->plain, $name, $this->param) = $matches;
         }
 
@@ -69,7 +68,7 @@ class InlinePlugin extends Inline
     public function __toString()
     {
         $body = (empty($this->body)) ? null : InlineFactory::factory($this->body);
-        $str = false;
+        //$str = false;
 
         // Try to call the plugin
         // TODO
@@ -85,9 +84,6 @@ class InlinePlugin extends Inline
             return parent::setLineRules(Utility::htmlsc('&'.$this->plain).$body);
         }
         */
-        return '<span class="bg-primary">InlinePlugin</span>';
+        return '<span class="badge badge-primary" title="Plugin">&amp;'.$this->name.'('.$this->param.')'.'</span>';
     }
 }
-
-/* End of file Plugin.php */
-/* Location: /vender/PukiWiki/Lib/Renderer/Inline/Plugin.php */

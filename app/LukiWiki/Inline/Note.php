@@ -9,12 +9,12 @@
 
 namespace App\LukiWiki\Inline;
 
-use LukiWiki\Rules\InlineRules;
+use App\LukiWiki\Rules\InlineRules;
 
 // Footnotes
 class Note extends Inline
 {
-    public $notes;
+    protected $notes = [];
     /**
      * title属性に入れる説明文の文字数.
      */
@@ -60,7 +60,7 @@ class Note extends Inline
         list(, $body) = $this->splice($arr);
 
         // Recover of notes(miko)
-        if (count($foot_explain) === 0) {
+        if (count($this->notes) === 0) {
             self::$note_id = 0;
         }
 
@@ -75,7 +75,7 @@ class Note extends Inline
             '</li>';
 
         // A hyperlink, content-body to footnote
-        $name = '<a id="notetext_'.$id.'" href="'.$script.'#notefoot_'.$id.'" class="note-anchor">'.InlineRules::FOOTNOTE_ANCHOR_ICON.$id.'</a>';
+        $name = '<a id="notetext_'.$id.'" href="#notefoot_'.$id.'" class="note-anchor">'.InlineRules::FOOTNOTE_ANCHOR_ICON.$id.'</a>';
 
         return parent::setParam($page, $name, $body);
     }

@@ -14,15 +14,9 @@ namespace App\LukiWiki\Element;
  */
 class Paragraph extends Element
 {
-    protected $param;
-
-    public function __construct($text, $param = '')
+    public function __construct($text)
     {
         parent::__construct();
-        $this->param = $param;
-        if (empty($text)) {
-            return;
-        }
 
         if (substr($text, 0, 1) == '~') {
             $text = ' '.substr($text, 1);
@@ -39,6 +33,6 @@ class Paragraph extends Element
 
     public function toString()
     {
-        return $this->wrap(parent::toString(), 'p', $this->param);
+        return $this->wrap(parent::toString(), 'p');
     }
 }

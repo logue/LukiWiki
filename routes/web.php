@@ -11,8 +11,9 @@
 |
 */
 
+// ファイル一覧
+Route::get('/:list', 'WikiController@list');
+// AMP対応版
+Route::get('/:amp/{page?}', 'WikiController@amp');
+// 通常時の処理
 Route::get('/{page?}', 'WikiController');
-
-Route::get('/:{cmd}', function () {
-    return view('welcome');
-});

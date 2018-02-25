@@ -16,8 +16,7 @@ class ListContainer extends Element
 {
     protected $tag = 'ul';
     protected $tag2 = 'li';
-    public $level = 1;
-    protected $style;
+    public $level = 0;
 
     public function __construct($tag, $tag2, $head, $text)
     {
@@ -72,6 +71,6 @@ class ListContainer extends Element
 
     public function toString()
     {
-        return $this->wrap(parent::toString(), $this->tag, $this->style);
+        return $this->wrap(parent::toString(), $this->tag);
     }
 }

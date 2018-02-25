@@ -89,7 +89,7 @@ abstract class Inline
     // Set basic parameters
     public function setParam($page, $name, $body, $type = '', $alias = '')
     {
-        static $converter;
+        $converter = new InlineConverter(['InlinePlugin']);
 
         $this->page = $page;
         $this->name = $name;
@@ -141,47 +141,50 @@ abstract class Inline
             return '<a href="'.$anchor.'">'.htmlspecialchars($alias, ENT_QUOTES, 'UTF-8').'</a>';
         }
 
-        $wiki = Factory::Wiki($page);
-        if (!$wiki->has()) {
-            // ページが存在しない場合は、AutoAliasから該当ページが存在するかを確認する
-            foreach (AutoAlias::getAutoAliasDict() as $aliaspage => $realpage) {
-                if (Factory::Wiki($realpage)->has()) {
-                    // リンクをエイリアス先に
-                    return self::setLink($page, $aliaspage);
+        return '<a href="'.url($page).'">'.$page.'</a>';
+        /*
+                $wiki = Factory::Wiki($page);
+                if (!$wiki->has()) {
+                    // ページが存在しない場合は、AutoAliasから該当ページが存在するかを確認する
+                    foreach (AutoAlias::getAutoAliasDict() as $aliaspage => $realpage) {
+                        if (Factory::Wiki($realpage)->has()) {
+                            // リンクをエイリアス�        �に
+                            return self::setLink($page, $aliaspage);
+                        }
+                    }
+                } elseif (!isset($related[$page]) && isset($vars['page']) && $page !== $vars['page']) {
+                    $related[$page] = $wiki->time();
                 }
-            }
-        } elseif (!isset($related[$page]) && isset($vars['page']) && $page !== $vars['page']) {
-            $related[$page] = $wiki->time();
-        }
 
-        $s_page = Utility::htmlsc($page);
-        $anchor_name = empty($alias) ? $page : $alias;
-        $anchor_name = str_replace('&amp;#039;', '\'', $anchor_name);	// 'が&#039;になってしまう問題をとりあえず解消
+                $s_page = Utility::htmlsc($page);
+                $anchor_name = empty($alias) ? $page : $alias;
+                $anchor_name = str_replace('&amp;#039;', '\'', $anchor_name);	// 'が&#039;になってしまう問題をとりあえず解消
 
-        if ($isautolink || $wiki->has()) {
-            // ページが存在する場合
-            // 用語集にページ名と同じワードが含まれていた場合
-            $glossary = Glossary::getGlossary($page);
+                if ($isautolink || $wiki->has()) {
+                    // ページが存在する場合
+                    // 用語集にページ名と同じワードが含まれていた場合
+                    $glossary = Glossary::getGlossary($page);
 
-            if (!empty($glossary)) {
-                // AutoGlossray
-                return '<abbr class="glossary" title="'.$glossary.' '.$wiki->passage(false, true).'">'.
-                    '<a href="'.$wiki->uri().'"'.($isautolink === true ? ' class="autolink"' : '').'>'.$anchor_name.'</a></abbr>';
-            }
+                    if (!empty($glossary)) {
+                        // AutoGlossray
+                        return '<abbr class="glossary" title="'.$glossary.' '.$wiki->passage(false, true).'">'.
+                            '<a href="'.$wiki->uri().'"'.($isautolink === true ? ' class="autolink"' : '').'>'.$anchor_name.'</a></abbr>';
+                    }
 
-            return '<a href="'.$wiki->uri().$anchor.'" '.
-                (!$link_compact ? 'title="'.$s_page.' '.$wiki->passage(false, true).'"' : '').
-                ($isautolink === true ? ' class="autolink"' : '').'>'.$anchor_name.'</a>';
-        } else {
-            // Dangling link
-            if (Auth::check_role('readonly')) {
-                return Utility::htmlsc($alias);
-            } // No dacorations
+                    return '<a href="'.$wiki->uri().$anchor.'" '.
+                        (!$link_compact ? 'title="'.$s_page.' '.$wiki->passage(false, true).'"' : '').
+                        ($isautolink === true ? ' class="autolink"' : '').'>'.$anchor_name.'</a>';
+                } else {
+                    // Dangling link
+                    if (Auth::check_role('readonly')) {
+                        return Utility::htmlsc($alias);
+                    } // No dacorations
 
-            $retval = $anchor_name.'<a href="'.$wiki->uri('edit', (empty($refer) ? null : ['refer' => $refer])).'" rel="nofollow">'.$_symbol_noexists.'</a>';
+                    $retval = $anchor_name.'<a href="'.$wiki->uri('edit', (empty($refer) ? null : ['refer' => $refer])).'" rel="nofollow">'.$_symbol_noexists.'</a>';
 
-            return ($link_compact) ? $retval : sprintf(RendererDefines::NOEXISTS_STRING, $retval);
-        }
+                    return ($link_compact) ? $retval : sprintf(RendererDefines::NOEXISTS_STRING, $retval);
+                }
+        */
     }
 
     /**
@@ -194,47 +197,49 @@ abstract class Inline
      *
      * @return string
      */
-    public static function setLink($term, $uri, $tooltip = '', $rel = '', $is_redirect = PKWK_USE_REDIRECT)
+    public static function setLink($term, $uri, $tooltip = '', $rel = '', $is_redirect = false)
     {
-        $_uri = Utility::htmlsc($uri);
-        $href = $is_redirect ? Router::get_cmd_uri('redirect', null, null, ['u' => $uri]) : $_uri;
+        /*
+               $_uri = Utility::htmlsc($uri);
+               $href = $is_redirect ? Router::get_cmd_uri('redirect', null, null, ['u' => $uri]) : $_uri;
 
-        $_term = Utility::htmlsc($term);
-        $_tooltip = !empty($tooltip) ? ' title="'.Utility::htmlsc($tooltip).'"' : '';
+               $_term = Utility::htmlsc($term);
+               $_tooltip = !empty($tooltip) ? ' title="'.Utility::htmlsc($tooltip).'"' : '';
 
-        // rel = "*"を生成
-        $rels[] = 'external';
-        if (!empty($rel)) {
-            $rels[] = $rel;
-        }
-        if ($is_redirect) {
-            $rels[] = 'nofollow';
-        }
-        $ext_rel = implode(' ', $rels);
+               // rel = "*"を生成
+               $rels[] = 'external';
+               if (!empty($rel)) {
+                   $rels[] = $rel;
+               }
+               if ($is_redirect) {
+                   $rels[] = 'nofollow';
+               }
+               $ext_rel = implode(' ', $rels);
 
-        // メディアファイル
-        if (!PKWK_DISABLE_INLINE_IMAGE_FROM_URI && Utility::isUri($uri)) {
-            if (preg_match(RendererDefines::IMAGE_EXTENTION_PATTERN, $uri)) {
-                // 画像の場合
-                $term = '<img src="'.$_uri.'" alt="'.$_term.'" '.$_tooltip.' />';
-            } else {
-                // 音声／動画の場合
-                $anchor = '<a href="'.$href.'" rel="'.(self::isInsideUri($uri) ? $rel : $ext_rel).'"'.$_tooltip.'>'.$_term.'</a>';
-                // 末尾のアイコン
-                $icon = self::isInsideUri($uri) ?
-                    '<a href="'.$href.'" rel="'.$rel.'">'.RendererDefines::INTERNAL_LINK_ICON.'</a>' :
-                    '<a href="'.$href.'" rel="'.$ext_rel.'">'.RendererDefines::EXTERNAL_LINK_ICON.'</a>';
+               // メディアファイル
+               if (!PKWK_DISABLE_INLINE_IMAGE_FROM_URI && Utility::isUri($uri)) {
+                   if (preg_match(RendererDefines::IMAGE_EXTENTION_PATTERN, $uri)) {
+                       // 画像の場合
+                       $term = '<img src="'.$_uri.'" alt="'.$_term.'" '.$_tooltip.' />';
+                   } else {
+                       // 音声／動画の場合
+                       $anchor = '<a href="'.$href.'" rel="'.(self::isInsideUri($uri) ? $rel : $ext_rel).'"'.$_tooltip.'>'.$_term.'</a>';
+                       // 末尾のアイコン
+                       $icon = self::isInsideUri($uri) ?
+                           '<a href="'.$href.'" rel="'.$rel.'">'.RendererDefines::INTERNAL_LINK_ICON.'</a>' :
+                           '<a href="'.$href.'" rel="'.$ext_rel.'">'.RendererDefines::EXTERNAL_LINK_ICON.'</a>';
 
-                if (preg_match(RendererDefines::VIDEO_EXTENTION_PATTERN, $uri)) {
-                    return '<video src="'.$_uri.'" alt="'.$_term.'" controls="controls"'.$_tooltip.'>'.$anchor.'</video>'.$icon;
-                } elseif (preg_match(RendererDefines::AUDIO_EXTENTION_PATTERN, $uri)) {
-                    return '<audio src="'.$_uri.'" alt="'.$_term.'" controls="controls"'.$_tooltip.'>'.$anchor.'</audio>'.$icon;
-                }
-            }
-        }
-        // リンクを出力
-        return self::isInsideUri($uri) ?
-            '<a href="'.$href.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.RendererDefines::INTERNAL_LINK_ICON.'</a>' :
-            '<a href="'.$href.'" rel="'.$ext_rel.'"'.$_tooltip.'>'.$term.RendererDefines::EXTERNAL_LINK_ICON.'</a>';
+                       if (preg_match(RendererDefines::VIDEO_EXTENTION_PATTERN, $uri)) {
+                           return '<video src="'.$_uri.'" alt="'.$_term.'" controls="controls"'.$_tooltip.'>'.$anchor.'</video>'.$icon;
+                       } elseif (preg_match(RendererDefines::AUDIO_EXTENTION_PATTERN, $uri)) {
+                           return '<audio src="'.$_uri.'" alt="'.$_term.'" controls="controls"'.$_tooltip.'>'.$anchor.'</audio>'.$icon;
+                       }
+                   }
+               }
+               // リンクを出力
+               return self::isInsideUri($uri) ?
+                   '<a href="'.$href.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.RendererDefines::INTERNAL_LINK_ICON.'</a>' :
+                   '<a href="'.$href.'" rel="'.$ext_rel.'"'.$_tooltip.'>'.$term.RendererDefines::EXTERNAL_LINK_ICON.'</a>';
+           */
     }
 }

@@ -51,19 +51,20 @@ class BracketName extends Inline
         if (empty($name) && empty($this->anchor)) {
             return false;
         }
-        /*
-                if (empty($name) || !Utility::isWikiName($name)) {
-                    if (empty($alias)) {
-                        $alias = $name.$this->anchor;
-                    }
-                    if (!empty($name)) {
-                        $name = self::getFullname($name, $page);
-                        if (!empty($name) && !Factory::Wiki($name)->isValied()) {
-                            return false;
-                        }
+
+        if (empty($name) || !InlineRules::isWikiName($name)) {
+            if (empty($alias)) {
+                $alias = $name.$this->anchor;
+            }
+            /*
+                if (!empty($name)) {
+                    $name = self::getFullname($name, $page);
+                    if (!empty($name) && !Factory::Wiki($name)->isValied()) {
+                        return false;
                     }
                 }
                 */
+        }
 
         return parent::setParam($page, $name, null, 'pagename', $alias);
     }

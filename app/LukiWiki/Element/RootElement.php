@@ -9,7 +9,7 @@
 
 namespace App\LukiWiki\Element;
 
-use App\LukiWiki\Rules\HeaddingAnchor;
+use App\LukiWiki\Rules\HeadingAnchor;
 
 /**
  * RootElement.
@@ -52,13 +52,14 @@ class RootElement extends Element
 
             // Extend TITLE by miko
             if (preg_match('/^(TITLE):(.*)$/', $line, $matches)) {
-                global $newtitle;
+                /*
                 static $newbase;
                 if (!isset($newbase)) {
                     $newbase = trim(strip_tags(RendererFactory::factory($matches[2])));
                     // For BugTrack/132.
                     $newtitle = htmlspecialchars($newbase, ENT_HTML5, 'UTF-8');
                 }
+                */
                 continue;
             }
 
@@ -155,11 +156,7 @@ class RootElement extends Element
                         $content = ElementFactory::factory('YTable', $this, $line);
                         break;
                     case '#':
-                        if ($this->is_guiedit) {
-                            $content = ElementFactory::factory('PluginDummy', $this, $line);
-                        } else {
-                            $content = ElementFactory::factory('Plugin', $this, $line);
-                        }
+                        $content = ElementFactory::factory('Plugin', $this, $line);
                         break;
                     default:
                         $content = ElementFactory::factory('InlineElement', null, $line);
@@ -180,7 +177,7 @@ class RootElement extends Element
         $autoid = 'content_'.$this->id.'_'.$this->count;
         ++$this->count;
 
-        list($_text, $id, $level) = HeaddingAnchor::ge($text, false); // Cut fixed-anchor from $text
+        list($_text, $id, $level) = HeadingAnchor::get($text, false); // Cut fixed-anchor from $text
 
         $anchor = ' &edit(,'.$id.');';
 
@@ -189,7 +186,7 @@ class RootElement extends Element
         $this->contents_last = $this->contents_last->add($contents);
 
         // Add heding
-        return [$_text.$anchor, $this->count > 1 ? "\n".$top : '', $autoid];
+        return [$_text.$anchor, $this->count > 1 ? "\n" : '', $autoid];
     }
 
     public function insert(&$obj)

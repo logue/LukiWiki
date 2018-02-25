@@ -15,17 +15,11 @@ class InlineFactory
 
     public static function factory($string, $page = '')
     {
-        global $vars;
-
-        if (is_array($string)) {
-            $string = implode("\n", $string);
-        }	// ポカミス用
-
         if (!isset(self::$converter)) {
             self::$converter = new InlineConverter();
         }
         $clone = self::$converter->getClone(self::$converter);
 
-        return $clone->convert($string, isset($vars['page']) ? $vars['page'] : $page);
+        return $clone->convert($string, $page);
     }
 }

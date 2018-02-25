@@ -18,22 +18,22 @@ class InlineConverter
      * デフォルトの変換パターン.
      */
     private static $default_converters = [
-        //'LukiWiki\Inline\InlinePlugin',     // Inline plugins
+        'App\LukiWiki\Inline\InlinePlugin',     // Inline plugins
         'App\LukiWiki\Inline\Note',             // Footnotes
-        'App\LukiWiki\Inline\Url',              // URLs
+    //    'App\LukiWiki\Inline\Url',              // URLs
         'App\LukiWiki\Inline\InterWiki',        // URLs (interwiki definition)
-        'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
-        'App\LukiWiki\Inline\InterWikiName',    // InterWikiName
+    //    'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
+    //    'App\LukiWiki\Inline\InterWikiName',    // InterWikiName
         'App\LukiWiki\Inline\BracketName',      // BracketName
-        'App\LukiWiki\Inline\WikiName',         // WikiName
+    //    'App\LukiWiki\Inline\WikiName',         // WikiName
     //    'App\LukiWiki\Inline\AutoLink',         // AutoLink(cjk,other)
     //    'App\LukiWiki\Inline\AutoLink_Alphabet',    // AutoLink(alphabet)
-        'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
+    //    'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
     ];
     /**
      * 変換クラス.
      */
-    private $converters = []; // as array()
+    private $converters = [];
     /**
      * 変換処理に用いる正規表現パターン.
      */
@@ -41,7 +41,7 @@ class InlineConverter
     /**
      * 結果.
      */
-    private $result;
+    private $result = [];
 
     private static $clone_func;
 
@@ -51,8 +51,9 @@ class InlineConverter
      * @param array $converters 使用する変換クラス名
      * @param array $excludes   除外する変換クラス名
      */
-    public function __construct($converters = null, $excludes = null)
+    public function __construct($converters = [], $excludes = [])
     {
+        static $converters;
         if (!isset($converters)) {
             $converters = self::$default_converters;
         }
@@ -129,7 +130,6 @@ class InlineConverter
     public function convert($string, $page)
     {
         $this->page = $page;
-        $this->result = [];
 
         $string = preg_replace_callback('/'.$this->pattern.'/x', function ($arr) {
             $obj = $this->getConverter($arr);
@@ -140,11 +140,10 @@ class InlineConverter
             return "\x08"; // Add a mark into latest processed part
         }, $string);
 
-        $arr = explode("\x08", Inline::setLineRules(htmlspecialchars($string, ENT_HTML5, 'UTF-8')));
+        $arr = explode("\x08", $string);
         $retval = null;
-        while (!empty($arr)) {
-            // $retval .= array_shift($arr) . array_shift($this->result);
-            $retval .= str_replace('\\$$', '$$', array_shift($arr)).array_shift($this->result);
+        while ($arr) {
+            $retval .= array_shift($arr).array_shift($this->result);
         }
 
         return trim($retval);

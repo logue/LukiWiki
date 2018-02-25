@@ -31,9 +31,7 @@ class BlockPlugin extends Element
     public function toString()
     {
         // Call #plugin
+        return '<div class="card text-white bg-primary"><div class="card-body">Block Plugin</div></div>';
         //return PluginRenderer::executePluginBlock($this->name, $this->param);
     }
 }
-
-/* End of file BlockPlugin.php */
-/* Location: /vendor/PukiWiki/Lib/Renderer/Element/BlockPlugin.php */

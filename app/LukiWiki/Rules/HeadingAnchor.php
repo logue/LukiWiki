@@ -7,7 +7,7 @@
  * @license   MIT
  */
 
-namespace App\LukiWiki\Rule;
+namespace App\LukiWiki\Rules;
 
 class HeadingAnchor
 {
@@ -67,8 +67,8 @@ class HeadingAnchor
 
         // Cut footnotes and tags
         if ($strip === true) {
-            $heading = Utility::stripHtmlTags(
-                InlineFactory::factory(preg_replace('/'.RendererDefines::NOTE_PATTERN.'/x', '', $heading))
+            $heading = strip_tags(
+                InlineFactory::factory(preg_replace('/'.InlineRules::NOTE_PATTERN.'/x', '', $heading))
             );
         }
 

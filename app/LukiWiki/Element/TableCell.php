@@ -18,7 +18,7 @@ class TableCell extends Element
     public $is_blank = false;
     public $class = [];
 
-    const CELL_OPTION_MATCH_PATTERN = '/^(?:(LEFT|CENTER|RIGHT|JUSTIFY)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\d+)\)|LANG\((\w+2)\)|(TOP|MIDDLE|BOTTOM)|(NOWRAP)):(.*)$/';
+    const CELL_OPTION_MATCH_PATTERN = '/^(?:(LEFT|CENTER|RIGHT|JUSTIFY)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\w+)\)|LANG\((\w+2)\)|(BASELINE|TOP|MIDDLE|BOTTOM|TEXT-TOP|TEXT-BOTTOM)|(NOWRAP)(TRUNCATE)):(.*)$/';
 
     public function __construct($text, $is_template = false)
     {
@@ -33,29 +33,43 @@ class TableCell extends Element
             // スイッチ
             if ($matches[1]) {
                 // LEFT CENTER RIGHT JUSTIFY
-                $this->style['text-align'] = $matches[1];
+                $this->class[] = 'text-'.self::processParam($matches[1]);
             } elseif ($matches[3]) {
                 // COLOR / BGCOLOR
                 $name = $matches[2] ? 'background-color' : 'color';
-                $this->style[$name] = $matches[3];
+                $this->style[$name] = self::processParam($matches[3]);
             } elseif ($matches[4]) {
                 // SIZE
-                $this->style['font-size'] = $matches[4].'px';
+                $value = self::processParam($matches[4]);
+                if (is_numeric($value)) {
+                    // 10px = 1rem
+                    $this->style['font-size'] = (int) $value * 0.1.'rem';
+                } elseif (preg_match('/^h[1-6]$', $value)) {
+                    // h1 ~ h6
+                    $this->class[] = $value;
+                }
             } elseif ($matches[5]) {
                 // LANG
-                $this->lang = strtolower(Utility::htmlsc($matches[5]));
+                $this->lang = self::processParam($matches[5]);
             } elseif ($matches[6]) {
-                // TOP / MIDDLE / BOTTOM
-                // http://pukiwiki.sourceforge.jp/?%E8%B3%AA%E5%95%8F%E7%AE%B14%2F540
-                $this->style['vertical-align'] = $matches[6];
+                // BASELINE / TOP / MIDDLE / BOTTOM / TEXT-TOP / TEXT~BOTTOM
+                $this->class[] = 'align-'.self::processParam($matches[6]);
             } elseif ($matches[7]) {
                 // NOWRAP
-                // http://pukiwiki.sourceforge.jp/dev/?PukiWiki%2F1.4%2F%A4%C1%A4%E7%A4%C3%A4%C8%CA%D8%CD%F8%A4%CB%2F%C9%BD%C1%C8%A4%DF%A4%C7nowrap%A4%F2%BB%D8%C4%EA%A4%B9%A4%EB
-                $this->style['white-space'] = 'nowrap';
+                $this->class[] = 'text-nowrap';
+            } elseif ($matches[8]) {
+                // TRUNCATE（長いテキストを省略）
+                $this->class[] = 'text-truncate';
             }
         }
-        if ($is_template && is_numeric($text)) {
-            $this->style['width'] = $text.'px;';
+        if ($is_template) {
+            // テンプレート行（末尾にhを入れるヘッダー行の前の行の処理）
+            if (is_numeric($text)) {
+                $this->style['width'] = (int) $text * 0.1.'rem';
+            } elseif (preg_match('/\d+%$/', $text)) {
+                // %指定
+                $this->style['width'] = (int) $text.'%';
+            }
         }
 
         if (preg_match("/\S+/", $text) === false) {
@@ -84,42 +98,44 @@ class TableCell extends Element
         $this->insert($obj);
     }
 
-    public function setStyle(&$style)
-    {
-        foreach ($style as $key => $value) {
-            if (!isset($this->style[$key])) {
-                $this->style[$key] = $value;
-            }
-        }
-    }
-
     public function toString()
     {
-        if ($this->rowspan == 0 || $this->colspan == 0) {
-            return '';
-        }
-
-        $param = ($this->is_blank === true ? ' class="blank-cell' : '');
-
+        $param = [];
         if ($this->rowspan > 1) {
-            $param .= ' rowspan="'.$this->rowspan.'"';
+            $param['rowspan'] = $this->rowspan;
         }
         if ($this->colspan > 1) {
-            $param .= ' colspan="'.$this->colspan.'"';
+            $param['colspan'] = $this->colspan;
             unset($this->style['width']);
         }
         if (!empty($this->lang)) {
-            $param .= ' lang="'.$this->lang.'"';
+            $param['lang'] = $this->lang;
         }
 
         if (!empty($this->style)) {
-            $style = '';
+            $style = [];
             foreach ($this->style as $key => $value) {
-                $style .= $key.':'.$value.';';
+                $style[] = $key.':'.$value;
             }
-            $param .= ' style="'.strtolower(strip_tags($style)).'"';
+            $param['style'] = implode(';', $style);
+        }
+
+        if (!empty($this->class)) {
+            $param['class'] = implode(' ', $this->class);
         }
 
         return $this->wrap(parent::toString(), $this->tag, $param, false);
+    }
+
+    /**
+     * 小文字にしてエスケープ.
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    private static function processParam($string)
+    {
+        return strtolower(htmlspecialchars($string, ENT_HTML5, 'UTF-8'));
     }
 }

@@ -9,7 +9,7 @@
 
 namespace App\LukiWiki\Element;
 
-use App\LukiWiki\Rule\HeadingAnchor;
+use App\LukiWiki\Rules\HeadingAnchor;
 
 /**
  * * Heading1
@@ -51,7 +51,6 @@ class Heading extends Element
         list($this->text, $fixed_anchor) = HeadingAnchor::get($this->text, false);
         $id = (empty($fixed_anchor)) ? $this->id : $fixed_anchor;
 
-        return $this->msg_top.$this->wrap(parent::toString(),
-            'h'.$this->level, ' id="'.$id.'"');
+        return $this->msg_top.$this->wrap(parent::toString(), 'h'.$this->level, ['id' => $id]);
     }
 }

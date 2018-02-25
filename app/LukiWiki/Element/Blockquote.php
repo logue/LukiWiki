@@ -53,9 +53,7 @@ class Blockquote extends Element
             return parent::insert($obj);
         }
 
-        $class = get_class($this);
-
-        if ($obj instanceof $class && $obj->level == $this->level && count($obj->elements)) {
+        if ($obj instanceof self && $obj->level == $this->level && count($obj->elements)) {
             $obj = &$obj->elements[0];
             if ($this->last instanceof Paragraph && count($obj->elements)) {
                 $obj = &$obj->elements[0];
@@ -75,7 +73,7 @@ class Blockquote extends Element
         $parent = &$root->last;
 
         while (is_object($parent)) {
-            if ($parent instanceof self && $parent->level == $level) {
+            if ($parent instanceof self && $parent->level === $level) {
                 return $parent->parent;
             }
             $parent = &$parent->parent;

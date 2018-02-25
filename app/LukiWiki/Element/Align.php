@@ -9,6 +9,8 @@
 
 namespace App\LukiWiki\Element;
 
+use App\LukiWiki\Rules\Alignment;
+
 /**
  * LEFT: / CENTER: / RIGHT: / JUSTIFY:.
  */
@@ -36,8 +38,7 @@ class Align extends Element
         if (empty($this->align)) {
             return $this->wrap(parent::toString(), 'div');
         }
-        $align = strtolower($this->align);
 
-        return $this->wrap(parent::toString(), 'div', ' class="text-'.$this->align.'"');
+        return $this->wrap(parent::toString(), 'div', ['class' => Alignment::block($this->align)]);
     }
 }

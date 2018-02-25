@@ -55,10 +55,22 @@ class Element
         return true;
     }
 
-    public function wrap($string, $tag, $param = '', $canomit = true)
+    public function wrap($string, $tag, $param = [], $canomit = true)
     {
-        return ($canomit && empty($string)) ? '' :
-            '<'.$tag.$param.'>'.$string.'</'.$tag.'>';
+        $attributes = [];
+        if ($param == '') {
+            dd($tag);
+        }
+        foreach ($param as $key => $value) {
+            $attributes[] = $key.'="'.$value.'"';
+        }
+
+        try {
+            return ($canomit && empty($string)) ? '' :
+            '<'.$tag.(count($attributes) !== 0 ? ' '.implode(' ', $attributes) : '').'>'.$string.'</'.$tag.'>';
+        } catch (\Exception $e) {
+            dd($tag, $param, $string);
+        }
     }
 
     public function toString()

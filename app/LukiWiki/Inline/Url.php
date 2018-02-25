@@ -47,12 +47,13 @@ class Url extends Inline
         list(, $bracket, $alias, $scheme, $mail, $host, $uri) = $this->splice($arr);
         $this->has_bracket = (substr($bracket, 0, 2) === '[[');
         $this->host = $host;
+
         if (extension_loaded('intl') && $host !== '/' && preg_match('/[^A-Za-z0-9.-]/', $host)) {
             $host = idn_to_ascii($host);
         }
         $name = $scheme.$mail.$host;
         // https?:/// -> $this->cont['ROOT_URL']
-        $name = preg_replace('#^(?:site:|https?:/)//#', ROOT_URI, $name).$uri;
+        //$name = preg_replace('#^(?:site:|https?:/)//#', ROOT_URI, $name).$uri;
         if (!$alias) {
             // Punycode化されたドメインかを判別
             $alias = (extension_loaded('intl') && strtolower(substr($host, 0, 4)) === 'xn--') ?
@@ -70,9 +71,8 @@ class Url extends Inline
 
     public function __toString()
     {
-        global $nofollow;
         $target = (empty($this->redirect)) ? $this->name : $this->redirect.rawurlencode($this->name);
 
-        return parent::setLink($this->alias, $target, $this->name, $nofollow === false ? null : 'nofollow');
+        return parent::setLink($this->alias, $target, $this->name, 'nofollow');
     }
 }

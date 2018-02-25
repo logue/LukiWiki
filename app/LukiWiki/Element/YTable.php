@@ -10,6 +10,7 @@
 namespace App\LukiWiki\Element;
 
 use App\LukiWiki\Inline\InlineFactory;
+use App\LukiWiki\Rules\BlockAlign;
 
 /**
  * , cell1  , cell2  ,  cell3
@@ -66,8 +67,7 @@ class YTable extends Element
             }
             $colspan = ($colspan > 1) ? ' colspan="'.$colspan.'"' : '';
             $text = preg_match("/\S+/", $_value[$i]) ? InlineFactory::factory($_value[$i]) : '';
-            $class = ((empty($text) || !preg_match("/\S+/", $text))) ? 'blank-cell' : '';
-            $align = $_align[$i] ? ' style="text-align:'.$_align[$i].'"' : '';
+            $align = $_align[$i] ? ' class="text-'.$_align[$i].'"' : '';
             $str[] = '<td class="'.$class.'"'.$align.$colspan.'>'.$text.'</td>';
             unset($_value[$i], $_align[$i], $text);
         }
@@ -95,6 +95,6 @@ class YTable extends Element
             $rows .= "\n".'<tr>'.$str.'</tr>'."\n";
         }
 
-        return $this->wrap($rows, 'table', ' class="table table-bordered table_'.$this->align.'"');
+        return $this->wrap($rows, 'table', ['class' => 'table '.BlockAlign($this->align)]);
     }
 }

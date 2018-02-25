@@ -9,6 +9,8 @@
 
 namespace App\LukiWiki\Element;
 
+use App\LukiWiki\Rules\Alignment;
+
 /**
  * | title1 | title2 | title3 |
  * | cell1  | cell2  | cell3  |
@@ -19,7 +21,7 @@ class Table extends Element
     protected $type;
     protected $types;
     protected $col;   // number of column
-    public $align = 'center';
+    public $align = 'CENTER';
     protected static $parts = [
         'h' => 'thead',
         'f' => 'tfoot',
@@ -117,7 +119,8 @@ class Table extends Element
             }
             $string .= $this->wrap($part_string, $part);
         }
+        $align = Alignment::block($this->align);
 
-        return $this->wrap($string, 'table', ' class="table table-bordered table_'.$this->align.'"');
+        return $this->wrap($string, 'table', ['class' => 'table table-bordered '.$align]);
     }
 }

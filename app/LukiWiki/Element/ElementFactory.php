@@ -31,7 +31,7 @@ class ElementFactory
                 break;
         }
         // 'InlineElement'
-        return self::inline($text, $is_guiedit);
+        return self::inline($text);
     }
 
     private static function &inline($text)
@@ -82,6 +82,7 @@ class ElementFactory
 
     private static function plugin(&$root, $text)
     {
+        /*
         $matches = [];
 
         if (preg_match('/^#([^\(\{]+)(?:\(([^\r]*)\))?(\{*)/', $text, $matches) && PluginRenderer::hasPluginMethod($matches[1], 'convert')) {
@@ -92,9 +93,11 @@ class ElementFactory
                 $matches[2] .= "\r".$body[1]."\r";
             }
         }
+
+        return new BlockPlugin($matches);
+        */
+
         //TODO:Plugin Support
         return '<p>Plugin</p>';
-
-        //return new BlockPlugin($matches);
     }
 }
