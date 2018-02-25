@@ -1,85 +1,18 @@
-@font-face {
-  font-family: "Yu Gothic";
-  src: local("Yu Gothic Medium");
-  font-weight: 100;
-}
+@charset "UTF-8";
+
+/* Windows 用 Medium 指定の游ゴシック */
 
 @font-face {
-  font-family: "Yu Gothic";
+  font-family: "Yu Gothic M";
   src: local("Yu Gothic Medium");
-  font-weight: 200;
 }
 
-@font-face {
-  font-family: "Yu Gothic";
-  src: local("Yu Gothic Medium");
-  font-weight: 300;
-}
+/* font-weight: bold の時は通常どおり Bold 書体を使わせる */
 
 @font-face {
-  font-family: "Yu Gothic";
-  src: local("Yu Gothic Medium");
-  font-weight: 400;
-}
-
-@font-face {
-  font-family: "Yu Gothic";
+  font-family: "Yu Gothic M";
   src: local("Yu Gothic Bold");
   font-weight: bold;
-}
-
-@font-face {
-  font-family: "Helvetica Neue";
-  src: local("Helvetica Neue Regular");
-  font-weight: 100;
-}
-
-@font-face {
-  font-family: "Helvetica Neue";
-  src: local("Helvetica Neue Regular");
-  font-weight: 200;
-}
-
-@font-face {
-  font-family: "Yu Gothic";
-  src: local("Yu Gothic Medium");
-  font-weight: 100;
-}
-
-@font-face {
-  font-family: "Yu Gothic";
-  src: local("Yu Gothic Medium");
-  font-weight: 200;
-}
-
-@font-face {
-  font-family: "Yu Gothic";
-  src: local("Yu Gothic Medium");
-  font-weight: 300;
-}
-
-@font-face {
-  font-family: "Yu Gothic";
-  src: local("Yu Gothic Medium");
-  font-weight: 400;
-}
-
-@font-face {
-  font-family: "Yu Gothic";
-  src: local("Yu Gothic Bold");
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: "Helvetica Neue";
-  src: local("Helvetica Neue Regular");
-  font-weight: 100;
-}
-
-@font-face {
-  font-family: "Helvetica Neue";
-  src: local("Helvetica Neue Regular");
-  font-weight: 200;
 }
 
 @media all and (-ms-high-contrast: none) {
@@ -124,8 +57,8 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
-  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", YuGothic, Verdana, Meiryo, "M+ 1p", sans-serif;
-  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Helvetica Neue", HelveticaNeue, "Segoe UI", "\6E38\30B4\30B7\30C3\30AF\4F53", YuGothic, "Yu Gothic M", "\6E38\30B4\30B7\30C3\30AF   Medium", "Yu Gothic Medium", "\30D2\30E9\30AE\30CE\89D2\30B4   ProN W3", "Hiragino Kaku Gothic ProN W3", HiraKakuProN-W3, "\30D2\30E9\30AE\30CE\89D2\30B4   ProN", "Hiragino Kaku Gothic ProN", "\30D2\30E9\30AE\30CE\89D2\30B4   Pro", "Hiragino Kaku Gothic Pro", "\30E1\30A4\30EA\30AA", Meiryo, Osaka, "\FF2D\FF33   \FF30\30B4\30B7\30C3\30AF", "MS PGothic", sans-serif;
+  --font-family-monospace: MeiryoKe_Gothic, "Ricty Diminished", "Osaka\FF0D\7B49\5E45", "Osaka-\7B49\5E45", Osaka-mono, "\FF2D\FF33   \30B4\30B7\30C3\30AF", "MS Gothic", "Courier New", Courier, Monaco, Menlo, Consolas, "Lucida Console", monospace;
 }
 
 *,
@@ -164,7 +97,7 @@ section {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", YuGothic, Verdana, Meiryo, "M+ 1p", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", HelveticaNeue, "Segoe UI", "\6E38\30B4\30B7\30C3\30AF\4F53", YuGothic, "Yu Gothic M", "\6E38\30B4\30B7\30C3\30AF   Medium", "Yu Gothic Medium", "\30D2\30E9\30AE\30CE\89D2\30B4   ProN W3", "Hiragino Kaku Gothic ProN W3", HiraKakuProN-W3, "\30D2\30E9\30AE\30CE\89D2\30B4   ProN", "Hiragino Kaku Gothic ProN", "\30D2\30E9\30AE\30CE\89D2\30B4   Pro", "Hiragino Kaku Gothic Pro", "\30E1\30A4\30EA\30AA", Meiryo, Osaka, "\FF2D\FF33   \FF30\30B4\30B7\30C3\30AF", "MS PGothic", sans-serif;
   font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.6;
@@ -637,7 +570,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: MeiryoKe_Gothic, "Ricty Diminished", "Osaka\FF0D\7B49\5E45", "Osaka-\7B49\5E45", Osaka-mono, "\FF2D\FF33   \30B4\30B7\30C3\30AF", "MS Gothic", "Courier New", Courier, Monaco, Menlo, Consolas, "Lucida Console", monospace;
 }
 
 code {
@@ -6184,7 +6117,7 @@ button.close {
   z-index: 1070;
   display: block;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", YuGothic, Verdana, Meiryo, "M+ 1p", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", HelveticaNeue, "Segoe UI", "\6E38\30B4\30B7\30C3\30AF\4F53", YuGothic, "Yu Gothic M", "\6E38\30B4\30B7\30C3\30AF   Medium", "Yu Gothic Medium", "\30D2\30E9\30AE\30CE\89D2\30B4   ProN W3", "Hiragino Kaku Gothic ProN W3", HiraKakuProN-W3, "\30D2\30E9\30AE\30CE\89D2\30B4   ProN", "Hiragino Kaku Gothic ProN", "\30D2\30E9\30AE\30CE\89D2\30B4   Pro", "Hiragino Kaku Gothic Pro", "\30E1\30A4\30EA\30AA", Meiryo, Osaka, "\FF2D\FF33   \FF30\30B4\30B7\30C3\30AF", "MS PGothic", sans-serif;
   font-style: normal;
   font-weight: 400;
   line-height: 1.6;
@@ -6309,7 +6242,7 @@ button.close {
   z-index: 1060;
   display: block;
   max-width: 276px;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", YuGothic, Verdana, Meiryo, "M+ 1p", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", HelveticaNeue, "Segoe UI", "\6E38\30B4\30B7\30C3\30AF\4F53", YuGothic, "Yu Gothic M", "\6E38\30B4\30B7\30C3\30AF   Medium", "Yu Gothic Medium", "\30D2\30E9\30AE\30CE\89D2\30B4   ProN W3", "Hiragino Kaku Gothic ProN W3", HiraKakuProN-W3, "\30D2\30E9\30AE\30CE\89D2\30B4   ProN", "Hiragino Kaku Gothic ProN", "\30D2\30E9\30AE\30CE\89D2\30B4   Pro", "Hiragino Kaku Gothic Pro", "\30E1\30A4\30EA\30AA", Meiryo, Osaka, "\FF2D\FF33   \FF30\30B4\30B7\30C3\30AF", "MS PGothic", sans-serif;
   font-style: normal;
   font-weight: 400;
   line-height: 1.6;
@@ -13661,5 +13594,13 @@ footer {
 body {
   -webkit-font-feature-settings: "palt";
           font-feature-settings: "palt";
+}
+
+.table {
+  width: auto;
+}
+
+.table.mx-0 {
+  width: 100%;
 }
 

@@ -2,3 +2,11 @@
 body {
     font-feature-settings: "palt";
 }
+
+.table {
+    width: auto;
+}
+
+.table.mx-0 {
+    width: 100%;
+}

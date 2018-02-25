@@ -21,45 +21,28 @@
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <a class="navbar-brand" href="#">{{ config('app.name') }}</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-content" aria-controls="navbar-collapse-content"
-         aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-content" aria-controls="navbar-collapse-content" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar-collapse-content">
-            @if (Route::has('login'))
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-link active">
-                    <a href="{{ url('/home') }}">Home
-                        <span class="sr-only">(current)</span>
-                    </a>
-                </li>
-                @auth
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">Login</a>
-                </li>
-                @else
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('register') }}">Register</a>]
-                </li>
-                @endauth
-            </ul>
-            @endif
-            <form class="form-inline my-2 my-lg-0 mr-0">
-                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            @yield('default.navbar')
+            <form class="form-inline my-2 my-lg-0 mr-0" action="{{ url(':search') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <input type="search" class="form-control mr-sm-2" placeholder="Search" aria-label="Search" />
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
         </div>
     </nav>
 
-    <main class="container my-2" id="app">
-        {!! $content !!}
+    <main class="container mt-2" id="app">
+        @yield('default.content')
     </main>
     <footer class="bg-light">
         <div class="container">
-            <span class="text-muted"><strong>LukiWiki</strong> v0.0.0-alpha</span>
+            @yield('default.footer')
         </div>
     </footer>
-    <script src="{{ mix('js/app.js') }}"></script>
+    @yield('default.scripts')
 </body>
 
 </html>

@@ -1,19 +1,60 @@
 // Body
 $body-bg: #FFF;
-
 // Typography
 $font-family-sans-serif: -apple-system,
 BlinkMacSystemFont,
 "Helvetica Neue",
-"Yu Gothic",
+HelveticaNeue,
+"Segoe UI",
+"游ゴシック体",
 YuGothic,
-Verdana,
+"Yu Gothic M",
+"游ゴシック Medium",
+"Yu Gothic Medium",
+"ヒラギノ角ゴ ProN W3",
+"Hiragino Kaku Gothic ProN W3",
+HiraKakuProN-W3,
+"ヒラギノ角ゴ ProN",
+"Hiragino Kaku Gothic ProN",
+"ヒラギノ角ゴ Pro",
+"Hiragino Kaku Gothic Pro",
+"メイリオ",
 Meiryo,
-"M+ 1p",
+Osaka,
+"ＭＳ Ｐゴシック",
+"MS PGothic",
 sans-serif;
-//$font-family-monospace:  SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+$font-family-serif:Georgia,
+"游明朝体",
+"YuMincho",
+"游明朝",
+"Yu Mincho",
+"ヒラギノ明朝 ProN W3",
+"Hiragino Mincho ProN W3",
+HiraMinProN-W3,
+"ヒラギノ明朝 ProN",
+"Hiragino Mincho ProN",
+"ヒラギノ明朝 Pro",
+"Hiragino Mincho Pro",
+"HGS明朝E",
+"ＭＳ Ｐ明朝",
+"MS PMincho",
+serif;
+$font-family-monospace: MeiryoKe_Gothic,
+"Ricty Diminished",
+"Osaka－等幅",
+"Osaka-等幅",
+Osaka-mono,
+"ＭＳ ゴシック",
+"MS Gothic",
+"Courier New",
+Courier,
+Monaco,
+Menlo,
+Consolas,
+"Lucida Console",
+monospace;
 $font-size-base: .9rem;
 $line-height-base: 1.6;
-
 // misc
 $footer-height: 64px;
