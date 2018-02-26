@@ -14,12 +14,11 @@ namespace App\LukiWiki\Element;
  */
 class Pre extends Element
 {
-    public function __construct(&$root, $text)
+    public function __construct($root, $text)
     {
-        global $preformat_ltrim;
         parent::__construct();
         $this->elements[] = htmlspecialchars(
-            (!$preformat_ltrim || empty($text) || $text[0] != ' ') ? $text : substr($text, 1),
+            (empty($text) || $text[0] != ' ') ? $text : substr($text, 1),
             ENT_HTML5,
             'UTF-8'
         );
@@ -39,6 +38,8 @@ class Pre extends Element
 
     public function toString()
     {
-        return $this->wrap(implode("\n", $this->elements), 'pre');
+        $code = $this->wrap(implode("\n", $this->elements), 'code');
+
+        return $this->wrap($code, 'pre');
     }
 }

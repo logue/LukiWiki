@@ -27,7 +27,6 @@ class Paragraph extends Element
 
     public function canContain(&$obj)
     {
-        //return is_a($obj, 'Inline');
         return $obj instanceof InlineElement;
     }
 

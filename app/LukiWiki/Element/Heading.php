@@ -14,13 +14,14 @@ use App\LukiWiki\Rules\HeadingAnchor;
 /**
  * * Heading1
  * ** Heading2
- * *** Heading3.
+ * *** Heading3
+ * **** Heading4
+ * ***** Heading5.
  */
 class Heading extends Element
 {
     protected $level;
     protected $id;
-    protected $msg_top;
     protected $text;
 
     public function __construct(&$root, $text)
@@ -28,10 +29,10 @@ class Heading extends Element
         parent::__construct();
 
         $this->text = $text;
-        $this->level = min(3, strspn($text, '*'));
+        $this->level = min(5, strspn($text, '*'));
         list($text, $this->msg_top, $this->id) = $root->getAnchor($text, $this->level);
         $this->insert(ElementFactory::factory('InlineElement', null, $text));
-        ++$this->level; // h2,h3,h4
+        ++$this->level; // h2,h3,h4,h5,h6
     }
 
     public function insert(&$obj)
@@ -51,6 +52,6 @@ class Heading extends Element
         list($this->text, $fixed_anchor) = HeadingAnchor::get($this->text, false);
         $id = (empty($fixed_anchor)) ? $this->id : $fixed_anchor;
 
-        return $this->msg_top.$this->wrap(parent::toString(), 'h'.$this->level, ['id' => $id]);
+        return $this->wrap(parent::toString(), 'h'.$this->level, ['id' => $id]);
     }
 }

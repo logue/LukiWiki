@@ -27,7 +27,7 @@ class RootElement extends Element
     public function __construct($id)
     {
         $this->id = $id;
-        $this->contents = new Element();
+        $this->contents = new parent();
         $this->contents_last = $this->contents;
         parent::__construct();
     }

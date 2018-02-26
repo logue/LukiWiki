@@ -18,7 +18,7 @@ use App\LukiWiki\Inline\InlineFactory;
  */
 class SharpPre extends Element
 {
-    public function __construct(&$root, $text)
+    public function __construct($root, $text)
     {
         parent::__construct();
         if (substr($text, 0, 2) === '# ') {

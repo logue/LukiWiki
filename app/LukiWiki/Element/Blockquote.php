@@ -48,7 +48,6 @@ class Blockquote extends Element
             return;
         }
 
-        // BugTrack/521, BugTrack/545
         if ($obj instanceof InlineElement) {
             return parent::insert($obj);
         }

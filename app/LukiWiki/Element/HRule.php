@@ -16,6 +16,6 @@ class HRule extends Element
 {
     public function toString()
     {
-        return '<hr />'."\n";
+        return '<hr />';
     }
 }

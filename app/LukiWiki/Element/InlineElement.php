@@ -37,8 +37,7 @@ class InlineElement extends Element
 
     public function toString()
     {
-        // 改行を<br />に変換するか？
-        return nl2br(implode("\n", $this->elements));
+        return implode("\n", $this->elements);
     }
 
     public function toPara($class = '')

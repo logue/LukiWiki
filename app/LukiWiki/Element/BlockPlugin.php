@@ -30,8 +30,7 @@ class BlockPlugin extends Element
 
     public function toString()
     {
-        // Call #plugin
-        return '<div class="card text-white bg-primary"><div class="card-body">Block Plugin</div></div>';
-        //return PluginRenderer::executePluginBlock($this->name, $this->param);
+        // TODO:Call #plugin
+        return '<p class="p-2 mb-2 rounded text-white bg-secondary">#'.$this->name.'</div>';
     }
 }

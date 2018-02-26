@@ -16,7 +16,7 @@ namespace App\LukiWiki\Element;
  */
 class UList extends ListContainer
 {
-    public function __construct(&$root, $text)
+    public function __construct($root, $text)
     {
         parent::__construct('ul', 'li', '-', $text);
     }

@@ -33,9 +33,9 @@ class Element
     {
         if ($this->canContain($obj)) {
             return $this->insert($obj);
-        } else {
-            return $this->parent->add($obj);
         }
+
+        return $this->parent->add($obj);
     }
 
     public function insert(&$obj)
@@ -58,19 +58,12 @@ class Element
     public function wrap($string, $tag, $param = [], $canomit = true)
     {
         $attributes = [];
-        if ($param == '') {
-            dd($tag);
-        }
         foreach ($param as $key => $value) {
             $attributes[] = $key.'="'.$value.'"';
         }
 
-        try {
-            return ($canomit && empty($string)) ? '' :
-            '<'.$tag.(count($attributes) !== 0 ? ' '.implode(' ', $attributes) : '').'>'.$string.'</'.$tag.'>';
-        } catch (\Exception $e) {
-            dd($tag, $param, $string);
-        }
+        return ($canomit && empty($string)) ? '' :
+            '<'.$tag.(count($attributes) !== 0 ? ' '.implode(' ', $attributes) : '').'>'.trim($string).'</'.$tag.'>';
     }
 
     public function toString()
