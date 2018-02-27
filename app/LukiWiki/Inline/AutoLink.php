@@ -132,6 +132,3 @@ class AutoLink_Alphabet extends AutoLink
         return isset($this->auto_a) ? '('.$this->auto_a.')' : false;
     }
 }
-
-/* End of file AutoLink.php */
-/* Location: /vendor/PukiWiki/Lib/Renderer/Inline/AutoLink.php */

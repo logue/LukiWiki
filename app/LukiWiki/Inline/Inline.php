@@ -111,13 +111,11 @@ abstract class Inline
     {
         static $pattern, $replace;
         $line_rules = InlineRules::Rule();
-
         if (!isset($pattern)) {
             $pattern = array_map(function ($a) {
                 return '/'.$a.'/';
             }, array_keys($line_rules));
             $replace = array_values($line_rules);
-            unset($line_rules);
         }
 
         return preg_replace($pattern, $replace, $str);
@@ -136,9 +134,10 @@ abstract class Inline
      */
     public static function setAutoLink($page, $alias = '', $anchor = '', $refer = '', $isautolink = false)
     {
+        $page = trim($page);
         if (empty($page)) {
             // ページ内リンク
-            return '<a href="'.$anchor.'">'.htmlspecialchars($alias, ENT_QUOTES, 'UTF-8').'</a>';
+            return '<a href="'.self::processText($anchor).'">'.self::processText($alias).'</a>';
         }
 
         return '<a href="'.url($page).'">'.$page.'</a>';
@@ -241,5 +240,10 @@ abstract class Inline
                    '<a href="'.$href.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.RendererDefines::INTERNAL_LINK_ICON.'</a>' :
                    '<a href="'.$href.'" rel="'.$ext_rel.'"'.$_tooltip.'>'.$term.RendererDefines::EXTERNAL_LINK_ICON.'</a>';
            */
+    }
+
+    protected static function processText($str)
+    {
+        return htmlspecialchars(trim($str), ENT_HTML5, 'UTF-8');
     }
 }

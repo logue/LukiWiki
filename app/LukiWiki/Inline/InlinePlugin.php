@@ -84,6 +84,7 @@ class InlinePlugin extends Inline
             return parent::setLineRules(Utility::htmlsc('&'.$this->plain).$body);
         }
         */
-        return '<span class="badge badge-primary" title="Plugin">&amp;'.$this->name.'('.$this->param.')'.'</span>';
+        return parent::setLineRules('&'.$this->plain.$body);
+        //return '<span class="badge badge-pill badge-primary" title="Plugin">&amp;'.$this->name.'('.$this->param.')'.'</span>';
     }
 }
