@@ -1,14 +1,30 @@
 <?php
+/**
+ * LukiWikiコントローラー.
+ *
+ * @author    Logue <logue@hotmail.co.jp>
+ * @copyright 2018 Logue
+ * @license   MIT
+ */
 
 namespace App\Http\Controllers;
 
-use App\LukiWiki;
+use App\LukiWiki\Parser;
+use App\LukiWiki\Utility\FileList;
 use Config;
 use Illuminate\Http\Request;
 use Storage;
 
 class WikiController extends Controller
 {
+    // 設定
+    private $config = [];
+    // ページ名
+    private $page = null;
+
+    /**
+     * コンストラクタ
+     */
     public function __construct()
     {
         // 設定読み込み
@@ -26,15 +42,25 @@ class WikiController extends Controller
     public function __invoke(Request $request, $page = 'MainPage')
     {
         $this->page = $page;
+        $this->filename = FileList::encode($this->page).'.txt';
         switch ($request->input('action')) {
             case 'edit':
                 return $this->edit();
+                break;
+            case 'amp':
+                return $this->amp();
                 break;
             case 'attach':
                 return $this->attach();
                 break;
             case 'list':
                 return $this->list($request->input('type') ?? 'data');
+                break;
+            case 'backup':
+                return $this->backup();
+                break;
+            case 'lock':
+                return $this->lock();
                 break;
         }
 
@@ -46,14 +72,14 @@ class WikiController extends Controller
      */
     private function read()
     {
-        $filename = $this->config['directory']['data'].'/'.strtoupper(bin2hex($this->page)).'.txt';
+        $filename = $this->config['directory']['data'].'/'.$this->filename;
 
         if (!Storage::exists($filename)) {
             return \App::abort(404);
         }
         $content = Storage::get($filename);
 
-        $obj = LukiWiki\Parser::factory($content);
+        $obj = Parser::factory($content);
 
         return view(
            'default.content',
@@ -65,9 +91,36 @@ class WikiController extends Controller
         );
     }
 
+    /**
+     * AMP用ページ出力.
+     */
+    private function amp()
+    {
+        $filename = $this->config['directory']['data'].'/'.$this->filename;
+
+        if (!Storage::exists($filename)) {
+            return \App::abort(404);
+        }
+        $content = Storage::get($filename);
+
+        $obj = Parser::factory($content, true);
+
+        return view(
+           'default.amp',
+           [
+                'page'    => $this->page,
+                'content' => $obj,
+                'title'   => $this->page,
+           ]
+        );
+    }
+
+    /**
+     * 編集画面表示.
+     */
     private function edit()
     {
-        $filename = $this->config['directory']['data'].'/'.strtoupper(bin2hex($this->page)).'.txt';
+        $filename = $this->config['directory']['data'].'/'.$this->filename;
 
         if (!Storage::exists($filename)) {
             return \App::abort(404);
@@ -95,27 +148,13 @@ class WikiController extends Controller
         if (!isset($this->config['directory'][$type])) {
             return \App::abort('not mounted');
         }
-        $dir = $this->config['directory'][$type];
-        $files = Storage::allFiles($dir);
-        $ret = [];
-        foreach ($files as $file) {
-            $filename = current(
-                explode('.',    // 拡張子を削除
-                    ltrim($file, $dir.'/')  // パスを削除
-                )
-            );
-            if (empty($filename)) {
-                // ファイル名が存在しない場合スキップ（.gitignoreとかの隠しファイルも省ける）
-                continue;
-            }
 
-            $ret[$file] = hex2bin($filename);
-        }
+        $filelist = new FileList($this->config['directory']);
 
         return view(
             'default.list',
             [
-                'pages' => $ret,
+                'pages' => array_keys($filelist->getList($type)),
                 'title' => 'List',
             ]
          );

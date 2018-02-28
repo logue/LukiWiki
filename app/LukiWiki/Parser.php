@@ -18,7 +18,15 @@ class Parser
 {
     private static $instance = 0;
 
-    public static function factory($lines)
+    /**
+     * LukiWikiファクトリークラス.
+     *
+     * @param mixed $lines Wikiのソース
+     * @param bool  $isAmp AMP対応フラグ
+     *
+     * @return string
+     */
+    public static function factory($lines, $isAmp = false)
     {
         if (!is_array($lines)) {
             // 改行を正規化
