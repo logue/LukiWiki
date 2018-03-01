@@ -10,10 +10,9 @@
 namespace App\Http\Controllers;
 
 use App\LukiWiki\Parser;
-use App\LukiWiki\Utility\FileList;
+use App\LukiWiki\Utility\WikiFileSystem;
 use Config;
 use Illuminate\Http\Request;
-use Storage;
 
 class WikiController extends Controller
 {
@@ -29,6 +28,7 @@ class WikiController extends Controller
     {
         // 設定読み込み
         $this->config = Config::get('lukiwiki');
+        $this->data = new WikiFileSystem('data');
     }
 
     /**
@@ -42,7 +42,11 @@ class WikiController extends Controller
     public function __invoke(Request $request, $page = 'MainPage')
     {
         $this->page = $page;
-        $this->filename = FileList::encode($this->page).'.txt';
+        $this->exists = isset($this->data->$page);
+        if ($this->exists) {
+            $this->content = $this->data->$page;
+        }
+
         switch ($request->input('action')) {
             case 'edit':
                 return $this->edit();
@@ -64,6 +68,10 @@ class WikiController extends Controller
                 break;
         }
 
+        if (!$this->exists) {
+            return \App::abort(404);
+        }
+
         return $this->read();
     }
 
@@ -72,21 +80,16 @@ class WikiController extends Controller
      */
     private function read()
     {
-        $filename = $this->config['directory']['data'].'/'.$this->filename;
-
-        if (!Storage::exists($filename)) {
+        if (!$this->exists) {
             return \App::abort(404);
         }
-        $content = Storage::get($filename);
-
-        $obj = Parser::factory($content);
 
         return view(
            'default.content',
            [
-                'page'    => $this->page,
-                'content' => $obj,
-                'title'   => $this->page,
+                'page' => $this->page,
+                'content' => Parser::factory($this->content),
+                'title' => $this->page,
            ]
         );
     }
@@ -96,21 +99,18 @@ class WikiController extends Controller
      */
     private function amp()
     {
-        $filename = $this->config['directory']['data'].'/'.$this->filename;
-
-        if (!Storage::exists($filename)) {
+        if (!$this->exists) {
             return \App::abort(404);
         }
-        $content = Storage::get($filename);
-
-        $obj = Parser::factory($content, true);
+        
+        \Debugbar::disable();
 
         return view(
            'default.amp',
            [
-                'page'    => $this->page,
-                'content' => $obj,
-                'title'   => $this->page,
+                'page' => $this->page,
+                'content' => Parser::factory($this->content, true),
+                'title' => $this->page,
            ]
         );
     }
@@ -120,18 +120,17 @@ class WikiController extends Controller
      */
     private function edit()
     {
-        $filename = $this->config['directory']['data'].'/'.$this->filename;
-
-        if (!Storage::exists($filename)) {
+        if (!$this->exists) {
+            // TODO
             return \App::abort(404);
         }
 
         return view(
             'default.edit',
             [
-                'page'   => $this->page,
-                'source' => Storage::get($filename),
-                'title'  => 'Edit',
+                'page' => $this->page,
+                'source' => $this->content,
+                'title' => 'Edit '.$this->page,
             ]
          );
     }
@@ -145,16 +144,12 @@ class WikiController extends Controller
      */
     public function list($type)
     {
-        if (!isset($this->config['directory'][$type])) {
-            return \App::abort('not mounted');
-        }
-
-        $filelist = new FileList($this->config['directory']);
+        $filelist = $this->data;
 
         return view(
             'default.list',
             [
-                'pages' => array_keys($filelist->getList($type)),
+                'pages' => array_keys($filelist()),
                 'title' => 'List',
             ]
          );

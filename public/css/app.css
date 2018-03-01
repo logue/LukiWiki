@@ -98,12 +98,12 @@ section {
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", HelveticaNeue, "Segoe UI", "\6E38\30B4\30B7\30C3\30AF\4F53", YuGothic, "Yu Gothic M", "\6E38\30B4\30B7\30C3\30AF   Medium", "Yu Gothic Medium", "\30D2\30E9\30AE\30CE\89D2\30B4   ProN W3", "Hiragino Kaku Gothic ProN W3", HiraKakuProN-W3, "\30D2\30E9\30AE\30CE\89D2\30B4   ProN", "Hiragino Kaku Gothic ProN", "\30D2\30E9\30AE\30CE\89D2\30B4   Pro", "Hiragino Kaku Gothic Pro", "\30E1\30A4\30EA\30AA", Meiryo, Osaka, "\FF2D\FF33   \FF30\30B4\30B7\30C3\30AF", "MS PGothic", sans-serif;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.5;
   color: #212529;
   text-align: left;
-  background-color: #FFF;
+  background-color: #fff;
 }
 
 [tabindex="-1"]:focus {
@@ -424,36 +424,36 @@ h6,
 
 h1,
 .h1 {
-  font-size: 2.25rem;
+  font-size: 2.5rem;
 }
 
 h2,
 .h2 {
-  font-size: 1.8rem;
+  font-size: 2rem;
 }
 
 h3,
 .h3 {
-  font-size: 1.575rem;
+  font-size: 1.75rem;
 }
 
 h4,
 .h4 {
-  font-size: 1.35rem;
+  font-size: 1.5rem;
 }
 
 h5,
 .h5 {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
 }
 
 h6,
 .h6 {
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .lead {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 300;
 }
 
@@ -525,7 +525,7 @@ mark,
 
 .blockquote {
   margin-bottom: 1rem;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
 }
 
 .blockquote-footer {
@@ -545,7 +545,7 @@ mark,
 
 .img-thumbnail {
   padding: 0.25rem;
-  background-color: #FFF;
+  background-color: #fff;
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
   max-width: 100%;
@@ -1975,7 +1975,7 @@ pre code {
 }
 
 .table .table {
-  background-color: #FFF;
+  background-color: #fff;
 }
 
 .table-sm th,
@@ -2141,7 +2141,7 @@ pre code {
 }
 
 .table .thead-dark th {
-  color: #FFF;
+  color: #fff;
   background-color: #212529;
   border-color: #32383e;
 }
@@ -2153,7 +2153,7 @@ pre code {
 }
 
 .table-dark {
-  color: #FFF;
+  color: #fff;
   background-color: #212529;
 }
 
@@ -2247,8 +2247,8 @@ pre code {
   display: block;
   width: 100%;
   padding: 0.375rem 0.75rem;
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.5;
   color: #495057;
   background-color: #fff;
   background-clip: padding-box;
@@ -2301,7 +2301,7 @@ pre code {
 }
 
 select.form-control:not([size]):not([multiple]) {
-  height: calc(2.19rem + 2px);
+  height: calc(2.25rem + 2px);
 }
 
 select.form-control:focus::-ms-value {
@@ -2320,20 +2320,20 @@ select.form-control:focus::-ms-value {
   padding-bottom: calc(0.375rem + 1px);
   margin-bottom: 0;
   font-size: inherit;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .col-form-label-lg {
   padding-top: calc(0.5rem + 1px);
   padding-bottom: calc(0.5rem + 1px);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: 1.5;
 }
 
 .col-form-label-sm {
   padding-top: calc(0.25rem + 1px);
   padding-bottom: calc(0.25rem + 1px);
-  font-size: 0.7875rem;
+  font-size: 0.875rem;
   line-height: 1.5;
 }
 
@@ -2343,7 +2343,7 @@ select.form-control:focus::-ms-value {
   padding-top: 0.375rem;
   padding-bottom: 0.375rem;
   margin-bottom: 0;
-  line-height: 1.6;
+  line-height: 1.5;
   background-color: transparent;
   border: solid transparent;
   border-width: 1px 0;
@@ -2372,7 +2372,7 @@ select.form-control:focus::-ms-value {
 .input-group-sm > .input-group-prepend > .btn,
 .input-group-sm > .input-group-append > .btn {
   padding: 0.25rem 0.5rem;
-  font-size: 0.7875rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   border-radius: 0.2rem;
 }
@@ -2383,7 +2383,7 @@ select.form-control-sm:not([size]):not([multiple]),
 .input-group-sm > .input-group-append > select.input-group-text:not([size]):not([multiple]),
 .input-group-sm > .input-group-prepend > select.btn:not([size]):not([multiple]),
 .input-group-sm > .input-group-append > select.btn:not([size]):not([multiple]) {
-  height: calc(1.68125rem + 2px);
+  height: calc(1.8125rem + 2px);
 }
 
 .form-control-lg,
@@ -2393,7 +2393,7 @@ select.form-control-sm:not([size]):not([multiple]),
 .input-group-lg > .input-group-prepend > .btn,
 .input-group-lg > .input-group-append > .btn {
   padding: 0.5rem 1rem;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: 1.5;
   border-radius: 0.3rem;
 }
@@ -2404,7 +2404,7 @@ select.form-control-lg:not([size]):not([multiple]),
 .input-group-lg > .input-group-append > select.input-group-text:not([size]):not([multiple]),
 .input-group-lg > .input-group-prepend > select.btn:not([size]):not([multiple]),
 .input-group-lg > .input-group-append > select.btn:not([size]):not([multiple]) {
-  height: calc(2.6875rem + 2px);
+  height: calc(2.875rem + 2px);
 }
 
 .form-group {
@@ -2560,8 +2560,8 @@ select.form-control-lg:not([size]):not([multiple]),
 
 .was-validated .custom-control-input:valid:focus ~ .custom-control-label::before,
 .custom-control-input.is-valid:focus ~ .custom-control-label::before {
-  -webkit-box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-          box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+  -webkit-box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+          box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
 .was-validated .custom-file-input:valid ~ .custom-file-label,
@@ -2677,8 +2677,8 @@ select.form-control-lg:not([size]):not([multiple]),
 
 .was-validated .custom-control-input:invalid:focus ~ .custom-control-label::before,
 .custom-control-input.is-invalid:focus ~ .custom-control-label::before {
-  -webkit-box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-          box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  -webkit-box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+          box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
 .was-validated .custom-file-input:invalid ~ .custom-file-label,
@@ -2813,8 +2813,8 @@ select.form-control-lg:not([size]):not([multiple]),
           user-select: none;
   border: 1px solid transparent;
   padding: 0.375rem 0.75rem;
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.5;
   border-radius: 0.25rem;
   -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
@@ -3522,7 +3522,7 @@ fieldset:disabled a.btn {
 .btn-lg,
 .btn-group-lg > .btn {
   padding: 0.5rem 1rem;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: 1.5;
   border-radius: 0.3rem;
 }
@@ -3530,7 +3530,7 @@ fieldset:disabled a.btn {
 .btn-sm,
 .btn-group-sm > .btn {
   padding: 0.25rem 0.5rem;
-  font-size: 0.7875rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   border-radius: 0.2rem;
 }
@@ -3616,7 +3616,7 @@ tbody.collapse.show {
   min-width: 10rem;
   padding: 0.5rem 0;
   margin: 0.125rem 0 0;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #212529;
   text-align: left;
   list-style: none;
@@ -3759,7 +3759,7 @@ tbody.collapse.show {
   display: block;
   padding: 0.5rem 1.5rem;
   margin-bottom: 0;
-  font-size: 0.7875rem;
+  font-size: 0.875rem;
   color: #6c757d;
   white-space: nowrap;
 }
@@ -4026,9 +4026,9 @@ tbody.collapse.show {
           align-items: center;
   padding: 0.375rem 0.75rem;
   margin-bottom: 0;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.5;
   color: #495057;
   text-align: center;
   white-space: nowrap;
@@ -4065,7 +4065,7 @@ tbody.collapse.show {
 .custom-control {
   position: relative;
   display: block;
-  min-height: 1.6rem;
+  min-height: 1.5rem;
   padding-left: 1.5rem;
 }
 
@@ -4088,8 +4088,8 @@ tbody.collapse.show {
 }
 
 .custom-control-input:focus ~ .custom-control-label::before {
-  -webkit-box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-          box-shadow: 0 0 0 1px #FFF, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  -webkit-box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+          box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .custom-control-input:active ~ .custom-control-label::before {
@@ -4111,7 +4111,7 @@ tbody.collapse.show {
 
 .custom-control-label::before {
   position: absolute;
-  top: 0.3rem;
+  top: 0.25rem;
   left: 0;
   display: block;
   width: 1rem;
@@ -4127,7 +4127,7 @@ tbody.collapse.show {
 
 .custom-control-label::after {
   position: absolute;
-  top: 0.3rem;
+  top: 0.25rem;
   left: 0;
   display: block;
   width: 1rem;
@@ -4185,9 +4185,9 @@ tbody.collapse.show {
 .custom-select {
   display: inline-block;
   width: 100%;
-  height: calc(2.19rem + 2px);
+  height: calc(2.25rem + 2px);
   padding: 0.375rem 1.75rem 0.375rem 0.75rem;
-  line-height: 1.6;
+  line-height: 1.5;
   color: #495057;
   vertical-align: middle;
   background: #fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right 0.75rem center;
@@ -4228,14 +4228,14 @@ tbody.collapse.show {
 }
 
 .custom-select-sm {
-  height: calc(1.68125rem + 2px);
+  height: calc(1.8125rem + 2px);
   padding-top: 0.375rem;
   padding-bottom: 0.375rem;
   font-size: 75%;
 }
 
 .custom-select-lg {
-  height: calc(2.6875rem + 2px);
+  height: calc(2.875rem + 2px);
   padding-top: 0.375rem;
   padding-bottom: 0.375rem;
   font-size: 125%;
@@ -4245,7 +4245,7 @@ tbody.collapse.show {
   position: relative;
   display: inline-block;
   width: 100%;
-  height: calc(2.19rem + 2px);
+  height: calc(2.25rem + 2px);
   margin-bottom: 0;
 }
 
@@ -4253,7 +4253,7 @@ tbody.collapse.show {
   position: relative;
   z-index: 2;
   width: 100%;
-  height: calc(2.19rem + 2px);
+  height: calc(2.25rem + 2px);
   margin: 0;
   opacity: 0;
 }
@@ -4278,9 +4278,9 @@ tbody.collapse.show {
   right: 0;
   left: 0;
   z-index: 1;
-  height: calc(2.19rem + 2px);
+  height: calc(2.25rem + 2px);
   padding: 0.375rem 0.75rem;
-  line-height: 1.6;
+  line-height: 1.5;
   color: #495057;
   background-color: #fff;
   border: 1px solid #ced4da;
@@ -4294,9 +4294,9 @@ tbody.collapse.show {
   bottom: 0;
   z-index: 3;
   display: block;
-  height: calc(calc(2.19rem + 2px) - 1px * 2);
+  height: calc(calc(2.25rem + 2px) - 1px * 2);
   padding: 0.375rem 0.75rem;
-  line-height: 1.6;
+  line-height: 1.5;
   color: #495057;
   content: "Browse";
   background-color: #e9ecef;
@@ -4357,8 +4357,8 @@ tbody.collapse.show {
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
   color: #495057;
-  background-color: #FFF;
-  border-color: #dee2e6 #dee2e6 #FFF;
+  background-color: #fff;
+  border-color: #dee2e6 #dee2e6 #fff;
 }
 
 .nav-tabs .dropdown-menu {
@@ -4434,10 +4434,10 @@ tbody.collapse.show {
 
 .navbar-brand {
   display: inline-block;
-  padding-top: 0.32rem;
-  padding-bottom: 0.32rem;
+  padding-top: 0.3125rem;
+  padding-bottom: 0.3125rem;
   margin-right: 1rem;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: inherit;
   white-space: nowrap;
 }
@@ -4489,7 +4489,7 @@ tbody.collapse.show {
 
 .navbar-toggler {
   padding: 0.25rem 0.75rem;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: 1;
   background-color: transparent;
   border: 1px solid transparent;
@@ -5306,7 +5306,7 @@ tbody.collapse.show {
 
 .pagination-lg .page-link {
   padding: 0.75rem 1.5rem;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: 1.5;
 }
 
@@ -5322,7 +5322,7 @@ tbody.collapse.show {
 
 .pagination-sm .page-link {
   padding: 0.25rem 0.5rem;
-  font-size: 0.7875rem;
+  font-size: 0.875rem;
   line-height: 1.5;
 }
 
@@ -5495,7 +5495,7 @@ tbody.collapse.show {
 }
 
 .alert-dismissible {
-  padding-right: 3.85rem;
+  padding-right: 4rem;
 }
 
 .alert-dismissible .close {
@@ -5644,7 +5644,7 @@ tbody.collapse.show {
   display: flex;
   height: 1rem;
   overflow: hidden;
-  font-size: 0.675rem;
+  font-size: 0.75rem;
   background-color: #e9ecef;
   border-radius: 0.25rem;
 }
@@ -5913,7 +5913,7 @@ tbody.collapse.show {
 
 .close {
   float: right;
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 700;
   line-height: 1;
   color: #000;
@@ -6050,7 +6050,7 @@ button.close {
 
 .modal-title {
   margin-bottom: 0;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .modal-body {
@@ -6120,7 +6120,7 @@ button.close {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", HelveticaNeue, "Segoe UI", "\6E38\30B4\30B7\30C3\30AF\4F53", YuGothic, "Yu Gothic M", "\6E38\30B4\30B7\30C3\30AF   Medium", "Yu Gothic Medium", "\30D2\30E9\30AE\30CE\89D2\30B4   ProN W3", "Hiragino Kaku Gothic ProN W3", HiraKakuProN-W3, "\30D2\30E9\30AE\30CE\89D2\30B4   ProN", "Hiragino Kaku Gothic ProN", "\30D2\30E9\30AE\30CE\89D2\30B4   Pro", "Hiragino Kaku Gothic Pro", "\30E1\30A4\30EA\30AA", Meiryo, Osaka, "\FF2D\FF33   \FF30\30B4\30B7\30C3\30AF", "MS PGothic", sans-serif;
   font-style: normal;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.5;
   text-align: left;
   text-align: start;
   text-decoration: none;
@@ -6131,7 +6131,7 @@ button.close {
   word-spacing: normal;
   white-space: normal;
   line-break: auto;
-  font-size: 0.7875rem;
+  font-size: 0.875rem;
   word-wrap: break-word;
   opacity: 0;
 }
@@ -6245,7 +6245,7 @@ button.close {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", HelveticaNeue, "Segoe UI", "\6E38\30B4\30B7\30C3\30AF\4F53", YuGothic, "Yu Gothic M", "\6E38\30B4\30B7\30C3\30AF   Medium", "Yu Gothic Medium", "\30D2\30E9\30AE\30CE\89D2\30B4   ProN W3", "Hiragino Kaku Gothic ProN W3", HiraKakuProN-W3, "\30D2\30E9\30AE\30CE\89D2\30B4   ProN", "Hiragino Kaku Gothic ProN", "\30D2\30E9\30AE\30CE\89D2\30B4   Pro", "Hiragino Kaku Gothic Pro", "\30E1\30A4\30EA\30AA", Meiryo, Osaka, "\FF2D\FF33   \FF30\30B4\30B7\30C3\30AF", "MS PGothic", sans-serif;
   font-style: normal;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.5;
   text-align: left;
   text-align: start;
   text-decoration: none;
@@ -6256,7 +6256,7 @@ button.close {
   word-spacing: normal;
   white-space: normal;
   line-break: auto;
-  font-size: 0.7875rem;
+  font-size: 0.875rem;
   word-wrap: break-word;
   background-color: #fff;
   background-clip: padding-box;
@@ -6418,7 +6418,7 @@ button.close {
 .popover-header {
   padding: 0.5rem 0.75rem;
   margin-bottom: 0;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: inherit;
   background-color: #f7f7f7;
   border-bottom: 1px solid #ebebeb;
@@ -10020,8 +10020,8 @@ a.text-dark:focus {
 }
 
 /*!
- * Font Awesome Free 5.0.5 by @fontawesome - http://fontawesome.com
- * License - http://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ * Font Awesome Free 5.0.7 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 
 .fa,
@@ -10520,6 +10520,10 @@ readers do not read off random characters that represent icons */
   content: "\F05E";
 }
 
+.fa-band-aid:before {
+  content: "\F462";
+}
+
 .fa-bandcamp:before {
   content: "\F2D5";
 }
@@ -10666,6 +10670,14 @@ readers do not read off random characters that represent icons */
 
 .fa-bowling-ball:before {
   content: "\F436";
+}
+
+.fa-box:before {
+  content: "\F466";
+}
+
+.fa-boxes:before {
+  content: "\F468";
 }
 
 .fa-braille:before {
@@ -10948,6 +10960,14 @@ readers do not read off random characters that represent icons */
   content: "\F328";
 }
 
+.fa-clipboard-check:before {
+  content: "\F46C";
+}
+
+.fa-clipboard-list:before {
+  content: "\F46D";
+}
+
 .fa-clock:before {
   content: "\F017";
 }
@@ -11148,6 +11168,10 @@ readers do not read off random characters that represent icons */
   content: "\F393";
 }
 
+.fa-dna:before {
+  content: "\F471";
+}
+
 .fa-dochub:before {
   content: "\F394";
 }
@@ -11158,6 +11182,14 @@ readers do not read off random characters that represent icons */
 
 .fa-dollar-sign:before {
   content: "\F155";
+}
+
+.fa-dolly:before {
+  content: "\F472";
+}
+
+.fa-dolly-flatbed:before {
+  content: "\F474";
 }
 
 .fa-dot-circle:before {
@@ -11410,6 +11442,10 @@ readers do not read off random characters that represent icons */
 
 .fa-firefox:before {
   content: "\F269";
+}
+
+.fa-first-aid:before {
+  content: "\F479";
 }
 
 .fa-first-order:before {
@@ -11774,6 +11810,10 @@ readers do not read off random characters that represent icons */
 
 .fa-hospital:before {
   content: "\F0F8";
+}
+
+.fa-hospital-symbol:before {
+  content: "\F47E";
 }
 
 .fa-hotjar:before {
@@ -12316,6 +12356,10 @@ readers do not read off random characters that represent icons */
   content: "\F3D8";
 }
 
+.fa-pallet:before {
+  content: "\F482";
+}
+
 .fa-paper-plane:before {
   content: "\F1D8";
 }
@@ -12402,6 +12446,10 @@ readers do not read off random characters that represent icons */
 
 .fa-pied-piper-pp:before {
   content: "\F1A7";
+}
+
+.fa-pills:before {
+  content: "\F484";
 }
 
 .fa-pinterest:before {
@@ -12704,6 +12752,10 @@ readers do not read off random characters that represent icons */
   content: "\F21A";
 }
 
+.fa-shipping-fast:before {
+  content: "\F48B";
+}
+
 .fa-shirtsinbulk:before {
   content: "\F214";
 }
@@ -12992,6 +13044,10 @@ readers do not read off random characters that represent icons */
   content: "\F2F1";
 }
 
+.fa-syringe:before {
+  content: "\F48E";
+}
+
 .fa-table:before {
   content: "\F0CE";
 }
@@ -13066,6 +13122,10 @@ readers do not read off random characters that represent icons */
 
 .fa-themeisle:before {
   content: "\F2B2";
+}
+
+.fa-thermometer:before {
+  content: "\F491";
 }
 
 .fa-thermometer-empty:before {
@@ -13380,8 +13440,16 @@ readers do not read off random characters that represent icons */
   content: "\F41F";
 }
 
+.fa-warehouse:before {
+  content: "\F494";
+}
+
 .fa-weibo:before {
   content: "\F18A";
+}
+
+.fa-weight:before {
+  content: "\F496";
 }
 
 .fa-weixin:before {
@@ -13533,8 +13601,8 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Brands';
   font-style: normal;
   font-weight: normal;
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?9e18a02ed6dda4a9940892fcd9822e1e);
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?9e18a02ed6dda4a9940892fcd9822e1e) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff2?255b0c33d43f1d56415ffb24feeb8c3b) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff?83cd1635a00e9e52cbb32e6c898ce540) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.ttf?fa5daef09950d89da09e8ff55fb19e65) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.svg?149e28f6450aad3538d99519b21978e8) format("svg");
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?3bdb625f0e05915a3377072547a1c3b4);
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.eot?3bdb625f0e05915a3377072547a1c3b4) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff2?bc8103562992d74f693082d7efa9b8c0) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.woff?9657ece5806dafc8d8e6d166acd6564e) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.ttf?ccde7a0dcbcd0a0f5917cea8220962e9) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-brands-400.svg?e1d733f845e0e62961000fb3d261a0d7) format("svg");
 }
 
 .fab {
@@ -13545,8 +13613,8 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 400;
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?2ba2495442600b56570876cc4f2ded96);
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?2ba2495442600b56570876cc4f2ded96) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff2?0479ffa5d852b08d1982b3a4912b7783) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff?97fcb1227e9e15cb7d6525caaad17af2) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.ttf?7d00728b9899f87cbe9c13b9555449d0) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.svg?a32a550634fd2fcf451b0c013c8d1b3a) format("svg");
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?3a97ab4f4a5b12981e4603b1cebba2a9);
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.eot?3a97ab4f4a5b12981e4603b1cebba2a9) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff2?915442a26af326cf1b08d349a4f8b84a) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.woff?5e3bdde93d62b2b0d790048262f72443) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.ttf?9dcd7472eef403729417eeddfc3445e1) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-regular-400.svg?a32a550634fd2fcf451b0c013c8d1b3a) format("svg");
 }
 
 .far {
@@ -13558,8 +13626,8 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 900;
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?d1292a5668df46420903f8c7bf49fcd9);
-  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?d1292a5668df46420903f8c7bf49fcd9) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff2?847e29976058fc705da43283c420f75e) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff?645080129ce48e5c75e161a61ce4e639) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.ttf?2a4adaf9c7f249227ba544a3f80f5b8f) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.svg?4ea4d678cefebf94978464f9a052c0fd) format("svg");
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?21271283456422d72f3e3cd220eb1a8d);
+  src: url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.eot?21271283456422d72f3e3cd220eb1a8d) format("embedded-opentype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff2?1ecd641925f90e0e0d7536d00a58123d) format("woff2"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.woff?de3ae99b0d3384e3214d2dd73251594b) format("woff"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.ttf?06a7df4bd250b39052ec138926a9b8ec) format("truetype"), url(/fonts/vendor/@fortawesome/fontawesome-free-webwebfa-solid-900.svg?cfada51b8db17f060a71f7e838f3b9b9) format("svg");
 }
 
 .fa,
