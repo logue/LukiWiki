@@ -9,6 +9,8 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\LukiWiki\Rules\InlineRules;
+
 // URLs
 class Url extends Inline
 {
@@ -27,7 +29,8 @@ class Url extends Inline
              '(?:>|:)'.
             ')?'.
             '('.                    // (3) scheme
-             '(?:(?:https?|ftp|news|site):\/\/|mailto:)'.
+            '(?:(?:https?|ftp|ssh|git|ssh):\/\/|mailto:)'.
+            //'(?:'.InlineRules::getProtocolPattern().':\/\/|mailto:)'.
             ')'.
             '([\w.-]+@)?'.          // (4) mailto name
             '([^\/"<>\s]+|\/)'.     // (5) host
@@ -45,13 +48,14 @@ class Url extends Inline
     public function setPattern($arr, $page)
     {
         list(, $bracket, $alias, $scheme, $mail, $host, $uri) = $this->splice($arr);
-        $this->has_bracket = (substr($bracket, 0, 2) === '[[');
-        $this->host = $host;
-
+        $this->has_bracket = substr($bracket, 0, 2) === '[[';
         if (extension_loaded('intl') && $host !== '/' && preg_match('/[^A-Za-z0-9.-]/', $host)) {
             $host = idn_to_ascii($host);
         }
-        $name = $scheme.$mail.$host;
+
+        $name = $scheme.$mail.$host.$uri;
+
+        /*
         // https?:/// -> $this->cont['ROOT_URL']
         //$name = preg_replace('#^(?:site:|https?:/)//#', ROOT_URI, $name).$uri;
         if (!$alias) {
@@ -64,15 +68,12 @@ class Url extends Inline
                 $alias = mb_convert_encoding(rawurldecode($alias), 'UTF-8', 'Auto');
             }
         }
-        $this->alias = $alias;
-
-        return parent::setParam($page, $name, null, ($mail ? 'mailto' : 'url'), $alias);
+        */
+        return parent::setParam($page, $name, $name, ($mail ? 'mailto' : 'url'));
     }
 
     public function __toString()
     {
-        $target = (empty($this->redirect)) ? $this->name : $this->redirect.rawurlencode($this->name);
-
-        return parent::setLink($this->alias, $target, $this->name, 'nofollow');
+        return parent::setLink($this->alias, $this->name, $this->name, 'nofollow');
     }
 }

@@ -45,6 +45,6 @@ class Telephone extends Inline
 
     public function __toString()
     {
-        return '<a href="tel:'.$this->name.'" rel="nofollow">'.$this->alias.'</a>';
+        return '<a href="tel:'.$this->name.'" rel="nofollow"><i class="fas fa-phone"></i> '.$this->alias.'</a>';
     }
 }

@@ -28,7 +28,7 @@ class WikiController extends Controller
     {
         // 設定読み込み
         $this->config = Config::get('lukiwiki');
-        $this->data = new WikiFileSystem('data');
+        $this->data = WikiFileSystem::getInstance();
     }
 
     /**
@@ -43,9 +43,7 @@ class WikiController extends Controller
     {
         $this->page = $page;
         $this->exists = isset($this->data->$page);
-        if ($this->exists) {
-            $this->content = $this->data->$page;
-        }
+        $this->content = $this->data->$page;
 
         switch ($request->input('action')) {
             case 'edit':
@@ -68,10 +66,6 @@ class WikiController extends Controller
                 break;
         }
 
-        if (!$this->exists) {
-            return \App::abort(404);
-        }
-
         return $this->read();
     }
 
@@ -87,9 +81,9 @@ class WikiController extends Controller
         return view(
            'default.content',
            [
-                'page' => $this->page,
+                'page'    => $this->page,
                 'content' => Parser::factory($this->content),
-                'title' => $this->page,
+                'title'   => $this->page,
            ]
         );
     }
@@ -102,15 +96,15 @@ class WikiController extends Controller
         if (!$this->exists) {
             return \App::abort(404);
         }
-        
+
         \Debugbar::disable();
 
         return view(
            'default.amp',
            [
-                'page' => $this->page,
+                'page'    => $this->page,
                 'content' => Parser::factory($this->content, true),
-                'title' => $this->page,
+                'title'   => $this->page,
            ]
         );
     }
@@ -128,9 +122,9 @@ class WikiController extends Controller
         return view(
             'default.edit',
             [
-                'page' => $this->page,
+                'page'   => $this->page,
                 'source' => $this->content,
-                'title' => 'Edit '.$this->page,
+                'title'  => 'Edit '.$this->page,
             ]
          );
     }

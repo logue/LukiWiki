@@ -48,22 +48,14 @@ class BracketName extends Inline
     public function setPattern($arr, $page)
     {
         list(, $alias, , $name, $this->anchor) = $this->splice($arr);
-        if (empty($name) && empty($this->anchor)) {
-            return false;
-        }
-
-        if (empty($name) || !InlineRules::isWikiName($name)) {
-            if (empty($alias)) {
+        if (empty($name)) {
+            if (empty($this->anchor)) {
+                return false;
+            } elseif (!InlineRules::isWikiName($name) && empty($alias)) {
                 $alias = $name.$this->anchor;
             }
-            /*
-                if (!empty($name)) {
-                    $name = self::getFullname($name, $page);
-                    if (!empty($name) && !Factory::Wiki($name)->isValied()) {
-                        return false;
-                    }
-                }
-                */
+//        } elseif (!isset($this->pages->$name)) {
+//            return false;
         }
 
         return parent::setParam($page, $name, null, 'pagename', $alias);

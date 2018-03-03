@@ -10,15 +10,17 @@
 namespace App\LukiWiki\Inline;
 
 use App\LukiWiki\Rules\InlineRules;
+use App\LukiWIki\Utility\WikiFileSystem;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 
 /**
  * InterWikiName-rendered URLs.
  */
 class InterWikiName extends Inline
 {
-    const INTERWIKINAME_PAGENAME = 'InterWikiName';
     const INTERWIKINAME_PATTERN = '/\[((?:(?:https?|ftp|news):\/\/|\.\.?\/)[!~*\'();\/?:\@&=+\$,%#\w.-]*)\s([^\]]+)\]\s?([^\s]*)/';
-    const INTERWIKINAME_CACHE = 'interwikiname';
+    const INTERWIKINAME_CACHE_NAME = 'interwikiname';
     const INTERWIKINAME_MAX_LENGTH = 512;
 
     private static $encode_aliases = [
@@ -33,7 +35,6 @@ class InterWikiName extends Inline
     protected $url = '';
     protected $param = '';
     protected $anchor = '';
-    private $interwikiname;
 
     public function __construct($start)
     {
@@ -70,36 +71,37 @@ class InterWikiName extends Inline
 
     public function setPattern($arr, $page)
     {
-        list(, $alias, , $this->interwikiname, $this->param) = $this->splice($arr);
+        list(, $alias, , $name, $this->param) = $this->splice($arr);
+        $this->name = $name;
+        $this->alias = $alias;
         $matches = [];
         if (preg_match('/^([^#]+)(#[A-Za-z][\w-]*)$/', $this->param, $matches)) {
             list(, $this->param, $this->anchor) = $matches;
         }
 
-        $url = self::getInterWikiUrl($this->interwikiname, $this->param);
-        if ($url === false) {
-            return $this->interwikiname.':'.$this->param;
+        $url = self::getInterWikiUrl($name, $this->param);
+        if (empty($url)) {
+            return $name.':'.$this->param;
         }
-        $this->url = htmlspecialchars($url, ENT_HTML5, 'UTF-8');
+        $this->url = parent::processText($url);
 
         return parent::setParam(
             $page,
-            htmlspecialchars($this->interwikiname.':'.$this->param, ENT_HTML5, 'UTF-8'),
+            parent::processText($name.':'.$this->param),
             null,
             'InterWikiName',
-            empty($alias) ? $this->interwikiname.':'.$this->param : $alias
+            empty($alias) ? $name.':'.$this->param : $alias
         );
     }
 
     public function __toString()
     {
-        $target = (empty($this->redirect)) ? $this->url : $this->redirect.rawurlencode($this->url);
-
-        if (!$this->url) {
-            //    return sprintf(RendererDefines::NOEXISTS_STRING, $this->interwikiname.':'.$this->param);
+        $url = (empty($this->redirect) ? $this->url : $this->redirect.rawurlencode($this->url)).$this->anchor;
+        if (empty($url)) {
+            return '<span title="'.$this->name.'" class="bg-warning"><i class="fas fa-globe"></i> '.$this->alias.'</span>';
         }
 
-        return '<a href="'.$target.$this->anchor.'" title="'.$this->name.'" rel="'.($nofollow === false ? 'external' : 'external nofollow').'">'.$this->alias.'</a>';
+        return '<a href="'.$target.$this->anchor.'" title="'.$this->name.'" rel="nofollow"><i class="fas fa-globe"></i> '.$this->alias.'</a>';
     }
 
     /**
@@ -176,51 +178,24 @@ class InterWikiName extends Inline
      *
      * @return array
      */
-    private static function getInterWikiNameDict($force = false)
+    private static function getInterWikiNameDict()
     {
-        global $interwiki, $cache;
-        static $interwikinames;
-
-        $wiki = Factory::Wiki($interwiki);
-        if (!$wiki->has()) {
-            return null;
+        $pages = WikiFileSystem::getInstance();
+        $interwikiname = Config::get('lukiwiki.special_page.interwikiname');
+        if (empty($interwikiname) || !isset($pages->$interwikiname)) {
+            return;
         }
 
-        // InterWikiNameの更新チェック
-        if ($cache['wiki']->hasItem(self::INTERWIKINAME_CACHE)) {
-            $term_cache_meta = $cache['wiki']->getMetadata(self::INTERWIKINAME_CACHE);
-            if ($term_cache_meta['mtime'] < $wiki->time()) {
-                $force = true;
+        return Cache::remember(self::INTERWIKINAME_CACHE_NAME, null, function () {
+            $interwikinames = $matches = [];
+            $lines = $pages->$interwikiname;
+            foreach ($lines as $line) {
+                if (preg_match(self::INTERWIKINAME_PATTERN, $line, $matches)) {
+                    $interwikinames[$matches[2]] = [$matches[1], $matches[3]];
+                }
             }
-        }
-
-        // キャッシュ処理
-        if ($force) {
-            unset($interwikinames);
-            $cache['wiki']->removeItem(self::INTERWIKINAME_CACHE);
-        } elseif (!empty($interwikinames)) {
-            return $interwikinames;
-        } elseif ($cache['wiki']->hasItem(self::INTERWIKINAME_CACHE)) {
-            $interwikinames = $cache['wiki']->getItem(self::INTERWIKINAME_CACHE);
-            $cache['wiki']->touchItem(self::INTERWIKINAME_CACHE);
 
             return $interwikinames;
-        }
-
-        // 定義ページより生成。
-        $interwikinames = $matches = [];
-        foreach ($wiki->get() as $line) {
-            if (preg_match(self::INTERWIKINAME_PATTERN, $line, $matches)) {
-                $interwikinames[$matches[2]] = [$matches[1], $matches[3]];
-            }
-        }
-
-        // キャッシュ保存
-        $cache['wiki']->setItem(self::INTERWIKINAME_CACHE, $interwikinames);
-
-        return $interwikinames;
+        });
     }
 }
-
-/* End of file InterWikiName.php */
-/* Location: /vendor/PukiWiki/Lib/Renderer/Inline/InterWikiName.php */

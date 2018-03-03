@@ -49,20 +49,18 @@ class RootElement extends Element
                     continue;
                 }
             }
-
+            /*
             // Extend TITLE by miko
             if (preg_match('/^(TITLE):(.*)$/', $line, $matches)) {
-                /*
                 static $newbase;
                 if (!isset($newbase)) {
                     $newbase = trim(strip_tags(RendererFactory::factory($matches[2])));
                     // For BugTrack/132.
                     $newtitle = htmlspecialchars($newbase, ENT_HTML5, 'UTF-8');
                 }
-                */
                 continue;
             }
-
+*/
             if (preg_match('/^(LEFT|CENTER|RIGHT|JUSTIFY):(.*)$/', $line, $matches)) {
                 // <div style="text-align:...">
                 $align = new Align(strtolower($matches[1]));
@@ -179,14 +177,12 @@ class RootElement extends Element
 
         list($_text, $id, $level) = HeadingAnchor::get($text, false); // Cut fixed-anchor from $text
 
-        $anchor = ' &edit(,'.$id.');';
-
         // Add 'page contents' link to its heading
         $contents = new ContentsList($_text, $level, $id);
         $this->contents_last = $this->contents_last->add($contents);
 
         // Add heding
-        return [$_text.$anchor, $this->count > 1 ? "\n" : '', $autoid];
+        return [$_text, $this->count > 1 ? "\n" : '', $autoid];
     }
 
     public function insert(&$obj)

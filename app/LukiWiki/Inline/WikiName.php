@@ -21,7 +21,7 @@ class WikiName extends Inline
 
     public function getPattern()
     {
-        return '('.InlineRules::WIKINAME_PATTERN.')';
+        return InlineRules::WIKINAME_PATTERN;
     }
 
     public function getCount()
@@ -31,7 +31,7 @@ class WikiName extends Inline
 
     public function setPattern($arr, $page)
     {
-        list($name) = $this->splice($arr);
+        $name = $this->splice($arr)[0];
 
         return parent::setParam($page, $name, null, 'pagename', $name);
     }

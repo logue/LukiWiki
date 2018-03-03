@@ -9,51 +9,71 @@
 
 namespace App\LukiWiki\Utility;
 
+use FlorianWolters\Component\Util\Singleton\SingletonTrait;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use RegexpTrie\RegexpTrie;
 
 class WikiFileSystem
 {
+    use SingletonTrait;
+
     // キャッシュ名のプレフィックス
     const DIRECTORY_CACHE_PREFIX = 'directory-';
-    // キャッシュの有効期間
-    const DIRECTORY_CACHE_EXPIRE = 1000;
+    // キャッシュ名のプレフィックス
+    const MATCH_PATTERN_CACHE_PREFIX = 'autolink-';
+    // キャッシュ名のプレフィックス
+    const CACHE_DATE_PREFIX = 'cache-date-directory-';
+
+    // ファイルの種類
+    const TYPE = 'data';
+    // ファイルの拡張子
+    const EXTENTION = '.txt';
 
     /** ディレクトリのパス */
     private $directory;
     /** ディレクトリの更新日（ファイル一覧キャッシュなどで使用） */
     private $modified;
-    /** 格納ファイルの拡張子 */
-    private $ext = '.txt';
-    /** キャッシュファイル名 */
-    private $cache_name;
+    /** 一覧キャッシュファイル名 */
+    private $directory_cache_name;
+    /** 一覧キャッシュファイル名 */
+    private $pattern_cache_name;
 
     /**
      * コンストラクタ
      */
-    public function __construct($type, $ext = '.txt')
+    private function __construct()
     {
-        $directory = Config::get('lukiwiki.directory');
-        if (empty($directory[$type])) {
+        // 設定を取得
+        $directory = Config::get('lukiwiki.directory.'.self::TYPE);
+        if (empty($directory)) {
             // 設定がない
             throw new \Exception('Not defineded.');
         }
-        if (!Storage::exists($directory[$type])) {
+
+        if (!Storage::exists($directory)) {
             // ディレクトリがない
-            Storage::makeDirectory($directory[$type]);
+            Storage::makeDirectory($directory);
+        } else {
+            $this->modified = Storage::lastModified($directory);
         }
-        if (Storage::getMetadata($directory[$type])['type'] !== 'dir') {
+        if (Storage::getMetadata($directory)['type'] !== 'dir') {
             // ディレクトリでない
             throw new \Exception('Not a directory.');
         }
-        //if (!Storage::isWritable($directory[$type])) {
-        // 書き込めない
-        //   throw new \Exception('Directory is not writable.');
-        //}
-        $this->directory = $directory[$type];
-        $this->modified = Storage::lastModified($directory[$type]);
-        $this->cache_name = self::DIRECTORY_CACHE_PREFIX.$type;
+
+        $this->directory = $directory;
+        $this->directory_cache_name = self::DIRECTORY_CACHE_PREFIX.self::TYPE;
+        $this->pattern_cache_name = self::MATCH_PATTERN_CACHE_PREFIX.self::TYPE;
+        $this->cache_date_name = self::CACHE_DATE_PREFIX.self::TYPE;
+
+        if ($this->modified > (int) Cache::get($this->cache_date_name)) {
+            // ディレクトリの更新日時がキャッシュ生成日時よりも新しい場合、キャッシュを削除
+            Cache::forget($this->directory_cache_name);
+            Cache::forget($this->pattern_cache_name);
+            Cache::forget($this->cache_date_name);
+        }
     }
 
     /**
@@ -64,9 +84,10 @@ class WikiFileSystem
      */
     public function __set($page, $content)
     {
-        Cache::forget($this->cache_name);
+        // タイムスタンプとハッシュが変わるのでキャッシュを削除
+        Cache::forget($this->directory_cache_name);
 
-        Storage::put($this->directory.'/'.self::encode($page).$this->ext, $contents);
+        Storage::put($this->getFilePath($page), $content);
     }
 
     /**
@@ -78,7 +99,7 @@ class WikiFileSystem
      */
     public function __get($page)
     {
-        return Storage::get($this->directory.'/'.self::encode($page).$this->ext);
+        return trim(Storage::get($this->getFilePath($page)));
     }
 
     /**
@@ -90,7 +111,7 @@ class WikiFileSystem
      */
     public function __isset($page)
     {
-        return Storage::exists($this->directory.'/'.self::encode($page).$this->ext);
+        return Storage::exists($this->getFilePath($page));
     }
 
     /**
@@ -100,9 +121,10 @@ class WikiFileSystem
      */
     public function __unset($page)
     {
-        Cache::forget($this->cache_name);
+        Cache::forget($this->directory_cache_name);
+        Cache::forget($this->pattern_cache_name);
 
-        return Storage::delete($this->directory.'/'.self::encode($page).$this->ext);
+        return Storage::delete($this->getFilePath($page));
     }
 
     /**
@@ -113,8 +135,8 @@ class WikiFileSystem
      */
     public function rename($from, $to)
     {
-        Cache::forget($this->cache_name);
-        Storage::move($this->directory.'/'.self::encode($from).$this->ext, $this->directory.'/'.self::encode($to).$this->ext);
+        Cache::forget($this->directory_cache_name);
+        Storage::move($this->getFilePath($from), $this->getFilePath($to));
     }
 
     /**
@@ -124,7 +146,7 @@ class WikiFileSystem
      */
     public function modified($page)
     {
-        return Storage::lastModified($this->directory.'/'.self::encode($page).$this->ext);
+        return Storage::lastModified($this->getFilePath($page));
     }
 
     /**
@@ -134,7 +156,11 @@ class WikiFileSystem
      */
     public function hash($page)
     {
-        //return Storage::hash($this->directory.'/'.self::encode($page).$this->ext);
+        if (!isset($this->page)) {
+            return;
+        }
+
+        return hash('md5', $this->page);
     }
 
     /**
@@ -142,9 +168,7 @@ class WikiFileSystem
      */
     public function touch($page, $time)
     {
-        Cache::forget($this->cache_name);
-
-        return touch(storage_path($this->directory.'/'.self::encode($page).$this->ext), $time);
+        //return touch($this->getFilePath($page), $time);
     }
 
     /**
@@ -156,28 +180,52 @@ class WikiFileSystem
      */
     public function __invoke()
     {
-        return Cache::remember($this->cache_name, self::DIRECTORY_CACHE_EXPIRE, function () {
+        return Cache::remember($this->directory_cache_name, null, function () {
             // ファイル名一覧の処理はキャッシュに入れる
             $ret = [];
-            foreach (Storage::files($this->directory) as $filepath) {
+            $files = Storage::files($this->directory);
+            foreach ($files as $filepath) {
                 $page = self::decode($filepath);
-
                 if (empty($page)) {
                     // ファイル名が存在しない場合スキップ（.gitignoreとかの隠しファイルも省ける）
                     continue;
                 }
 
-                $ret[$page] = ['path' => $filepath, 'modified' => $this->modified($page), 'hash' => $this->hash($page)];
+                $ret[$page] = [
+                    // ファイルのパス
+                    'path' => $filepath,
+                    // ファイルの更新日
+                    'modified' => $this->modified($page),
+                    // MD5ハッシュ
+                    'hash' => $this->hash($page),
+                ];
             }
+
+            // キャッシュの更新日時を更新
+            Cache::forever($this->cache_date_name, $this->modified);
 
             return $ret;
         });
     }
 
     /**
+     * ページ一覧の正規表現を出力.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return Cache::remember($this->pattern_cache_name, null, function () {
+            $trie = new RegexpTrie(array_keys(self::__invoke()));
+
+            return $trie->build();
+        });
+    }
+
+    /**
      * パスからファイル名を取得.
      *
-     * @param string $path
+     * @param string $path ファイルパス
      *
      * @return string
      */
@@ -185,6 +233,18 @@ class WikiFileSystem
     {
         // パスを削除
         return substr($path, strrpos($path, '/') + 1);
+    }
+
+    /**
+     * ページ名からファイル名を指定.
+     *
+     * @param string $page ページ名
+     *
+     * @return string
+     */
+    private function getFilePath($page)
+    {
+        return $this->directory.DIRECTORY_SEPARATOR.self::encode($page).self::EXTENTION;
     }
 
     /**
@@ -196,6 +256,7 @@ class WikiFileSystem
      */
     public static function encode($page)
     {
+        // HEXに変換して大文字にする
         return strtoupper(bin2hex($page));
     }
 

@@ -9,6 +9,8 @@
 
 namespace App\LukiWiki\Rules;
 
+use RegexpTrie\RegexpTrie;
+
 class InlineRules
 {
     /**
@@ -76,36 +78,58 @@ class InlineRules
     /**
      * デフォルトのテキストルール.
      */
-    private static $default_rules = [
+    private static $rules = [
         // 実体参照パターンおよびシステムで使用するパターンを$line_rulesに加える
         // XHTML5では&lt;、&gt;、&amp;、&quot;と、&apos;のみ使える。
         // http://www.w3.org/TR/html5/the-xhtml-syntax.html
-        '&amp;(#[0-9]+|#x[0-9a-f]+|(?=[a-zA-Z0-9]{2,8})(?:apos|amp|lt|gt|quot));' => '&$1;',
+        '/&amp;(#[0-9]+|#x[0-9a-f]+|(?=[a-zA-Z0-9]{2,8})(?:apos|amp|lt|gt|quot));/' => '&$1;',
         // 行末にチルダは改行
-        "\r" => "<br />\n",
+        "/\r/" => "<br />\n",
         // PukiWiki Adv.標準書式
-        'COLOR\(([^\(\)]*)\){([^}]*)}'                      => '<span style="color:$1">$2</span>',
-        'SIZE\(([^\(\)]*)\){([^}]*)}'                       => '<span style="font-size:$1px">$2</span>',
-        'COLOR\(([^\(\)]*)\):((?:(?!COLOR\([^\)]+\)\:).)*)' => '<span style="color:$1">$2</span>',
-        'SIZE\(([^\(\)]*)\):((?:(?!SIZE\([^\)]+\)\:).)*)'   => '<span class="size$1">$2</span>',
-        'SUP{([^}]*)}'                                      => '<sup>$1</sup>',
-        'SUB{([^}]*)}'                                      => '<sub>$1</sub>',
-        'LANG\(([^\(\)]*)\):((?:(?!LANG\([^\)]+\)\:).)*)'   => '<bdi lang="$1">$2</bdi>',
-        'LANG\(([^\(\)]*)\){([^}]*)}'                       => '<bdi lang="$1">$2</bdi>',
-        '%%%(?!%)((?:(?!%%%).)*)%%%'                        => '<ins>$1</ins>',
-        '%%(?!%)((?:(?!%%).)*)%%'                           => '<del>$1</del>',
-        '@@@(?!@)((?:(?!@@).)*)@@@'                         => '<q>$1</q>',
-        '@@(?!@)((?:(?!@@).)*)@@'                           => '<code>$1</code>',
-        '___(?!@)((?:(?!@@).)*)___'                         => '<s>$1</s>',
-        '__(?!@)((?:(?!@@).)*)__'                           => '<u>$1</u>',
-        // htmlspecialchars関数対策。'を&#39;に変えてしまうため。
-        '&#039;&#039;&#039;(?!&#039;)((?:(?!&#039;&#039;&#039;).)*)&#039;&#039;&#039;' => '<em>$1</em>',
-        '&#039;&#039;(?!&#039;)((?:(?!&#039;&#039;).)*)&#039;&#039;'                   => '<strong>$1</strong>',
+        '/COLOR\(([^\(\)]*)\){([^}]*)}/i'                     => '<span style="color:$1">$2</span>',
+        '/SIZE\(([^\(\)]*)\){([^}]*)}/i'                      => '<span style="font-size:calc($1 * .1rem);">$2</span>',
+        '/COLOR\(([^\(\)]*)\):((?:(?!COLOR\([^\)]+\)\:).)*)/' => '<span style="color:$1">$2</span>',
+        '/SIZE\(([^\(\)]*)\):((?:(?!SIZE\([^\)]+\)\:).)*)/'   => '<span class="h$1">$2</span>',
+        '/SUP{([^}]*)}/'                                      => '<sup>$1</sup>',
+        '/SUB{([^}]*)}/'                                      => '<sub>$1</sub>',
+        '/LANG\(([^\(\)]*)\):((?:(?!LANG\([^\)]+\)\:).)*)/'   => '<bdi lang="$1">$2</bdi>',
+        '/LANG\(([^\(\)]*)\){([^}]*)}/'                       => '<bdi lang="$1">$2</bdi>',
+        '/ABBR\(([^\(\)]*)\):((?:(?!ABBR\([^\)]+\)\:).)*)/'   => '<abbr title="$1">$2</abbr>',
+        '/ABBR\(([^\(\)]*)\){([^}]*)}/'                       => '<abbr title="$1">$2</abbr>',
+        '/%%%(?!%)((?:(?!%%%).)*)%%%/i'                       => '<ins>$1</ins>',
+        '/%%(?!%)((?:(?!%%).)*)%%/'                           => '<del>$1</del>',
+        '/@@@(?!@)((?:(?!@@).)*)@@@/'                         => '<q>$1</q>',
+        '/@@(?!@)((?:(?!@@).)*)@@/'                           => '<code>$1</code>',
+        '/___(?!@)((?:(?!@@).)*)___/'                         => '<s>$1</s>',
+        '/__(?!@)((?:(?!@@).)*)__/'                           => '<u>$1</u>',
+        "/'''(?!')((?:(?!''').)*)'''/"                        => '<em>$1</em>',
+        "/''(?!')((?:(?!'').)*)''/"                           => '<strong>$1</strong>',
     ];
 
-    public static function Rule()
+    // 自動リンク対象のURLスキーム
+    private static $uri_schmes = [
+        // Official
+        'aaa', 'aaas', 'about', 'acap', 'cap', 'cid', 'crid', 'data', 'dav', 'dict', 'dns', 'fax', 'file', 'ftp', 'geo', 'go',
+        'Gopher', 'h323', 'http', 'https', 'iax', 'im', 'imap', 'info', 'ldap', 'mailto', 'mid', 'news', 'nfs', 'nntp', 'pop',
+        'rsync', 'pres', 'rtsp', 'sip', 'sips', 'snmp', 'tag', 'tel', 'telnet', 'tftp', 'urn', 'view-source', 'wais', 'ws', 'xmpp',
+        // Un Official
+        'afp', 'aim', 'apt', 'bolo', 'bzr', 'callto', 'coffee', 'cvs', 'daap', 'dsnp', 'ed2k', 'feed', 'fish', 'gg', 'git',
+        'gizmoproject', 'irc', 'ircs', 'itms', 'javascript', 'ldaps', 'magnet', 'mms', 'msnim', 'postal2', 'secondlife', 'skype',
+        'spotify', 'ssh', 'svn', 'sftp', 'smb', 'sms', 'steam', 'webcal', 'winamp', 'wyciwyg', 'xfire', 'ymsgr',
+    ];
+
+    // User-defined rules (convert without replacing source)
+    public static function replace($str)
     {
-        return self::$default_rules;
+        $pattern = array_keys(self::$rules);
+        $replace = array_values(self::$rules);
+
+        return preg_replace($pattern, $replace, $str);
+    }
+
+    public static function getProtocolPattern()
+    {
+        return RegexpTrie::union(self::$uri_schmes)->build();
     }
 
     /**

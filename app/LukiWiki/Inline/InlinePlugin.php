@@ -13,6 +13,8 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\LukiWiki\Rules\InlineRules;
+
 // Inline plugins
 class InlinePlugin extends Inline
 {
@@ -81,10 +83,10 @@ class InlinePlugin extends Inline
             // No such plugin, or Failed
             $body = (empty($body) ? '' : '{'.$body.'}').';';
 
-            return parent::setLineRules(Utility::htmlsc('&'.$this->plain).$body);
+
         }
         */
-        return parent::setLineRules('&'.$this->plain.$body);
-        //return '<span class="badge badge-pill badge-primary" title="Plugin">&amp;'.$this->name.'('.$this->param.')'.'</span>';
+        return InlineRules::replace('&'.$this->plain.$body);
+        //return '<span class="badge badge-pill badge-primary" title="Plugin">&amp;'.$this->name.'(<var>'.$this->param.'</var>)'.'</span>';
     }
 }

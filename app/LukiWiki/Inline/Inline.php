@@ -22,6 +22,7 @@ abstract class Inline
 
     public $type;
     protected $page;
+    protected $pages;
     public $name;
     protected $body;
     protected $alias;
@@ -36,7 +37,7 @@ abstract class Inline
     public function __construct($start)
     {
         $this->start = $start;
-        $this->pages = new WikiFileSystem('data');
+        $this->pages = WikiFileSystem::getInstance();
     }
 
     /**
@@ -75,7 +76,7 @@ abstract class Inline
      */
     public function __toString()
     {
-        return '';
+        return $this->body;
     }
 
     // Private: Get needed parts from a matched array()
@@ -99,28 +100,13 @@ abstract class Inline
         $this->type = $type;
         if (!empty($alias)) {
             $alias = $converter->convert($alias, $page);
-
-            $alias = self::setLineRules($alias);
             $alias = preg_replace('#</?a[^>]*>#i', '', $alias);
+            $this->alias = InlineRules::replace($alias);
+        } else {
+            $this->alias = $body;
         }
-        $this->alias = $alias;
 
         return true;
-    }
-
-    // User-defined rules (convert without replacing source)
-    public static function setLineRules($str)
-    {
-        static $pattern, $replace;
-        $line_rules = InlineRules::Rule();
-        if (!isset($pattern)) {
-            $pattern = array_map(function ($a) {
-                return '/'.$a.'/';
-            }, array_keys($line_rules));
-            $replace = array_values($line_rules);
-        }
-
-        return preg_replace($pattern, $replace, $str);
     }
 
     /**
@@ -136,7 +122,7 @@ abstract class Inline
      */
     public function setAutoLink($page, $alias = '', $anchor = '', $refer = '', $isautolink = false)
     {
-        $page = trim($page);
+        $page = self::processText($page);
         if (empty($page)) {
             // ページ内リンク
             return '<a href="'.self::processText($anchor).'">'.self::processText($alias).'</a>';
@@ -170,46 +156,47 @@ abstract class Inline
     {
         $_uri = self::processText($uri);
         $_term = self::processText($term);
-        
-               $_tooltip = !empty($tooltip) ? ' title="'.self::processText($tooltip).'"' : '';
 
-               // rel = "*"を生成
-               $rels[] = 'external';
-               if (!empty($rel)) {
-                   $rels[] = $rel;
-               }
-               if ($is_redirect) {
-                   $rels[] = 'nofollow';
-               }
-               $ext_rel = implode(' ', $rels);
-               return '<a href="'.$href.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.'<i class="fas fa-external-link-alt"></i></a>';
-/*
-               // メディアファイル
-               if (!PKWK_DISABLE_INLINE_IMAGE_FROM_URI && Utility::isUri($uri)) {
-                   if (preg_match(RendererDefines::IMAGE_EXTENTION_PATTERN, $uri)) {
-                       // 画像の場合
-                       $term = '<img src="'.$_uri.'" alt="'.$_term.'" '.$_tooltip.' />';
-                   } else {
-                       // 音声／動画の場合
-                       $anchor = '<a href="'.$href.'" rel="'.(self::isInsideUri($uri) ? $rel : $ext_rel).'"'.$_tooltip.'>'.$_term.'</a>';
-                       // 末尾のアイコン
-                       $icon = self::isInsideUri($uri) ?
-                           '<a href="'.$href.'" rel="'.$rel.'">'.RendererDefines::INTERNAL_LINK_ICON.'</a>' :
-                           '<a href="'.$href.'" rel="'.$ext_rel.'">'.RendererDefines::EXTERNAL_LINK_ICON.'</a>';
+        $_tooltip = !empty($tooltip) ? ' title="'.self::processText($tooltip).'"' : '';
 
-                       if (preg_match(RendererDefines::VIDEO_EXTENTION_PATTERN, $uri)) {
-                           return '<video src="'.$_uri.'" alt="'.$_term.'" controls="controls"'.$_tooltip.'>'.$anchor.'</video>'.$icon;
-                       } elseif (preg_match(RendererDefines::AUDIO_EXTENTION_PATTERN, $uri)) {
-                           return '<audio src="'.$_uri.'" alt="'.$_term.'" controls="controls"'.$_tooltip.'>'.$anchor.'</audio>'.$icon;
+        // rel = "*"を生成
+        $rels[] = 'external';
+        if (!empty($rel)) {
+            $rels[] = $rel;
+        }
+        if ($is_redirect) {
+            $rels[] = 'nofollow';
+        }
+        $ext_rel = implode(' ', $rels);
+
+        return '<a href="'.$uri.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.' <i class="fas fa-external-link-alt fa-xs"></i></a>';
+        /*
+                       // メディアファイル
+                       if (!PKWK_DISABLE_INLINE_IMAGE_FROM_URI && Utility::isUri($uri)) {
+                           if (preg_match(RendererDefines::IMAGE_EXTENTION_PATTERN, $uri)) {
+                               // 画像の場合
+                               $term = '<img src="'.$_uri.'" alt="'.$_term.'" '.$_tooltip.' />';
+                           } else {
+                               // 音声／動画の場合
+                               $anchor = '<a href="'.$href.'" rel="'.(self::isInsideUri($uri) ? $rel : $ext_rel).'"'.$_tooltip.'>'.$_term.'</a>';
+                               // 末尾のアイコン
+                               $icon = self::isInsideUri($uri) ?
+                                   '<a href="'.$href.'" rel="'.$rel.'">'.RendererDefines::INTERNAL_LINK_ICON.'</a>' :
+                                   '<a href="'.$href.'" rel="'.$ext_rel.'">'.RendererDefines::EXTERNAL_LINK_ICON.'</a>';
+
+                               if (preg_match(RendererDefines::VIDEO_EXTENTION_PATTERN, $uri)) {
+                                   return '<video src="'.$_uri.'" alt="'.$_term.'" controls="controls"'.$_tooltip.'>'.$anchor.'</video>'.$icon;
+                               } elseif (preg_match(RendererDefines::AUDIO_EXTENTION_PATTERN, $uri)) {
+                                   return '<audio src="'.$_uri.'" alt="'.$_term.'" controls="controls"'.$_tooltip.'>'.$anchor.'</audio>'.$icon;
+                               }
+                           }
                        }
-                   }
-               }
 
-               // リンクを出力
-               return self::isInsideUri($uri) ?
-                   '<a href="'.$href.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.RendererDefines::INTERNAL_LINK_ICON.'</a>' :
-                   '<a href="'.$href.'" rel="'.$ext_rel.'"'.$_tooltip.'>'.$term.RendererDefines::EXTERNAL_LINK_ICON.'</a>'
-*/
+                       // リンクを出力
+                       return self::isInsideUri($uri) ?
+                           '<a href="'.$href.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.RendererDefines::INTERNAL_LINK_ICON.'</a>' :
+                           '<a href="'.$href.'" rel="'.$ext_rel.'"'.$_tooltip.'>'.$term.RendererDefines::EXTERNAL_LINK_ICON.'</a>'
+        */
     }
 
     protected static function processText($str)

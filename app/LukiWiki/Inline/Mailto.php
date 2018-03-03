@@ -39,7 +39,9 @@ class Mailto extends Inline
     public function setPattern($arr, $page)
     {
         list(, $alias, $toname, $host) = $this->splice($arr);
-        $name = $orginalname = $toname.$host;
+        //dd($this->splice($arr));
+        $name = $toname.$host;
+        /*
         if (extension_loaded('intl')) {
             // 国際化ドメイン対応
             if (preg_match('/[^A-Za-z0-9.-]/', $host)) {
@@ -48,12 +50,14 @@ class Mailto extends Inline
                 $orginalname = $toname.idn_to_utf8($host);
             }
         }
+        return parent::setParam($page, $name, '', 'mailto', $alias === '' ? $orginalname : $alias);
+        */
 
-        return parent :: setParam($page, $name, '', 'mailto', $alias === '' ? $orginalname : $alias);
+        return parent::setParam($page, $name, $name, 'mailto', $alias);
     }
 
     public function __toString()
     {
-        return '<a href="mailto:'.$this->name.'" rel="nofollow">'.$this->alias.'</a>';
+        return '<a href="mailto:'.$this->name.'" rel="nofollow"><i class="far fa-envelope"></i> '.$this->alias.'</a>';
     }
 }
