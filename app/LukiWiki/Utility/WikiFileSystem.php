@@ -39,6 +39,8 @@ class WikiFileSystem
     private $directory_cache_name;
     /** 一覧キャッシュファイル名 */
     private $pattern_cache_name;
+    /** キャッシュの生成時刻 */
+    private $cache_date_name;
 
     /**
      * コンストラクタ
@@ -143,9 +145,15 @@ class WikiFileSystem
      * ページの最終更新日.
      *
      * @param string $page
+     *
+     * @return int
      */
-    public function modified($page)
+    public function timestamp($page)
     {
+        if (!isset($this->$page)) {
+            return;
+        }
+
         return Storage::lastModified($this->getFilePath($page));
     }
 
@@ -153,14 +161,16 @@ class WikiFileSystem
      * ページのハッシュ.
      *
      * @param string $page
+     *
+     * @return string
      */
     public function hash($page)
     {
-        if (!isset($this->page)) {
+        if (!isset($this->$page)) {
             return;
         }
 
-        return hash('md5', $this->page);
+        return hash('md5', $this->$page);
     }
 
     /**
@@ -180,7 +190,7 @@ class WikiFileSystem
      */
     public function __invoke()
     {
-        return Cache::remember($this->directory_cache_name, null, function () {
+        return Cache::rememberForever($this->directory_cache_name, function () {
             // ファイル名一覧の処理はキャッシュに入れる
             $ret = [];
             $files = Storage::files($this->directory);
@@ -195,7 +205,7 @@ class WikiFileSystem
                     // ファイルのパス
                     'path' => $filepath,
                     // ファイルの更新日
-                    'modified' => $this->modified($page),
+                    'timestamp' => $this->timestamp($page),
                     // MD5ハッシュ
                     'hash' => $this->hash($page),
                 ];
@@ -215,7 +225,7 @@ class WikiFileSystem
      */
     public function __toString()
     {
-        return Cache::remember($this->pattern_cache_name, null, function () {
+        return Cache::rememberForever($this->pattern_cache_name, function () {
             $trie = new RegexpTrie(array_keys(self::__invoke()));
 
             return $trie->build();

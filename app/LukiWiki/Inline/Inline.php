@@ -133,10 +133,10 @@ abstract class Inline
         $anchor_name = str_replace('&amp;#039;', '\'', $anchor_name);	// 'が&#039;になってしまう問題をとりあえず解消
 
         if (isset($wikis->$page)) {
-            return '<a href="'.url($page).$anchor.'" '.
-                ($isautolink === true ? ' class="autolink"' : '').'>'.$anchor_name.'</a>';
+            return '<a href="'.url($page).$anchor.'" data-timestamp="'.$wikis->timestamp($page).'"'.
+                ($isautolink === true ? ' class="autolink"' : '').' title="'.$page.'">'.$anchor_name.'</a>';
         } else {
-            $retval = $anchor_name.'<a href="'.url($page).'?action=edit" rel="nofollow">?</a>';
+            $retval = $anchor_name.'<a href="'.url($page).'?action=edit" rel="nofollow" title="'.$page.'">?</a>';
 
             return '<span class="bg-light text-dark">'.$retval.'</span>';
         }

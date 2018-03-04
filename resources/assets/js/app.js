@@ -20,4 +20,4 @@ const app = new Vue({
   el: '#app'
 })
 
-window.codemirror = require('codemirror/lib/codemirror')
+window.CodeMirror = require('codemirror/lib/codemirror')

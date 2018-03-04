@@ -2,9 +2,39 @@
 
 @section('title', $title)
 
+@section('navbar')
+<ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle active" href="#" id="pageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Page
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pageDropdown">
+            <a class="dropdown-item" href="{{ url($page) }}?action=new">New</a>
+            <a class="dropdown-item active" href="{{ url($page) }}?action=edit">Edit</a>
+            <a class="dropdown-item" href="{{ url($page) }}?action=source">Source</a>
+            <a class="dropdown-item" href="{{ url($page) }}?action=attachment">Attachment</a>
+            <a class="dropdown-item" href="{{ url($page) }}?action=backup">Backup</a>
+        </div>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="listDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          List
+        </a>
+        <div class="dropdown-menu" aria-labelledby="listDropdown">
+            <a class="dropdown-item" href="{{ url('/') }}?action=list">Page List</a>
+            <a class="dropdown-item" href="{{ url('/') }}?action=recent">Recent Changes</a>
+        </div>
+    </li>
+</ul>
+<span class="navbar-text mx-2">
+    <i class="fas fa-unlock"></i>
+</span>
+@endsection
+
 @section('content')
 <form action="{{ url('/') }}" method="POST">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <input type="hidden" name="page" value="{{ $page }}" />
     <input type="hidden" name="action" value="edit" />
     <div class="form-group row">
         <label for="pagename-textbox" class="col-sm-2 col-form-label col-form-label-sm"></label>
@@ -42,7 +72,7 @@
         <button class="btn btn-outline-secondary btn-sm disabled pull-right hidden" id="indicator"><span class="fa fa-refresh fa-spin"></span></button>
     </div>
     <div class="form-group">
-        <textarea class="form-control" id="source" rows="10" name="source">{{$source or ''}}</textarea>
+        <textarea class="form-control" id="source" rows="20" name="source" id="source">{{$source or ''}}</textarea>
     </div>
     <div class="form-row align-items-center mt-1">
         <div class="col-auto">
@@ -65,5 +95,15 @@
         </div>
     </div>
 </form>
+@endsection
 
+@section('scripts')
+<script>
+window.CodeMirror.fromTextArea(document.getElementById('source'), {
+  lineNumbers: true,
+  styleActiveLine: true,
+  matchBrackets: true
+})
+$('.CodeMirror').addClass('form-control px-0 py-0 my-0 mx-auto')
+</script>
 @endsection

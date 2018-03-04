@@ -9,11 +9,12 @@
           Page
         </a>
         <div class="dropdown-menu" aria-labelledby="pageDropdown">
-            <a class="dropdown-item disabled" href="{{ url('/') }}?action=new">New</a>
+            <a class="dropdown-item" href="{{ url($page) }}?action=new">New</a>
             <a class="dropdown-item" href="{{ url($page) }}?action=edit">Edit</a>
             <a class="dropdown-item" href="{{ url($page) }}?action=source">Source</a>
-            <a class="dropdown-item disabled" href="{{ url($page) }}?action=attachment">Attachment</a>
+            <a class="dropdown-item" href="{{ url($page) }}?action=attachment">Attachment</a>
             <a class="dropdown-item" href="{{ url($page) }}?action=backup">Backup</a>
+            <a class="dropdown-item" href="{{ url($page) }}?action=lock">Lock</a>
         </div>
     </li>
     <li class="nav-item dropdown">
@@ -26,7 +27,7 @@
         </div>
     </li>
 </ul>
-<span class="navbar-text mx-1">
+<span class="navbar-text mx-2">
     <i class="fas fa-unlock"></i>
 </span>
 @endsection

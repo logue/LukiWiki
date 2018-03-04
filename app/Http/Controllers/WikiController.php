@@ -52,17 +52,48 @@ class WikiController extends Controller
             case 'amp':
                 return $this->amp();
                 break;
-            case 'attach':
-                return $this->attach();
-                break;
-            case 'list':
-                return $this->list($request->input('type') ?? 'data');
+            case 'attachment':
+                return $this->attachment();
                 break;
             case 'backup':
                 return $this->backup();
                 break;
+            case 'source':
+                return view(
+                   'default.source',
+                   [
+                       'source' => $this->data->$page,
+                       'title'  => 'Source of '.$page,
+                       'page'   => $page,
+                   ]
+               );
+            case 'list':
+                return $this->list($request->input('type') ?? 'data');
+                break;
             case 'lock':
                 return $this->lock();
+                break;
+            case 'recent':
+               // 最終更新
+               return view(
+                   'default.recent',
+                   [
+                       'entries' => $this->getLatest(),
+                       'title'   => 'RecentChanges',
+                   ]
+               );
+               break;
+            case 'atom':
+                // ATOM
+                return response()
+                    ->view('api.atom', ['entries'=>$this->getLatest()])
+                    ->header('Content-Type', ' application/xml; charset=UTF-8');
+                break;
+            case 'sitemap':
+                // Sitemap
+                return response()
+                    ->view('api.sitemap', ['entries'=>$filelist()])
+                    ->header('Content-Type', ' application/xml; charset=UTF-8');
                 break;
         }
 
@@ -138,14 +169,40 @@ class WikiController extends Controller
      */
     public function list($type)
     {
+        // 全ファイル一覧（WikiFileSystemオブジェクト）
         $filelist = $this->data;
+        $entries = [];
 
         return view(
             'default.list',
             [
-                'pages' => array_keys($filelist()),
-                'title' => 'List',
+                'entries' => $filelist(),
+                'title'   => 'List',
             ]
-         );
+        );
+    }
+
+    /**
+     * ページ一覧を新しい順に並び替える.
+     *
+     * @param int $limit 制限件数
+     *
+     * @return array
+     */
+    private function getLatest($limit = 10)
+    {
+        $data = $this->data;
+        $entries = $data();
+        $i = 0;
+        foreach ($entries as $key => $value) {
+            if ($i === $limit) {
+                break;
+            }
+            $modified[$key] = $value['timestamp'];
+            $i++;
+        }
+        array_multisort($entries, SORT_DESC, $modified);
+
+        return $entries;
     }
 }

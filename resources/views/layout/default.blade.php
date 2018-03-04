@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('title')</title>
-    <link rel="canonical" href="{{ Request::fullUrl() }}" />
+    <link rel="canonical" href="{{ $page ? url($page) : url('/') }}" />
+    <link rel="alternate" type="application/atom+xml" title="RecentChanges" href="{{ url('/') }}?action=atom" />
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
 <!--[if IE]>
     <link href="{{ asset('css/bootstrap-ie9.css') }}" rel="stylesheet" />
@@ -36,6 +37,8 @@
     </nav>
 
     <main class="container mt-2" id="app">
+        <h1>{{$title}}</h1>
+        <hr />
         @yield('content')
     </main>
     <footer class="bg-light">

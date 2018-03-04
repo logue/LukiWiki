@@ -21,17 +21,17 @@
           List
         </a>
         <div class="dropdown-menu" aria-labelledby="listDropdown">
-            <a class="dropdown-item active" href="{{ url('/') }}?action=list">Page List</a>
-            <a class="dropdown-item" href="{{ url('/') }}?action=recent">Recent Changes</a>
+            <a class="dropdown-item" href="{{ url('/') }}?action=list">Page List</a>
+            <a class="dropdown-item active" href="{{ url('/') }}?action=recent">Recent Changes</a>
         </div>
     </li>
 </ul>
 @endsection
 
 @section('content')
-<ul class="entries">
+<ol class="recent">
 @foreach ($entries as $name=>$info)
-    <li><a href="{{ url($name) }}" data-timestamp="{{ $info['timestamp'] }}">{{ $name }}</a></li>
+    <li><a href="{{ url($name) }}" data-timestamp="{{ $info['timestamp'] }}">{{ $name }}</a> - {{ date('Y-m-d\TH:i:sP', $info['timestamp']) }}</li>
 @endforeach
-</ul>
+</ol>
 @endsection
