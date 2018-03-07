@@ -34,14 +34,7 @@
 @section('content')
 <form action="{{ url('/') }}" method="POST">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-    <input type="hidden" name="page" value="{{ $page }}" />
     <input type="hidden" name="action" value="edit" />
-    <div class="form-group row">
-        <label for="pagename-textbox" class="col-sm-2 col-form-label col-form-label-sm"></label>
-        <div class="col-sm-10">
-            
-        </div>
-    </div>
     <div class="btn-toolbar justify-content-between mb-1" role="toolbar" aria-label="Toolbar with button groups">
         <div class="input-group">
             <div class="input-group-prepend">
@@ -69,7 +62,6 @@
             <button class="btn btn-outline-secondary btn-sm replace" title="Convert character reference" name="ncr">&amp;#</button>
             <button class="btn btn-outline-secondary btn-sm insert" title="Hint" name="hint"><i class="fa fa-question-circle"></i></button>
         </div>
-        <button class="btn btn-outline-secondary btn-sm disabled pull-right hidden" id="indicator"><span class="fa fa-refresh fa-spin"></span></button>
     </div>
     <div class="form-group">
         <textarea class="form-control" id="source" rows="20" name="source" id="source">{{$source or ''}}</textarea>
@@ -102,7 +94,9 @@
 window.CodeMirror.fromTextArea(document.getElementById('source'), {
   lineNumbers: true,
   styleActiveLine: true,
-  matchBrackets: true
+  matchBrackets: true,
+  viewportMargin: Infinity,
+  mode: 'text/lukiwiki'
 })
 $('.CodeMirror').addClass('form-control px-0 py-0 my-0 mx-auto')
 </script>

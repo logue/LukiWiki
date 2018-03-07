@@ -7,7 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('title')</title>
+@if(isset($page))
     <link rel="canonical" href="{{ $page ? url($page) : url('/') }}" />
+    <link rel="amphtml" href="{{ $page ? url($page) : url('/') }}?action=amp" />
+@endif
     <link rel="alternate" type="application/atom+xml" title="RecentChanges" href="{{ url('/') }}?action=atom" />
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
 <!--[if IE]>

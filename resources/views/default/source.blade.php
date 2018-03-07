@@ -43,8 +43,10 @@ window.CodeMirror.fromTextArea(document.getElementById('source'), {
   lineNumbers: true,
   styleActiveLine: true,
   matchBrackets: true,
-  readOnly: true
+  readOnly: true,
+  height: 'auto',
+  mode: 'text/lukiwiki'
 })
-$('.CodeMirror').addClass('form-control px-0 py-0 my-0 mx-auto')
+$('.CodeMirror').addClass('form-control px-0 py-0 my-0 mx-auto').css('height', 'auto')
 </script>
 @endsection
