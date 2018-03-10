@@ -24,12 +24,12 @@ class Pre extends Element
         );
     }
 
-    public function canContain(&$obj)
+    public function canContain($obj)
     {
         return $obj instanceof self;
     }
 
-    public function insert(&$obj)
+    public function insert($obj)
     {
         $this->elements[] = $obj->elements[0];
 
@@ -38,8 +38,6 @@ class Pre extends Element
 
     public function toString()
     {
-        $code = $this->wrap(implode("\n", $this->elements), 'code');
-
-        return $this->wrap($code, 'pre');
+        return $this->wrap(implode("\n", $this->elements), 'pre');
     }
 }

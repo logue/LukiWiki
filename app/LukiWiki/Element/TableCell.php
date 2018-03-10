@@ -92,7 +92,7 @@ class TableCell extends Element
                 $obj = $obj->elements[0];
             }
         } else {
-            $obj = ElementFactory::factory('InlineElement', null, $text);
+            $obj = new InlineElement($text);
         }
 
         $this->insert($obj);

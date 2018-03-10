@@ -27,7 +27,7 @@ class InlineConverter
         'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
         'App\LukiWiki\Inline\InterWikiName',    // InterWikiName
         'App\LukiWiki\Inline\BracketName',      // BracketName
- //       'App\LukiWiki\Inline\WikiName',         // WikiName
+        'App\LukiWiki\Inline\WikiName',         // WikiName
         'App\LukiWiki\Inline\AutoLink',         // AutoLink
         'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
     ];
@@ -41,6 +41,8 @@ class InlineConverter
     private $pattern;
 
     private static $clone_func;
+
+    private $meta;
 
     /**
      * コンストラクタ
@@ -77,6 +79,7 @@ class InlineConverter
             $patterns[] = '('.$pattern.')';
             $this->converters[$start] = $converter;
             $start += $converter->getCount();
+
             ++$start;
         }
         $this->pattern = implode('|', $patterns);
@@ -124,7 +127,7 @@ class InlineConverter
      *
      * @return string
      */
-    public function convert($string, $page)
+    public function convert($string, $page = '')
     {
         $input = trim($string);
         if (empty($input)) {
@@ -134,8 +137,12 @@ class InlineConverter
         $string = preg_replace_callback('/'.$this->pattern.'/x', function ($arr) use ($page) {
             $obj = $this->getConverter($arr);
 
-            $this->result[] = ($obj !== null && $obj->setPattern($arr, $page) !== false) ?
-            $obj->__toString() : $arr[0];
+            if ($obj !== null) {
+                $this->result[] = ($obj->setPattern($arr, $page) !== false) ? $obj->__toString() : $arr[0];
+                $this->meta[get_class($obj)][] = $obj->getMeta();
+            } else {
+                $this->result[] = $arr[0];
+            }
 
             return "\x08"; // Add a mark into latest processed part
         }, $string);
@@ -163,5 +170,10 @@ class InlineConverter
                 return $this->converters[$start];
             }
         }
+    }
+
+    public function getMeta()
+    {
+        return $this->meta;
     }
 }

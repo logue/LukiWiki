@@ -9,28 +9,39 @@
 
 namespace App\LukiWiki\Element;
 
-use App\LukiWiki\Inline\InlineFactory;
+use App\LukiWiki\Inline\InlineConverter;
 
 /**
  * Inline elements.
  */
 class InlineElement extends Element
 {
+    private static $converter;
+
     public function __construct($text)
     {
         parent::__construct();
-        $this->elements[] = trim((substr($text, 0, 1) === "\n") ?
-            $text : InlineFactory::factory($text));
+        $text = trim($text);
+
+        if (substr($text, 0, 1) === "\n") {
+            $this->elements[] = $text;
+        } else {
+            if (!isset(self::$converter)) {
+                self::$converter = new InlineConverter();
+            }
+            $clone = self::$converter->getClone(self::$converter);
+            $this->elements[] = $clone->convert($text);
+        }
     }
 
-    public function insert(&$obj)
+    public function insert($obj)
     {
         $this->elements[] = $obj->elements[0];
 
         return $this;
     }
 
-    public function canContain(&$obj)
+    public function canContain($obj)
     {
         return $obj instanceof self;
     }

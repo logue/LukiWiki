@@ -24,25 +24,24 @@ class Heading extends Element
     protected $id;
     protected $text;
 
-    public function __construct(&$root, $text)
+    public function __construct($root, $text)
     {
         parent::__construct();
 
-        $this->text = $text;
         $this->level = min(5, strspn($text, '*'));
         list($text, $this->msg_top, $this->id) = $root->getAnchor($text, $this->level);
-        $this->insert(ElementFactory::factory('InlineElement', null, $text));
+        $this->insert(new InlineElement($text));
         ++$this->level; // h2,h3,h4,h5,h6
     }
 
-    public function insert(&$obj)
+    public function insert($obj)
     {
         parent::insert($obj);
 
-        return $this->last = &$this;
+        return $this->last = $this;
     }
 
-    public function canContain(&$obj)
+    public function canContain($obj)
     {
         return false;
     }

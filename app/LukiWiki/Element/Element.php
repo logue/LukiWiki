@@ -21,15 +21,15 @@ class Element
     public function __construct()
     {
         $this->elements = [];
-        $this->last = &$this;
+        $this->last = $this;
     }
 
-    public function setParent(&$parent)
+    public function setParent($parent)
     {
-        $this->parent = &$parent;
+        $this->parent = $parent;
     }
 
-    public function add(&$obj)
+    public function add($obj)
     {
         if ($this->canContain($obj)) {
             return $this->insert($obj);
@@ -38,19 +38,19 @@ class Element
         return $this->parent->add($obj);
     }
 
-    public function insert(&$obj)
+    public function insert($obj)
     {
-        if (gettype($obj) === 'object') {
+        if (is_object($obj)) {
             $obj->setParent($this);
             $this->elements[] = $obj;
 
-            $this->last = &$obj->last;
+            $this->last = $obj->last;
         }
 
         return $this->last;
     }
 
-    public function canContain(&$obj)
+    public function canContain($obj)
     {
         return true;
     }
@@ -69,23 +69,11 @@ class Element
     public function toString()
     {
         $ret = [];
-        foreach (array_keys($this->elements) as $key) {
+        $keys = array_keys($this->elements);
+        foreach ($keys as $key) {
             $ret[] = $this->elements[$key]->toString();
         }
 
         return implode("\n", $ret);
-    }
-
-    public function dump($indent = 0)
-    {
-        $ret = str_repeat(' ', $indent).get_class($this)."\n";
-        $indent += 2;
-        foreach (array_keys($this->elements) as $key) {
-            $ret .= is_object($this->elements[$key]) ?
-                $this->elements[$key]->dump($indent) : null;
-            //str_repeat(' ', $indent) . $this->elements[$key];
-        }
-
-        return $ret;
     }
 }

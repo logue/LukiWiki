@@ -18,9 +18,9 @@ class ListElement extends Element
         $this->head = $head;
     }
 
-    public function canContain(&$obj)
+    public function canContain($obj)
     {
-        return !$obj instanceof ListContainer || ($obj->level > $this->level);
+        return !$obj instanceof ListContainer || $obj->level > $this->level;
     }
 
     public function toString()

@@ -17,11 +17,11 @@ class Blockquote extends Element
 {
     protected $level;
 
-    public function __construct(&$root, $text)
+    public function __construct($root, $text)
     {
         parent::__construct();
 
-        $head = substr($text, 0, 1);
+        $head = $text[0];
         $this->level = min(3, strspn($text, $head));
         $text = ltrim(substr($text, $this->level));
 
@@ -30,19 +30,19 @@ class Blockquote extends Element
             $this->level = 0;
             $this->last = $this->end($root, $level);
             if (!empty($text)) {
-                $this->last = $this->last->insert(ElementFactory::factory('InlineElement', null, $text));
+                $this->last = $this->last->insert(new InlineElement($text));
             }
         } else {
-            $this->insert(ElementFactory::factory('InlineElement', null, $text));
+            $this->insert(new InlineElement($text));
         }
     }
 
-    public function canContain(&$obj)
+    public function canContain($obj)
     {
         return !($obj instanceof self) || $obj->level >= $this->level;
     }
 
-    public function insert(&$obj)
+    public function insert($obj)
     {
         if (!is_object($obj)) {
             return;
@@ -53,9 +53,9 @@ class Blockquote extends Element
         }
 
         if ($obj instanceof self && $obj->level == $this->level && count($obj->elements)) {
-            $obj = &$obj->elements[0];
+            $obj = $obj->elements[0];
             if ($this->last instanceof Paragraph && count($obj->elements)) {
-                $obj = &$obj->elements[0];
+                $obj = $obj->elements[0];
             }
         }
 
@@ -67,15 +67,15 @@ class Blockquote extends Element
         return $this->wrap(parent::toString(), 'blockquote', ['class' => 'blockquote']);
     }
 
-    private function end(&$root, $level)
+    private function end($root, $level)
     {
-        $parent = &$root->last;
+        $parent = $root->last;
 
         while (is_object($parent)) {
             if ($parent instanceof self && $parent->level === $level) {
                 return $parent->parent;
             }
-            $parent = &$parent->parent;
+            $parent = $parent->parent;
         }
 
         return $this;

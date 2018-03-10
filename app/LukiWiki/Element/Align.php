@@ -24,7 +24,7 @@ class Align extends Element
         $this->align = $align;
     }
 
-    public function canContain(&$obj)
+    public function canContain($obj)
     {
         if ($obj instanceof Table || $obj instanceof YTable) {
             $obj->align = $this->align;

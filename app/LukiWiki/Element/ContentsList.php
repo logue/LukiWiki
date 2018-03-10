@@ -20,7 +20,7 @@ class ContentsList extends ListContainer
         parent::__construct('ul', 'li', '-', $_text);
     }
 
-    public function setParent(&$parent)
+    public function setParent($parent)
     {
         parent::setParent($parent);
         $step = $this->level;

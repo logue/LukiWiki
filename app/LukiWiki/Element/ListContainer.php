@@ -30,17 +30,17 @@ class ListContainer extends Element
 
         parent::insert($element);
         if (!empty($text)) {
-            $this->last = $this->last->insert(ElementFactory::factory('InlineElement', null, $text));
+            $this->last = $this->last->insert(new InlineElement($text));
         }
     }
 
-    public function canContain(&$obj)
+    public function canContain($obj)
     {
         return !($obj instanceof self)
             || ($this->tag === $obj->tag && $this->level === $obj->level);
     }
 
-    public function setParent(&$parent)
+    public function setParent($parent)
     {
         parent::setParent($parent);
 
@@ -50,7 +50,7 @@ class ListContainer extends Element
         }
     }
 
-    public function insert(&$obj)
+    public function insert($obj)
     {
         if (!$obj instanceof self && $this->level > 3) {
             return $this->last = $this->last->insert($obj);
@@ -62,7 +62,8 @@ class ListContainer extends Element
         } // up to ListElement
 
         // Move elements
-        foreach (array_keys($obj->elements) as $key) {
+        $keys = array_keys($obj->elements);
+        foreach ($keys as $key) {
             parent::insert($obj->elements[$key]);
         }
 

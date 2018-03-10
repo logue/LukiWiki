@@ -22,7 +22,7 @@ class DList extends ListContainer
         $element = new ListElement($this->level, 'dd');
         $this->last = Element::insert($element);
         if (!empty($out[1])) {
-            $this->last = $this->last->insert(ElementFactory::factory('InlineElement', null, $out[1]));
+            $this->last = $this->last->insert(new InlineElement($out[1]));
         }
     }
 }

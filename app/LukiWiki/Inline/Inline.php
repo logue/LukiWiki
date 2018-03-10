@@ -29,6 +29,8 @@ abstract class Inline
 
     protected $redirect;
 
+    protected $meta;
+
     /**
      * コンストラクタ
      *
@@ -130,7 +132,6 @@ abstract class Inline
         $wikis = $this->pages;
 
         $anchor_name = empty($alias) ? $page : $alias;
-        $anchor_name = str_replace('&amp;#039;', '\'', $anchor_name);	// 'が&#039;になってしまう問題をとりあえず解消
 
         if (isset($wikis->$page)) {
             return '<a href="'.url($page).$anchor.'" data-timestamp="'.$wikis->timestamp($page).'"'.
@@ -202,5 +203,10 @@ abstract class Inline
     protected static function processText($str)
     {
         return htmlspecialchars(trim($str), ENT_HTML5, 'UTF-8');
+    }
+
+    public function getMeta()
+    {
+        return $this->meta;
     }
 }

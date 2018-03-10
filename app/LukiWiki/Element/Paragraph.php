@@ -18,14 +18,14 @@ class Paragraph extends Element
     {
         parent::__construct();
 
-        if (substr($text, 0, 1) == '~') {
+        if (substr($text, 0, 1) === '~') {
             $text = ' '.substr($text, 1);
         }
 
-        $this->insert(ElementFactory::factory('Inline', null, $text));
+        $this->insert(new InlineElement($text));
     }
 
-    public function canContain(&$obj)
+    public function canContain($obj)
     {
         return $obj instanceof InlineElement;
     }

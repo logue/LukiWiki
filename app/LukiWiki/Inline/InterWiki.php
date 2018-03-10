@@ -40,7 +40,7 @@ class InterWiki extends Inline
     {
         list(, $name, $alias) = $this->splice($arr);
 
-        return parent::setParam($page, htmlspecialchars($name, ENT_HTML5, 'UTF-8'), null, 'url', $alias);
+        return parent::setParam($page, self::processText($name), null, 'url', $alias);
     }
 
     public function __toString()

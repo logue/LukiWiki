@@ -14,7 +14,6 @@ use App\LukiWiki\Rules\InlineRules;
 // Footnotes
 class Note extends Inline
 {
-    protected $notes = [];
     /**
      * title属性に入れる説明文の文字数.
      */
@@ -59,20 +58,11 @@ class Note extends Inline
     {
         list(, $body) = $this->splice($arr);
 
-        // Recover of notes(miko)
-        if (count($this->notes) === 0) {
-            self::$note_id = 0;
-        }
-
         $id = ++self::$note_id;
         $note = InlineFactory::factory($body);
-        $page = isset($vars['page']) ? rawurlencode($vars['page']) : null;
 
         // Footnote
-        $this->notes[$id] =
-            '<li id="notefoot_'.$id.'">'.
-            '<a href="#notetext_'.$id.'">'.InlineRules::FOOTNOTE_ANCHOR_ICON.$id.'</a>'.$note.
-            '</li>';
+        $this->meta['note'][$id] = $note;
 
         // A hyperlink, content-body to footnote
         $name = '<a id="notetext_'.$id.'" href="#notefoot_'.$id.'" class="note-anchor">'.InlineRules::FOOTNOTE_ANCHOR_ICON.$id.'</a>';
@@ -83,10 +73,5 @@ class Note extends Inline
     public function __toString()
     {
         return $this->name;
-    }
-
-    public function getExplain()
-    {
-        return '<ul class="notes">'."\n".implode("\n", $this->notes).'</ul>'."\n";
     }
 }

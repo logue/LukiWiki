@@ -44,12 +44,12 @@ class Table extends Element
         $this->elements[] = $row;
     }
 
-    public function canContain(&$obj)
+    public function canContain($obj)
     {
         return ($obj instanceof self) && ($obj->col === $this->col);
     }
 
-    public function insert(&$obj)
+    public function insert($obj)
     {
         $this->elements[] = $obj->elements[0];
         $this->types[] = $obj->type;

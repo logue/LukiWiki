@@ -38,52 +38,26 @@ class RootElement extends Element
         $matches = [];
 
         while (!empty($lines)) {
-            $line = array_shift($lines);
+            $line = rtrim(array_shift($lines), "\t\r\n\0\x0B");	// スペース以外の空白文字をトリム;
 
-            // Escape comments
-            if (substr($line, 0, 2) === '//') {
-                if ($this->is_guiedit) {
-                    $this->comments[] = substr($line, 2);
-                    $line = '___COMMENT___';
-                } else {
-                    continue;
-                }
-            }
-            /*
-            // Extend TITLE by miko
-            if (preg_match('/^(TITLE):(.*)$/', $line, $matches)) {
-                static $newbase;
-                if (!isset($newbase)) {
-                    $newbase = trim(strip_tags(RendererFactory::factory($matches[2])));
-                    // For BugTrack/132.
-                    $newtitle = htmlspecialchars($newbase, ENT_HTML5, 'UTF-8');
-                }
+            // Empty
+            if (empty($line)) {
+                $this->last = $this;
                 continue;
             }
-*/
-            if (preg_match('/^(LEFT|CENTER|RIGHT|JUSTIFY):(.*)$/', $line, $matches)) {
-                // <div style="text-align:...">
-                $align = new Align(strtolower($matches[1]));
-                $this->last = $this->last->add($align);
+
+            if (preg_match('/^(LEFT|CENTER|RIGHT|JUSTIFY|TITLE):(.*)$/', $line, $matches)) {
+                $cmd = strtolower($matches[1]);
+
+                if ($cmd === 'title') {
+                    $this->meta['title'] = $matches[2];
+                } else {
+                    $this->last = $this->last->add(new Align(strtolower($cmd)));
+                }
                 if (empty($matches[2])) {
                     continue;
                 }
                 $line = $matches[2];
-            }
-
-            $line = rtrim($line, "\t\r\n\0\x0B");	// スペース以外の空白文字をトリム
-
-            // Empty
-            if (empty($line)) {
-                $this->last = &$this;
-                continue;
-            }
-
-            // Horizontal Rule
-            if (substr($line, 0, 4) == '----') {
-                $hrule = new HRule($this, $line);
-                $this->insert($hrule);
-                continue;
             }
 
             // Multiline-enabled block plugin #plugin{{ ... }}
@@ -101,29 +75,22 @@ class RootElement extends Element
                 }
             }
 
+            // Github Markdown互換シンタックスハイライト記法
+            if (preg_match('/^```$/', $line, $matches)) {
+                $line .= self::MULTILINE_DELIMITER;
+                while (!empty($lines)) {
+                    $next_line = preg_replace('/['.self::MULTILINE_DELIMITER.'\n]*$/', '', array_shift($lines));
+                    if (preg_match('/^```$/', $next_line)) {
+                        $line .= $next_line;
+                        break;
+                    } else {
+                        $line .= $next_line .= self::MULTILINE_DELIMITER;
+                    }
+                }
+            }
+
             // The first character
             $head = $line[0];
-
-            // Heading
-            if ($head === '*') {
-                $heading = new Heading($this, $line);
-                $this->insert($heading);
-                continue;
-            }
-
-            // Pre
-            if ($head === ' ' || $head === "\t") {
-                $pre = new Pre($this, $line);
-                $this->last = $this->last->add($pre);
-                continue;
-            }
-
-            // CPre (Plus!)
-            if (substr($line, 0, 2) === '# ' or substr($line, 0, 2) == "#\t") {
-                $sharppre = new SharpPre($this, $line);
-                $this->last = $this->last->add($sharppr);
-                continue;
-            }
 
             // Line Break
             if (substr($line, -1) === '~') {
@@ -132,8 +99,31 @@ class RootElement extends Element
 
             // Other Character
             if (gettype($this->last) === 'object') {
+                $content = null;
                 switch ($head) {
+                    case '*':
+                        $this->insert(new Heading($this, $line));
+                        continue;
+                        break;
+                    case '`':
+                        // GFM:pre
+                        if (preg_match('/\```(\w+?)\r(.*)\r```/', $line, $body)) {
+                            $line .= "\r".$body[1]."\r";
+                        }
+                        $content = new GfmPre($this, $line, $lang);
+                        break;
+                    case ' ':
+                    case "\t":
+                        // Pre
+                        $content = new Pre($this, $line);
+                        break;
                     case '-':
+                        if (substr($line, 0, 4) === '----') {
+                            // Horizontal Rule
+                            $this->insert(new HRule($this, $line));
+                            continue;
+                        }
+                        // List
                         $content = new UList($this, $line);
                         break;
                     case '+':
@@ -143,21 +133,48 @@ class RootElement extends Element
                     case '<':
                         $content = new Blockquote($this, $line);
                         break;
-                    // ここからはファクトリークラスを通す
                     case ':':
-                        $content = ElementFactory::factory('DList', $this, $line);
+                        $out = explode('|', ltrim($line), 2);
+                        if (!count($out) < 2) {
+                            $content = new DList($out);
+                        }
                         break;
                     case '|':
-                        $content = ElementFactory::factory('Table', $this, $line);
+                        if (preg_match('/^\|(.+)\|([hHfFcC]?)$/', $line, $out)) {
+                            $content = new Table($out);
+                        }
                         break;
                     case ',':
-                        $content = ElementFactory::factory('YTable', $this, $line);
+                        $content = new YTable(explode(',', substr($line, 1)));
                         break;
                     case '#':
-                        $content = ElementFactory::factory('Plugin', $this, $line);
+                        $matches = [];
+
+                        if ($line[1] === ' ' || $line[1] === "\t") {
+                            // CPre (Plus!)
+                            $content = $this->last->add(new SharpPre($this, $line));
+                        } elseif (preg_match('/^#([^\(\{]+)(?:\(([^\r]*)\))?(\{*)/', $line, $matches)) {
+                            // Plugin
+                            $len = strlen($matches[3]);
+                            $body = [];
+                            if (preg_match('/\{{'.$len.'}\s*\r(.*)\r\}{'.$len.'}/', $line, $body)) {
+                                // Seems multiline-enabled block plugin
+                                $matches[2] .= "\r".$body[1]."\r";
+                            }
+                            $content = new BlockPlugin($matches);
+                        }
+                        break;
+                    case '~':
+                        $content = new Paragraph(' '.substr($line, 1));
+                        break;
+                    case '/':
+                        // Escape comments
+                        if ($line[1] === '/') {
+                            continue;
+                        }
                         break;
                     default:
-                        $content = ElementFactory::factory('InlineElement', null, $line);
+                        $content = new InlineElement($line);
                         break;
                 }
 
@@ -185,7 +202,7 @@ class RootElement extends Element
         return [$_text, $this->count > 1 ? "\n" : '', $autoid];
     }
 
-    public function insert(&$obj)
+    public function insert($obj)
     {
         if ($obj instanceof InlineElement) {
             $obj = $obj->toPara();

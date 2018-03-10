@@ -23,7 +23,7 @@ class BlockPlugin extends Element
         list(, $this->name, $this->param) = array_pad($out, 3, null);
     }
 
-    public function canContain(&$obj)
+    public function canContain($obj)
     {
         return false;
     }

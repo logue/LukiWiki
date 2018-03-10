@@ -31,6 +31,9 @@ class WikiFileSystem
     // ファイルの拡張子
     const EXTENTION = '.txt';
 
+    // RFC3986で定義されているページ名として使用できない文字＋α
+    const RESERVED_CHARS = ['!', '#', '$', '&', '\'', '(', ')', '*', '+', ',', '/', ':', ';', '=', '?', '@', '[', ']', '~'];
+
     /** ディレクトリのパス */
     private $directory;
     /** ディレクトリの更新日（ファイル一覧キャッシュなどで使用） */
@@ -57,24 +60,18 @@ class WikiFileSystem
         if (!Storage::exists($directory)) {
             // ディレクトリがない
             Storage::makeDirectory($directory);
-        } else {
-            $this->modified = Storage::lastModified($directory);
         }
+
         if (Storage::getMetadata($directory)['type'] !== 'dir') {
             // ディレクトリでない
             throw new \Exception('Not a directory.');
         }
 
-        $this->directory = $directory;
-        $this->directory_cache_name = self::DIRECTORY_CACHE_PREFIX.self::TYPE;
-        $this->pattern_cache_name = self::MATCH_PATTERN_CACHE_PREFIX.self::TYPE;
-        $this->cache_date_name = self::CACHE_DATE_PREFIX.self::TYPE;
-
-        if ($this->modified > (int) Cache::get($this->cache_date_name)) {
+        if (Storage::lastModified($directory) > (int) Cache::get(self::CACHE_DATE_PREFIX.self::TYPE)) {
             // ディレクトリの更新日時がキャッシュ生成日時よりも新しい場合、キャッシュを削除
-            Cache::forget($this->directory_cache_name);
-            Cache::forget($this->pattern_cache_name);
-            Cache::forget($this->cache_date_name);
+            Cache::forget(self::DIRECTORY_CACHE_PREFIX.self::TYPE);
+            Cache::forget(self::MATCH_PATTERN_CACHE_PREFIX.self::TYPE);
+            Cache::forget(self::CACHE_DATE_PREFIX.self::TYPE);
         }
     }
 
@@ -83,13 +80,18 @@ class WikiFileSystem
      *
      * @param string $page    ページ名
      * @param string $content 内容
+     *
+     * @return bool
      */
     public function __set($page, $content)
     {
+        if (!self::isValiedPageName($page)) {
+            return false;
+        }
         // タイムスタンプとハッシュが変わるのでキャッシュを削除
-        Cache::forget($this->directory_cache_name);
+        Cache::forget(self::CACHE_DATE_PREFIX.self::TYPE);
 
-        Storage::put($this->getFilePath($page), $content);
+        return Storage::put($this->getFilePath($page), $content);
     }
 
     /**
@@ -101,6 +103,10 @@ class WikiFileSystem
      */
     public function __get($page)
     {
+        if (!self::isValiedPageName($page)) {
+            return false;
+        }
+
         return trim(Storage::get($this->getFilePath($page)));
     }
 
@@ -113,6 +119,10 @@ class WikiFileSystem
      */
     public function __isset($page)
     {
+        if (!self::isValiedPageName($page)) {
+            return false;
+        }
+
         return Storage::exists($this->getFilePath($page));
     }
 
@@ -123,8 +133,10 @@ class WikiFileSystem
      */
     public function __unset($page)
     {
-        Cache::forget($this->directory_cache_name);
-        Cache::forget($this->pattern_cache_name);
+        if (!self::isValiedPageName($page)) {
+            return false;
+        }
+        Cache::forget(self::CACHE_DATE_PREFIX.self::TYPE);
 
         return Storage::delete($this->getFilePath($page));
     }
@@ -134,22 +146,34 @@ class WikiFileSystem
      *
      * @param string $from 変更前
      * @param string $to   変更後
+     *
+     * @return bool
      */
     public function rename($from, $to)
     {
-        Cache::forget($this->directory_cache_name);
-        Storage::move($this->getFilePath($from), $this->getFilePath($to));
+        if (!self::isValiedPageName($from) || !self::isValiedPageName($to)) {
+            return false;
+        }
+
+        Cache::forget(self::CACHE_DATE_PREFIX.self::TYPE);
+
+        return Storage::move($this->getFilePath($from), $this->getFilePath($to));
     }
 
     /**
      * ページの最終更新日.
+     * 空白時はディレクトリの最終更新日時
      *
      * @param string $page
      *
      * @return int
      */
-    public function timestamp($page)
+    public function timestamp($page = null)
     {
+        if (empty($page)) {
+            return Storage::lastModified(Config::get('lukiwiki.directory.'.self::TYPE));
+        }
+
         if (!isset($this->$page)) {
             return;
         }
@@ -174,14 +198,6 @@ class WikiFileSystem
     }
 
     /**
-     * タイムスタンプを更新.
-     */
-    public function touch($page, $time)
-    {
-        //return touch($this->getFilePath($page), $time);
-    }
-
-    /**
      * ファイル名とページ名の対応リストを取得する.
      *
      * @param string $type ファイルの種類
@@ -190,11 +206,11 @@ class WikiFileSystem
      */
     public function __invoke()
     {
-        return Cache::rememberForever($this->directory_cache_name, function () {
+        return Cache::rememberForever(self::DIRECTORY_CACHE_PREFIX.self::TYPE, function () {
             // ファイル名一覧の処理はキャッシュに入れる
             $ret = [];
-            $files = Storage::files($this->directory);
-            foreach ($files as $filepath) {
+            $files = Storage::files(Config::get('lukiwiki.directory.'.self::TYPE));
+            foreach ($files as &$filepath) {
                 $page = self::decode($filepath);
                 if (empty($page)) {
                     // ファイル名が存在しない場合スキップ（.gitignoreとかの隠しファイルも省ける）
@@ -209,10 +225,11 @@ class WikiFileSystem
                     // MD5ハッシュ
                     'hash' => $this->hash($page),
                 ];
+                unset($filepath);
             }
 
             // キャッシュの更新日時を更新
-            Cache::forever($this->cache_date_name, $this->modified);
+            Cache::forever(self::CACHE_DATE_PREFIX.self::TYPE, $this->modified);
 
             return $ret;
         });
@@ -225,7 +242,7 @@ class WikiFileSystem
      */
     public function __toString()
     {
-        return Cache::rememberForever($this->pattern_cache_name, function () {
+        return Cache::rememberForever(self::MATCH_PATTERN_CACHE_PREFIX.self::TYPE, function () {
             $trie = new RegexpTrie(array_keys(self::__invoke()));
 
             return $trie->build();
@@ -254,7 +271,7 @@ class WikiFileSystem
      */
     private function getFilePath($page)
     {
-        return $this->directory.DIRECTORY_SEPARATOR.self::encode($page).self::EXTENTION;
+        return Config::get('lukiwiki.directory.'.self::TYPE).DIRECTORY_SEPARATOR.self::encode($page).self::EXTENTION;
     }
 
     /**
@@ -289,5 +306,25 @@ class WikiFileSystem
         }
 
         return hex2bin($filename);
+    }
+
+    /**
+     * 無効なページ名が指定されていないかをチェック.
+     *
+     * @param string $page
+     *
+     * @return bool
+     */
+    private static function isValiedPageName($page)
+    {
+        // 多分正規表現より早い
+        foreach (self::RESERVED_CHARS as &$niddle) {
+            if ((strpos($page, $niddle)) !== false) {
+                return false;
+            }
+            unset($niddle);
+        }
+
+        return true;
     }
 }
