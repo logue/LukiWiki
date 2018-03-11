@@ -11,6 +11,7 @@ namespace App\LukiWiki\Inline;
 
 use App\LukiWiki\Rules\InlineRules;
 use App\LukiWIki\Utility\WikiFileSystem;
+use Illuminate\Support\Facades\Config;
 
 /**
  * インライン要素パースクラス.
@@ -20,7 +21,6 @@ abstract class Inline
     protected $start;   // Origin number of parentheses (0 origin)
     protected $text;    // Matched string
 
-    public $type;
     protected $page;
     protected $pages;
     public $name;
@@ -34,9 +34,9 @@ abstract class Inline
     /**
      * コンストラクタ
      *
-     * @param string $start
+     * @param int $start
      */
-    public function __construct($start)
+    public function __construct(int $start)
     {
         $this->start = $start;
         $this->pages = WikiFileSystem::getInstance();
@@ -65,10 +65,10 @@ abstract class Inline
     /**
      * マッチするパターンを設定.
      *
-     * @param type $arr
-     * @param type $page
+     * @param array  $arr
+     * @param string $page
      */
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         return '';
     }
@@ -81,8 +81,12 @@ abstract class Inline
         return $this->body;
     }
 
-    // Private: Get needed parts from a matched array()
-    public function splice($arr)
+    /**
+     * 正規表現の結果をパースする.
+     *
+     * @param array $arr
+     */
+    protected function splice(array $arr)
     {
         $count = $this->getCount() + 1;
         $arr = array_pad(array_splice($arr, $this->start, $count), $count, '');
@@ -92,18 +96,19 @@ abstract class Inline
     }
 
     // Set basic parameters
-    public function setParam($page, $name, $body, $type = '', $alias = '')
+    public function setParam(string $page, string $name, string $body, string $alias = '')
     {
         $converter = new InlineConverter(['InlinePlugin']);
 
         $this->page = $page;
         $this->name = $name;
         $this->body = $body;
-        $this->type = $type;
         if (!empty($alias)) {
             $alias = $converter->convert($alias, $page);
+            // aタグのみ削除
             $alias = preg_replace('#</?a[^>]*>#i', '', $alias);
             $this->alias = InlineRules::replace($alias);
+            $this->meta = $converter->getMeta();
         } else {
             $this->alias = $body;
         }
@@ -122,7 +127,7 @@ abstract class Inline
      *
      * @return string
      */
-    public function setAutoLink($page, $alias = '', $anchor = '', $refer = '', $isautolink = false)
+    public function setAutoLink(string $page, string $alias = '', string $anchor = '', string $refer = '', bool $isautolink = false)
     {
         $page = self::processText($page);
         if (empty($page)) {
@@ -134,6 +139,8 @@ abstract class Inline
         $anchor_name = empty($alias) ? $page : $alias;
 
         if (isset($wikis->$page)) {
+            $this->meta['pages'] = $page;
+
             return '<a href="'.url($page).$anchor.'" data-timestamp="'.$wikis->timestamp($page).'"'.
                 ($isautolink === true ? ' class="autolink"' : '').' title="'.$page.'">'.$anchor_name.'</a>';
         } else {
@@ -147,18 +154,20 @@ abstract class Inline
      * リンクを作成（厳密にはimgタグ、audioタグ、videoタグにも使用するが）.
      *
      * @param string $term    リンクの名前
-     * @param string $uri     リンク先
+     * @param string $url     リンク先
      * @param string $tooltip title属性の内容
      * @param string $rel     リンクのタイプ
      *
      * @return string
      */
-    public static function setLink($term, $uri, $tooltip = '', $rel = '', $is_redirect = false)
+    public static function setLink(string $term, string $url, string $tooltip = '', string $rel = '', bool $is_redirect = false)
     {
-        $_uri = self::processText($uri);
-        $_term = self::processText($term);
-
+        $parsed_url = parse_url($url, PHP_URL_PATH);
         $_tooltip = !empty($tooltip) ? ' title="'.self::processText($tooltip).'"' : '';
+        if (!$parsed_url) {
+            // パースできないURLだった場合リンクを貼らない。
+            return self::processText($term);
+        }
 
         // rel = "*"を生成
         $rels[] = 'external';
@@ -170,41 +179,56 @@ abstract class Inline
         }
         $ext_rel = implode(' ', $rels);
 
-        return '<a href="'.$uri.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.' <i class="fas fa-external-link-alt fa-xs"></i></a>';
-        /*
-                       // メディアファイル
-                       if (!PKWK_DISABLE_INLINE_IMAGE_FROM_URI && Utility::isUri($uri)) {
-                           if (preg_match(RendererDefines::IMAGE_EXTENTION_PATTERN, $uri)) {
-                               // 画像の場合
-                               $term = '<img src="'.$_uri.'" alt="'.$_term.'" '.$_tooltip.' />';
-                           } else {
-                               // 音声／動画の場合
-                               $anchor = '<a href="'.$href.'" rel="'.(self::isInsideUri($uri) ? $rel : $ext_rel).'"'.$_tooltip.'>'.$_term.'</a>';
-                               // 末尾のアイコン
-                               $icon = self::isInsideUri($uri) ?
-                                   '<a href="'.$href.'" rel="'.$rel.'">'.RendererDefines::INTERNAL_LINK_ICON.'</a>' :
-                                   '<a href="'.$href.'" rel="'.$ext_rel.'">'.RendererDefines::EXTERNAL_LINK_ICON.'</a>';
+        // メディアファイル
+        if (Config::get('lukiwiki.render.expand_external_media_file')) {
+            // 拡張子を取得
+            $ext = substr($parsed_url, strrpos($parsed_url, '.') + 1);
 
-                               if (preg_match(RendererDefines::VIDEO_EXTENTION_PATTERN, $uri)) {
-                                   return '<video src="'.$_uri.'" alt="'.$_term.'" controls="controls"'.$_tooltip.'>'.$anchor.'</video>'.$icon;
-                               } elseif (preg_match(RendererDefines::AUDIO_EXTENTION_PATTERN, $uri)) {
-                                   return '<audio src="'.$_uri.'" alt="'.$_term.'" controls="controls"'.$_tooltip.'>'.$anchor.'</audio>'.$icon;
-                               }
-                           }
-                       }
+            switch ($ext) {
+                case 'jpeg':
+                case 'jpg':
+                case 'gif':
+                case 'png':
+                case 'svg':
+                case 'svgz':
+                case 'webp':
+                case 'bmp':
+                case 'ico':
+                    $term = '<img src="'.$url.'" alt="'.self::processText($term).'" '.$_tooltip.' />';
+                    break;
+                case 'mp4':
+                case 'ogm':
+                case 'webm':
+                     return '<video src="'.$url.'" alt="'.self::processText($term).'" controls="controls"'.$_tooltip.'/>';
+                     break;
+                case 'wav':
+                case 'ogg':
+                case 'm4a':
+                case 'mp3':
+                    return '<audio src="'.$url.'" alt="'.self::processText($term).'" controls="controls"'.$_tooltip.'/>';
+                    break;
+            }
+        }
 
-                       // リンクを出力
-                       return self::isInsideUri($uri) ?
-                           '<a href="'.$href.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.RendererDefines::INTERNAL_LINK_ICON.'</a>' :
-                           '<a href="'.$href.'" rel="'.$ext_rel.'"'.$_tooltip.'>'.$term.RendererDefines::EXTERNAL_LINK_ICON.'</a>'
-        */
+        // リンクを出力
+        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.' <i class="fas fa-external-link-alt fa-xs"></i></a>';
     }
 
-    protected static function processText($str)
+    /**
+     * 文字列をエスケープ.
+     *
+     * @param string $str
+     *
+     * @return string
+     */
+    protected static function processText(string $str)
     {
         return htmlspecialchars(trim($str), ENT_HTML5, 'UTF-8');
     }
 
+    /**
+     * メタ情報を取得.
+     */
     public function getMeta()
     {
         return $this->meta;

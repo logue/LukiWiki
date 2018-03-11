@@ -9,8 +9,6 @@
 
 namespace App\LukiWiki\Inline;
 
-use App\LukiWiki\Rules\InlineRules;
-
 // Footnotes
 class Note extends Inline
 {
@@ -19,10 +17,6 @@ class Note extends Inline
      */
     const FOOTNOTE_TITLE_MAX = 16;
     /**
-     * 説明文のリンクを相対パスにする。（ページ内リンクのみにする）.
-     */
-    const ALLOW_RELATIVE_FOOTNOTE_ANCHOR = true;
-    /**
      * 説明文のID.
      */
     private static $note_id = 0;
@@ -30,7 +24,7 @@ class Note extends Inline
     /**
      * コンストラクタ
      */
-    public function __construct($start)
+    public function __construct(int $start)
     {
         parent::__construct($start);
     }
@@ -54,7 +48,7 @@ class Note extends Inline
         return 1;
     }
 
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         list(, $body) = $this->splice($arr);
 
@@ -62,10 +56,10 @@ class Note extends Inline
         $note = InlineFactory::factory($body);
 
         // Footnote
-        $this->meta['note'][$id] = $note;
+        $this->meta['note'] = [$id, trim($note)];
 
         // A hyperlink, content-body to footnote
-        $name = '<a id="notetext_'.$id.'" href="#notefoot_'.$id.'" class="note-anchor">'.InlineRules::FOOTNOTE_ANCHOR_ICON.$id.'</a>';
+        $name = '<sup><a id="notetext_'.$id.'" href="#notefoot_'.$id.'" class="note-anchor"><i class="fas fa-thumbtack fa-xs"></i> '.$id.'</a></sup>';
 
         return parent::setParam($page, $name, $body);
     }

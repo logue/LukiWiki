@@ -24,7 +24,7 @@ class InterWiki extends Inline
         return
         '\['.       // open bracket
         '('.        // (1) url
-         '(?:(?:https?|ftp|news):\/\/|\.\.?\/)[!~*\'();\/?:\@&=+\$,%#\w.-]*'.
+         '(?:(?:https?|ftp|ssh|telnet|):\/\/|\.\.?\/)[!~*\'();\/?:\@&=+\$,%#\w.-]*'.
         ')'.
         '\s'.
         '([^\]]+)'. // (2) alias
@@ -36,11 +36,11 @@ class InterWiki extends Inline
         return 2;
     }
 
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         list(, $name, $alias) = $this->splice($arr);
 
-        return parent::setParam($page, self::processText($name), null, 'url', $alias);
+        return parent::setParam($page, self::processText($name), null, $alias);
     }
 
     public function __toString()

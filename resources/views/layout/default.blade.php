@@ -17,7 +17,7 @@
     <link href="{{ asset('css/bootstrap-ie9.css') }}" rel="stylesheet" />
     <script src="{{ asset('js/html5shiv.min.js') }}"></script>
 <![endif]-->
-    <!--[if lt IE 9]>
+<!--[if lt IE 9]>
     <link href="{{ asset('css/bootstrap-ie8.css') }}" rel="stylesheet" />
 <![endif]-->
     @yield('styles')
@@ -31,8 +31,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbar-collapse-content">
             @yield('navbar')
-            <form class="form-inline my-2 my-lg-0 mr-0" action="{{ url(':search') }}">
+            <form class="form-inline my-2 my-lg-0 mr-0" action="{{ url('/') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <input type="hidden" name="action" value="search" />
                 <input type="search" class="form-control mr-sm-2" placeholder="Search" aria-label="Search" />
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
@@ -46,7 +47,7 @@
     </main>
     <footer class="bg-light">
         <div class="container">
-            @yield('footer')
+            <p><strong>LukiWiki</strong> v0.0.0-alpha</p>
         </div>
     </footer>
     <script src="{{ mix('js/app.js') }}"></script>

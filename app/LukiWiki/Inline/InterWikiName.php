@@ -69,7 +69,7 @@ class InterWikiName extends Inline
         return 5;
     }
 
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         list(, $alias, , $name, $this->param) = $this->splice($arr);
         $this->name = $name;
@@ -89,7 +89,6 @@ class InterWikiName extends Inline
             $page,
             parent::processText($name.':'.$this->param),
             null,
-            'InterWikiName',
             empty($alias) ? $name.':'.$this->param : $alias
         );
     }

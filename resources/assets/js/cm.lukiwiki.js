@@ -1,6 +1,7 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
+// LukiWiki for CodeMirror
 // Author: Logue (http://github.com/logue)
 
 (function (mod) {
@@ -82,7 +83,7 @@
 
       // Note
       {
-        regex: /\(\(.+\)\)/,
+        regex: /\({2}[^\)]+?\){2}/,
         token: 'attribute'
       },
 

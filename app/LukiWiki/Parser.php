@@ -35,6 +35,7 @@ class Parser
 
         $body = new RootElement(null, null, ['id' => ++self::$instance]);
         $body->parse($lines);
+        dd($body);
 
         return $body->toString();
     }

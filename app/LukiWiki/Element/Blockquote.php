@@ -25,15 +25,18 @@ class Blockquote extends Element
         $this->level = min(3, strspn($text, $head));
         $text = ltrim(substr($text, $this->level));
 
+        $content = new InlineElement($text);
+        $this->meta = $content->getMeta();
+
         if ($head === '<') { // Blockquote close
             $level = $this->level;
             $this->level = 0;
             $this->last = $this->end($root, $level);
             if (!empty($text)) {
-                $this->last = $this->last->insert(new InlineElement($text));
+                $this->last = $this->last->insert($content);
             }
         } else {
-            $this->insert(new InlineElement($text));
+            $this->insert($content);
         }
     }
 

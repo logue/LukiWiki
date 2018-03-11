@@ -12,7 +12,7 @@ namespace App\LukiWiki\Inline;
 // tel: URL schemes
 class Telephone extends Inline
 {
-    public function __construct($start)
+    public function __construct(int $start)
     {
         parent::__construct($start);
     }
@@ -35,12 +35,12 @@ class Telephone extends Inline
         return 2;
     }
 
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         list(, $alias, $tel) = $this->splice($arr);
         $name = $orginalname = $tel;
 
-        return parent :: setParam($page, $name, '', 'tel', $alias === '' ? $orginalname : $alias);
+        return parent :: setParam($page, $name, '', $alias === '' ? $orginalname : $alias);
     }
 
     public function __toString()

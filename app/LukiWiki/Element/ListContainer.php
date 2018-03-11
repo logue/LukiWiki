@@ -30,7 +30,9 @@ class ListContainer extends Element
 
         parent::insert($element);
         if (!empty($text)) {
-            $this->last = $this->last->insert(new InlineElement($text));
+            $content = new InlineElement($text);
+            $this->meta = $content->getMeta();
+            $this->last = $this->last->insert($content);
         }
     }
 

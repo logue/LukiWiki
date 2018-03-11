@@ -45,7 +45,7 @@ class Url extends Inline
         return 6;
     }
 
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         list(, $bracket, $alias, $scheme, $mail, $host, $uri) = $this->splice($arr);
         $this->has_bracket = substr($bracket, 0, 2) === '[[';
@@ -69,7 +69,7 @@ class Url extends Inline
             }
         }
         */
-        return parent::setParam($page, $name, $name, ($mail ? 'mailto' : 'url'));
+        return parent::setParam($page, $name, $name);
     }
 
     public function __toString()

@@ -12,7 +12,7 @@ namespace App\LukiWiki\Inline;
 // mailto: URL schemes
 class Mailto extends Inline
 {
-    public function __construct($start)
+    public function __construct(int $start)
     {
         parent::__construct($start);
     }
@@ -36,7 +36,7 @@ class Mailto extends Inline
         return 3;
     }
 
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         list(, $alias, $toname, $host) = $this->splice($arr);
         //dd($this->splice($arr));
@@ -53,7 +53,7 @@ class Mailto extends Inline
         return parent::setParam($page, $name, '', 'mailto', $alias === '' ? $orginalname : $alias);
         */
 
-        return parent::setParam($page, $name, $name, 'mailto', $alias);
+        return parent::setParam($page, $name, $name, $alias);
     }
 
     public function __toString()

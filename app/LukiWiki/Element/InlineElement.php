@@ -31,6 +31,7 @@ class InlineElement extends Element
             }
             $clone = self::$converter->getClone(self::$converter);
             $this->elements[] = $clone->convert($text);
+            $this->meta = $clone->getMeta();
         }
     }
 

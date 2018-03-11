@@ -21,8 +21,11 @@ class DList extends ListContainer
         parent::__construct('dl', 'dt', ':', $out[0]);
         $element = new ListElement($this->level, 'dd');
         $this->last = Element::insert($element);
+
         if (!empty($out[1])) {
-            $this->last = $this->last->insert(new InlineElement($out[1]));
+            $content = new InlineElement($out[1]);
+            $this->meta = $content->getMeta();
+            $this->last = $this->last->insert($content);
         }
     }
 }

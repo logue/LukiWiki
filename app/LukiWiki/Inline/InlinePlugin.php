@@ -3,12 +3,8 @@
  * インライン型プラグイン変換クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2012-2013 PukiWiki Advance Developers Team
- * @create    2012/12/18
- *
- * @license   GPL v2 or (at your option) any later version
- *
- * @version   $Id: Plugin.php,v 1.0.0 2013/01/29 19:54:00 Logue Exp $
+ * @copyright 2013-2014,2018 Logue
+ * @license   MIT
  */
 
 namespace App\LukiWiki\Inline;
@@ -22,7 +18,7 @@ class InlinePlugin extends Inline
     protected $plain;
     protected $param;
 
-    public function __construct($start)
+    public function __construct(int $start)
     {
         parent::__construct($start);
     }
@@ -54,7 +50,7 @@ class InlinePlugin extends Inline
         return 4;
     }
 
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         list($all, $this->plain, $name, $this->param, $body) = $this->splice($arr);
 
@@ -64,7 +60,7 @@ class InlinePlugin extends Inline
             list(, $this->plain, $name, $this->param) = $matches;
         }
 
-        return parent::setParam($page, $name, $body, 'plugin');
+        return parent::setParam($page, $name, $body);
     }
 
     public function __toString()

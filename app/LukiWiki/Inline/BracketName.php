@@ -45,7 +45,7 @@ class BracketName extends Inline
         return 4;
     }
 
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         list(, $alias, , $name, $this->anchor) = $this->splice($arr);
         if (empty($name)) {
@@ -58,7 +58,7 @@ class BracketName extends Inline
 //            return false;
         }
 
-        return parent::setParam($page, $name, null, 'pagename', $alias);
+        return parent::setParam($page, $name, '', $alias);
     }
 
     public function __toString()

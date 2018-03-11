@@ -29,11 +29,11 @@ class WikiName extends Inline
         return 1;
     }
 
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         $name = $this->splice($arr)[0];
 
-        return parent::setParam($page, $name, null, 'pagename', $name);
+        return parent::setParam($page, $name, null, $name);
     }
 
     public function __toString()

@@ -17,6 +17,7 @@ class Element
     protected $parent;
     protected $elements;    // References of childs
     protected $last;        // Insert new one at the back of the $last
+    protected $meta = null;
 
     public function __construct()
     {
@@ -75,5 +76,22 @@ class Element
         }
 
         return implode("\n", $ret);
+    }
+
+    public function getMeta()
+    {
+        return $this->meta;
+    }
+
+    /**
+     * 文字列をエスケープ.
+     *
+     * @param string $str
+     *
+     * @return string
+     */
+    protected static function processText(string $str)
+    {
+        return htmlspecialchars(trim($str), ENT_HTML5, 'UTF-8');
     }
 }

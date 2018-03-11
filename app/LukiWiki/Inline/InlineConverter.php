@@ -27,7 +27,7 @@ class InlineConverter
         'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
         'App\LukiWiki\Inline\InterWikiName',    // InterWikiName
         'App\LukiWiki\Inline\BracketName',      // BracketName
-        'App\LukiWiki\Inline\WikiName',         // WikiName
+    //    'App\LukiWiki\Inline\WikiName',         // WikiName
         'App\LukiWiki\Inline\AutoLink',         // AutoLink
         'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
     ];
@@ -65,7 +65,7 @@ class InlineConverter
         $start = 1;
 
         foreach ($converters as $name) {
-            if (!isset($name)) {
+            if (empty($name)) {
                 continue;
             }
 
@@ -75,6 +75,7 @@ class InlineConverter
             if (empty($pattern)) {
                 continue;
             }
+            //echo $name."\n";
 
             $patterns[] = '('.$pattern.')';
             $this->converters[$start] = $converter;
@@ -139,7 +140,7 @@ class InlineConverter
 
             if ($obj !== null) {
                 $this->result[] = ($obj->setPattern($arr, $page) !== false) ? $obj->__toString() : $arr[0];
-                $this->meta[get_class($obj)][] = $obj->getMeta();
+                $this->meta = $obj->getMeta();
             } else {
                 $this->result[] = $arr[0];
             }

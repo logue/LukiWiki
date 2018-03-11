@@ -20,24 +20,20 @@ class RootElement extends Element
 
     protected $id;
     protected $count = 0;
-    protected $contents;
-    protected $contents_last;
-    protected $comments = [];
 
-    public function __construct($id)
+    public function __construct(int $id = 0)
     {
         $this->id = $id;
-        $this->contents = new parent();
-        $this->contents_last = $this->contents;
         parent::__construct();
     }
 
-    public function parse($lines)
+    public function parse(array $lines)
     {
-        $this->last = &$this;
+        $this->last = $this;
         $matches = [];
 
-        while (!empty($lines)) {
+        $count = count($lines);
+        for ($i = 0; $i < $count; $i++) {
             $line = rtrim(array_shift($lines), "\t\r\n\0\x0B");	// スペース以外の空白文字をトリム;
 
             // Empty
@@ -52,7 +48,7 @@ class RootElement extends Element
                 if ($cmd === 'title') {
                     $this->meta['title'] = $matches[2];
                 } else {
-                    $this->last = $this->last->add(new Align(strtolower($cmd)));
+                    $this->last = $this->last->add(new Align($cmd));
                 }
                 if (empty($matches[2])) {
                     continue;
@@ -98,7 +94,7 @@ class RootElement extends Element
             }
 
             // Other Character
-            if (gettype($this->last) === 'object') {
+            if (is_object($this->last)) {
                 $content = null;
                 switch ($head) {
                     case '*':
@@ -178,6 +174,15 @@ class RootElement extends Element
                         break;
                 }
 
+                if (is_object($content)) {
+                    $meta = $content->getMeta();
+                    if (!empty($meta)) {
+                        foreach ($meta as $key => $value) {
+                            $this->meta[$key][] = $value;
+                        }
+                    }
+                }
+
                 // Default
                 $this->last = $this->last->add($content);
                 unset($content);
@@ -194,9 +199,7 @@ class RootElement extends Element
 
         list($_text, $id, $level) = HeadingAnchor::get($text, false); // Cut fixed-anchor from $text
 
-        // Add 'page contents' link to its heading
-        $contents = new ContentsList($_text, $level, $id);
-        $this->contents_last = $this->contents_last->add($contents);
+        $this->meta['contents'][$id] = ['level' => $level, 'content' => $_text];
 
         // Add heding
         return [$_text, $this->count > 1 ? "\n" : '', $autoid];
@@ -209,30 +212,5 @@ class RootElement extends Element
         }
 
         return parent::insert($obj);
-    }
-
-    public function toString()
-    {
-        // #contents
-        return preg_replace_callback('/<#_contents_>/', [$this, 'replaceContents'], parent::toString());
-    }
-
-    private function comment($matches)
-    {
-        $comments = explode("\n", $matches[0]);
-        foreach ($comments as &$comment) {
-            $comment = array_shift($this->comments);
-        }
-        $comment = implode("\n", $comments);
-
-        return '<span class="fa fa-comment" title="'.strip_tags($comment).'"></span>';
-    }
-
-    private function replaceContents()
-    {
-        //var_dump($this->contents->toString());
-        return '<div class="contents" id="contents_'.$this->id.'">'."\n".
-            $this->contents->toString().
-            '</div>'."\n";
     }
 }

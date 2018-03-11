@@ -27,11 +27,11 @@ class AutoLink extends Inline
         return 1;
     }
 
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         list($name) = $this->splice($arr);
 
-        return parent::setParam($page, $name, null, 'pagename', $name);
+        return parent::setParam($page, $name, null, $name);
     }
 
     public function __toString()

@@ -9,7 +9,7 @@
 
 namespace App\Http\Controllers;
 
-use App\LukiWiki\Parser;
+use App\LukiWiki\Element\RootElement;
 use App\LukiWiki\Utility\WikiFileSystem;
 use Config;
 use Illuminate\Http\Request;
@@ -46,8 +46,9 @@ class WikiController extends Controller
         $this->content = $this->data->$page;
 
         switch ($request->input('action')) {
+            case 'new':
             case 'edit':
-                return $this->edit();
+                return $this->edit($request);
                 break;
             case 'amp':
                 return $this->amp();
@@ -86,13 +87,13 @@ class WikiController extends Controller
             case 'atom':
                 // ATOM
                 return response()
-                    ->view('api.atom', ['entries'=>$this->getLatest()])
+                    ->view('api.atom', ['entries' => $this->getLatest()])
                     ->header('Content-Type', ' application/xml; charset=UTF-8');
                 break;
             case 'sitemap':
                 // Sitemap
                 return response()
-                    ->view('api.sitemap', ['entries'=>$filelist()])
+                    ->view('api.sitemap', ['entries' => $filelist()])
                     ->header('Content-Type', ' application/xml; charset=UTF-8');
                 break;
         }
@@ -109,13 +110,20 @@ class WikiController extends Controller
             return \App::abort(404);
         }
 
+        $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $this->content));
+
+        $body = new RootElement();
+        $body->parse($lines);
+        $meta = $body->getMeta();
+
         return view(
            'default.content',
            [
                 'page'    => $this->page,
-                'content' => Parser::factory($this->content),
-                'title'   => $this->page,
-           ]
+                'content' => $body->toString(),
+                'title'   => $meta['title'] ?? $this->page,
+                'notes'   => $meta['note'] ?? null,
+            ]
         );
     }
 
@@ -143,11 +151,23 @@ class WikiController extends Controller
     /**
      * 編集画面表示.
      */
-    private function edit()
+    private function edit($request)
     {
-        if (!$this->exists) {
-            // TODO
-            return \App::abort(404);
+        if (!$this->page || $request->input('action') === 'new') {
+            return view(
+                'default.edit',
+                [
+                    'page'   => '',
+                    'source' => '',
+                    'title'  => 'Create New Page',
+                    'hash'   => 0,
+                ]
+             );
+        }
+
+        if ($request->isMethod('post')) {
+            // POSTの場合、書き込み処理
+            $diff = new iphis\FineDiff\Diff();
         }
 
         return view(
@@ -156,6 +176,7 @@ class WikiController extends Controller
                 'page'   => $this->page,
                 'source' => $this->content,
                 'title'  => 'Edit '.$this->page,
+                'hash'   => $this->data->hash($this->page),
             ]
          );
     }
@@ -199,7 +220,7 @@ class WikiController extends Controller
                 break;
             }
             $modified[$key] = $value['timestamp'];
-            $i++;
+            ++$i;
         }
         array_multisort($entries, SORT_DESC, $modified);
 

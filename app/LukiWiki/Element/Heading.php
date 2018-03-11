@@ -30,7 +30,11 @@ class Heading extends Element
 
         $this->level = min(5, strspn($text, '*'));
         list($text, $this->msg_top, $this->id) = $root->getAnchor($text, $this->level);
-        $this->insert(new InlineElement($text));
+
+        $content = new InlineElement($text);
+        $this->meta = $content->getMeta();
+        $this->insert($content);
+
         ++$this->level; // h2,h3,h4,h5,h6
     }
 
@@ -50,6 +54,8 @@ class Heading extends Element
     {
         list($this->text, $fixed_anchor) = HeadingAnchor::get($this->text, false);
         $id = (empty($fixed_anchor)) ? $this->id : $fixed_anchor;
+
+        $this->meta[$id] = $this->text;
 
         return $this->wrap(parent::toString(), 'h'.$this->level, ['id' => $id]);
     }

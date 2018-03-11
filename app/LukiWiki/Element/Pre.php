@@ -17,11 +17,7 @@ class Pre extends Element
     public function __construct($root, $text)
     {
         parent::__construct();
-        $this->elements[] = htmlspecialchars(
-            (empty($text) || $text[0] != ' ') ? $text : substr($text, 1),
-            ENT_HTML5,
-            'UTF-8'
-        );
+        $this->elements[] = parent::processText(empty($text) || $text[0] !== ' ' ? $text : substr($text, 1));
     }
 
     public function canContain($obj)
@@ -38,6 +34,6 @@ class Pre extends Element
 
     public function toString()
     {
-        return $this->wrap(implode("\n", $this->elements), 'pre');
+        return $this->wrap(implode('', $this->elements), 'pre');
     }
 }

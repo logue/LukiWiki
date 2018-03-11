@@ -95,6 +95,7 @@ class TableCell extends Element
             $obj = new InlineElement($text);
         }
 
+        $this->meta = $obj->getMeta();
         $this->insert($obj);
     }
 
@@ -125,17 +126,5 @@ class TableCell extends Element
         }
 
         return $this->wrap(parent::toString(), $this->tag, $param, false);
-    }
-
-    /**
-     * 小文字にしてエスケープ.
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    private static function processParam($string)
-    {
-        return strtolower(htmlspecialchars($string, ENT_HTML5, 'UTF-8'));
     }
 }

@@ -15,11 +15,10 @@ namespace LukiWiki\Renderer\Inline;
  */
 class Ref extends Inline
 {
-    protected $pattern;
     protected $plain;
     protected $param;
 
-    public function __construct($start)
+    public function __construct(int $start)
     {
         parent::__construct($start);
     }
@@ -40,7 +39,7 @@ class Ref extends Inline
         return 2;
     }
 
-    public function setPattern($arr, $page)
+    public function setPattern(array $arr, string $page = null)
     {
         list(, $this->param, $body) = $this->splice($arr);
         $this->param = trim($this->param);

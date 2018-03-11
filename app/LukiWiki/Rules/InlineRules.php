@@ -20,7 +20,7 @@ class InlineRules
     /**
      * WikiNameのマッチパターン.
      */
-    const WIKINAME_PATTERN = '[A-Z][a-z]+([A-Z])[a-z]+';
+    const WIKINAME_PATTERN = '(?:[A-Z][a-z]+){2,}(?!\w)';
     // \c3\9f through \c3\bf correspond to \df through \ff in ISO8859-1
     //const WIKINAME_PATTERN = '(?:[A-Z](?:[a-z]|\xc3[\x9f-\xbf])+(?:[A-Z](?:[a-z]|\xc3[\x9f-\xbf])+)+)(?!\w)';
     /**
@@ -32,50 +32,6 @@ class InlineRules
      */
     const NOTE_PATTERN = '\(\(((?:(?>(?:(?!\(\()(?!\)\)(?:[^\)]|$)).)+)|(?R))*)\)\)';
     /**
-     * 内部リンクのアイコン.
-     */
-    const INTERNAL_LINK_ICON = '<i class="fa fa-external-link-square" title="Internal Link" aria-hidden="true"></i>';
-    /**
-     * 外部リンクのアイコン.
-     */
-    const EXTERNAL_LINK_ICON = '<i class="fa fa-external-link" title="External Link" aria-hidden="true"></i>';
-    /**
-     * メールリンクのアイコン.
-     */
-    const MAILTO_ICON = '<i class="fa fa-envelope" title="mailto:" aria-hidden="true"></i>';
-    /**
-     * 電話番号リンクのアイコン.
-     */
-    const TELEPHONE_ICON = '<i class="fa fa-phone" title="tel:" aria-hidden="true"></i>';
-    /**
-     * InterWikiNameのアイコン.
-     */
-    const INTERWIKINAME_ICON = '<i class="fa fa-globe" title="InterWikiName" aria-hidden="true"></i>';
-    /**
-     * 部分編集リンクのアイコン.
-     */
-    const PARTIAL_EDIT_LINK_ICON = '<i class="fa fa-pencil" title="Edit here" aria-hidden="true"></i>';
-    /**
-     * 見つからないページのリンク.
-     */
-    const NOEXISTS_STRING = '<span class="noexists">%s</span>';
-    /**
-     * imgタグに展開する拡張子のパターン.
-     */
-    const IMAGE_EXTENTION_PATTERN = '/\.(gif|png|bmp|jpe?g|svg?z|webp|ico)$/i';
-    /**
-     * audioタグで展開する拡張子のパターン.
-     */
-    const AUDIO_EXTENTION_PATTERN = '/\.(mp3|ogg|m4a)$/i';
-    /**
-     * videoタグで展開する拡張子のパターン.
-     */
-    const VIDEO_EXTENTION_PATTERN = '/\.(mp4|webm)$/i';
-    /**
-     * ノートのアイコン.
-     */
-    const FOOTNOTE_ANCHOR_ICON = '<i class="fa fa-thumb-tack" aria-hidden="true"></i>';
-    /**
      * デフォルトのテキストルール.
      */
     private static $rules = [
@@ -85,6 +41,7 @@ class InlineRules
         '/&amp;(#[0-9]+|#x[0-9a-f]+|(?=[a-zA-Z0-9]{2,8})(?:apos|amp|lt|gt|quot));/' => '&$1;',
         // 行末にチルダは改行
         "/\r|&amp;br;/" => '<br />',
+
         // PukiWiki Adv.標準書式
         '/COLOR\(([^\(\)]*)\){([^}]*)}/'                      => '<span style="color:$1">$2</span>',
         '/SIZE\(([^\(\)]*)\){([^}]*)}/'                       => '<span style="font-size:calc($1 * .1rem);">$2</span>',
@@ -98,12 +55,16 @@ class InlineRules
         '/ABBR\(([^\(\)]*)\){([^}]*)}/'                       => '<abbr title="$1">$2</abbr>',
         '/%%%(?!%)((?:(?!%%%).)*)%%%/i'                       => '<ins>$1</ins>',
         '/%%(?!%)((?:(?!%%).)*)%%/'                           => '<del>$1</del>',
-        '/@@@(?!@)((?:(?!@@).)*)@@@/'                         => '<q>$1</q>',
+        '/@@@(?!@)((?:(?!@@@).)*)@@@/'                        => '<q>$1</q>',
         '/@@(?!@)((?:(?!@@).)*)@@/'                           => '<code>$1</code>',
-        '/___(?!@)((?:(?!@@).)*)___/'                         => '<s>$1</s>',
-        '/__(?!@)((?:(?!@@).)*)__/'                           => '<u>$1</u>',
+        '/___(?!_)((?:(?!___).)*)___/'                        => '<s>$1</s>',
+        '/__(?!_)((?:(?!__).)*)__/'                           => '<u>$1</u>',
         "/'''(?!')((?:(?!''').)*)'''/"                        => '<em>$1</em>',
         "/''(?!')((?:(?!'').)*)''/"                           => '<strong>$1</strong>',
+        // Markdown互換書式
+        '/\*(?!\*)((?:(?!\*).)*)\*/'                          => '<em>$1</em>',
+        '/\*\*(?!\*\*)((?:(?!\*\*).)*)\*\*/'                  => '<strong>$1</strong>',
+        '/`(?!`)((?:(?!`).)*)`/'                              => '<code>$1</code>',
     ];
 
     // 自動リンク対象のURLスキーム
