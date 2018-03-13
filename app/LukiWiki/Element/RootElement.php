@@ -10,6 +10,7 @@
 namespace App\LukiWiki\Element;
 
 use App\LukiWiki\Rules\HeadingAnchor;
+use Debugbar;
 
 /**
  * RootElement.
@@ -29,11 +30,12 @@ class RootElement extends Element
 
     public function parse(array $lines)
     {
+        Debugbar::startMeasure('LukiWiki', 'LukiWiki');
         $this->last = $this;
         $matches = [];
 
         $count = count($lines);
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; ++$i) {
             $line = rtrim(array_shift($lines), "\t\r\n\0\x0B");	// スペース以外の空白文字をトリム;
 
             // Empty
@@ -176,6 +178,7 @@ class RootElement extends Element
 
                 if (is_object($content)) {
                     $meta = $content->getMeta();
+
                     if (!empty($meta)) {
                         foreach ($meta as $key => $value) {
                             $this->meta[$key][] = $value;
@@ -189,6 +192,7 @@ class RootElement extends Element
                 continue;
             }
         }
+        Debugbar::stopMeasure('LukiWiki');
     }
 
     public function getAnchor($text, $level)
@@ -199,7 +203,7 @@ class RootElement extends Element
 
         list($_text, $id, $level) = HeadingAnchor::get($text, false); // Cut fixed-anchor from $text
 
-        $this->meta['contents'][$id] = ['level' => $level, 'content' => $_text];
+        $this->meta['contents'][] = str_repeat('-', $level).'[['.$_text.'>#'.$id.']]';
 
         // Add heding
         return [$_text, $this->count > 1 ? "\n" : '', $autoid];

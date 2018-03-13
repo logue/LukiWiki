@@ -78,7 +78,7 @@ abstract class Inline
      */
     public function __toString()
     {
-        return $this->body;
+        return trim($this->body);
     }
 
     /**

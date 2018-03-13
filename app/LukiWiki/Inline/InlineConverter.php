@@ -154,7 +154,7 @@ class InlineConverter
             $retval[] = trim(array_shift($arr).array_shift($this->result));
         }
 
-        return implode("\n", $retval);
+        return trim(implode('', $retval));
     }
 
     /**

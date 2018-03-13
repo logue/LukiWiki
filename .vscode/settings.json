@@ -23,7 +23,7 @@
             "autoFix": true
         }
     ],
-    "workbench.iconTheme": null,
+    "workbench.iconTheme": "material-icon-theme",
     // Exclude Vendor Folders During Search and Replace
     "files.watcherExclude": {
         "**/vendor/**": true,

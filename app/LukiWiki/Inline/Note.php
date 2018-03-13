@@ -51,15 +51,15 @@ class Note extends Inline
     public function setPattern(array $arr, string $page = null)
     {
         list(, $body) = $this->splice($arr);
-
-        $id = ++self::$note_id;
         $note = InlineFactory::factory($body);
 
-        // Footnote
-        $this->meta['note'] = [$id, trim($note)];
+        $id = self::$note_id;
 
+        // Footnote
+        $this->meta['note'] = trim($note);
         // A hyperlink, content-body to footnote
         $name = '<sup><a id="notetext_'.$id.'" href="#notefoot_'.$id.'" class="note-anchor"><i class="fas fa-thumbtack fa-xs"></i> '.$id.'</a></sup>';
+        ++self::$note_id;
 
         return parent::setParam($page, $name, $body);
     }

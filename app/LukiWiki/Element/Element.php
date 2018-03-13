@@ -25,6 +25,13 @@ class Element
         $this->last = $this;
     }
 
+    public function __destruct()
+    {
+        unset($this->elements);
+        unset($this->last);
+        unset($this->meta);
+    }
+
     public function setParent($parent)
     {
         $this->parent = $parent;

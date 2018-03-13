@@ -10,7 +10,10 @@ module.exports = {
     "rules": {
         "async-await/space-after-async": 2,
         "async-await/space-after-await": 2,
-        "require-await": 2
+        "require-await": 2,
+        "indent": [2, 4, {
+            'SwitchCase': 1,
+        }]
     },
     "parser": "babel-eslint",
     "parserOptions": {

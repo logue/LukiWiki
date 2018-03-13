@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use RegexpTrie\RegexpTrie;
+use Debugbar;
 
 class WikiFileSystem
 {
@@ -92,17 +93,22 @@ class WikiFileSystem
      */
     public function __get(string $page)
     {
+        Debugbar::startMeasure('loading', 'Loading data...');
         if (!self::isValiedPageName($page)) {
             return false;
         }
         $path = self::getFilePath($page);
 
-        try {
-            return trim(Storage::get($path));
-        } catch (\Exception $e) {
+        if (!Storage::exists($path)) {
             throw new \FileNotFoundException($path.'('.$page.') is not found.', $e->getCode(), $e);
-            return false;
+            return null;
         }
+
+        $data = trim(Storage::get($path));
+
+        Debugbar::stopMeasure('loading');
+
+        return $data;
     }
 
     /**
@@ -209,6 +215,7 @@ class WikiFileSystem
     public function __invoke()
     {
         return Cache::rememberForever(self::DIRECTORY_CACHE_PREFIX.self::TYPE, function () {
+            Debugbar::startMeasure('listing', 'Process data directory');
             // ファイル名一覧の処理はキャッシュに入れる
             $ret = [];
             $files = Storage::files(Config::get('lukiwiki.directory.'.self::TYPE));
@@ -232,6 +239,7 @@ class WikiFileSystem
 
             // キャッシュの更新日時を更新
             Cache::forever(self::CACHE_DATE_PREFIX.self::TYPE, Storage::lastModified(Config::get('lukiwiki.directory.'.self::TYPE)));
+            Debugbar::stopMeasure('listing');
 
             return $ret;
         });
