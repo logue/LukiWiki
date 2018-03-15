@@ -21,8 +21,9 @@ class Paragraph extends Element
         if (substr($text, 0, 1) === '~') {
             $text = ' '.substr($text, 1);
         }
-
-        $this->insert(new InlineElement($text));
+        $obj = new InlineElement($text);
+        $this->meta = $obj->getMeta();
+        $this->insert($obj);
     }
 
     public function canContain($obj)

@@ -203,10 +203,10 @@ class RootElement extends Element
 
         list($_text, $id, $level) = HeadingAnchor::get($text, false); // Cut fixed-anchor from $text
 
-        $this->meta['contents'][] = str_repeat('-', $level).'[['.$_text.'>#'.$id.']]';
+        $this->meta['contents'][] = str_repeat('-', $level).'[['.$_text.'>#'.$autoid.']]';
 
         // Add heding
-        return [$_text, $this->count > 1 ? "\n" : '', $autoid];
+        return [$_text, null, $autoid];
     }
 
     public function insert($obj)

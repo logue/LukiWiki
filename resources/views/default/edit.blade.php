@@ -120,12 +120,12 @@
 @endsection @section('scripts')
 <script>
     window.CodeMirror.fromTextArea(document.getElementById('source'), {
-      lineNumbers: true,
-      styleActiveLine: true,
-      matchBrackets: true,
-      viewportMargin: Infinity,
-      mode: 'text/lukiwiki'
+        lineNumbers: true,
+        styleActiveLine: true,
+        matchBrackets: true,
+        viewportMargin: Infinity,
+        mode: 'text/lukiwiki'
     })
-    $('.CodeMirror').addClass('form-control px-0 py-0 my-0 mx-auto')
+    // $('.CodeMirror').addClass('form-control px-0 py-0 my-0 mx-auto')
 </script>
 @endsection

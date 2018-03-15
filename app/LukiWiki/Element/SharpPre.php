@@ -24,7 +24,7 @@ class SharpPre extends Element
         if (substr($text, 0, 2) === '# ') {
             $text = substr($text, 1);
         }
-        $this->elements[] = (empty($text) || substr($text, 0, 1) !== ' ') ? $text : substr($text, 1);
+        $this->elements[] = trim(empty($text) || substr($text, 0, 1) !== ' ' ? $text : substr($text, 1));
     }
 
     public function canContain($obj)

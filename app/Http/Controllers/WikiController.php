@@ -63,7 +63,7 @@ class WikiController extends Controller
                 return view(
                    'default.source',
                    [
-                       'source' => $this->data->$page,
+                       'source' => $this->content,
                        'title' => 'Source of '.$page,
                        'page' => $page,
                    ]
@@ -176,7 +176,7 @@ class WikiController extends Controller
                 'page' => $this->page,
                 'source' => $this->content,
                 'title' => 'Edit '.$this->page,
-                'hash' => $this->data->hash($this->page),
+                'hash' => $this->data->hash($this->content),
             ]
          );
     }

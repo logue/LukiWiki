@@ -3,7 +3,6 @@
 @import "Yu-Gothic";
 // Variables
 @import "variables";
-@import "~codemirror/lib/codemirror";
 // Bootstrap: 4;
 // https://getbootstrap.com/
 @import "~bootstrap/scss/bootstrap";
@@ -18,3 +17,5 @@
 @import "sticky-footer-navibar";
 // overrides
 @import "overrides";
+
+@import "codemirror";

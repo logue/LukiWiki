@@ -47,7 +47,7 @@
     </main>
     <footer class="bg-light">
         <div class="container">
-            <p><strong>LukiWiki</strong> v0.0.0-alpha</p>
+            <p><strong>LukiWiki</strong> v0.0.0-alpha / <small>Process Time: <var>{{ sprintf('%0.3f', microtime(true) - LARAVEL_START) }}</var> sec.</small></p>
         </div>
     </footer>
     <script src="{{ mix('js/app.js') }}"></script>

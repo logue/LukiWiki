@@ -99,6 +99,11 @@ abstract class Inline
     public function setParam(string $page, string $name, string $body, string $alias = '')
     {
         $converter = new InlineConverter(['InlinePlugin']);
+        
+        $meta = $converter->getMeta();
+        if (!empty($meta)){
+             $this->meta = array_merge($this->meta, $meta);
+        }
 
         $this->page = $page;
         $this->name = $name;

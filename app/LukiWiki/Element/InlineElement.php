@@ -49,7 +49,7 @@ class InlineElement extends Element
 
     public function toString()
     {
-        return implode("\n", $this->elements);
+        return implode('', $this->elements);
     }
 
     public function toPara($class = '')
