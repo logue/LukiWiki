@@ -18,7 +18,7 @@ class InlineElement extends Element
 {
     private static $converter;
 
-    public function __construct($text)
+    public function __construct($text, $isAmp)
     {
         parent::__construct();
         $text = trim($text);
@@ -27,7 +27,7 @@ class InlineElement extends Element
             $this->elements[] = $text;
         } else {
             if (!isset(self::$converter)) {
-                self::$converter = new InlineConverter();
+                self::$converter = new InlineConverter([], [], $isAmp);
             }
             $clone = self::$converter->getClone(self::$converter);
             $this->elements[] = $clone->convert($text);

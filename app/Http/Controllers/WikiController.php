@@ -50,9 +50,6 @@ class WikiController extends Controller
             case 'edit':
                 return $this->edit($request);
                 break;
-            case 'amp':
-                return $this->amp();
-                break;
             case 'attachment':
                 return $this->attachment();
                 break;
@@ -64,8 +61,8 @@ class WikiController extends Controller
                    'default.source',
                    [
                        'source' => $this->content,
-                       'title' => 'Source of '.$page,
-                       'page' => $page,
+                       'title'  => 'Source of '.$page,
+                       'page'   => $page,
                    ]
                );
             case 'list':
@@ -80,7 +77,7 @@ class WikiController extends Controller
                    'default.recent',
                    [
                        'entries' => $this->getLatest(),
-                       'title' => 'RecentChanges',
+                       'title'   => 'RecentChanges',
                    ]
                );
                break;
@@ -96,55 +93,42 @@ class WikiController extends Controller
                     ->view('api.sitemap', ['entries' => $filelist()])
                     ->header('Content-Type', ' application/xml; charset=UTF-8');
                 break;
+            case 'amp':
+                return $this->read(true);
+                break;
+            default:
+                return $this->read(false);
+                break;
         }
-
-        return $this->read();
     }
 
     /**
      * ページを読み込む
      */
-    private function read()
+    private function read($isAmp)
     {
         if (!$this->exists) {
             return \App::abort(404);
+        }
+
+        if ($isAmp) {
+            \Debugbar::disable();
         }
 
         $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $this->content));
 
-        $body = new RootElement();
+        $body = new RootElement('', 0, ['id' => 0, 'isAmp' => $isAmp]);
         $body->parse($lines);
         $meta = $body->getMeta();
 
         return view(
-           'default.content',
+           $isAmp ? 'default.amp' : 'default.content',
            [
-                'page' => $this->page,
+                'page'    => $this->page,
                 'content' => $body->toString(),
-                'title' => $meta['title'] ?? $this->page,
-                'notes' => $meta['note'] ?? null,
+                'title'   => $meta['title'] ?? $this->page,
+                'notes'   => $meta['note'] ?? null,
             ]
-        );
-    }
-
-    /**
-     * AMP用ページ出力.
-     */
-    private function amp()
-    {
-        if (!$this->exists) {
-            return \App::abort(404);
-        }
-
-        \Debugbar::disable();
-
-        return view(
-           'default.amp',
-           [
-                'page' => $this->page,
-                'content' => Parser::factory($this->content, true),
-                'title' => $this->page,
-           ]
         );
     }
 
@@ -157,10 +141,10 @@ class WikiController extends Controller
             return view(
                 'default.edit',
                 [
-                    'page' => '',
+                    'page'   => '',
                     'source' => '',
-                    'title' => 'Create New Page',
-                    'hash' => 0,
+                    'title'  => 'Create New Page',
+                    'hash'   => 0,
                 ]
              );
         }
@@ -173,10 +157,10 @@ class WikiController extends Controller
         return view(
             'default.edit',
             [
-                'page' => $this->page,
+                'page'   => $this->page,
                 'source' => $this->content,
-                'title' => 'Edit '.$this->page,
-                'hash' => $this->data->hash($this->content),
+                'title'  => 'Edit '.$this->page,
+                'hash'   => $this->data->hash($this->content),
             ]
          );
     }
@@ -198,7 +182,7 @@ class WikiController extends Controller
             'default.list',
             [
                 'entries' => $filelist(),
-                'title' => 'List',
+                'title'   => 'List',
             ]
         );
     }

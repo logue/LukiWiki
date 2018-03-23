@@ -16,11 +16,6 @@ class BracketName extends Inline
     protected $anchor;
     protected $refer;
 
-    public function __construct($start)
-    {
-        parent::__construct($start);
-    }
-
     public function getPattern()
     {
         $s2 = $this->start + 2;

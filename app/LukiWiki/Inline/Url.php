@@ -14,11 +14,6 @@ use App\LukiWiki\Rules\InlineRules;
 // URLs
 class Url extends Inline
 {
-    public function __construct($start)
-    {
-        parent::__construct($start);
-    }
-
     public function getPattern()
     {
         $s1 = $this->start + 1;

@@ -17,7 +17,7 @@ class Blockquote extends Element
 {
     protected $level;
 
-    public function __construct($root, $text)
+    public function __construct($root, $text, $isAmp)
     {
         parent::__construct();
 
@@ -25,7 +25,7 @@ class Blockquote extends Element
         $this->level = min(3, strspn($text, $head));
         $text = ltrim(substr($text, $this->level));
 
-        $content = new InlineElement($text);
+        $content = new InlineElement($text, $isAmp);
         $this->meta = $content->getMeta();
 
         if ($head === '<') { // Blockquote close
@@ -67,7 +67,7 @@ class Blockquote extends Element
 
     public function toString()
     {
-        return $this->wrap(parent::toString(), 'blockquote', ['class' => 'blockquote']);
+        return $this->wrap(parent::toString(), 'blockquote', ['class' => 'blockquote'], false);
     }
 
     private function end($root, $level)

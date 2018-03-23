@@ -9,12 +9,12 @@
 
 namespace App\LukiWiki\Utility;
 
+use Debugbar;
 use FlorianWolters\Component\Util\Singleton\SingletonTrait;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use RegexpTrie\RegexpTrie;
-use Debugbar;
 
 class WikiFileSystem
 {

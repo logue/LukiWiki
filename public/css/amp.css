@@ -4643,3 +4643,8 @@ body {
   width: 100%;
 }
 
+.external_media {
+  width: auto;
+  height: auto;
+}
+

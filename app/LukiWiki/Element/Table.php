@@ -28,7 +28,7 @@ class Table extends Element
         ''  => 'tbody',
     ];
 
-    public function __construct($out)
+    public function __construct($out, $isAmp)
     {
         parent::__construct();
 
@@ -39,7 +39,7 @@ class Table extends Element
         $is_template = $this->type === 'c';
         $row = [];
         foreach ($cells as $cell) {
-            $row[] = new TableCell($cell, $is_template);
+            $row[] = new TableCell($cell, $is_template, $isAmp);
         }
         $this->elements[] = $row;
     }
@@ -82,7 +82,7 @@ class Table extends Element
         foreach (array_keys($this->elements) as $nrow) {
             $row = &$this->elements[$nrow];
             if ($this->types[$nrow] === 'c') {
-                $stylerow = &$row;
+                $stylerow = $row;
             }
             $colspan = 1;
             foreach (array_keys($row) as $ncol) {
@@ -110,17 +110,17 @@ class Table extends Element
                 if ($this->types[$nrow] != $type) {
                     continue;
                 }
-                $row = &$this->elements[$nrow];
+                $row = $this->elements[$nrow];
                 $row_string = '';
                 foreach (array_keys($row) as $ncol) {
                     $row_string .= $row[$ncol]->toString();
                 }
-                $part_string .= $this->wrap($row_string, 'tr');
+                $part_string .= $this->wrap($row_string, 'tr', [], false);
             }
-            $string .= $this->wrap($part_string, $part);
+            $string .= $this->wrap($part_string, $part, [], false);
         }
         $align = Alignment::block($this->align);
 
-        return $this->wrap($string, 'table', ['class' => 'table table-bordered '.$align]);
+        return $this->wrap($string, 'table', ['class' => 'table table-bordered '.$align], false);
     }
 }

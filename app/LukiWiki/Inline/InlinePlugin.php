@@ -18,11 +18,6 @@ class InlinePlugin extends Inline
     protected $plain;
     protected $param;
 
-    public function __construct(int $start)
-    {
-        parent::__construct($start);
-    }
-
     public function getPattern()
     {
         $this->pattern =

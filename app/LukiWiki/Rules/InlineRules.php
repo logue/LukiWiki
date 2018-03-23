@@ -42,25 +42,22 @@ class InlineRules
         // 行末にチルダは改行
         "/\r|&amp;br;/" => '<br />',
 
-        // PukiWiki Adv.標準書式
-        '/COLOR\(([^\(\)]*)\){([^}]*)}/'                      => '<span style="color:$1">$2</span>',
-        '/SIZE\(([^\(\)]*)\){([^}]*)}/'                       => '<span style="font-size:calc($1 * .1rem);">$2</span>',
-        '/COLOR\(([^\(\)]*)\):((?:(?!COLOR\([^\)]+\)\:).)*)/' => '<span style="color:$1">$2</span>',
-        '/SIZE\(([^\(\)]*)\):((?:(?!SIZE\([^\)]+\)\:).)*)/'   => '<span class="h$1">$2</span>',
-        '/SUP{([^}]*)}/'                                      => '<sup>$1</sup>',
-        '/SUB{([^}]*)}/'                                      => '<sub>$1</sub>',
-        '/LANG\(([^\(\)]*)\):((?:(?!LANG\([^\)]+\)\:).)*)/'   => '<bdi lang="$1">$2</bdi>',
-        '/LANG\(([^\(\)]*)\){([^}]*)}/'                       => '<bdi lang="$1">$2</bdi>',
-        '/ABBR\(([^\(\)]*)\):((?:(?!ABBR\([^\)]+\)\:).)*)/'   => '<abbr title="$1">$2</abbr>',
-        '/ABBR\(([^\(\)]*)\){([^}]*)}/'                       => '<abbr title="$1">$2</abbr>',
-        '/%%%(?!%)((?:(?!%%%).)*)%%%/i'                       => '<ins>$1</ins>',
-        '/%%(?!%)((?:(?!%%).)*)%%/'                           => '<del>$1</del>',
-        '/@@@(?!@)((?:(?!@@@).)*)@@@/'                        => '<q>$1</q>',
-        '/@@(?!@)((?:(?!@@).)*)@@/'                           => '<code>$1</code>',
-        '/___(?!_)((?:(?!___).)*)___/'                        => '<s>$1</s>',
-        '/__(?!_)((?:(?!__).)*)__/'                           => '<u>$1</u>',
-        "/'''(?!')((?:(?!''').)*)'''/"                        => '<em>$1</em>',
-        "/''(?!')((?:(?!'').)*)''/"                           => '<strong>$1</strong>',
+        // LukiWiki標準書式
+        '/COLOR\((.+)?\){(.+)?}/u'      => '<span style="color:$1">$2</span>',
+        '/BGCOLOR\((.+)?\){(.+)?}/u'    => '<span style="background-color:$1">$2</span>',
+        '/SIZE\((\d+)?\){(.+)?}/u'      => '<span style="font-size:$1rem">$2</span>',
+        '/SUP\((.+)?\){(.+)?}/u'        => '<sup>$1</sup>',
+        '/SUB\((.+)?\){(.+)?}/u'        => '<sub>$1</sub>',
+        '/LANG\((\w\w)?\){(.+)?}/u'     => '<bdi lang="$1">$2</bdi>',
+        '/ABBR\((.+)?\){(.+)?}/u'       => '<abbr title="$1">$2</abbr>',
+        '/%%(?!%)((?:(?!%%).)*)%%/u'    => '<ins>$1</ins>',
+        '/~~(?!%)((?:(?!~~).)*)~~/u'    => '<del>$1</del>',
+        '/@@@(?!@)((?:(?!@@@).)*)@@@/u' => '<q>$1</q>',
+        '/___(?!_)((?:(?!___).)*)___/u' => '<s>$1</s>',
+        '/__(?!_)((?:(?!__).)*)__/u'    => '<u>$1</u>',
+        "/'''(?!')((?:(?!''').)*)'''/u" => '<i>$1</i>',
+        "/''(?!')((?:(?!'').)*)''/u"    => '<b>$1</b>',
+
         // Markdown互換書式
         '/\*(?!\*)((?:(?!\*).)*)\*/'                          => '<em>$1</em>',
         '/\*\*(?!\*\*)((?:(?!\*\*).)*)\*\*/'                  => '<strong>$1</strong>',
@@ -82,10 +79,7 @@ class InlineRules
     // User-defined rules (convert without replacing source)
     public static function replace($str)
     {
-        $pattern = array_keys(self::$rules);
-        $replace = array_values(self::$rules);
-
-        return preg_replace($pattern, $replace, $str);
+        return preg_replace(array_keys(self::$rules), array_values(self::$rules), $str);
     }
 
     public static function getProtocolPattern()

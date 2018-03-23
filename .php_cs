@@ -11,6 +11,7 @@ $finder = PhpCsFixer\Finder::create()
         'node_modules',
         'resources/lang',
         'storage',
+        'bootstrap',
         'vendor'
     ]);
 

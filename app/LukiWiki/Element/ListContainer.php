@@ -17,6 +17,7 @@ class ListContainer extends Element
     protected $tag = 'ul';
     protected $tag2 = 'li';
     public $level = 0;
+    protected $isAmp;
 
     public function __construct($tag, $tag2, $head, $text)
     {
@@ -30,7 +31,7 @@ class ListContainer extends Element
 
         parent::insert($element);
         if (!empty($text)) {
-            $content = new InlineElement($text);
+            $content = new InlineElement($text, $this->isAmp);
             $this->meta = $content->getMeta();
             $this->last = $this->last->insert($content);
         }
@@ -74,6 +75,6 @@ class ListContainer extends Element
 
     public function toString()
     {
-        return $this->wrap(parent::toString(), $this->tag);
+        return $this->wrap(parent::toString(), $this->tag, [], false);
     }
 }

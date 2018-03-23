@@ -49,8 +49,9 @@ class InlineConverter
      *
      * @param array $converters 使用する変換クラス名
      * @param array $excludes   除外する変換クラス名
+     * @param bool  $isAmp      AMP用HTMLを出力するか？
      */
-    public function __construct($converters = [], $excludes = [])
+    public function __construct(array $converters, array $excludes, bool $isAmp)
     {
         static $converters;
         if (!isset($converters)) {
@@ -69,7 +70,7 @@ class InlineConverter
                 continue;
             }
 
-            $converter = new $name($start);
+            $converter = new $name($start, $isAmp);
 
             $pattern = $converter->getPattern();
             if (empty($pattern)) {
@@ -107,7 +108,7 @@ class InlineConverter
      *
      * @return function
      */
-    public function getClone($obj)
+    public function getClone(object $obj)
     {
         static $clone_func;
 
@@ -128,7 +129,7 @@ class InlineConverter
      *
      * @return string
      */
-    public function convert($string, $page = '')
+    public function convert(string $string, string $page = '')
     {
         $input = trim($string);
         if (empty($input)) {
@@ -164,7 +165,7 @@ class InlineConverter
      *
      * @return object
      */
-    private function getConverter($arr)
+    private function getConverter(array $arr)
     {
         foreach (array_keys($this->converters) as $start) {
             if (isset($arr[$start]) && $arr[$start] === $arr[0]) {
@@ -173,6 +174,11 @@ class InlineConverter
         }
     }
 
+    /**
+     * メタ情報を取得.
+     *
+     * @return array
+     */
     public function getMeta()
     {
         return $this->meta;

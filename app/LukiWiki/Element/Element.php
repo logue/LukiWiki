@@ -32,12 +32,12 @@ class Element
         unset($this->meta);
     }
 
-    public function setParent($parent)
+    public function setParent(object $parent)
     {
         $this->parent = $parent;
     }
 
-    public function add($obj)
+    public function add(object $obj)
     {
         if ($this->canContain($obj)) {
             return $this->insert($obj);
@@ -46,7 +46,7 @@ class Element
         return $this->parent->add($obj);
     }
 
-    public function insert($obj)
+    public function insert(object $obj)
     {
         if (is_object($obj)) {
             $obj->setParent($this);
@@ -58,12 +58,12 @@ class Element
         return $this->last;
     }
 
-    public function canContain($obj)
+    public function canContain(object $obj)
     {
         return true;
     }
 
-    public function wrap($string, $tag, $param = [], $canomit = true)
+    public function wrap(string $string, string $tag, array $param, bool $canomit)
     {
         $attributes = [];
         foreach ($param as $key => $value) {

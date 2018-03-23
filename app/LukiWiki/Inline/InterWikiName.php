@@ -36,11 +36,6 @@ class InterWikiName extends Inline
     protected $param = '';
     protected $anchor = '';
 
-    public function __construct($start)
-    {
-        parent::__construct($start);
-    }
-
     public function getPattern()
     {
         $s2 = $this->start + 2;

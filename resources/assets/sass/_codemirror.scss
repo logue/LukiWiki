@@ -3,7 +3,7 @@
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: $font-family-monospace;
-  height: 30rem;
+  height: auto;
   resize: vertical;
   direction: ltr;
   /* berow Copy from bootstrap's .form-control */

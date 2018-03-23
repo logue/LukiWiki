@@ -12,11 +12,6 @@ namespace App\LukiWiki\Inline;
 // tel: URL schemes
 class Telephone extends Inline
 {
-    public function __construct(int $start)
-    {
-        parent::__construct($start);
-    }
-
     public function getPattern()
     {
         $s1 = $this->start + 1;

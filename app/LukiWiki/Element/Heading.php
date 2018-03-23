@@ -24,14 +24,14 @@ class Heading extends Element
     protected $id;
     protected $text;
 
-    public function __construct($root, $text)
+    public function __construct($root, $text, $isAmp = false)
     {
         parent::__construct();
 
         $this->level = min(5, strspn($text, '*'));
         list($text, $this->msg_top, $this->id) = $root->getAnchor($text, $this->level);
 
-        $content = new InlineElement($text);
+        $content = new InlineElement($text, $isAmp);
         $this->meta = $content->getMeta();
         $this->insert($content);
 
@@ -57,6 +57,6 @@ class Heading extends Element
 
         $this->meta[$id] = $this->text;
 
-        return $this->wrap(parent::toString(), 'h'.$this->level, ['id' => $id]);
+        return $this->wrap(parent::toString(), 'h'.$this->level, ['id' => $id], false);
     }
 }

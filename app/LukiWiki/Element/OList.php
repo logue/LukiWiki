@@ -16,8 +16,8 @@ namespace App\LukiWiki\Element;
  */
 class OList extends ListContainer
 {
-    public function __construct($root, $text)
+    public function __construct($root, $text, $isAmp)
     {
-        parent::__construct('ol', 'li', '+', $text);
+        parent::__construct('ol', 'li', '+', $text, $isAmp);
     }
 }

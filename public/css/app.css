@@ -13677,7 +13677,7 @@ body {
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: MeiryoKe_Gothic, "Ricty Diminished", "Osaka\FF0D\7B49\5E45", "Osaka-\7B49\5E45", Osaka-mono, "\FF2D\FF33   \30B4\30B7\30C3\30AF", "MS Gothic", "Courier New", Courier, Monaco, Menlo, Consolas, "Lucida Console", monospace;
-  height: 30rem;
+  height: auto;
   resize: vertical;
   direction: ltr;
   /* berow Copy from bootstrap's .form-control */

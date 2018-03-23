@@ -36,9 +36,9 @@ class Align extends Element
     public function toString()
     {
         if (empty($this->align)) {
-            return $this->wrap(parent::toString(), 'div');
+            return $this->wrap(parent::toString(), 'div', [], false);
         }
 
-        return $this->wrap(parent::toString(), 'div', ['class' => Alignment::block($this->align)]);
+        return $this->wrap(parent::toString(), 'div', ['class' => Alignment::block($this->align)], false);
     }
 }

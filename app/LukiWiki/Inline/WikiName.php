@@ -14,11 +14,6 @@ use App\LukiWiki\Rules\InlineRules;
 // WikiNames
 class WikiName extends Inline
 {
-    public function __construct($start)
-    {
-        parent::__construct($start);
-    }
-
     public function getPattern()
     {
         return InlineRules::WIKINAME_PATTERN;

@@ -12,11 +12,6 @@ namespace App\LukiWiki\Inline;
 // AutoLinks
 class AutoLink extends Inline
 {
-    public function __construct($start)
-    {
-        parent::__construct($start);
-    }
-
     public function getPattern()
     {
         return '';

@@ -25,6 +25,6 @@ class ListElement extends Element
 
     public function toString()
     {
-        return $this->wrap(parent::toString(), $this->head);
+        return $this->wrap(parent::toString(), $this->head, [], false);
     }
 }

@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>@yield('title')</title>
+    <meta name="generator" content="LukiWiki v0.0.0-alpha" />
+    <title>@yield('title') - {{ Config::get('lukiwiki.sitename') }}</title>
 @if(isset($page))
     <link rel="canonical" href="{{ $page ? url($page) : url('/') }}" />
     <link rel="amphtml" href="{{ $page ? url($page) : url('/') }}?action=amp" />
@@ -15,11 +16,8 @@
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
 <!--[if IE]>
     <link href="{{ asset('css/bootstrap-ie9.css') }}" rel="stylesheet" />
-    <script src="{{ asset('js/html5shiv.min.js') }}"></script>
 <![endif]-->
-<!--[if lt IE 9]>
-    <link href="{{ asset('css/bootstrap-ie8.css') }}" rel="stylesheet" />
-<![endif]-->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
     @yield('styles')
 </head>
 
@@ -41,11 +39,11 @@
     </nav>
 
     <main class="container mt-2" id="app">
-        <h1>{{$title}}</h1>
+        <h1>{{ $title }}</h1>
         <hr />
         @yield('content')
     </main>
-    <footer class="bg-light">
+    <footer class="bg-light mt-1">
         <div class="container">
             <p><strong>LukiWiki</strong> v0.0.0-alpha / <small>Process Time: <var>{{ sprintf('%0.3f', microtime(true) - LARAVEL_START) }}</var> sec.</small></p>
         </div>

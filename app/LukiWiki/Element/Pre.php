@@ -34,6 +34,6 @@ class Pre extends Element
 
     public function toString()
     {
-        return $this->wrap(implode('', $this->elements), 'pre');
+        return $this->wrap(implode('', $this->elements), 'pre', [], false);
     }
 }

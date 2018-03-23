@@ -12,11 +12,6 @@ namespace App\LukiWiki\Inline;
 // mailto: URL schemes
 class Mailto extends Inline
 {
-    public function __construct(int $start)
-    {
-        parent::__construct($start);
-    }
-
     public function getPattern()
     {
         $s1 = $this->start + 1;

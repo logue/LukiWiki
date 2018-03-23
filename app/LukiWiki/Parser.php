@@ -33,9 +33,8 @@ class Parser
             $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $lines));
         }
 
-        $body = new RootElement(null, null, ['id' => ++self::$instance]);
+        $body = new RootElement(null, null, ['id' => ++self::$instance, 'isAmp' => $isAmp]);
         $body->parse($lines);
-        dd($body);
 
         return $body->toString();
     }

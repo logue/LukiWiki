@@ -31,14 +31,17 @@ abstract class Inline
 
     protected $meta;
 
+    protected $isAmp;
+
     /**
      * コンストラクタ
      *
      * @param int $start
      */
-    public function __construct(int $start)
+    public function __construct(int $start, bool $isAmp)
     {
         $this->start = $start;
+        $this->isAmp = $isAmp;
         $this->pages = WikiFileSystem::getInstance();
     }
 
@@ -98,11 +101,11 @@ abstract class Inline
     // Set basic parameters
     public function setParam(string $page, string $name, string $body, string $alias = '')
     {
-        $converter = new InlineConverter(['InlinePlugin']);
-        
+        $converter = new InlineConverter(['InlinePlugin'], [], $this->isAmp);
+
         $meta = $converter->getMeta();
-        if (!empty($meta)){
-             $this->meta = array_merge($this->meta, $meta);
+        if (!empty($meta)) {
+            $this->meta = array_merge($this->meta, $meta);
         }
 
         $this->page = $page;
@@ -165,7 +168,7 @@ abstract class Inline
      *
      * @return string
      */
-    public static function setLink(string $term, string $url, string $tooltip = '', string $rel = '', bool $is_redirect = false)
+    public function setLink(string $term, string $url, string $tooltip = '', string $rel = '', bool $is_redirect = false)
     {
         $parsed_url = parse_url($url, PHP_URL_PATH);
         $_tooltip = !empty($tooltip) ? ' title="'.self::processText($tooltip).'"' : '';
@@ -199,18 +202,31 @@ abstract class Inline
                 case 'webp':
                 case 'bmp':
                 case 'ico':
-                    $term = '<img src="'.$url.'" alt="'.self::processText($term).'" '.$_tooltip.' />';
+                    if ($this->isAmp) {
+                        $term = '<amp-img src="'.$url.'" alt="'.self::processText($term).'" width="1" height="1" class="external-media"><div fallback>'.$tooltip.'</div></amp-img>';
+                    } else {
+                        $term = '<img src="'.$url.'" alt="'.self::processText($term).'" '.$_tooltip.' />';
+                    }
+
                     break;
                 case 'mp4':
                 case 'ogm':
                 case 'webm':
-                     return '<video src="'.$url.'" alt="'.self::processText($term).'" controls="controls"'.$_tooltip.'/>';
+                    if ($this->isAmp) {
+                        return '<amp-video src="'.$url.'" controls '.$_tooltip.' width="1" height="1" class="external-media"><div fallback>'.self::processText($term).'</div></amp-video>';
+                    } else {
+                        return '<video src="'.$url.'" alt="'.self::processText($term).'" controls="controls"'.$_tooltip.'/>';
+                    }
                      break;
                 case 'wav':
                 case 'ogg':
                 case 'm4a':
                 case 'mp3':
-                    return '<audio src="'.$url.'" alt="'.self::processText($term).'" controls="controls"'.$_tooltip.'/>';
+                    if ($this->isAmp) {
+                        return '<amp-audio  src="'.$url.'" controls '.$_tooltip.' width="auto" height="50"><div fallback>'.self::processText($term).'</div></amp-audio>';
+                    } else {
+                        return '<audio src="'.$url.'" alt="'.self::processText($term).'" controls="controls"'.$_tooltip.'/>';
+                    }
                     break;
             }
         }

@@ -22,9 +22,10 @@ class RootElement extends Element
     protected $id;
     protected $count = 0;
 
-    public function __construct(int $id = 0)
+    public function __construct(string $text, int $level, array $option)
     {
-        $this->id = $id;
+        $this->id = $option['id'] ?? 0;
+        $this->isAmp = $option['isAmp'] ?? false;
         parent::__construct();
     }
 
@@ -74,7 +75,8 @@ class RootElement extends Element
             }
 
             // Github Markdown互換シンタックスハイライト記法
-            if (preg_match('/^```$/', $line, $matches)) {
+            $lang = null;
+            if (preg_match('/^```.+?$/', $line, $matches)) {
                 $line .= self::MULTILINE_DELIMITER;
                 while (!empty($lines)) {
                     $next_line = preg_replace('/['.self::MULTILINE_DELIMITER.'\n]*$/', '', array_shift($lines));
@@ -100,15 +102,14 @@ class RootElement extends Element
                 $content = null;
                 switch ($head) {
                     case '*':
-                        $this->insert(new Heading($this, $line));
+                        $this->insert(new Heading($this, $line, $this->isAmp));
                         continue;
                         break;
                     case '`':
                         // GFM:pre
-                        if (preg_match('/\```(\w+?)\r(.*)\r```/', $line, $body)) {
-                            $line .= "\r".$body[1]."\r";
+                        if (preg_match('/\```(.+?)\r(.*)\r```/', $line, $matches)) {
+                            $content = new GfmPre($this, $matches[2], $matches[1]);
                         }
-                        $content = new GfmPre($this, $line, $lang);
                         break;
                     case ' ':
                     case "\t":
@@ -118,28 +119,28 @@ class RootElement extends Element
                     case '-':
                         if (substr($line, 0, 4) === '----') {
                             // Horizontal Rule
-                            $this->insert(new HRule($this, $line));
+                            $this->insert(new HRule($this, $line, $this->isAmp));
                             continue;
                         }
                         // List
-                        $content = new UList($this, $line);
+                        $content = new UList($this, $line, $this->isAmp);
                         break;
                     case '+':
-                        $content = new OList($this, $line);
+                        $content = new OList($this, $line, $this->isAmp);
                         break;
                     case '>':
                     case '<':
-                        $content = new Blockquote($this, $line);
+                        $content = new Blockquote($this, $line, $this->isAmp);
                         break;
                     case ':':
                         $out = explode('|', ltrim($line), 2);
                         if (!count($out) < 2) {
-                            $content = new DList($out);
+                            $content = new DList($out, $this->isAmp);
                         }
                         break;
                     case '|':
                         if (preg_match('/^\|(.+)\|([hHfFcC]?)$/', $line, $out)) {
-                            $content = new Table($out);
+                            $content = new Table($out, $this->isAmp);
                         }
                         break;
                     case ',':
@@ -163,7 +164,7 @@ class RootElement extends Element
                         }
                         break;
                     case '~':
-                        $content = new Paragraph(' '.substr($line, 1));
+                        $content = new Paragraph(' '.substr($line, 1), $this->isAmp);
                         break;
                     case '/':
                         // Escape comments
@@ -172,7 +173,7 @@ class RootElement extends Element
                         }
                         break;
                     default:
-                        $content = new InlineElement($line);
+                        $content = new InlineElement($line, $this->isAmp);
                         break;
                 }
 
@@ -187,7 +188,9 @@ class RootElement extends Element
                 }
 
                 // Default
-                $this->last = $this->last->add($content);
+                if (!empty($content)) {
+                    $this->last = $this->last->add($content);
+                }
                 unset($content);
                 continue;
             }

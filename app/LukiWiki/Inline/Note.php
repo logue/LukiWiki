@@ -22,14 +22,6 @@ class Note extends Inline
     private static $note_id = 0;
 
     /**
-     * コンストラクタ
-     */
-    public function __construct(int $start)
-    {
-        parent::__construct($start);
-    }
-
-    /**
      * マッチパターン.
      */
     public function getPattern()
@@ -51,14 +43,15 @@ class Note extends Inline
     public function setPattern(array $arr, string $page = null)
     {
         list(, $body) = $this->splice($arr);
-        $note = InlineFactory::factory($body);
+        $converter = new InlineConverter([], [get_class()], $this->isAmp);
+        $note = $converter->convert($body);
 
         $id = self::$note_id;
 
         // Footnote
         $this->meta['note'] = trim($note);
         // A hyperlink, content-body to footnote
-        $name = '<sup><a id="notetext_'.$id.'" href="#notefoot_'.$id.'" class="note-anchor"><i class="fas fa-thumbtack fa-xs"></i> '.$id.'</a></sup>';
+        $name = '<sup><a id="note-anchor-'.$id.'" href="#note-'.$id.'" class="note-anchor"><i class="fas fa-thumbtack fa-xs"></i> '.$id.'</a></sup>';
         ++self::$note_id;
 
         return parent::setParam($page, $name, $body);

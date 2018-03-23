@@ -20,7 +20,7 @@ class TableCell extends Element
 
     const CELL_OPTION_MATCH_PATTERN = '/^(?:(LEFT|CENTER|RIGHT|JUSTIFY)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\w+)\)|LANG\((\w+2)\)|(BASELINE|TOP|MIDDLE|BOTTOM|TEXT-TOP|TEXT-BOTTOM)|(NOWRAP)(TRUNCATE)):(.*)$/';
 
-    public function __construct($text, $is_template = false)
+    public function __construct($text, $is_template, $isAmp)
     {
         parent::__construct();
         $matches = [];
@@ -43,7 +43,7 @@ class TableCell extends Element
                 $value = self::processParam($matches[4]);
                 if (is_numeric($value)) {
                     // 10px = 1rem
-                    $this->style['font-size'] = (int) $value * 0.1.'rem';
+                    $this->style['font-size'] = (int) $value.'rem';
                 } elseif (preg_match('/^h[1-6]$', $value)) {
                     // h1 ~ h6
                     $this->class[] = $value;
@@ -65,10 +65,10 @@ class TableCell extends Element
         if ($is_template) {
             // テンプレート行（末尾にhを入れるヘッダー行の前の行の処理）
             if (is_numeric($text)) {
-                $this->style['width'] = (int) $text * 0.1.'rem';
+                $this->style['width'] = $text.'rem';
             } elseif (preg_match('/\d+%$/', $text)) {
                 // %指定
-                $this->style['width'] = (int) $text.'%';
+                $this->style['width'] = $text.'%';
             }
         }
 
@@ -92,7 +92,7 @@ class TableCell extends Element
                 $obj = $obj->elements[0];
             }
         } else {
-            $obj = new InlineElement($text);
+            $obj = new InlineElement($text, $isAmp);
         }
 
         $this->meta = $obj->getMeta();
