@@ -23,8 +23,8 @@ class ListElement extends Element
         return !$obj instanceof ListContainer || $obj->level > $this->level;
     }
 
-    public function toString()
+    public function __toString()
     {
-        return $this->wrap(parent::toString(), $this->head, [], false);
+        return $this->wrap(parent::__toString(), $this->head, [], false);
     }
 }

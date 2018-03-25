@@ -65,9 +65,9 @@ class Blockquote extends Element
         return parent::insert($obj);
     }
 
-    public function toString()
+    public function __toString()
     {
-        return $this->wrap(parent::toString(), 'blockquote', ['class' => 'blockquote'], false);
+        return $this->wrap(parent::__toString(), 'blockquote', ['class' => 'blockquote'], false);
     }
 
     private function end($root, $level)

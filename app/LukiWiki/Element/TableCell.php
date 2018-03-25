@@ -99,7 +99,7 @@ class TableCell extends Element
         $this->insert($obj);
     }
 
-    public function toString()
+    public function __toString()
     {
         $param = [];
         if ($this->rowspan > 1) {
@@ -125,6 +125,6 @@ class TableCell extends Element
             $param['class'] = implode(' ', $this->class);
         }
 
-        return $this->wrap(parent::toString(), $this->tag, $param, false);
+        return $this->wrap(parent::__toString(), $this->tag, $param, false);
     }
 }

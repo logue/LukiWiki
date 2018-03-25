@@ -33,12 +33,12 @@ class Align extends Element
         return $obj instanceof InlineElement;
     }
 
-    public function toString()
+    public function __toString()
     {
         if (empty($this->align)) {
-            return $this->wrap(parent::toString(), 'div', [], false);
+            return $this->wrap(parent::__toString(), 'div', [], false);
         }
 
-        return $this->wrap(parent::toString(), 'div', ['class' => Alignment::block($this->align)], false);
+        return $this->wrap(parent::__toString(), 'div', ['class' => Alignment::block($this->align)], false);
     }
 }

@@ -73,8 +73,8 @@ class ListContainer extends Element
         return $this->last;
     }
 
-    public function toString()
+    public function __toString()
     {
-        return $this->wrap(parent::toString(), $this->tag, [], false);
+        return $this->wrap(parent::__toString(), $this->tag, [], false);
     }
 }

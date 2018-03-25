@@ -25,7 +25,7 @@ class Table extends Element
     protected static $parts = [
         'h' => 'thead',
         'f' => 'tfoot',
-        ''  => 'tbody',
+        '' => 'tbody',
     ];
 
     public function __construct($out, $isAmp)
@@ -46,7 +46,7 @@ class Table extends Element
 
     public function canContain($obj)
     {
-        return ($obj instanceof self) && ($obj->col === $this->col);
+        return $obj instanceof self && $obj->col === $this->col;
     }
 
     public function insert($obj)
@@ -57,13 +57,13 @@ class Table extends Element
         return $this;
     }
 
-    public function toString()
+    public function __toString()
     {
         // Set rowspan (from bottom, to top)
         for ($ncol = 0; $ncol < $this->col; ++$ncol) {
             $rowspan = 1;
             foreach (array_reverse(array_keys($this->elements)) as $nrow) {
-                $row = &$this->elements[$nrow];
+                $row = $this->elements[$nrow];
                 if ($row[$ncol]->rowspan === 0) {
                     ++$rowspan;
                     continue;
@@ -80,7 +80,7 @@ class Table extends Element
         // Set colspan and style
         $stylerow = null;
         foreach (array_keys($this->elements) as $nrow) {
-            $row = &$this->elements[$nrow];
+            $row = $this->elements[$nrow];
             if ($this->types[$nrow] === 'c') {
                 $stylerow = $row;
             }
@@ -107,13 +107,13 @@ class Table extends Element
         foreach (static::$parts as $type => $part) {
             $part_string = '';
             foreach (array_keys($this->elements) as $nrow) {
-                if ($this->types[$nrow] != $type) {
+                if ($this->types[$nrow] !== $type) {
                     continue;
                 }
                 $row = $this->elements[$nrow];
                 $row_string = '';
                 foreach (array_keys($row) as $ncol) {
-                    $row_string .= $row[$ncol]->toString();
+                    $row_string .= $row[$ncol];
                 }
                 $part_string .= $this->wrap($row_string, 'tr', [], false);
             }

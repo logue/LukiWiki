@@ -16,8 +16,6 @@ use App\LukiWiki\Inline\InlineConverter;
  */
 class InlineElement extends Element
 {
-    private static $converter;
-
     public function __construct($text, $isAmp)
     {
         parent::__construct();
@@ -29,6 +27,7 @@ class InlineElement extends Element
             if (!isset(self::$converter)) {
                 self::$converter = new InlineConverter([], [], $isAmp);
             }
+
             $clone = self::$converter->getClone(self::$converter);
             $this->elements[] = $clone->convert($text);
             $this->meta = $clone->getMeta();
@@ -37,7 +36,9 @@ class InlineElement extends Element
 
     public function insert($obj)
     {
-        $this->elements[] = $obj->elements[0];
+        if (!empty($obj->elements[0])) {
+            $this->elements[] = $obj->elements[0];
+        }
 
         return $this;
     }
@@ -47,7 +48,7 @@ class InlineElement extends Element
         return $obj instanceof self;
     }
 
-    public function toString()
+    public function __toString()
     {
         return implode('', $this->elements);
     }

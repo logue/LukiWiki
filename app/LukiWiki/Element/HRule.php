@@ -14,7 +14,7 @@ namespace App\LukiWiki\Element;
  */
 class HRule extends Element
 {
-    public function toString()
+    public function __toString()
     {
         return '<hr />';
     }

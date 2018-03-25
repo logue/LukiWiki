@@ -39,7 +39,7 @@ class SharpPre extends Element
         return $this;
     }
 
-    public function toString()
+    public function __toString()
     {
         // 変換処理
         $ret = InlineFactory::factory($this->elements);

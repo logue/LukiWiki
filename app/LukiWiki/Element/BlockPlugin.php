@@ -23,12 +23,7 @@ class BlockPlugin extends Element
         list(, $this->name, $this->param) = array_pad($out, 3, null);
     }
 
-    public function canContain($obj)
-    {
-        return false;
-    }
-
-    public function toString()
+    public function __toString()
     {
         // TODO:Call #plugin
         return '<p class="p-2 mb-2 rounded text-white bg-secondary">#'.$this->name.'</div>';

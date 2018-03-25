@@ -48,10 +48,12 @@ class RootElement extends Element
             if (preg_match('/^(LEFT|CENTER|RIGHT|JUSTIFY|TITLE):(.*)$/', $line, $matches)) {
                 $cmd = strtolower($matches[1]);
 
-                if ($cmd === 'title') {
-                    $this->meta['title'] = $matches[2];
-                } else {
-                    $this->last = $this->last->add(new Align($cmd));
+                if (!empty($cmd)) {
+                    if ($cmd === 'title') {
+                        $this->meta['title'] = $matches[2];
+                    } elseif (is_object($this->last)) {
+                        $this->last = $this->last->add(new Align($cmd));
+                    }
                 }
                 if (empty($matches[2])) {
                     continue;
@@ -210,6 +212,11 @@ class RootElement extends Element
 
         // Add heding
         return [$_text, null, $autoid];
+    }
+    
+    public function canContain(object $obj)
+    {
+        return true;
     }
 
     public function insert($obj)

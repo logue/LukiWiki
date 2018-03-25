@@ -61,8 +61,8 @@ class WikiController extends Controller
                    'default.source',
                    [
                        'source' => $this->content,
-                       'title'  => 'Source of '.$page,
-                       'page'   => $page,
+                       'title' => 'Source of '.$page,
+                       'page' => $page,
                    ]
                );
             case 'list':
@@ -77,7 +77,7 @@ class WikiController extends Controller
                    'default.recent',
                    [
                        'entries' => $this->getLatest(),
-                       'title'   => 'RecentChanges',
+                       'title' => 'RecentChanges',
                    ]
                );
                break;
@@ -124,10 +124,10 @@ class WikiController extends Controller
         return view(
            $isAmp ? 'default.amp' : 'default.content',
            [
-                'page'    => $this->page,
-                'content' => $body->toString(),
-                'title'   => $meta['title'] ?? $this->page,
-                'notes'   => $meta['note'] ?? null,
+                'page' => $this->page,
+                'content' => $body->__toString(),
+                'title' => $meta['title'] ?? $this->page,
+                'notes' => $meta['note'] ?? null,
             ]
         );
     }
@@ -141,10 +141,10 @@ class WikiController extends Controller
             return view(
                 'default.edit',
                 [
-                    'page'   => '',
+                    'page' => '',
                     'source' => '',
-                    'title'  => 'Create New Page',
-                    'hash'   => 0,
+                    'title' => 'Create New Page',
+                    'hash' => 0,
                 ]
              );
         }
@@ -157,10 +157,10 @@ class WikiController extends Controller
         return view(
             'default.edit',
             [
-                'page'   => $this->page,
+                'page' => $this->page,
                 'source' => $this->content,
-                'title'  => 'Edit '.$this->page,
-                'hash'   => $this->data->hash($this->content),
+                'title' => 'Edit '.$this->page,
+                'hash' => $this->data->hash($this->content),
             ]
          );
     }
@@ -182,7 +182,7 @@ class WikiController extends Controller
             'default.list',
             [
                 'entries' => $filelist(),
-                'title'   => 'List',
+                'title' => 'List',
             ]
         );
     }

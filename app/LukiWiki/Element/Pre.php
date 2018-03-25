@@ -32,7 +32,7 @@ class Pre extends Element
         return $this;
     }
 
-    public function toString()
+    public function __toString()
     {
         return $this->wrap(implode('', $this->elements), 'pre', [], false);
     }

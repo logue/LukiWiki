@@ -31,8 +31,8 @@ class Paragraph extends Element
         return $obj instanceof InlineElement;
     }
 
-    public function toString()
+    public function __toString()
     {
-        return $this->wrap(parent::toString(), 'p', [], false);
+        return $this->wrap(parent::__toString(), 'p', [], false);
     }
 }

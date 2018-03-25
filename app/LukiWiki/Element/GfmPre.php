@@ -20,7 +20,8 @@ class GfmPre extends Element
     {
         parent::__construct();
         $this->lang = $lang;
-        $this->elements[] = htmlspecialchars(trim($text), ENT_HTML5, 'UTF-8');
+        $this->meta[] = $lang;
+        $this->elements[] = parent::processText($text);
     }
 
     public function canContain($obj)
@@ -35,8 +36,8 @@ class GfmPre extends Element
         return $this;
     }
 
-    public function toString()
+    public function __toString()
     {
-        return $this->wrap(implode("\n", $this->elements), 'pre', ['class' => 'cm', 'data-lang' => $this->lang], false);
+        return $this->wrap(implode("\n", $this->elements), 'pre', ['data-lang' => $this->lang], false);
     }
 }

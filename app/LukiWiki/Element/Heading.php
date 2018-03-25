@@ -45,18 +45,13 @@ class Heading extends Element
         return $this->last = $this;
     }
 
-    public function canContain($obj)
-    {
-        return false;
-    }
-
-    public function toString()
+    public function __toString()
     {
         list($this->text, $fixed_anchor) = HeadingAnchor::get($this->text, false);
         $id = (empty($fixed_anchor)) ? $this->id : $fixed_anchor;
 
         $this->meta[$id] = $this->text;
 
-        return $this->wrap(parent::toString(), 'h'.$this->level, ['id' => $id], false);
+        return $this->wrap(parent::__toString(), 'h'.$this->level, ['id' => $id], false);
     }
 }
