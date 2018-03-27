@@ -13677,14 +13677,10 @@ body {
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: MeiryoKe_Gothic, "Ricty Diminished", "Osaka\FF0D\7B49\5E45", "Osaka-\7B49\5E45", Osaka-mono, "\FF2D\FF33   \30B4\30B7\30C3\30AF", "MS Gothic", "Courier New", Courier, Monaco, Menlo, Consolas, "Lucida Console", monospace;
-  height: auto;
-  resize: vertical;
   direction: ltr;
   /* berow Copy from bootstrap's .form-control */
   display: block;
   width: 100%;
-  font-size: 1rem;
-  line-height: 1.5;
   color: #495057;
   background-color: #fff;
   background-clip: padding-box;
@@ -13699,6 +13695,10 @@ body {
 .CodeMirror::-ms-expand {
   background-color: transparent;
   border: 0;
+}
+
+pre.CodeMirror {
+  padding: 0.375rem 0.75rem;
 }
 
 /* PADDING */

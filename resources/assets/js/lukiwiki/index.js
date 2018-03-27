@@ -5,5 +5,7 @@
  * @copyright 2018 Logue
  * @license   MIT
  */
-require('./cm.lukiwiki')
+window.CodeMirror = require('codemirror/lib/codemirror')
+require('./codemirror_lukiwiki')
+require('./codemirror_syntaxhilighter')
 require('./tooltip')

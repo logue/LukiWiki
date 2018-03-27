@@ -38,6 +38,6 @@ class GfmPre extends Element
 
     public function __toString()
     {
-        return $this->wrap(implode("\n", $this->elements), 'pre', ['data-lang' => $this->lang], false);
+        return $this->wrap(implode("\n", $this->elements), 'pre', ['class' => 'CodeMirror', 'data-lang' => $this->lang], false);
     }
 }

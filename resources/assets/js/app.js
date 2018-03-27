@@ -20,5 +20,4 @@ const app = new Vue({
     el: '#app'
 })
 
-window.CodeMirror = require('codemirror/lib/codemirror')
 require('./lukiwiki')

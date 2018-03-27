@@ -213,7 +213,7 @@ class RootElement extends Element
         // Add heding
         return [$_text, null, $autoid];
     }
-    
+
     public function canContain(object $obj)
     {
         return true;

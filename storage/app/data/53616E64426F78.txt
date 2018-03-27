@@ -110,7 +110,7 @@ __アンダーバー__
 
 `コード`
 
-```text/javascript
+```javascript
 // Demo for running a CodeMirror parser over a piece of code without
 // creating an actual editor.
 

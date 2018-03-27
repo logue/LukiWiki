@@ -25,7 +25,7 @@ class Table extends Element
     protected static $parts = [
         'h' => 'thead',
         'f' => 'tfoot',
-        '' => 'tbody',
+        ''  => 'tbody',
     ];
 
     public function __construct($out, $isAmp)

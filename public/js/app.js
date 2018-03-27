@@ -57,7 +57,7 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 14);
@@ -5202,7 +5202,7 @@ function addChangeToHistory(doc, change, selAfter, opId) {
 
   if ((hist.lastOp == opId ||
        hist.lastOrigin == change.origin && change.origin &&
-       ((change.origin.charAt(0) == "+" && doc.cm && hist.lastModTime > time - doc.cm.options.historyEventDelay) ||
+       ((change.origin.charAt(0) == "+" && hist.lastModTime > time - (doc.cm ? doc.cm.options.historyEventDelay : 500)) ||
         change.origin.charAt(0) == "*")) &&
       (cur = lastChangeEvent(hist, hist.lastOp == opId))) {
     // Merge this change into the last event
@@ -5816,7 +5816,7 @@ function makeChangeSingleDocInEditor(cm, change, spans) {
 function replaceRange(doc, code, from, to, origin) {
   if (!to) { to = from; }
   if (cmp(to, from) < 0) { var assign;
-    (assign = [to, from], from = assign[0], to = assign[1], assign); }
+    (assign = [to, from], from = assign[0], to = assign[1]); }
   if (typeof code == "string") { code = doc.splitLines(code); }
   makeChange(doc, {from: from, to: to, text: code, origin: origin});
 }
@@ -5912,10 +5912,10 @@ function LeafChunk(lines) {
 }
 
 LeafChunk.prototype = {
-  chunkSize: function chunkSize() { return this.lines.length },
+  chunkSize: function() { return this.lines.length },
 
   // Remove the n lines at offset 'at'.
-  removeInner: function removeInner(at, n) {
+  removeInner: function(at, n) {
     var this$1 = this;
 
     for (var i = at, e = at + n; i < e; ++i) {
@@ -5928,13 +5928,13 @@ LeafChunk.prototype = {
   },
 
   // Helper used to collapse a small branch into a single leaf.
-  collapse: function collapse(lines) {
+  collapse: function(lines) {
     lines.push.apply(lines, this.lines);
   },
 
   // Insert the given array of lines at offset 'at', count them as
   // having the given height.
-  insertInner: function insertInner(at, lines, height) {
+  insertInner: function(at, lines, height) {
     var this$1 = this;
 
     this.height += height;
@@ -5943,7 +5943,7 @@ LeafChunk.prototype = {
   },
 
   // Used to iterate over a part of the tree.
-  iterN: function iterN(at, n, op) {
+  iterN: function(at, n, op) {
     var this$1 = this;
 
     for (var e = at + n; at < e; ++at)
@@ -5967,9 +5967,9 @@ function BranchChunk(children) {
 }
 
 BranchChunk.prototype = {
-  chunkSize: function chunkSize() { return this.size },
+  chunkSize: function() { return this.size },
 
-  removeInner: function removeInner(at, n) {
+  removeInner: function(at, n) {
     var this$1 = this;
 
     this.size -= n;
@@ -5995,13 +5995,13 @@ BranchChunk.prototype = {
     }
   },
 
-  collapse: function collapse(lines) {
+  collapse: function(lines) {
     var this$1 = this;
 
     for (var i = 0; i < this.children.length; ++i) { this$1.children[i].collapse(lines); }
   },
 
-  insertInner: function insertInner(at, lines, height) {
+  insertInner: function(at, lines, height) {
     var this$1 = this;
 
     this.size += lines.length;
@@ -6030,7 +6030,7 @@ BranchChunk.prototype = {
   },
 
   // When a node has grown, check whether it should be split.
-  maybeSpill: function maybeSpill() {
+  maybeSpill: function() {
     if (this.children.length <= 10) { return }
     var me = this;
     do {
@@ -6052,7 +6052,7 @@ BranchChunk.prototype = {
     me.parent.maybeSpill();
   },
 
-  iterN: function iterN(at, n, op) {
+  iterN: function(at, n, op) {
     var this$1 = this;
 
     for (var i = 0; i < this.children.length; ++i) {
@@ -7730,8 +7730,8 @@ function leftButtonStartDrag(cm, event, pos, behavior) {
   var dragEnd = operation(cm, function (e) {
     if (webkit) { display.scroller.draggable = false; }
     cm.state.draggingText = false;
-    off(document, "mouseup", dragEnd);
-    off(document, "mousemove", mouseMove);
+    off(display.wrapper.ownerDocument, "mouseup", dragEnd);
+    off(display.wrapper.ownerDocument, "mousemove", mouseMove);
     off(display.scroller, "dragstart", dragStart);
     off(display.scroller, "drop", dragEnd);
     if (!moved) {
@@ -7740,7 +7740,7 @@ function leftButtonStartDrag(cm, event, pos, behavior) {
         { extendSelection(cm.doc, pos, null, null, behavior.extend); }
       // Work around unexplainable focus problem in IE9 (#2127) and Chrome (#3081)
       if (webkit || ie && ie_version == 9)
-        { setTimeout(function () {document.body.focus(); display.input.focus();}, 20); }
+        { setTimeout(function () {display.wrapper.ownerDocument.body.focus(); display.input.focus();}, 20); }
       else
         { display.input.focus(); }
     }
@@ -7755,8 +7755,8 @@ function leftButtonStartDrag(cm, event, pos, behavior) {
   dragEnd.copy = !behavior.moveOnDrag;
   // IE's approach to draggable
   if (display.scroller.dragDrop) { display.scroller.dragDrop(); }
-  on(document, "mouseup", dragEnd);
-  on(document, "mousemove", mouseMove);
+  on(display.wrapper.ownerDocument, "mouseup", dragEnd);
+  on(display.wrapper.ownerDocument, "mousemove", mouseMove);
   on(display.scroller, "dragstart", dragStart);
   on(display.scroller, "drop", dragEnd);
 
@@ -7888,8 +7888,8 @@ function leftButtonSelect(cm, event, start, behavior) {
     counter = Infinity;
     e_preventDefault(e);
     display.input.focus();
-    off(document, "mousemove", move);
-    off(document, "mouseup", up);
+    off(display.wrapper.ownerDocument, "mousemove", move);
+    off(display.wrapper.ownerDocument, "mouseup", up);
     doc.history.lastSelOrigin = null;
   }
 
@@ -7899,8 +7899,8 @@ function leftButtonSelect(cm, event, start, behavior) {
   });
   var up = operation(cm, done);
   cm.state.selectingText = up;
-  on(document, "mousemove", move);
-  on(document, "mouseup", up);
+  on(display.wrapper.ownerDocument, "mousemove", move);
+  on(display.wrapper.ownerDocument, "mouseup", up);
 }
 
 // Used when mouse-selecting to adjust the anchor to the proper side
@@ -9605,13 +9605,10 @@ TextareaInput.prototype.init = function (display) {
     var this$1 = this;
 
   var input = this, cm = this.cm;
+  this.createField(display);
+  var te = this.textarea;
 
-  // Wraps and hides input textarea
-  var div = this.wrapper = hiddenTextarea();
-  // The semihidden textarea that is focused when the editor is
-  // focused, and receives input.
-  var te = this.textarea = div.firstChild;
-  display.wrapper.insertBefore(div, display.wrapper.firstChild);
+  display.wrapper.insertBefore(this.wrapper, display.wrapper.firstChild);
 
   // Needed to hide big blue blinking cursor on Mobile Safari (doesn't seem to work in iOS 8 anymore)
   if (ios) { te.style.width = "0px"; }
@@ -9676,6 +9673,14 @@ TextareaInput.prototype.init = function (display) {
       input.composing = null;
     }
   });
+};
+
+TextareaInput.prototype.createField = function (_display) {
+  // Wraps and hides input textarea
+  this.wrapper = hiddenTextarea();
+  // The semihidden textarea that is focused when the editor is
+  // focused, and receives input.
+  this.textarea = this.wrapper.firstChild;
 };
 
 TextareaInput.prototype.prepareSelection = function () {
@@ -10071,7 +10076,7 @@ CodeMirror$1.fromTextArea = fromTextArea;
 
 addLegacyProps(CodeMirror$1);
 
-CodeMirror$1.version = "5.35.0";
+CodeMirror$1.version = "5.36.0";
 
 return CodeMirror$1;
 
@@ -10218,7 +10223,7 @@ module.exports = function(module) {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* WEBPACK VAR INJECTION */(function(global) {/**!
  * @fileOverview Kickass library to create and place poppers near their reference elements.
- * @version 1.14.0
+ * @version 1.14.1
  * @license
  * Copyright (c) 2016 Federico Zivolo and contributors
  *
@@ -23786,8 +23791,8 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(15);
-__webpack_require__(44);
-module.exports = __webpack_require__(45);
+__webpack_require__(45);
+module.exports = __webpack_require__(46);
 
 
 /***/ }),
@@ -23819,7 +23824,6 @@ var app = new Vue({
   el: '#app'
 });
 
-window.CodeMirror = __webpack_require__(2);
 __webpack_require__(41);
 
 /***/ }),
@@ -45784,7 +45788,7 @@ module.exports = function spread(callback) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global, setImmediate) {/*!
- * Vue.js v2.5.15
+ * Vue.js v2.5.16
  * (c) 2014-2018 Evan You
  * Released under the MIT License.
  */
@@ -46810,10 +46814,9 @@ function defineReactive (
  */
 function set (target, key, val) {
   if ("development" !== 'production' &&
-    !Array.isArray(target) &&
-    !isObject(target)
+    (isUndef(target) || isPrimitive(target))
   ) {
-    warn(("Cannot set reactive property on non-object/array value: " + target));
+    warn(("Cannot set reactive property on undefined, null, or primitive value: " + ((target))));
   }
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.length = Math.max(target.length, key);
@@ -46846,10 +46849,9 @@ function set (target, key, val) {
  */
 function del (target, key) {
   if ("development" !== 'production' &&
-    !Array.isArray(target) &&
-    !isObject(target)
+    (isUndef(target) || isPrimitive(target))
   ) {
-    warn(("Cannot delete reactive property on non-object/array value: " + target));
+    warn(("Cannot delete reactive property on undefined, null, or primitive value: " + ((target))));
   }
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.splice(key, 1);
@@ -49766,6 +49768,24 @@ function FunctionalRenderContext (
   Ctor
 ) {
   var options = Ctor.options;
+  // ensure the createElement function in functional components
+  // gets a unique context - this is necessary for correct named slot check
+  var contextVm;
+  if (hasOwn(parent, '_uid')) {
+    contextVm = Object.create(parent);
+    // $flow-disable-line
+    contextVm._original = parent;
+  } else {
+    // the context vm passed in is a functional context as well.
+    // in this case we want to make sure we are able to get a hold to the
+    // real context instance.
+    contextVm = parent;
+    // $flow-disable-line
+    parent = parent._original;
+  }
+  var isCompiled = isTrue(options._compiled);
+  var needNormalization = !isCompiled;
+
   this.data = data;
   this.props = props;
   this.children = children;
@@ -49773,12 +49793,6 @@ function FunctionalRenderContext (
   this.listeners = data.on || emptyObject;
   this.injections = resolveInject(options.inject, parent);
   this.slots = function () { return resolveSlots(children, parent); };
-
-  // ensure the createElement function in functional components
-  // gets a unique context - this is necessary for correct named slot check
-  var contextVm = Object.create(parent);
-  var isCompiled = isTrue(options._compiled);
-  var needNormalization = !isCompiled;
 
   // support for compiled functional template
   if (isCompiled) {
@@ -49835,23 +49849,28 @@ function createFunctionalComponent (
   var vnode = options.render.call(null, renderContext._c, renderContext);
 
   if (vnode instanceof VNode) {
-    setFunctionalContextForVNode(vnode, data, contextVm, options);
-    return vnode
+    return cloneAndMarkFunctionalResult(vnode, data, renderContext.parent, options)
   } else if (Array.isArray(vnode)) {
     var vnodes = normalizeChildren(vnode) || [];
+    var res = new Array(vnodes.length);
     for (var i = 0; i < vnodes.length; i++) {
-      setFunctionalContextForVNode(vnodes[i], data, contextVm, options);
+      res[i] = cloneAndMarkFunctionalResult(vnodes[i], data, renderContext.parent, options);
     }
-    return vnodes
+    return res
   }
 }
 
-function setFunctionalContextForVNode (vnode, data, vm, options) {
-  vnode.fnContext = vm;
-  vnode.fnOptions = options;
+function cloneAndMarkFunctionalResult (vnode, data, contextVm, options) {
+  // #7817 clone node before setting fnContext, otherwise if the node is reused
+  // (e.g. it was from a cached normal slot) the fnContext causes named slots
+  // that should not be matched to match.
+  var clone = cloneVNode(vnode);
+  clone.fnContext = contextVm;
+  clone.fnOptions = options;
   if (data.slot) {
-    (vnode.data || (vnode.data = {})).slot = data.slot;
+    (clone.data || (clone.data = {})).slot = data.slot;
   }
+  return clone
 }
 
 function mergeProps (to, from) {
@@ -49881,7 +49900,7 @@ function mergeProps (to, from) {
 
 /*  */
 
-// hooks to be invoked on component VNodes during patch
+// inline hooks to be invoked on component VNodes during patch
 var componentVNodeHooks = {
   init: function init (
     vnode,
@@ -50039,8 +50058,8 @@ function createComponent (
     }
   }
 
-  // merge component management hooks onto the placeholder node
-  mergeHooks(data);
+  // install component management hooks onto the placeholder node
+  installComponentHooks(data);
 
   // return a placeholder vnode
   var name = Ctor.options.name || tag;
@@ -50080,22 +50099,11 @@ function createComponentInstanceForVnode (
   return new vnode.componentOptions.Ctor(options)
 }
 
-function mergeHooks (data) {
-  if (!data.hook) {
-    data.hook = {};
-  }
+function installComponentHooks (data) {
+  var hooks = data.hook || (data.hook = {});
   for (var i = 0; i < hooksToMerge.length; i++) {
     var key = hooksToMerge[i];
-    var fromParent = data.hook[key];
-    var ours = componentVNodeHooks[key];
-    data.hook[key] = fromParent ? mergeHook$1(ours, fromParent) : ours;
-  }
-}
-
-function mergeHook$1 (one, two) {
-  return function (a, b, c, d) {
-    one(a, b, c, d);
-    two(a, b, c, d);
+    hooks[key] = componentVNodeHooks[key];
   }
 }
 
@@ -50743,13 +50751,15 @@ var KeepAlive = {
     }
   },
 
-  watch: {
-    include: function include (val) {
-      pruneCache(this, function (name) { return matches(val, name); });
-    },
-    exclude: function exclude (val) {
-      pruneCache(this, function (name) { return !matches(val, name); });
-    }
+  mounted: function mounted () {
+    var this$1 = this;
+
+    this.$watch('include', function (val) {
+      pruneCache(this$1, function (name) { return matches(val, name); });
+    });
+    this.$watch('exclude', function (val) {
+      pruneCache(this$1, function (name) { return !matches(val, name); });
+    });
   },
 
   render: function render () {
@@ -50867,7 +50877,7 @@ Object.defineProperty(Vue, 'FunctionalRenderContext', {
   value: FunctionalRenderContext
 });
 
-Vue.version = '2.5.15';
+Vue.version = '2.5.16';
 
 /*  */
 
@@ -54832,7 +54842,7 @@ function parseHTML (html, options) {
 
 var onRE = /^@|^v-on:/;
 var dirRE = /^v-|^@|^:/;
-var forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/;
+var forAliasRE = /([^]*?)\s+(?:in|of)\s+([^]*)/;
 var forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
 var stripParensRE = /^\(|\)$/g;
 
@@ -55502,7 +55512,7 @@ function preTransformNode (el, options) {
     if (map[':type'] || map['v-bind:type']) {
       typeBinding = getBindingAttr(el, 'type');
     }
-    if (!typeBinding && map['v-bind']) {
+    if (!map.type && !typeBinding && map['v-bind']) {
       typeBinding = "(" + (map['v-bind']) + ").type";
     }
 
@@ -55755,10 +55765,11 @@ var keyNames = {
   tab: 'Tab',
   enter: 'Enter',
   space: ' ',
-  up: 'ArrowUp',
-  left: 'ArrowLeft',
-  right: 'ArrowRight',
-  down: 'ArrowDown',
+  // #7806: IE11 uses key names without `Arrow` prefix for arrow keys.
+  up: ['Up', 'ArrowUp'],
+  left: ['Left', 'ArrowLeft'],
+  right: ['Right', 'ArrowRight'],
+  down: ['Down', 'ArrowDown'],
   'delete': ['Backspace', 'Delete']
 };
 
@@ -57011,8 +57022,10 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
  * @copyright 2018 Logue
  * @license   MIT
  */
+window.CodeMirror = __webpack_require__(2);
 __webpack_require__(42);
-__webpack_require__(43);
+__webpack_require__(68);
+__webpack_require__(44);
 
 /***/ }),
 /* 42 */
@@ -57156,7 +57169,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
 
 /***/ }),
-/* 43 */
+/* 43 */,
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57198,16 +57212,253 @@ $(function () {
 });
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 47 */,
+/* 48 */,
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */,
+/* 54 */,
+/* 55 */,
+/* 56 */,
+/* 57 */,
+/* 58 */,
+/* 59 */,
+/* 60 */,
+/* 61 */,
+/* 62 */,
+/* 63 */,
+/* 64 */,
+/* 65 */,
+/* 66 */,
+/* 67 */,
+/* 68 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _codemirror = __webpack_require__(2);
+
+var CodeMirror = _interopRequireWildcard(_codemirror);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+// CodeMirror.modeURL = 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/' + CodeMirror.version + '/mode/%N/%N.js'
+CodeMirror.modeURL = 'js/codemirror/mode/%N/%N.js'; /**
+                                                     * CodeMirrorでシンタックスハイライター
+                                                     *
+                                                     * @author    Logue <logue@hotmail.co.jp>
+                                                     * @copyright 2018 Logue
+                                                     * @license   MIT
+                                                     */
+
+var loading = {};
+
+function splitCallback(cont, n) {
+    var countDown = n;
+    return function () {
+        if (--countDown === 0) cont();
+    };
+}
+
+function ensureDeps(mode, cont) {
+    var deps = CodeMirror.modes[mode].dependencies;
+    if (!deps) return cont();
+    var missing = [];
+    for (var i = 0; i < deps.length; ++i) {
+        if (!CodeMirror.modes.hasOwnProperty(deps[i])) missing.push(deps[i]);
+    }
+    if (!missing.length) return cont();
+    var split = splitCallback(cont, missing.length);
+    for (var _i = 0; _i < missing.length; ++_i) {
+        CodeMirror.requireMode(missing[_i], split);
+    }
+}
+
+CodeMirror.requireMode = function (mode, cont) {
+    if (typeof mode !== 'string') mode = mode.name;
+    if (CodeMirror.modes.hasOwnProperty(mode)) return ensureDeps(mode, cont);
+    if (loading.hasOwnProperty(mode)) return loading[mode].push(cont);
+
+    var file = CodeMirror.modeURL.replace(/%N/g, mode);
+
+    var script = document.createElement('script');
+    script.src = file;
+    var others = document.getElementsByTagName('script')[0];
+    var list = loading[mode] = [cont];
+
+    CodeMirror.on(script, 'load', function () {
+        ensureDeps(mode, function () {
+            for (var i = 0; i < list.length; ++i) {
+                list[i]();
+            }
+        });
+    });
+
+    others.parentNode.insertBefore(script, others);
+};
+
+CodeMirror.autoLoadMode = function (instance, mode) {
+    if (CodeMirror.modes.hasOwnProperty(mode)) return;
+
+    CodeMirror.requireMode(mode, function () {
+        instance.setOption('mode', instance.getOption('mode'));
+    });
+};
+
+var isBlock = /^(p|li|div|h\\d|pre|blockquote|td)$/;
+
+function textContent(node, out) {
+    if (node.nodeType === 3) return out.push(node.nodeValue);
+    for (var ch = node.firstChild; ch; ch = ch.nextSibling) {
+        textContent(ch, out);
+        if (isBlock.test(node.nodeType)) out.push('\n');
+    }
+}
+
+CodeMirror.colorize = function (collection, defaultMode) {
+    if (!collection) collection = document.body.getElementsByTagName('pre');
+
+    var _loop = function _loop(i) {
+        var options = {};
+        var node = collection[i];
+        var mode = node.getAttribute('data-lang') || defaultMode;
+        options.tabsize = node.getAttribute('data-tab-size') || 4;
+        options.state = node.getAttribute('data-state') || null;
+        if (!mode) return 'continue';
+
+        var text = [];
+        textContent(node, text);
+        node.innerHTML = '';
+
+        CodeMirror.requireMode(mode, function () {
+            CodeMirror.runMode(text.join(''), mode, node, options);
+        });
+        node.className += ' cm-s-default';
+    };
+
+    for (var i = 0; i < collection.length; ++i) {
+        var _ret = _loop(i);
+
+        if (_ret === 'continue') continue;
+    }
+};
+
+CodeMirror.runMode = function (string, modespec, callback, options) {
+    var mode = CodeMirror.getMode(CodeMirror.defaults, modespec);
+    if (mode.name === 'null') {
+        console.warn('CodeMirror: Could not load run mode:', modespec);
+    } else {
+        console.info('CodeMirror: loading', mode.name);
+    }
+
+    if (callback.appendChild) {
+        var tabSize = options && options.tabSize || CodeMirror.defaults.tabSize;
+        var _node = callback;
+        var col = 0;
+        _node.innerHTML = '';
+        callback = function callback(text, style) {
+            if (text === '\n') {
+                // Emitting LF or CRLF on IE8 or earlier results in an incorrect display.
+                // Emitting a carriage return makes everything ok.
+                _node.appendChild(document.createTextNode(text));
+                col = 0;
+                return;
+            }
+            var content = '';
+            // replace tabs
+            for (var pos = 0;;) {
+                var idx = text.indexOf('\t', pos);
+                if (idx === -1) {
+                    content += text.slice(pos);
+                    col += text.length - pos;
+                    break;
+                } else {
+                    col += idx - pos;
+                    content += text.slice(pos, idx);
+                    var size = tabSize - col % tabSize;
+                    col += size;
+                    for (var i = 0; i < size; ++i) {
+                        content += ' ';
+                    }pos = idx + 1;
+                }
+            }
+
+            if (style) {
+                var sp = _node.appendChild(document.createElement('span'));
+                sp.className = 'cm-' + style.replace(/ +/g, ' cm-');
+                sp.appendChild(document.createTextNode(content));
+            } else {
+                _node.appendChild(document.createTextNode(content));
+            }
+        };
+    }
+
+    var lines = CodeMirror.splitLines(string);
+    var state = options && options.state || CodeMirror.startState(mode);
+    for (var i = 0, e = lines.length; i < e; ++i) {
+        if (i) {
+            callback('\n');
+        }
+        var stream = new CodeMirror.StringStream(lines[i]);
+        if (!stream.string && mode.blankLine) mode.blankLine(state);
+        while (!stream.eol()) {
+            var style = mode.token(stream, state);
+            callback(stream.current(), style, i, stream.start, state);
+            stream.start = stream.pos;
+        }
+    }
+};
+
+setTimeout(function () {
+    CodeMirror.colorize();
+}, 20);
+
+var textareas = document.body.getElementsByTagName('textarea');
+
+var _loop2 = function _loop2(i) {
+    var options = {};
+    var node = textareas[i];
+    var mode = node.getAttribute('data-lang') || false;
+    options.tabsize = node.getAttribute('data-tab-size') || 4;
+    options.state = node.getAttribute('data-state') || null;
+    if (!mode) return 'continue';
+
+    CodeMirror.requireMode(mode, function () {
+        CodeMirror.fromTextArea(node, {
+            lineNumbers: true,
+            mode: mode,
+            viewportMargin: Infinity
+        });
+    });
+};
+
+for (var i = 0; i < textareas.length; ++i) {
+    var _ret2 = _loop2(i);
+
+    if (_ret2 === 'continue') continue;
+}
+
+window.CodeMirror = CodeMirror;
+exports.default = CodeMirror;
 
 /***/ })
 /******/ ]);
