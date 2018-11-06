@@ -1,76 +1,68 @@
-# LukiWiki
+<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
-LukiWiki（ルキウィキ）とはLaravelをベースに[PukiWiki Advance](https://github.com/logue/pukiwiki_adv)を作り直したWikiシステムです。
+<p align="center">
+<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
+</p>
 
-サンプルサイト：<https://lukiwiki.logue.be>　※上がっているソースと同じとは限りません。
+## About Laravel
 
-## 開発方針
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
 
-* PukiWiki Adv.で肥大化した機能を削減し、よりシンプルに。極力Laravelの機能を使う
-* DB対応は検討中。当面はPukiWiki Adv.との互換性重視（storageディレクトリ内にデーターが置かれます。）
-* グローバル変数を削除
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-### 非互換
+Laravel is accessible, yet powerful, providing tools needed for large, robust applications.
 
-* プラグインすべて。OOPにするため互換性はありません。PukiWiki Adv.と異なりラッパーを用意する予定もありません。作り直しになります。まだ仕様は決まっていませんが原則的にこのAbstractPluginクラスに則る形になると思います。composerや
-* 設定ファイル。前述のグローバル変数を削除するため使えません。設定項目は大幅に少なくなる予定です。
+## Learning Laravel
 
-## 試験方法
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of any modern web application framework, making it a breeze to get started learning the framework.
 
-インストール時は以下のコマンドを実行してください。
+If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 1100 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
 
-```ssh
-composer install
-npm install
-```
+## Laravel Sponsors
 
-テスト環境を作る際は、PHPの機能とLaravelの機能でサーバーをインストールする必要はありません。以下のコマンドを打って常駐させるだけです。
+We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell):
 
-```ssh
-php artisan serve
-```
+- **[Vehikl](https://vehikl.com/)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Cubet Techno Labs](https://cubettech.com)**
+- **[British Software Development](https://www.britishsoftware.co)**
+- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
+- [UserInsights](https://userinsights.com)
+- [Fragrantica](https://www.fragrantica.com)
+- [SOFTonSOFA](https://softonsofa.com/)
+- [User10](https://user10.com)
+- [Soumettre.fr](https://soumettre.fr/)
+- [CodeBrisk](https://codebrisk.com)
+- [1Forge](https://1forge.com)
+- [TECPRESSO](https://tecpresso.co.jp/)
+- [Runtime Converter](http://runtimeconverter.com/)
+- [WebL'Agence](https://weblagence.com/)
+- [Invoice Ninja](https://www.invoiceninja.com)
+- [iMi digital](https://www.imi-digital.de/)
+- [Earthlink](https://www.earthlink.ro/)
+- [Steadfast Collective](https://steadfastcollective.com/)
+- [We Are The Robots Inc.](https://watr.mx/)
+- [Understand.io](https://www.understand.io/)
 
-また、JavaScriptやスタイルシートの修正は、別途以下のコマンドを打って、resources/assets内のファイルを修正してください。
-直接public/js内のファイルやpublic/css内のファイルはいじらないでください。
-このコマンドを常駐させている間は変更があったタイミングで自動的にコンパイルされます。
+## Contributing
 
-```ssh
-npm run watch -- --watch-poll
-```
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## お願い
+## Security Vulnerabilities
 
-* アイデアなどがありましたら、Githubの[Issues](https://github.com/logue/LukiWiki/issues)に登録してください。
-* コーディングルールは同封の[.php-cs](https://github.com/logue/LukiWiki/blob/master/.php_cs)となっています。コミット前や投稿前に`php-cs-fixer fix .`を実行してください。
-* 現在のところ推奨エディタは、OSを問わず[Visual Studio Code](https://code.visualstudio.com/)です。一部の設定は、プロジェクトに含まれています。
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## 主な変更点
+## License
 
-* 文法などは原則的にPukiWiki Adv.準拠だが大幅に削減。
-* 顔文字やハートなどはUnicodeに標準で含まれるようになったため削除
-* ページ名は`REQUEST_URI`からのみ取り、Query Stringは使わない。
-* 凍結（freeze）はロック（Lock）に変更
-* FrontPageはMainPageに変更
-* シンタックスハイライトの処理とテキストエリアの処理は[CodeMirror](https://codemirror.net/)で統一。
-* MenuBarはSideBarに変更だが、サイドバーをWikiで実装するメリットがあるのか微妙なので保留中。後述のAMP対応などの事情があるため管理画面からカスタマイズという形にする予定。
-* jQuery Mobile廃止し代わりに[AMP（Accelerated Mobile Pages）](https://www.ampproject.org/ja/)で代用。各ページで?action=ampパラメータを付けることで表示される予定です。
-* ユーザ管理はすべて廃止。代わりにLaravelの任意のモジュールで実装。SNSログイン前提。
-* データーのやり取りは[File](https://github.com/logue/pukiwiki_adv/blob/master/wiki-common/lib/PukiWiki/File/AbstractFile.php)クラスに変わって、[WikiFileSystem](https://github.com/logue/LukiWiki/blob/master/app/LukiWiki/Utility/WikiFileSystem.php)クラスで行います。極力マジックメソッドで実装するようにしているため、Wikiのページをあたかも変数のように使用可能です。
-* スパムの温床になったりHTTPS化で正確なパラメータが取れないため、トラックバック、アクセス解析、PingBack機能はすべて廃止。Google Analyticsを使用してください。
-
-## TODO
-
-* 添付ファイルの管理をどうするか？WordpressやMediaWikiのように全体で管理するか、それともこれまでのようにページ単位で管理するか。
-* バックアップの仕様。予定ではページごとにSqliteで管理予定。
-* LaravelじゃなくLumenでもいいんじゃね？
-
-## 必要要件
-
-* PHP 7.2以上
-* nodejs
-
-## ライセンス
-
-MIT
-
-Advの時点で原型を留めないくらいコードを書き直しちゃってますけど、途中からGPLからMITに変えるってどうなんでしょうね？
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

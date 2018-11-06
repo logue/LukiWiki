@@ -1,91 +1,98 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ app()->getLocale() }}" xml:lang="{{ app()->getLocale() }}">
+<!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-	<meta name="csrf-token" content="{{ csrf_token() }}" />
-	<title>{{ config('app.name') }}</title>
-	<link rel="canonical" href="{{ Request::fullUrl() }}" />
-	<link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
-<!--[if IE]>
-	<link href="{{ asset('css/bootstrap-ie9.css') }}" rel="stylesheet" />
-	<script src="{{ asset('js/html5shiv.min.js') }}"></script>
-<![endif]-->
-	<!--[if lt IE 9]>
-	<link href="{{ asset('css/bootstrap-ie8.css') }}" rel="stylesheet" />
-<![endif]-->
-</head>
+        <title>Laravel</title>
 
-<body>
-	<nav class="navbar navbar-expand-md navbar-dark bg-dark">
-		<a class="navbar-brand" href="#">{{ config('app.name') }}</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-content" aria-controls="navbar-collapse-content"
-		 aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbar-collapse-content">
-			@if (Route::has('login'))
-			<ul class="navbar-nav mr-auto">
-				@auth
-				<li class="nav-link active">
-					<a href="{{ url('/home') }}">Home
-						<span class="sr-only">(current)</span>
-					</a>
-				</li>
-				@else
-				<li class="nav-item">
-					<a class="nav-link" href="{{ route('login') }}">Login</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{{ route('register') }}">Register</a>]
-				</li>
-				@endauth
-			</ul>
-			@endif
-			<form class="form-inline my-2 my-lg-0 mr-0">
-				<input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-			</form>
-		</div>
-	</nav>
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
 
-	<main class="container">
-		<div class="jumbotron text-center mt-3">
-			<h1 class="display-4">Laravel</h1>
-			<p class="display-1">
-				<i class="fab fa-laravel"></i>
-			</p>
-			<p class="lead">Laravel + Bootstrap4 + Font Awasome Test.</p>
-		</div>
-		
-		<example-component id="app"></example-component>
+        <!-- Styles -->
+        <style>
+            html, body {
+                background-color: #fff;
+                color: #636b6f;
+                font-family: 'Nunito', sans-serif;
+                font-weight: 200;
+                height: 100vh;
+                margin: 0;
+            }
 
-		<ul class="list-inline text-center">
-			<li class="list-inline-item">
-				<a href="https://laravel.com/docs">Documentation</a>
-			</li>
-			<li class="list-inline-item">
-				<a href="https://laracasts.com">Laracasts</a>
-			</li>
-			<li class="list-inline-item">
-				<a href="https://laravel-news.com">News</a>
-			</li>
-			<li class="list-inline-item">
-				<a href="https://forge.laravel.com">Forge</a>
-			</li>
-			<li class="list-inline-item">
-				<a href="https://github.com/laravel/laravel">GitHub</a>
-			</li>
-		</ul>
-	</main>
-	<footer class="bg-light">
-		<div class="container">
-			<span class="text-muted">Place sticky footer content here.</span>
-		</div>
-	</footer>
-	<script src="{{ mix('js/app.js') }}"></script>
-</body>
+            .full-height {
+                height: 100vh;
+            }
 
+            .flex-center {
+                align-items: center;
+                display: flex;
+                justify-content: center;
+            }
+
+            .position-ref {
+                position: relative;
+            }
+
+            .top-right {
+                position: absolute;
+                right: 10px;
+                top: 18px;
+            }
+
+            .content {
+                text-align: center;
+            }
+
+            .title {
+                font-size: 84px;
+            }
+
+            .links > a {
+                color: #636b6f;
+                padding: 0 25px;
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: .1rem;
+                text-decoration: none;
+                text-transform: uppercase;
+            }
+
+            .m-b-md {
+                margin-bottom: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="flex-center position-ref full-height">
+            @if (Route::has('login'))
+                <div class="top-right links">
+                    @auth
+                        <a href="{{ url('/home') }}">Home</a>
+                    @else
+                        <a href="{{ route('login') }}">Login</a>
+
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}">Register</a>
+                        @endif
+                    @endauth
+                </div>
+            @endif
+
+            <div class="content">
+                <div class="title m-b-md">
+                    Laravel
+                </div>
+
+                <div class="links">
+                    <a href="https://laravel.com/docs">Documentation</a>
+                    <a href="https://laracasts.com">Laracasts</a>
+                    <a href="https://laravel-news.com">News</a>
+                    <a href="https://nova.laravel.com">Nova</a>
+                    <a href="https://forge.laravel.com">Forge</a>
+                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

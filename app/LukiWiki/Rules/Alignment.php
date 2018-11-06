@@ -11,7 +11,13 @@ namespace App\LukiWiki\Rules;
 
 class Alignment
 {
-    public static function block($align)
+    /**
+     * ブロック型
+     * 
+     * @param string $align
+     * @return string
+     */
+    public static function block(string $align)
     {
         switch (strtolower($align)) {
             case 'left':
@@ -37,7 +43,12 @@ class Alignment
                 return 'mt-auto mb-0';
         }
     }
-
+    /**
+     * インライン型
+     * 
+     * @param string $align
+     * @return string
+     */
     public static function inline($align)
     {
         switch (strtolower($align)) {
@@ -64,6 +75,44 @@ class Alignment
             case 'bottom':
                 // ↓
                 return 'align-bottom';
+        }
+    }
+    /**
+     * フレックスボックス型
+     * 
+     * @param string $align
+     * @return string
+     */
+    public static function flex($align){
+        switch (strtolower($align)) {
+            case 'left':
+                // ←
+                return 'justify-content-start';
+            case 'right':
+                // →
+                return 'justify-content-end';
+            case 'center':
+                // 中央
+                return 'justify-content-center';
+            case 'justify':
+            case 'between':
+                // 両端寄せ
+                return 'justify-content-between';
+            case 'around':
+                return 'justify-content-around';
+            case 'top':
+                // ↑
+                return 'align-items-start';
+            case 'middle':
+                // 上下中央
+                return 'align-items-center';
+            case 'baseline':
+                return 'align-items-baseline';
+            case 'bottom':
+                // ↓
+                return 'align-items-end';
+            case 'stretch':
+                return 'align-items-stretch';
         }
     }
 }

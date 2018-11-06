@@ -14,6 +14,7 @@ use FlorianWolters\Component\Util\Singleton\SingletonTrait;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use RegexpTrie\RegexpTrie;
 
 class WikiFileSystem
@@ -89,7 +90,7 @@ class WikiFileSystem
      *
      * @param string $page ページ名
      *
-     * @return string
+     * @return string|boolean
      */
     public function __get(string $page)
     {
@@ -100,8 +101,7 @@ class WikiFileSystem
         $path = self::getFilePath($page);
 
         if (!Storage::exists($path)) {
-            throw new \FileNotFoundException($path.'('.$page.') is not found.', $e->getCode(), $e);
-            return null;
+            return false;
         }
 
         $data = trim(Storage::get($path));
@@ -144,7 +144,8 @@ class WikiFileSystem
 
             return Storage::delete(self::getFilePath($page));
         } catch (\Exception $e) {
-            throw new \FileNotFoundException($path.'('.$page.') is not found.', $e->getCode(), $e);
+            throw new FileNotFoundException($path.'('.$page.') is not found.', $e->getCode(), $e);
+
             return false;
         }
     }

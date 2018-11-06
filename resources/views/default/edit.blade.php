@@ -50,7 +50,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="pagename-textbox">Page Name</label>
             </div>
-            <input type="text" class="form-control form-control-sm" id="pagename-textbox" @if($hash !==0 ) readonly="readonly" @endif name="page" value="{{ $page }}" />
+            <input type="text" class="form-control" id="pagename-textbox" @if($hash !==0 ) readonly="readonly" @endif name="page" value="{{ $page }}" />
         </div>
         <div class="btn-group" role="group" aria-label="Basic Button">
             <button class="btn btn-outline-secondary btn-sm replace" title="Bold" name="b">
