@@ -1,6 +1,6 @@
 <?php
 /**
- * 番号付きリスト要素クラス.
+ * 箇条書きクラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2013-2014,2018 Logue
@@ -10,14 +10,14 @@
 namespace App\LukiWiki\Element;
 
 /**
- * + One
- * + Two
- * + Three.
+ * - One
+ * -- Two
+ * --- Three.
  */
-class OList extends ListContainer
+class UnorderedList extends ListContainer
 {
     public function __construct($root, $text, $isAmp)
     {
-        parent::__construct('ol', 'li', '+', $text, $isAmp);
+        parent::__construct('ul', 'li', '-', $text, $isAmp);
     }
 }

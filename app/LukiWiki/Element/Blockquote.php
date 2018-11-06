@@ -13,7 +13,7 @@ namespace App\LukiWiki\Element;
  * > Someting cited
  * > like E-mail text.
  */
-class Blockquote extends Element
+class Blockquote extends AbstractElement
 {
     protected $level;
 

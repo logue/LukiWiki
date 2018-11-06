@@ -12,12 +12,11 @@ namespace App\LukiWiki\Element;
 /**
  * Lists (UL, OL, DL).
  */
-class ListContainer extends Element
+class ListContainer extends AbstractElement
 {
     protected $tag = 'ul';
     protected $tag2 = 'li';
     public $level = 0;
-    protected $isAmp;
 
     public function __construct($tag, $tag2, $head, $text)
     {

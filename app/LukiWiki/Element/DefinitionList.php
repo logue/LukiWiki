@@ -14,14 +14,14 @@ namespace App\LukiWiki\Element;
  * : definition2 | description2
  * : definition3 | description3.
  */
-class DList extends ListContainer
+class DefinitionList extends ListContainer
 {
     public function __construct($out, $isAmp)
     {
         parent::__construct('dl', 'dt', ':', $out[0]);
         $element = new ListElement($this->level, 'dd');
         $element->isAmp = $isAmp;
-        $this->last = Element::insert($element);
+        $this->last = AbstractElement::insert($element);
 
         if (!empty($out[1])) {
             $content = new InlineElement($out[1], $isAmp);

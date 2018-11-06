@@ -9,7 +9,7 @@
 
 namespace App\LukiWiki\Element;
 
-class TableCell extends Element
+class TableCell extends AbstractElement
 {
     protected $tag = 'td';    // {td|th}
     public $colspan = 1;
@@ -52,7 +52,7 @@ class TableCell extends Element
                 // LANG
                 $this->lang = self::processParam($matches[5]);
             } elseif ($matches[6]) {
-                // BASELINE / TOP / MIDDLE / BOTTOM / TEXT-TOP / TEXT~BOTTOM
+                // BASELINE / TOP / MIDDLE / BOTTOM / TEXT-TOP / TEXT-BOTTOM
                 $this->class[] = 'align-'.self::processParam($matches[6]);
             } elseif ($matches[7]) {
                 // NOWRAP

@@ -12,7 +12,7 @@ namespace App\LukiWiki\Element;
 /**
  * Horizontal Rule.
  */
-class HRule extends Element
+class HorizontalRule extends AbstractElement
 {
     public function __toString()
     {

@@ -15,7 +15,7 @@ use Debugbar;
 /**
  * RootElement.
  */
-class RootElement extends Element
+class RootElement extends AbstractElement
 {
     const MULTILINE_DELIMITER = "\r";
 
@@ -110,25 +110,20 @@ class RootElement extends Element
                     case '`':
                         // GFM:pre
                         if (preg_match('/\```(.+?)\r(.*)\r```/', $line, $matches)) {
-                            $content = new GfmPre($this, $matches[2], $matches[1]);
+                            $content = new PreformattedText($this, $matches[2], $matches[1]);
                         }
-                        break;
-                    case ' ':
-                    case "\t":
-                        // Pre
-                        $content = new Pre($this, $line);
                         break;
                     case '-':
                         if (substr($line, 0, 4) === '----') {
                             // Horizontal Rule
-                            $this->insert(new HRule($this, $line, $this->isAmp));
+                            $this->insert(new HorizontalRule($this, $line, $this->isAmp));
                             continue;
                         }
                         // List
-                        $content = new UList($this, $line, $this->isAmp);
+                        $content = new UnorderedList($this, $line, $this->isAmp);
                         break;
                     case '+':
-                        $content = new OList($this, $line, $this->isAmp);
+                        $content = new OrderedList($this, $line, $this->isAmp);
                         break;
                     case '>':
                     case '<':
@@ -137,16 +132,13 @@ class RootElement extends Element
                     case ':':
                         $out = explode('|', ltrim($line), 2);
                         if (!count($out) < 2) {
-                            $content = new DList($out, $this->isAmp);
+                            $content = new DefinitionList($out, $this->isAmp);
                         }
                         break;
                     case '|':
                         if (preg_match('/^\|(.+)\|([hHfFcC]?)$/', $line, $out)) {
                             $content = new Table($out, $this->isAmp);
                         }
-                        break;
-                    case ',':
-                        $content = new YTable(explode(',', substr($line, 1)));
                         break;
                     case '#':
                         $matches = [];

@@ -12,9 +12,10 @@ namespace App\LukiWiki\Rules;
 class Alignment
 {
     /**
-     * ブロック型
-     * 
+     * ブロック型.
+     *
      * @param string $align
+     *
      * @return string
      */
     public static function block(string $align)
@@ -43,10 +44,12 @@ class Alignment
                 return 'mt-auto mb-0';
         }
     }
+
     /**
-     * インライン型
-     * 
+     * インライン型.
+     *
      * @param string $align
+     *
      * @return string
      */
     public static function inline($align)
@@ -77,13 +80,16 @@ class Alignment
                 return 'align-bottom';
         }
     }
+
     /**
-     * フレックスボックス型
-     * 
+     * フレックスボックス型.
+     *
      * @param string $align
+     *
      * @return string
      */
-    public static function flex($align){
+    public static function flex($align)
+    {
         switch (strtolower($align)) {
             case 'left':
                 // ←

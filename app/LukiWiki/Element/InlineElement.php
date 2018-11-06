@@ -14,7 +14,7 @@ use App\LukiWiki\Inline\InlineConverter;
 /**
  * Inline elements.
  */
-class InlineElement extends Element
+class InlineElement extends AbstractElement
 {
     public function __construct($text, $isAmp)
     {

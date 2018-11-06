@@ -16,7 +16,7 @@ use App\LukiWiki\Rules\Alignment;
  * | cell1  | cell2  | cell3  |
  * | cell4  | cell5  | cell6  |.
  */
-class Table extends Element
+class Table extends AbstractElement
 {
     protected $type;
     protected $types;

@@ -12,7 +12,7 @@ namespace App\LukiWiki\Element;
 /**
  * Paragraph: blank-line-separated sentences.
  */
-class Paragraph extends Element
+class Paragraph extends AbstractElement
 {
     public function __construct($text, $isAmp)
     {

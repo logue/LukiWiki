@@ -1,6 +1,6 @@
 <?php
 /**
- * Github Markdown Pre.
+ * Preformatted Text.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2018 Logue
@@ -12,7 +12,7 @@ namespace App\LukiWiki\Element;
 /**
  * ```lang ... ```.
  */
-class GfmPre extends Element
+class PreformattedText extends AbstractElement
 {
     private $lang;
 

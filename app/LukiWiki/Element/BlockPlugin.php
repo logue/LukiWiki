@@ -12,7 +12,7 @@ namespace App\LukiWiki\Element;
 /**
  *  Block plugin: #something (started with '#').
  */
-class BlockPlugin extends Element
+class BlockPlugin extends AbstractElement
 {
     protected $name;
     protected $param;

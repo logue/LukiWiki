@@ -11,10 +11,10 @@ namespace App\LukiWiki\Utility;
 
 use Debugbar;
 use FlorianWolters\Component\Util\Singleton\SingletonTrait;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use RegexpTrie\RegexpTrie;
 
 class WikiFileSystem
@@ -90,7 +90,7 @@ class WikiFileSystem
      *
      * @param string $page ページ名
      *
-     * @return string|boolean
+     * @return string|bool
      */
     public function __get(string $page)
     {

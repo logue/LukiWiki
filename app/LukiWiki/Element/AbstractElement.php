@@ -10,15 +10,16 @@
 namespace App\LukiWiki\Element;
 
 /**
- * Block elements.
+ * Block Abstracts.
  */
-abstract class Element
+abstract class AbstractElement
 {
     protected $parent;
-    protected $elements;    // References of childs
     protected $last;        // Insert new one at the back of the $last
     protected $meta = null;
     protected static $converter;
+    protected $elements = [];    // References of childs
+    protected $isAmp = false;
 
     /**
      * コンストラクタ

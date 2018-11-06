@@ -14,7 +14,7 @@ use App\LukiWiki\Rules\Alignment;
 /**
  * LEFT: / CENTER: / RIGHT: / JUSTIFY:.
  */
-class Align extends Element
+class Align extends AbstractElement
 {
     protected $align;
 

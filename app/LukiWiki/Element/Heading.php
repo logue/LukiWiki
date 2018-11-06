@@ -18,7 +18,7 @@ use App\LukiWiki\Rules\HeadingAnchor;
  * **** Heading4
  * ***** Heading5.
  */
-class Heading extends Element
+class Heading extends AbstractElement
 {
     protected $level;
     protected $id;
