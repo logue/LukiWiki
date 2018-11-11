@@ -7,7 +7,7 @@
  * @license   MIT
  */
 
-namespace App\LukiWiki\Inline;
+namespace App\LukiWiki;
 
 use App\LukiWiki\Rules\InlineRules;
 use App\LukiWIki\Utility\WikiFileSystem;
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Config;
 /**
  * インライン要素パースクラス.
  */
-abstract class Inline
+abstract class AbstractInline
 {
     protected $start;   // Origin number of parentheses (0 origin)
     protected $text;    // Matched string

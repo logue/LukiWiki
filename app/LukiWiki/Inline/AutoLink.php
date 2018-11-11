@@ -9,8 +9,10 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\LukiWiki\AbstractInline;
+
 // AutoLinks
-class AutoLink extends Inline
+class AutoLink extends AbstractInline
 {
     public function getPattern()
     {

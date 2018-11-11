@@ -9,10 +9,11 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\LukiWiki\AbstractInline;
 use App\LukiWiki\Rules\InlineRules;
 
 // URLs
-class Url extends Inline
+class Url extends AbstractInline
 {
     public function getPattern()
     {

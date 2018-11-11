@@ -9,6 +9,8 @@
 
 namespace App\LukiWiki\Element;
 
+use App\LukiWiki\AbstractElement;
+
 /**
  * > Someting cited
  * > like E-mail text.

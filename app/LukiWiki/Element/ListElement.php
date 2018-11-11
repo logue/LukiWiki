@@ -9,6 +9,8 @@
 
 namespace App\LukiWiki\Element;
 
+use App\LukiWiki\AbstractElement;
+
 class ListElement extends AbstractElement
 {
     public function __construct($level, $head)

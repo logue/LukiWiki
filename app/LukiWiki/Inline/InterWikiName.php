@@ -9,6 +9,7 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\LukiWiki\AbstractInline;
 use App\LukiWiki\Rules\InlineRules;
 use App\LukiWIki\Utility\WikiFileSystem;
 use Illuminate\Support\Facades\Cache;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Config;
 /**
  * InterWikiName-rendered URLs.
  */
-class InterWikiName extends Inline
+class InterWikiName extends AbstractInline
 {
     const INTERWIKINAME_PATTERN = '/\[((?:(?:https?|ftp|news):\/\/|\.\.?\/)[!~*\'();\/?:\@&=+\$,%#\w.-]*)\s([^\]]+)\]\s?([^\s]*)/';
     const INTERWIKINAME_CACHE_NAME = 'interwikiname';

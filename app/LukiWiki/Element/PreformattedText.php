@@ -9,6 +9,8 @@
 
 namespace App\LukiWiki\Element;
 
+use App\LukiWiki\AbstractElement;
+
 /**
  * ```lang ... ```.
  */
@@ -16,11 +18,17 @@ class PreformattedText extends AbstractElement
 {
     private $lang;
 
-    public function __construct($root, $text, $lang)
+    public function __construct($root, $text, $meta)
     {
         parent::__construct();
-        $this->lang = $lang;
-        $this->meta[] = $lang;
+        if (strpos($meta, ':')) {
+            list($lang, $name) = explode(':', $meta);
+        } else {
+            $lang = $meta;
+            $name = '';
+        }
+        $this->meta = ['lang' => $lang, 'name' => $name];
+
         $this->elements[] = parent::processText($text);
     }
 
@@ -38,6 +46,6 @@ class PreformattedText extends AbstractElement
 
     public function __toString()
     {
-        return $this->wrap(implode("\n", $this->elements), 'pre', ['class' => 'CodeMirror', 'data-lang' => $this->lang], false);
+        return $this->wrap(implode("\n", $this->elements), 'pre', ['class' => 'CodeMirror', 'data-lang' => $this->meta['lang']], false);
     }
 }

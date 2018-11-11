@@ -9,6 +9,8 @@
 
 namespace App\LukiWiki\Element;
 
+use App\LukiWiki\AbstractElement;
+
 /**
  * : definition1 | description1
  * : definition2 | description2

@@ -9,6 +9,7 @@
 
 namespace App\LukiWiki\Element;
 
+use App\LukiWiki\AbstractElement;
 use App\LukiWiki\Rules\HeadingAnchor;
 
 /**

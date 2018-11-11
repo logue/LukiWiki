@@ -7,7 +7,7 @@
  * @license   MIT
  */
 
-namespace App\LukiWiki\Element;
+namespace App\LukiWiki;
 
 /**
  * Block Abstracts.

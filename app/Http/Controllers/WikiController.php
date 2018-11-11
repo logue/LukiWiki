@@ -41,6 +41,8 @@ class WikiController extends Controller
      */
     public function __invoke(Request $request, $page = 'MainPage')
     {
+        global $lw; // TODO
+
         $this->page = $page;
         $this->exists = isset($this->data->$page);
         $this->content = $this->data->$page;
@@ -152,6 +154,7 @@ class WikiController extends Controller
         if ($request->isMethod('post')) {
             // POSTの場合、書き込み処理
             $diff = new iphis\FineDiff\Diff();
+            dd($diff);
         }
 
         return view(

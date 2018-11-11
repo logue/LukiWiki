@@ -9,8 +9,10 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\LukiWiki\AbstractInline;
+
 // Footnotes
-class Note extends Inline
+class Note extends AbstractInline
 {
     /**
      * title属性に入れる説明文の文字数.

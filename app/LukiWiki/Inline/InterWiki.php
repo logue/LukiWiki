@@ -9,10 +9,12 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\LukiWiki\AbstractInline;
+
 /**
  * URLs (InterWiki definition on "InterWikiName").
  */
-class InterWiki extends Inline
+class InterWiki extends AbstractInline
 {
     public function getPattern()
     {

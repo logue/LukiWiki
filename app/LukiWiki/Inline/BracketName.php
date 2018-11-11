@@ -9,9 +9,10 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\LukiWiki\AbstractInline;
 use App\LukiWiki\Rules\InlineRules;
 
-class BracketName extends Inline
+class BracketName extends AbstractInline
 {
     protected $anchor;
     protected $refer;

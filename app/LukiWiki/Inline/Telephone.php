@@ -9,8 +9,10 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\LukiWiki\AbstractInline;
+
 // tel: URL schemes
-class Telephone extends Inline
+class Telephone extends AbstractInline
 {
     public function getPattern()
     {

@@ -9,6 +9,8 @@
 
 namespace App\LukiWiki\Element;
 
+use App\LukiWiki\AbstractElement;
+
 class TableCell extends AbstractElement
 {
     protected $tag = 'td';    // {td|th}

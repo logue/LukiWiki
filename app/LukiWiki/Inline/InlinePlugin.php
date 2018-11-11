@@ -9,10 +9,11 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\LukiWiki\AbstractInline;
 use App\LukiWiki\Rules\InlineRules;
 
 // Inline plugins
-class InlinePlugin extends Inline
+class InlinePlugin extends AbstractInline
 {
     protected $pattern;
     protected $plain;

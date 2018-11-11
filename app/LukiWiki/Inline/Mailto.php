@@ -9,8 +9,10 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\LukiWiki\AbstractInline;
+
 // mailto: URL schemes
-class Mailto extends Inline
+class Mailto extends AbstractInline
 {
     public function getPattern()
     {

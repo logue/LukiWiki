@@ -14,12 +14,16 @@ abstract class AbstractPlugin
     /** @var string プラグイン名 */
     protected $name;
 
+    /** @var array パラメータ */
+    protected $params;
+
     /**
      * コンストラクタ
      */
-    public function __construct()
+    public function __construct(array $params)
     {
         $this->name = get_class($this);
+        $this->params = $params;
     }
 
     /**
@@ -36,9 +40,9 @@ abstract class AbstractPlugin
      *
      * @return string
      */
-    public function executeBlock($args = [])
+    public function executeBlock()
     {
-        return '<div class="card"><div class="card-header">#'.$this->name.'</div><div class="card-body">'.implode(',', $args).'</div></div>';
+        return '<div class="card"><div class="card-header">#'.$this->name.'</div><div class="card-body">'.implode(',', $this->params).'</div></div>';
     }
 
     /**
@@ -48,9 +52,9 @@ abstract class AbstractPlugin
      *
      * @return string
      */
-    public function executeInline($args = [])
+    public function executeInline()
     {
-        return '<span class="badge badge-pill badge-secondary">&amp;'.$this->name.'('.implode(',', $args).')'.'</span>';
+        return '<span class="badge badge-pill badge-secondary">&amp;'.$this->name.'('.implode(',', $this->params).')'.'</span>';
     }
 
     /**
@@ -60,9 +64,9 @@ abstract class AbstractPlugin
      *
      * @return string
      */
-    public function executeAmpBlock($args = [])
+    public function executeAmpBlock()
     {
-        return $this->executeBlock($args);
+        return $this->executeBlock();
     }
 
     /**
@@ -70,8 +74,8 @@ abstract class AbstractPlugin
      *
      * @param
      */
-    public function executeAmpInline($args = [])
+    public function executeAmpInline()
     {
-        return $this->executeInline($args);
+        return $this->executeInline();
     }
 }
