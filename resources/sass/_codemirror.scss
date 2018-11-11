@@ -410,11 +410,11 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 }
 
 .CodeMirror-gutter-wrapper ::selection {
-  background-color: transparent
+  background-color: transparent;
 }
 
 .CodeMirror-gutter-wrapper ::-moz-selection {
-  background-color: transparent
+  background-color: transparent;
 }
 
 .CodeMirror-lines {

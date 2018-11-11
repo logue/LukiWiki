@@ -80,6 +80,7 @@ CodeMirror.colorize = function (collection, defaultMode) {
         const mode = node.getAttribute('data-lang') || defaultMode
         options.tabsize = node.getAttribute('data-tab-size') || 4
         options.state = node.getAttribute('data-state') || null
+        
         if (!mode) continue
 
         const text = []
@@ -171,13 +172,20 @@ for (let i = 0; i < textareas.length; ++i) {
     options.state = node.getAttribute('data-state') || null
     if (!mode) continue
 
+    const height = node.getAttribute('data-height') || 'auto'
+
     CodeMirror.requireMode(mode, function () {
-        CodeMirror.fromTextArea(node, {
+        let cm = CodeMirror.fromTextArea(node, {
             lineNumbers: true,
             mode: mode,
-            viewportMargin: Infinity
+            //viewportMargin: Infinity
         })
+        if (height !== 'auto') {
+            cm.setSize(null, height)
+        }
     })
+
+    
 }
 
 window.CodeMirror = CodeMirror
