@@ -9,6 +9,7 @@
 
 namespace App\LukiWiki;
 
+use App\LukiWiki\Inline\InlineConverter;
 use App\LukiWiki\Rules\InlineRules;
 use App\LukiWIki\Utility\WikiFileSystem;
 use Illuminate\Support\Facades\Config;

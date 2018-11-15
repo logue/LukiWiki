@@ -31,9 +31,10 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+// LukiWiki Start
+require('./lukiwiki')
+
+// Vue start
 const app = new Vue({
     el: '#app'
 });
-
-/** LukiWiki Start *****************************************************/
-require('./lukiwiki')

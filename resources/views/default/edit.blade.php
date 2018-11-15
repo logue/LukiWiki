@@ -42,58 +42,14 @@
 @section('content')
 <form action="{{ url('/') }}" method="POST">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-    <input type="hidden" name="action" value="edit" /> @if($hash !== 0)
+    <input type="hidden" name="action" value="edit" />
+    @if($hash !== 0)
     <input type="hidden" name="hash" value="{{ $hash }}" />
-    <input type="hidden" name="original" value="{{ $source }}" /> @endif
-    <div class="btn-toolbar justify-content-between mb-1" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <label class="input-group-text" for="pagename-textbox">Page Name</label>
-            </div>
-            <input type="text" class="form-control" id="pagename-textbox" @if($hash !== 0 ) readonly="readonly" @endif name="page" value="{{ $page }}" />
-        </div>
-        <div class="btn-group" role="group" aria-label="Basic Button">
-            <button type="button" class="btn btn-outline-secondary btn-sm replace" title="Bold" name="b">
-                <i class="fa fa-bold"></i>
-            </button>
-            <button type="button" class="btn btn-outline-secondary btn-sm replace" title="Italic" name="i">
-                <i class="fa fa-italic"></i>
-            </button>
-            <button type="button" class="btn btn-outline-secondary btn-sm replace" title="Strike" name="s">
-                <i class="fa fa-strikethrough"></i>
-            </button>
-            <button type="button" class="btn btn-outline-secondary btn-sm replace" title="Underline" name="u">
-                <i class="fa fa-underline"></i>
-            </button>
-            <button type="button" class="btn btn-outline-secondary btn-sm replace" title="Code" name="code">
-                <i class="fa fa-code"></i>
-            </button>
-            <button type="button" class="btn btn-outline-secondary btn-sm replace" title="Quotation" name="q">
-                <i class="fa fa-quote-left"></i>
-            </button>
-        </div>
-        <div class="btn-group" role="group" aria-label="First group">
-            <button type="button" class="btn btn-outline-secondary btn-sm replace" title="Insert Link" name="url">
-                <i class="fa fa-link"></i>
-            </button>
-            <button type="button" class="btn btn-outline-secondary btn-sm replace" title="Font size" name="size">
-                <i class="fa fa-text-height"></i>
-            </button>
-            <button type="button" class="btn btn-outline-secondary btn-sm insert" title="Color" name="color">color</button>
-        </div>
-        <div class="btn-group" role="group" aria-label="First group">
-            <button type="button" class="btn btn-outline-secondary btn-sm insert" title="Line break" name="br">⏎</button>
-        </div>
-        <div class="btn-group" role="group" aria-label="Misic group">
-            <button type="button" class="btn btn-outline-secondary btn-sm replace" title="Convert character reference" name="ncr">&amp;#</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm insert" title="Hint" name="hint">
-                <i class="fa fa-question-circle"></i>
-            </button>
-        </div>
-    </div>
-    <div class="form-group">
-        <textarea class="form-control" data-lang="lukiwiki" data-height="400" id="source" rows="20" name="source">{{ $source }}</textarea>
-    </div>
+    <input type="hidden" name="original" value="{{ $source }}" />
+    @endif
+    <lw-editor>
+        <textarea name="body" class="form-control">{{ $source }}</textarea>
+    </lw-editor>
     <div class="form-row align-items-center mt-1">
         <div class="col-auto">
             <div class="custom-control custom-checkbox">
