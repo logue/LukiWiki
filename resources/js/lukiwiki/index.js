@@ -5,9 +5,11 @@
  * @copyright 2018 Logue
  * @license   MIT
  */
+import BootstrapVue from 'bootstrap-vue'
+Vue.use(BootstrapVue);
 
-import VueCodemirror from 'vue-codemirror'
-
+window.CodeMirror = require('codemirror/lib/codemirror');
+import VueCodemirror from 'vue-codemirror';
 // require more codemirror resource...
 
 // you can set default global options and events when use
@@ -15,16 +17,12 @@ Vue.use(VueCodemirror, /* {
   options: { theme: 'base16-dark', ... },
   events: ['scroll', ...]
 } */)
-
-window.CodeMirror = require('codemirror/lib/codemirror')
-const querystring = require('query-string')
+const querystring = require('query-string');
 window.qs = querystring.parse(location.search);
-require('./codemirror_lukiwiki')
-require('./codemirror_syntaxhilighter')
-require('./tooltip')
 
+require('./codemirror_lukiwiki');
+require('./codemirror_syntaxhilighter');
+//require('./tooltip');
 
-if (window.qs.action === 'edit'){
-    Vue.component('lw-editor', require('./components/Editor.vue'));
-   // require('./edit.js')
-}
+Vue.component('lw-editor', require('./components/Editor.vue'));
+Vue.component('lw-link', require('./components/WikiLink.vue'));

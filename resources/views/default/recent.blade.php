@@ -13,7 +13,7 @@
             <a class="dropdown-item disabled" href="#">Edit</a>
             <a class="dropdown-item disabled" href="#">Source</a>
             <a class="dropdown-item disabled" href="#">Attachment</a>
-            <a class="dropdown-item disabled" href="#">Backup</a>
+            <a class="dropdown-item disabled" href="#">History</a>
         </div>
     </li>
     <li class="nav-item dropdown">

@@ -150,8 +150,8 @@ abstract class AbstractInline
         if (isset($wikis->$page)) {
             $this->meta['pages'] = $page;
 
-            return '<a href="'.url($page).$anchor.'" data-timestamp="'.$wikis->timestamp($page).'"'.
-                ($isautolink === true ? ' class="autolink"' : '').' title="'.$page.'">'.$anchor_name.'</a>';
+            return '<lw-link><a href="'.url($page).$anchor.'"'.
+                ($isautolink === true ? ' class="autolink"' : '').' title="'.$page.'" timestamp="'.$wikis->timestamp($page).'">'.$anchor_name.'</a></lw-link>';
         } else {
             $retval = $anchor_name.'<a href="'.url($page).'?action=edit" rel="nofollow" title="'.$page.'">?</a>';
 

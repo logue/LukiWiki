@@ -13,13 +13,13 @@
             <a class="dropdown-item active" href="{{ url($page) }}?action=edit">Edit</a>
             <a class="dropdown-item" href="{{ url($page) }}?action=source">Source</a>
             <a class="dropdown-item" href="{{ url($page) }}?action=attachment">Attachment</a>
-            <a class="dropdown-item" href="{{ url($page) }}?action=backup">Backup</a>
+            <a class="dropdown-item" href="{{ url($page) }}?action=history">History</a>
             @else
             <a class="dropdown-item active" href="{{ url('/') }}?action=new">New</a>
             <a class="dropdown-item disabled" href="#">Edit</a>
             <a class="dropdown-item disabled" href="#">Source</a>
             <a class="dropdown-item disabled" href="#">Attachment</a>
-            <a class="dropdown-item disabled" href="#">Backup</a>
+            <a class="dropdown-item disabled" href="#">History</a>
             @endif
         </div>
     </li>
@@ -37,7 +37,7 @@
 <span class="navbar-text mx-2">
     <i class="fas fa-unlock"></i>
 </span>
-@endsection 
+@endsection
 
 @section('content')
 <form action="{{ url('/') }}" method="POST">
@@ -48,7 +48,13 @@
     <input type="hidden" name="original" value="{{ $source }}" />
     @endif
     <lw-editor>
-        <textarea name="body" class="form-control">{{ $source }}</textarea>
+        <div class="input-group" slot="page">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="pagename-textbox">Page Name</label>
+            </div>
+            <input type="text" class="form-control" id="pagename-textbox" name="page" value="{{ $page }}" />
+        </div>
+        <textarea name="body" class="form-control" slot="body">{{ $source }}</textarea>
     </lw-editor>
     <div class="form-row align-items-center mt-1">
         <div class="col-auto">

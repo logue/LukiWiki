@@ -55,8 +55,8 @@ class WikiController extends Controller
             case 'attachment':
                 return $this->attachment();
                 break;
-            case 'backup':
-                return $this->backup();
+            case 'history':
+                return $this->history();
                 break;
             case 'source':
                 return view(
@@ -140,6 +140,7 @@ class WikiController extends Controller
     private function edit($request)
     {
         if (!$this->page || $request->input('action') === 'new') {
+            // 新規ページ
             return view(
                 'default.edit',
                 [

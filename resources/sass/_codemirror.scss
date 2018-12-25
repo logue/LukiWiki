@@ -1,16 +1,27 @@
+/**
+ * CodeMirror for Bootstrap
+ * 
+ * @author    Logue <logue@hotmail.co.jp>
+ * @copyright 2018 Logue
+ * @license   MIT
+ */
+
 /* BASICS */
 
 .CodeMirror {
-  /* Set height, width, borders, and global font properties here */
+  height: 300px;
+  // Set height, width, borders, and global font properties here
   font-family: $font-family-monospace;
   direction: ltr;
-  /* berow Copy from bootstrap's .form-control */
+  // berow Copy from bootstrap's .form-control
   display: block;
-  width: 100%; //  padding: $input-padding-y $input-padding-x;
+  width: 100%; 
+  //  padding: $input-padding-y $input-padding-x;
   color: $input-color;
   background-color: $input-bg;
   background-clip: padding-box;
-  border: $input-border-width solid $input-border-color; // Note: This has no effect on <select>s in some browsers, due to the limited stylability of `<select>`s in CSS.
+  border: $input-border-width solid $input-border-color;
+  // Note: This has no effect on <select>s in some browsers, due to the limited stylability of `<select>`s in CSS.
   @if $enable-rounded {
     // Manually use the if/else instead of the mixin to account for iOS override
     border-radius: $input-border-radius;
@@ -25,11 +36,17 @@
     background-color: transparent;
     border: 0;
   }
+  pre {
+    // Horizontal padding of content
+    padding: 0 4px;
+  }
 }
 
 pre.CodeMirror {
   padding: 0.375rem 0.75rem;
-  
+  background: $gray-100;
+  font-size: $code-font-size;
+  color: $pre-color;
 }
 
 /* PADDING */
@@ -39,10 +56,6 @@ pre.CodeMirror {
   /* Vertical padding around content */
 }
 
-.CodeMirror pre {
-  padding: 0 4px;
-  /* Horizontal padding of content */
-}
 
 .CodeMirror-scrollbar-filler,
 .CodeMirror-gutter-filler {
@@ -64,7 +77,7 @@ pre.CodeMirror {
   padding: 0 3px 0 5px;
   min-width: 20px;
   text-align: right;
-  color: $gray-500;
+  color: $gray-600;
   white-space: nowrap;
 }
 
@@ -79,7 +92,7 @@ pre.CodeMirror {
 /* CURSOR */
 
 .CodeMirror-cursor {
-  border-left: $border-width solid $border-color;
+  border-left: $border-width solid $gray-600;
   border-right: none;
   width: 0;
 }
@@ -90,46 +103,28 @@ pre.CodeMirror {
   border-left: $border-width solid $border-color;
 }
 
-.cm-fat-cursor .CodeMirror-cursor {
-  width: auto;
-  border: 0 !important;
-  background: #7e7;
-}
+.cm-fat-cursor {
+  .CodeMirror-cursor {
+    width: auto;
+    border: 0 !important;
+    background: $green;
+  }
 
-.cm-fat-cursor div.CodeMirror-cursors {
-  z-index: 1;
+  div.CodeMirror-cursors {
+    z-index: 1;
+  }
 }
 
 .cm-fat-cursor-mark {
-  background-color: rgba(20, 255, 20, 0.5);
-  -webkit-animation: blink 1.06s steps(1) infinite;
-  -moz-animation: blink 1.06s steps(1) infinite;
+  background-color: rgba($green, 0.5);
   animation: blink 1.06s steps(1) infinite;
 }
 
 .cm-animate-fat-cursor {
   width: auto;
   border: 0;
-  -webkit-animation: blink 1.06s steps(1) infinite;
-  -moz-animation: blink 1.06s steps(1) infinite;
   animation: blink 1.06s steps(1) infinite;
-  background-color: #7e7;
-}
-
-@-moz-keyframes blink {
-  0% {}
-  50% {
-    background-color: transparent;
-  }
-  100% {}
-}
-
-@-webkit-keyframes blink {
-  0% {}
-  50% {
-    background-color: transparent;
-  }
-  100% {}
+  background-color: $green;
 }
 
 @keyframes blink {
@@ -167,22 +162,6 @@ pre.CodeMirror {
 
 /* DEFAULT THEME */
 
-.cm-s-default .cm-header {
-  color: $blue;
-}
-
-.cm-s-default .cm-quote {
-  color: $green;
-}
-
-.cm-negative {
-  color: $red;
-}
-
-.cm-positive {
-  color: $teal;
-}
-
 .cm-header,
 .cm-strong {
   font-weight: bold;
@@ -200,89 +179,108 @@ pre.CodeMirror {
   text-decoration: line-through;
 }
 
-.cm-s-default .cm-keyword {
-  color: $purple;
-}
-
-.cm-s-default .cm-atom {
-  color: $indigo;
-}
-
-.cm-s-default .cm-number {
-  color: $green;
-}
-
-.cm-s-default .cm-def {
-  color: $blue;
-}
-
-.cm-s-default .cm-variable,
-.cm-s-default .cm-punctuation,
-.cm-s-default .cm-property,
-.cm-s-default .cm-operator {
-  color: $secondary;
-}
-
-.cm-s-default .cm-variable-2 {
-  color: $cyan;
-}
-
-.cm-s-default .cm-variable-3,
-.cm-s-default .cm-type {
-  color: $green;
-}
-
-.cm-s-default .cm-comment {
-  color: $success;
-}
-
-.cm-s-default .cm-string {
-  color: $pink;
-}
-
-.cm-s-default .cm-string-2 {
-  color: $orange;
-}
-
-.cm-s-default .cm-meta {
-  color: $gray-600;
-}
-
-.cm-s-default .cm-qualifier {
-  color: $dark;
-}
-
-.cm-s-default .cm-builtin {
-  color: $yellow;
-}
-
-.cm-s-default .cm-bracket {
-  color: $cyan;
-}
-
-.cm-s-default .cm-tag {
-  color: $green;
-}
-
-.cm-s-default .cm-attribute {
-  color: $info;
-}
-
-.cm-s-default .cm-hr {
-  color: $secondary;
-}
-
-.cm-s-default .cm-link {
-  color: $primary;
-}
-
-.cm-s-default .cm-error {
+.cm-negative {
   color: $danger;
 }
 
-.cm-invalidchar {
-  color: $warning;
+.cm-positive {
+  color: $success;
 }
+
+.cm-invalidchar {
+    color: $warning;
+}
+
+.cm-s-default {
+  .cm-header {
+    color: $blue;
+  }
+
+  .cm-quote {
+    color: $green;
+  }
+
+  .cm-keyword {
+    color: $purple;
+  }
+
+  .cm-atom {
+    color: $indigo;
+  }
+
+  .cm-number {
+    color: $green;
+  }
+
+  .cm-def {
+    color: $blue;
+  }
+
+  .cm-variable,
+  .cm-punctuation,
+  .cm-property,
+  .cm-operator {
+    color: $secondary;
+  }
+
+  .cm-variable-2 {
+    color: $cyan;
+  }
+
+  .cm-variable-3,
+  .cm-type {
+    color: $green;
+  }
+
+  .cm-comment {
+    color: $teal;
+  }
+
+  .cm-string {
+    color: $pink;
+  }
+
+  .cm-string-2 {
+    color: $orange;
+  }
+
+  .cm-meta {
+    color: $gray-600;
+  }
+
+  .cm-qualifier {
+    color: $dark;
+  }
+
+  .cm-builtin {
+    color: $yellow;
+  }
+
+  .cm-bracket {
+    color: $cyan;
+  }
+
+  .cm-tag {
+    color: $green;
+  }
+
+  .cm-attribute {
+    color: $red;
+  }
+
+  .cm-hr {
+    color: $gray-600;
+  }
+
+  .cm-link {
+    color: $blue;
+  }
+
+  .cm-error {
+    color: $red;
+  }
+}
+
 
 .CodeMirror-composing {
   border-bottom: 2px solid;
@@ -290,20 +288,20 @@ pre.CodeMirror {
 
 /* Default styles for common addons */
 
-div.CodeMirror span.CodeMirror-matchingbracket {
+.CodeMirror-activeline-background {
+  background: $light;
+}
+
+.CodeMirror span.CodeMirror-matchingbracket {
   color: $teal;
 }
 
-div.CodeMirror span.CodeMirror-nonmatchingbracket {
+.CodeMirror span.CodeMirror-nonmatchingbracket {
   color: $pink;
 }
 
 .CodeMirror-matchingtag {
-  background: rgba(255, 150, 0, .3);
-}
-
-.CodeMirror-activeline-background {
-  background: $light;
+  background: rgba($orange, .3);
 }
 
 /* STOP */
@@ -394,6 +392,9 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
   z-index: 4;
   background: none !important;
   border: none !important;
+  ::selection {
+    background-color: transparent;
+  }
 }
 
 .CodeMirror-gutter-background {
@@ -409,14 +410,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
   z-index: 4;
 }
 
-.CodeMirror-gutter-wrapper ::selection {
-  background-color: transparent;
-}
-
-.CodeMirror-gutter-wrapper ::-moz-selection {
-  background-color: transparent;
-}
-
 .CodeMirror-lines {
   cursor: text;
   min-height: 1px;
@@ -425,8 +418,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 
 .CodeMirror pre {
   /* Reset some styles that the rest of the page might have set */
-  -moz-border-radius: 0;
-  -webkit-border-radius: 0;
   border-radius: 0;
   border-width: 0;
   background: transparent;
@@ -439,8 +430,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
   z-index: 2;
   position: relative;
   overflow: visible;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-font-variant-ligatures: contextual;
   font-variant-ligatures: contextual;
 }
 
@@ -462,8 +451,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 .CodeMirror-linewidget {
   position: relative;
   z-index: 2;
-  padding: 0.1px;
-  /* Force widget margins to stay inside of the container */
+  padding: 0.1px; // Force widget margins to stay inside of the container
 }
 
 .CodeMirror-widget {}
@@ -483,7 +471,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 .CodeMirror-gutter,
 .CodeMirror-gutters,
 .CodeMirror-linenumber {
-  -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
 
@@ -493,6 +480,9 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
   height: 0;
   overflow: hidden;
   visibility: hidden;
+  pre {
+    position: static;
+  }
 }
 
 .CodeMirror-cursor {
@@ -500,21 +490,14 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
   pointer-events: none;
 }
 
-.CodeMirror-measure pre {
-  position: static;
-}
 
-div.CodeMirror-cursors {
+.CodeMirror-cursors {
   visibility: hidden;
   position: relative;
   z-index: 3;
 }
 
-div.CodeMirror-dragcursors {
-  visibility: visible;
-}
-
-.CodeMirror-focused div.CodeMirror-cursors {
+.CodeMirror-dragcursors {
   visibility: visible;
 }
 
@@ -522,8 +505,14 @@ div.CodeMirror-dragcursors {
   background: $gray-300;
 }
 
-.CodeMirror-focused .CodeMirror-selected {
-  background: $gray-500;
+.CodeMirror-focused {
+  .CodeMirror-cursors {
+    visibility: visible;
+  }
+
+  .CodeMirror-selected {
+    background: $gray-400;
+  }
 }
 
 .CodeMirror-crosshair {
@@ -533,18 +522,11 @@ div.CodeMirror-dragcursors {
 .CodeMirror-line::selection,
 .CodeMirror-line>span::selection,
 .CodeMirror-line>span>span::selection {
-  background: $gray-300;
-}
-
-.CodeMirror-line::-moz-selection,
-.CodeMirror-line>span::-moz-selection,
-.CodeMirror-line>span>span::-moz-selection {
-  background: $gray-300;
+  background: $gray-800;
 }
 
 .cm-searching {
-  background-color: #ffa;
-  background-color: rgba(255, 255, 0, .4);
+  background-color: rgba($yellow, .4);
 }
 
 /* Used to force a border model for a node */
@@ -555,7 +537,7 @@ div.CodeMirror-dragcursors {
 
 @media print {
   /* Hide the cursor when printing */
-  .CodeMirror div.CodeMirror-cursors {
+  .CodeMirror .CodeMirror-cursors {
     visibility: hidden;
   }
 }

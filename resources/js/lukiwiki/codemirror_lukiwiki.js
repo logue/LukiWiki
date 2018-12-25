@@ -48,9 +48,9 @@
                 regex: /^\>{1,3}.+$/,
                 token: 'quote'
             },
-            // hr
+            // hr / plugin
             {
-                regex: /^-{4,}|#hr$/,
+                regex: /^-{4,}|^#(.+)$/,
                 token: 'hr'
             },
             // Strings
@@ -112,6 +112,16 @@
         },
         {
             regex: /\*\//,
+            token: 'comment'
+        }
+        ],
+        pre: [{
+            regex: /```(.*?):?(.*?)/,
+            token: 'comment',
+            next: 'start'
+        },
+        {
+            regex: /```/,
             token: 'comment'
         }
         ],
