@@ -150,10 +150,10 @@ abstract class AbstractInline
         if (isset($wikis->$page)) {
             $this->meta['pages'] = $page;
 
-            return '<lw-link><a href="'.url($page).$anchor.'"'.
-                ($isautolink === true ? ' class="autolink"' : '').' title="'.$page.'" timestamp="'.$wikis->timestamp($page).'">'.$anchor_name.'</a></lw-link>';
+            return '<a href="'.url($page).$anchor.'"'.
+                ($isautolink === true ? ' class="autolink"' : '').' title="'.$page.'" data-timestamp="'.$wikis->timestamp($page).'" v-passage v-b-tooltip>'.$anchor_name.'</a>';
         } else {
-            $retval = $anchor_name.'<a href="'.url($page).'?action=edit" rel="nofollow" title="'.$page.'">?</a>';
+            $retval = $anchor_name.'<a href="'.url($page).'?action=edit" rel="nofollow" title="Edit '.$page.'" v-b-tooltip>?</a>';
 
             return '<span class="bg-light text-dark">'.$retval.'</span>';
         }
@@ -172,7 +172,7 @@ abstract class AbstractInline
     public function setLink(string $term, string $url, string $tooltip = '', string $rel = '', bool $is_redirect = false)
     {
         $parsed_url = parse_url($url, PHP_URL_PATH);
-        $_tooltip = !empty($tooltip) ? ' title="'.self::processText($tooltip).'"' : '';
+        $_tooltip = !empty($tooltip) ? ' title="'.self::processText($tooltip).'" v-b-tooltip' : '';
         if (!$parsed_url) {
             // パースできないURLだった場合リンクを貼らない。
             return self::processText($term);

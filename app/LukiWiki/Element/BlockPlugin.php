@@ -28,6 +28,6 @@ class BlockPlugin extends AbstractElement
     public function __toString()
     {
         // TODO:Call #plugin
-        return '<p class="p-2 mb-2 rounded text-white bg-secondary">#'.$this->name.'</div>';
+        return '<p class="p-2 mb-2 rounded text-white bg-secondary">#'.$this->name.'</p>';
     }
 }

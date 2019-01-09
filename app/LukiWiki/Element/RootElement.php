@@ -106,7 +106,7 @@ class RootElement extends AbstractElement
                 switch ($head) {
                     case '*':
                         $this->insert(new Heading($this, $line, $this->isAmp));
-                        continue;
+                        continue 2;
                         break;
                     case '`':
                         // GFM:pre
@@ -118,7 +118,7 @@ class RootElement extends AbstractElement
                         if (substr($line, 0, 4) === '----') {
                             // Horizontal Rule
                             $this->insert(new HorizontalRule($this, $line, $this->isAmp));
-                            continue;
+                            continue 2;
                         }
                         // List
                         $content = new UnorderedList($this, $line, $this->isAmp);
@@ -164,7 +164,7 @@ class RootElement extends AbstractElement
                     case '/':
                         // Escape comments
                         if ($line[1] === '/') {
-                            continue;
+                            continue 2;
                         }
                         break;
                     default:
