@@ -42,6 +42,6 @@ class Telephone extends AbstractInline
 
     public function __toString()
     {
-        return '<a href="tel:'.$this->name.'" rel="nofollow"><i class="fas fa-phone"></i> '.$this->alias.'</a>';
+        return '<a href="tel:'.$this->name.'" rel="nofollow"><font-awesome-icon fas icon="phone" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
     }
 }

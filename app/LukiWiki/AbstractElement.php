@@ -108,6 +108,10 @@ abstract class AbstractElement
     {
         $attributes = [];
         foreach ($param as $key => $value) {
+            if (empty($value)){
+                 $attributes[] = $key;
+                 continue;
+            }
             $attributes[] = $key.'="'.$value.'"';
         }
 

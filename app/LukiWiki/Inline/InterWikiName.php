@@ -93,10 +93,10 @@ class InterWikiName extends AbstractInline
     {
         $url = (empty($this->redirect) ? $this->url : $this->redirect.rawurlencode($this->url)).$this->anchor;
         if (empty($url)) {
-            return '<span title="'.$this->name.'" class="bg-warning"><i class="fas fa-globe"></i> '.$this->alias.'</span>';
+            return '<span title="'.$this->name.'" class="bg-warning"><font-awesome-icon fas icon="globe" class="mr-1"></font-awesome-icon>'.$this->alias.'</span>';
         }
 
-        return '<a href="'.$target.$this->anchor.'" title="'.$this->name.'" rel="nofollow"><i class="fas fa-globe"></i> '.$this->alias.'</a>';
+        return '<a href="'.$target.$this->anchor.'" title="'.$this->name.'" rel="nofollow"><font-awesome-icon fas icon="globe" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
     }
 
     /**

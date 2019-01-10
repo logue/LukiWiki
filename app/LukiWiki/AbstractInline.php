@@ -145,13 +145,13 @@ abstract class AbstractInline
         }
         $wikis = $this->pages;
 
-        $anchor_name = empty($alias) ? $page : $alias;
+        $anchor_name = trim(empty($alias) ? $page : $alias);
 
         if (isset($wikis->$page)) {
             $this->meta['pages'] = $page;
 
             return '<a href="'.url($page).$anchor.'"'.
-                ($isautolink === true ? ' class="autolink"' : '').' title="'.$page.'" data-timestamp="'.$wikis->timestamp($page).'" v-passage v-b-tooltip>'.$anchor_name.'</a>';
+                ($isautolink === true ? ' class="autolink"' : '').' title="'.$page.'" data-timestamp="'.$wikis->timestamp($page).'" v-lw-passage v-b-tooltip>'.$anchor_name.'</a>';
         } else {
             $retval = $anchor_name.'<a href="'.url($page).'?action=edit" rel="nofollow" title="Edit '.$page.'" v-b-tooltip>?</a>';
 
@@ -233,7 +233,7 @@ abstract class AbstractInline
         }
 
         // リンクを出力
-        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.' <i class="fas fa-external-link-alt fa-xs"></i></a>';
+        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
     }
 
     /**

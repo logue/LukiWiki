@@ -1,120 +1,197 @@
 <template>
   <div>
-    <b-button-toolbar aria-label="Editor Toolbar" justify class="mb-1">
-      <b-input-group prepend="Page name">
-        <b-form-input v-model="page" name="page" autocomplete="off"></b-form-input>
-      </b-input-group>
-      <b-button-group>
-        <b-button
-          size="sm"
-          variant="outline-secondary"
-          v-b-tooltip
-          title="Bold"
-          v-on:click="replace('b')"
-        >
-          <font-awesome-icon fas icon="bold"/>
-        </b-button>
-        <b-button
-          size="sm"
-          variant="outline-secondary"
-          v-b-tooltip
-          title="Italic"
-          v-on:click="replace('i')"
-        >
-          <font-awesome-icon fas icon="italic"/>
-        </b-button>
-        <b-button
-          size="sm"
-          variant="outline-secondary"
-          v-b-tooltip
-          title="Strike"
-          v-on:click="replace('s')"
-        >
-          <font-awesome-icon fas icon="strikethrough"/>
-        </b-button>
-        <b-button
-          size="sm"
-          variant="outline-secondary"
-          v-b-tooltip
-          title="Underline"
-          v-on:click="replace('u')"
-        >
-          <font-awesome-icon fas icon="underline"/>
-        </b-button>
-        <b-button
-          size="sm"
-          variant="outline-secondary"
-          v-b-tooltip
-          title="Code"
-          v-on:click="replace('code')"
-        >
-          <font-awesome-icon fas icon="code"/>
-        </b-button>
-        <b-button
-          size="sm"
-          variant="outline-secondary"
-          v-b-tooltip
-          title="Quotation"
-          v-on:click="replace('q')"
-        >
-          <font-awesome-icon fas icon="quote-left"/>
-        </b-button>
-      </b-button-group>
-      <b-button-group>
-        <b-button
-          size="sm"
-          variant="outline-secondary"
-          v-b-tooltip
-          title="Insert Link"
-          v-on:click="replace('url')"
-        >
-          <font-awesome-icon fas icon="link"/>
-        </b-button>
-        <b-button
-          size="sm"
-          variant="outline-secondary"
-          v-b-tooltip
-          title="Font Size"
-          v-on:click="replace('size')"
-        >
-          <font-awesome-icon fas icon="text-height"/>
-        </b-button>
-        <b-button
-          size="sm"
-          variant="outline-secondary"
-          v-b-tooltip
-          title="Insert Link"
-          v-on:click="insert('color')"
-        >color</b-button>
-      </b-button-group>
-      <b-button-group>
-        <b-button
-          size="sm"
-          variant="outline-secondary"
-          v-b-tooltip
-          title="Convert character reference"
-          v-on:click="replace('ncr')"
-        >&amp;#</b-button>
-        <b-button
-          size="sm"
-          variant="outline-secondary"
-          v-b-tooltip
-          title="Hint"
-          v-on:click="hint()"
-        >
-          <font-awesome-icon fas icon="question-circle"/>
-        </b-button>
-      </b-button-group>
+    <b-button-toolbar aria-label="Editor Toolbar" class="align-items-baseline form-row" justify>
+      <div class="col-12 col-md-4">
+        <b-input-group>
+          <b-input-group-text slot="prepend">
+            <font-awesome-icon fas icon="file-signature"/>
+          </b-input-group-text>
+          <b-form-input
+            v-model="page"
+            name="page"
+            autocomplete="off"
+            v-b-tooltip
+            title="Page Name"
+          />
+        </b-input-group>
+      </div>
+      <div class="col-md-8">
+        <b-button-group>
+          <b-button
+            size="sm"
+            variant="outline-secondary"
+            v-b-tooltip
+            title="Bold"
+            v-on:click="replace('b')"
+          >
+            <font-awesome-icon fas fixed-width icon="bold"/>
+          </b-button>
+          <b-button
+            size="sm"
+            variant="outline-secondary"
+            v-b-tooltip
+            title="Italic"
+            v-on:click="replace('i')"
+          >
+            <font-awesome-icon fas fixed-width icon="italic"/>
+          </b-button>
+          <b-button
+            size="sm"
+            variant="outline-secondary"
+            v-b-tooltip
+            title="Strike"
+            v-on:click="replace('s')"
+          >
+            <font-awesome-icon fas fixed-width icon="strikethrough"/>
+          </b-button>
+          <b-button
+            size="sm"
+            variant="outline-secondary"
+            v-b-tooltip
+            title="Underline"
+            v-on:click="replace('u')"
+          >
+            <font-awesome-icon fas fixed-width icon="underline"/>
+          </b-button>
+          <b-button
+            size="sm"
+            variant="outline-secondary"
+            v-b-tooltip
+            title="Code"
+            v-on:click="replace('code')"
+          >
+            <font-awesome-icon fas fixed-width icon="code"/>
+          </b-button>
+          <b-button
+            size="sm"
+            variant="outline-secondary"
+            v-b-tooltip
+            title="Quotation"
+            v-on:click="replace('q')"
+          >
+            <font-awesome-icon fas fixed-width icon="quote-left"/>
+          </b-button>
+        </b-button-group>
+        <b-button-group>
+          <b-button
+            size="sm"
+            variant="outline-secondary"
+            v-b-tooltip
+            title="Insert Link"
+            v-on:click="replace('url')"
+          >
+            <font-awesome-icon fas fixed-width icon="link"/>
+          </b-button>
+          <b-button
+            size="sm"
+            variant="outline-secondary"
+            v-b-tooltip
+            title="Font Size"
+            v-on:click="replace('size')"
+          >
+            <font-awesome-icon fas fixed-width icon="text-height"/>
+          </b-button>
+          <b-button
+            size="sm"
+            variant="outline-secondary"
+            v-b-tooltip
+            title="Insert Color"
+            v-on:click="insert('color')"
+          >
+            <font-awesome-icon fas fixed-width icon="palette"/>
+          </b-button>
+        </b-button-group>
+        <b-button-group>
+          <b-button
+            size="sm"
+            variant="outline-secondary"
+            v-b-tooltip
+            title="Convert character reference"
+            v-on:click="replace('ncr')"
+          >&amp;#</b-button>
+          <b-button
+            size="sm"
+            variant="outline-secondary"
+            v-b-tooltip
+            title="Hint"
+            v-on:click="hint()"
+          >
+            <font-awesome-icon fas fixed-width icon="question-circle"/>
+          </b-button>
+        </b-button-group>
+      </div>
     </b-button-toolbar>
-    <codemirror v-model="editor" :options="cmOption" ref="cm"></codemirror>
+    <codemirror v-model="editor" :options="cmOption" ref="cm" class="my-1"></codemirror>
+    <div class="form-row align-items-center" aria-label="Editor Footer">
+      <div class="col-md-3 col-sm-6">
+        <b-form-checkbox
+          id="keep_timestamp"
+          v-model="keep_timestamp"
+          value="1"
+          unchecked-value="0"
+        >Keep Timestamp</b-form-checkbox>
+      </div>
+      <div class="col-md col-sm-6">
+        <b-input-group>
+          <b-input-group-text slot="prepend">
+            <font-awesome-icon fas icon="key"/>
+          </b-input-group-text>
+          <b-form-input
+            name="password"
+            autocomplete="off"
+            v-b-tooltip
+            title="Password"
+            v-bind:disabled="keep_timestamp === 0"
+          />
+        </b-input-group>
+      </div>
+      <div class="col-md-4 col-sm-12 text-right mr-0 mt-1 mt-md-0">
+        <b-button variant="primary" type="submit" name="action" value="post">
+          <font-awesome-icon fas fixed-width icon="check"/>Submit
+        </b-button>
+        <b-button variant="secondary" type="submit" name="action" value="cancel">
+          <font-awesome-icon fas fixed-width icon="ban"/>Cancel
+        </b-button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { fas } from "@fortawesome/free-solid-svg-icons";
-library.add(fas);
+import {
+  faFileSignature,
+  faBold,
+  faItalic,
+  faStrikethrough,
+  faUnderline,
+  faCode,
+  faQuoteLeft,
+  faLink,
+  faTextHeight,
+  faPalette,
+  faQuestionCircle,
+  faKey,
+  faCheck,
+  faBan
+} from "@fortawesome/free-solid-svg-icons";
+library.add(
+  faFileSignature,
+  faBold,
+  faItalic,
+  faStrikethrough,
+  faUnderline,
+  faCode,
+  faQuoteLeft,
+  faLink,
+  faTextHeight,
+  faPalette,
+  faQuestionCircle,
+  faKey,
+  faCheck,
+  faBan
+);
 
 // language
 import "../codemirror_lukiwiki.js";
@@ -150,15 +227,17 @@ import "codemirror/addon/fold/xml-fold.js";
 export default {
   data() {
     return {
-      editor: this.$slots.body ? this.$slots.body[0].children[0].text : "",
-      page: this.$slots.page
-        ? this.$slots.page[0].children[2].data.attrs.value
+      editor: this.$slots.body[0] ? this.$slots.body[0].children[0].text : "",
+      page: this.$slots.header[0]
+        ? this.$slots.header[0].children[2].data.attrs.value
         : "",
+      keep_timestamp: false,
       cmOption: {
         tabSize: 4,
         foldGutter: true,
         styleActiveLine: true,
         lineNumbers: true,
+        lineWrapping: true,
         line: true,
         keyMap: "sublime",
         mode: "lukiwiki",
@@ -190,7 +269,6 @@ export default {
           ret = "&(" + v + ");";
           break;
       }
-      console.log(ret);
       const doc = editor.getDoc();
       const cursor = doc.getCursor();
       this.$refs.cm.codemirror.replaceRange(ret, cursor);
@@ -198,6 +276,10 @@ export default {
     replace(v) {
       let ret = "";
       let str = this.$refs.cm.codemirror.getSelection();
+      if (str === "") {
+        alert("Please select text.");
+        return;
+      }
       switch (v) {
         case "size":
           var val = prompt("font-size (rem)", "1");

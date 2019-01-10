@@ -46,6 +46,6 @@ class PreformattedText extends AbstractElement
 
     public function __toString()
     {
-        return $this->wrap(implode("\n", $this->elements), 'pre', ['class' => 'CodeMirror', 'data-lang' => $this->meta['lang']], false);
+        return $this->wrap(implode("\n", $this->elements), 'pre', ['v-lw-sh' => null, 'class' => 'CodeMirror', 'data-lang' => $this->meta['lang']], false);
     }
 }

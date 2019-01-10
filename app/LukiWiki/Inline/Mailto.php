@@ -55,6 +55,6 @@ class Mailto extends AbstractInline
 
     public function __toString()
     {
-        return '<a href="mailto:'.$this->name.'" rel="nofollow"><i class="far fa-envelope"></i> '.$this->alias.'</a>';
+        return '<a href="mailto:'.$this->name.'" rel="nofollow"><font-awesome-icon fas icon="envelope" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
     }
 }
