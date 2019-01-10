@@ -13,11 +13,11 @@ use App\LukiWiki\AbstractElement;
 use App\LukiWiki\Rules\HeadingAnchor;
 
 /**
- * * Heading1
- * ** Heading2
- * *** Heading3
- * **** Heading4
- * ***** Heading5.
+ * # Heading1
+ * ## Heading2
+ * ### Heading3
+ * #### Heading4
+ * ##### Heading5.
  */
 class Heading extends AbstractElement
 {
@@ -29,7 +29,7 @@ class Heading extends AbstractElement
     {
         parent::__construct();
 
-        $this->level = min(5, strspn($text, '*'));
+        $this->level = min(5, strspn($text, '#'));
         list($text, $this->msg_top, $this->id) = $root->getAnchor($text, $this->level);
 
         $content = new InlineElement($text, $isAmp);
@@ -48,7 +48,7 @@ class Heading extends AbstractElement
 
     public function __toString()
     {
-        list($this->text, $fixed_anchor) = HeadingAnchor::get($this->text, false);
+        list($this->text, $fixed_anchor) = HeadingAnchor::get(parent::__toString(), false);
         $id = (empty($fixed_anchor)) ? $this->id : $fixed_anchor;
 
         $this->meta[$id] = $this->text;

@@ -3,7 +3,7 @@
  * 基底要素クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018-2019 Logue
  * @license   MIT
  */
 
@@ -11,7 +11,6 @@ namespace App\LukiWiki\Element;
 
 use App\LukiWiki\AbstractElement;
 use App\LukiWiki\Rules\HeadingAnchor;
-use Debugbar;
 
 /**
  * RootElement.
@@ -32,7 +31,6 @@ class RootElement extends AbstractElement
 
     public function parse(array $lines)
     {
-        Debugbar::startMeasure('LukiWiki', 'LukiWiki');
         $this->last = $this;
         $matches = [];
 
@@ -63,7 +61,7 @@ class RootElement extends AbstractElement
             }
 
             // Multiline-enabled block plugin #plugin{{ ... }}
-            if (preg_match('/^#[^{]+(\{\{+)\s*$/', $line, $matches)) {
+            if (preg_match('/^@[^{]+(\{\{+)\s*$/', $line, $matches)) {
                 $len = strlen($matches[1]);
                 $line .= self::MULTILINE_DELIMITER;
                 while (!empty($lines)) {
@@ -104,7 +102,7 @@ class RootElement extends AbstractElement
             if (is_object($this->last)) {
                 $content = null;
                 switch ($head) {
-                    case '*':
+                    case '#':
                         $this->insert(new Heading($this, $line, $this->isAmp));
                         continue 2;
                         break;
@@ -141,13 +139,13 @@ class RootElement extends AbstractElement
                             $content = new Table($out, $this->isAmp);
                         }
                         break;
-                    case '#':
+                    case '@':
                         $matches = [];
 
                         if ($line[1] === ' ' || $line[1] === "\t") {
                             // CPre (Plus!)
                             $content = $this->last->add(new SharpPre($this, $line));
-                        } elseif (preg_match('/^#([^\(\{]+)(?:\(([^\r]*)\))?(\{*)/', $line, $matches)) {
+                        } elseif (preg_match('/^@([^\(\{]+)(?:\(([^\r]*)\))?(\{*)/', $line, $matches)) {
                             // Plugin
                             $len = strlen($matches[3]);
                             $body = [];
@@ -190,7 +188,6 @@ class RootElement extends AbstractElement
                 continue;
             }
         }
-        Debugbar::stopMeasure('LukiWiki');
     }
 
     public function getAnchor($text, $level)

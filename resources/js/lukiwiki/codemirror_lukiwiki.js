@@ -17,24 +17,29 @@
 
     CodeMirror.defineSimpleMode('lukiwiki', {
         start: [
-            // ul, ol, li, dt,
+            // ul, ol, li,
             {
-                regex: /^(-|\+|:){1,3}/,
+                regex: /^(-|\+){1,3}(.+?)$/,
+                token: 'def'
+            },
+            // dt, dl
+            {
+                regex: /^\:(.+?)\|(.+?)$/,
                 token: 'def'
             },
             // table
             {
-                regex: /\|/,
+                regex: /^\|(.+)$/,
                 token: 'qualifier'
             },
             // h2~h6
             {
-                regex: /^\*{1,5}.+$/,
+                regex: /^\#{1,5}.+$/,
                 token: 'keyword'
             },
             // Block Plugin
             {
-                regex: /^#[a-z_]+\([^\)]+\)?(\{[^\)]+\})?/,
+                regex: /^\@.+?$/,
                 token: 'string'
             },
             // Blacket
@@ -48,21 +53,15 @@
                 regex: /^\>{1,3}.+$/,
                 token: 'quote'
             },
-            // hr / plugin
+            // hr
             {
-                regex: /^-{4,}|^#(.+)$/,
+                regex: /^-{4,}$/,
                 token: 'hr'
             },
             // Strings
             {
-                regex: /\&(#[0-9]+|#x[0-9a-f]+|(?=[a-zA-Z0-9]{2,8})(?:apos|amp|lt|gt|quot))\;/,
+                regex: /\&(.+)\;/,
                 token: 'string'
-            },
-
-            // Plugin
-            {
-                regex: /&[a-zA-Z_]+[^;]*;/,
-                token: 'string2'
             },
             // Align
             {
@@ -72,8 +71,8 @@
 
             // Inline
             {
-                regex: /(_|\@|\'|\%){1,3}.+(_|\@|\'|\%){1,3}/,
-                token: 'string3'
+                regex: /(_|\~|\'|\%){1,3}(.+)(_|\~|\'|\%){1,3}/,
+                token: 'string'
             },
             // Inline
             {
@@ -113,18 +112,25 @@
         {
             regex: /\*\//,
             token: 'comment'
-        }
-        ],
+        }],
         pre: [{
-            regex: /```(.*?):?(.*?)/,
+            regex: /^```(.+)(\:(.+)?)$/,
             token: 'comment',
             next: 'start'
         },
         {
-            regex: /```/,
+            regex: /^```$/,
             token: 'comment'
-        }
-        ],
+        }],
+        plugin: [{
+            regex: /^@[^{]+(\{\{+)\s*$/,
+            token: 'string',
+            next: 'start'
+        },
+        {
+            regex: /^\}\}$/,
+            token: 'string'
+        }],
         meta: {
             electricInput: /^{{|}}$/,
             blockCommentStart: '/*',
