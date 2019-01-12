@@ -29,8 +29,10 @@ Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.config.productionTip = false;
 
 // Bootstrap Vue
-import BootstrapVue from 'bootstrap-vue'
-Vue.use(BootstrapVue);
+//import BootstrapVue from 'bootstrap-vue'
+//Vue.use(BootstrapVue);
+import vBTooltip from 'bootstrap-vue/es/directives/tooltip/tooltip';
+Vue.directive('b-tooltip', vBTooltip);
 
 // Vue Codemirror
 import VueCodemirror from 'vue-codemirror';

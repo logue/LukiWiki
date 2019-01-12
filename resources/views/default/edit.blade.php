@@ -3,7 +3,8 @@
 @section('content')
 <form action="{{ url('/') }}" method="POST">
     @csrf
-    <input type="hidden" name="action" value="edit" />
+    <input type="hidden" name="hash" value="{{ $hash }}" />
+    <input type="hidden" name="original" value="{{ $source }}" />
     <lw-editor>
         <div class="input-group" slot="header">
             <div class="input-group-prepend">
@@ -11,28 +12,10 @@
             </div>
             <input type="text" class="form-control" id="pagename-textbox" name="page" value="{{ $page }}" />
         </div>
-        <textarea name="body" class="form-control" slot="body">{{ $source }}</textarea>
-        <div class="form-row align-items-center mt-1" slot="footer">
-            <div class="col">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" name="keeep-timestamp" id="keep-timestamp-checkbox">
-                    <label class="custom-control-label" for="keep-timestamp-checkbox">Keep timestamp</label>
-                </div>
-            </div>
-            <div class="col">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="password-addon">
-                            Password
-                        </span>
-                    </div>
-                    <input type="password" name="password" class="form-control" aria-label="Password" aria-describedby="password-addon" />
-                </div>
-            </div>
-            <div class="col-4 ml-auto mr-0">
-                <button type="submit" class="btn btn-primary" name="action" value="submit">Save</button>
-                <button type="submit" class="btn btn-secondary" name="action" value="cancel">Cancel</button>
-            </div>
+        <textarea name="source" class="form-control" slot="body">{{ $source }}</textarea>
+        <div class="text-right" slot="footer">
+            <button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+            <button type="submit" class="btn btn-secondary" name="action" value="cancel">Cancel</button>
         </div>
     </lw-editor>
 </form>

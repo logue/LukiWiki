@@ -11,6 +11,7 @@ namespace App\LukiWiki;
 
 use App\LukiWiki\Element\RootElement;
 use Debugbar;
+
 /**
  * パーサー.
  */
@@ -35,7 +36,6 @@ class Parser
             $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $lines));
         }
 
-        Debugbar::startMeasure('LukiWiki', 'LukiWiki Parser');
         $body = new RootElement(null, null, ['id' => ++self::$instance, 'isAmp' => $isAmp]);
         $body->parse($lines);
         $ret = $body->toString();

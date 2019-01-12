@@ -1,4 +1,5 @@
 @norelated
+
 # Welcome to LukiWiki [bc51f60e]
 インストール成功おめでとうございます。この画面が正常に表示されているということは、インストールに成功したということです。
 まずは、[[SandBox]]で行きLukiWikiの機能を試してみましょう。
@@ -9,7 +10,6 @@
 -[[MainPage]] - このページです。
 -[[SideBar]] - サイドメニューを定義します
 -[[InterWikiName]] - 外部のWikiと連携させる場合はここで設定します。詳細は、[[Help/InterWiki]]をご覧になって下さい。
-
 
 # サポート [cf8431bf]
 -[[ヘルプ>Help]]

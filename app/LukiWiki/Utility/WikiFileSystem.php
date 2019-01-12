@@ -82,7 +82,7 @@ class WikiFileSystem
         // タイムスタンプとハッシュが変わるのでキャッシュを削除
         Cache::forget(self::CACHE_DATE_PREFIX.self::TYPE);
 
-        return Storage::put(self::getFilePath($page), $content);
+        return Storage::put(self::getFilePath($page), self::convertEOL($content));
     }
 
     /**
@@ -94,7 +94,7 @@ class WikiFileSystem
      */
     public function __get(string $page)
     {
-        Debugbar::startMeasure('loading', 'Loading data...');
+        Debugbar::startMeasure('loading', 'Loading '.$page.'...');
         if (!self::isValiedPageName($page)) {
             return false;
         }
@@ -191,22 +191,6 @@ class WikiFileSystem
     }
 
     /**
-     * ページのハッシュ.
-     *
-     * @param string $page
-     *
-     * @return string
-     */
-    public function hash(string $page)
-    {
-        if (!isset($this->$page)) {
-            return;
-        }
-
-        return hash('md5', $this->$page);
-    }
-
-    /**
      * ファイル名とページ名の対応リストを取得する.
      *
      * @param string $type ファイルの種類
@@ -215,8 +199,8 @@ class WikiFileSystem
      */
     public function __invoke()
     {
-        return Cache::rememberForever(self::DIRECTORY_CACHE_PREFIX.self::TYPE, function () {
-            Debugbar::startMeasure('listing', 'Process data directory');
+        Debugbar::startMeasure('listing', 'Process data directory');
+        $list = Cache::rememberForever(self::DIRECTORY_CACHE_PREFIX.self::TYPE, function () {
             // ファイル名一覧の処理はキャッシュに入れる
             $ret = [];
             $files = Storage::files(Config::get('lukiwiki.directory.'.self::TYPE));
@@ -232,18 +216,18 @@ class WikiFileSystem
                     'path' => $filepath,
                     // ファイルの更新日
                     'timestamp' => $this->timestamp($page),
-                    // MD5ハッシュ
-                    'hash' => $this->hash($page),
                 ];
                 unset($filepath);
             }
 
             // キャッシュの更新日時を更新
             Cache::forever(self::CACHE_DATE_PREFIX.self::TYPE, Storage::lastModified(Config::get('lukiwiki.directory.'.self::TYPE)));
-            Debugbar::stopMeasure('listing');
 
             return $ret;
         });
+        Debugbar::stopMeasure('listing');
+
+        return $list;
     }
 
     /**
@@ -337,5 +321,15 @@ class WikiFileSystem
         }
 
         return true;
+    }
+
+    protected static function convertEOL($str, $to = "\n")
+    {
+        $str = str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $str);
+        if ("\n" !== $to) {
+            $str = str_replace("\n", $to, $str);
+        }
+
+        return $str;
     }
 }

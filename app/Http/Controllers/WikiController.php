@@ -21,6 +21,11 @@ class WikiController extends Controller
     // ページ名
     private $page = null;
 
+    // 新旧のデーターの比較に用いる要約用のハッシュのアルゴリズム
+    // 使用可能な値：http://php.net/manual/ja/function.hash-algos.php
+    // あくまでも新旧のデーターに変化があったかのチェック用途であるため、高速なcrc32で十分だと思う。
+    const HASH_ALGORITHM = 'crc32';
+
     /**
      * コンストラクタ
      */
@@ -39,18 +44,18 @@ class WikiController extends Controller
      *
      * @return Response
      */
-    public function __invoke(Request $request, $page = 'MainPage')
+    public function __invoke(Request $request, $page = null)
     {
-        global $lw; // TODO
-
         $this->page = $page;
-        $this->exists = isset($this->data->$page);
-        $this->content = $this->data->$page;
+        $this->request = $request;
 
         switch ($request->input('action')) {
             case 'new':
             case 'edit':
-                return $this->edit($request);
+                return $this->edit();
+                break;
+            case 'save':
+                return $this->save();
                 break;
             case 'attachment':
                 return $this->attachment();
@@ -62,13 +67,13 @@ class WikiController extends Controller
                 return view(
                    'default.source',
                    [
-                       'source' => $this->content,
+                       'source' => $this->data->$page,
                        'title'  => 'Source of '.$page,
                        'page'   => $page,
                    ]
                );
             case 'list':
-                return $this->list($request->input('type') ?? 'data');
+                return $this->list();
                 break;
             case 'lock':
                 return $this->lock();
@@ -109,15 +114,19 @@ class WikiController extends Controller
      */
     private function read($isAmp)
     {
-        if (!$this->exists) {
-            return \App::abort(404);
+        $page = $this->page ?? $this->config['special_page']['default'];
+        $data = $this->data->$page;
+
+        if (!$data) {
+            // ページが見つからない場合は404エラー
+            return abort(404);
         }
 
         if ($isAmp) {
             \Debugbar::disable();
         }
 
-        $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $this->content));
+        $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $data));
 
         $body = new RootElement('', 0, ['id' => 0, 'isAmp' => $isAmp]);
         $body->parse($lines);
@@ -126,9 +135,9 @@ class WikiController extends Controller
         return view(
            $isAmp ? 'default.amp' : 'default.content',
            [
-                'page'    => $this->page,
+                'page'    => $page,
                 'content' => $body->__toString(),
-                'title'   => $meta['title'] ?? $this->page,
+                'title'   => $meta['title'] ?? $page,
                 'notes'   => $meta['note'] ?? null,
             ]
         );
@@ -137,9 +146,10 @@ class WikiController extends Controller
     /**
      * 編集画面表示.
      */
-    private function edit($request)
+    private function edit()
     {
-        if (!$this->page || $request->input('action') === 'new') {
+        $page = $this->page;
+        if (!$page || $this->request->input('action') === 'new') {
             // 新規ページ
             return view(
                 'default.edit',
@@ -152,21 +162,72 @@ class WikiController extends Controller
              );
         }
 
-        if ($request->isMethod('post')) {
-            // POSTの場合、書き込み処理
-            $diff = new iphis\FineDiff\Diff();
-            dd($diff);
-        }
+        $data = $this->data->$page;
 
         return view(
             'default.edit',
             [
-                'page'   => $this->page,
-                'source' => $this->content,
-                'title'  => 'Edit '.$this->page,
-                'hash'   => $this->data->hash($this->content),
+                'page'   => $page,
+                'source' => $data,
+                'title'  => 'Edit '.$page,
+                'hash'   => hash(self::HASH_ALGORITHM, $data),
             ]
          );
+    }
+
+    /**
+     * 保存処理.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    private function save()
+    {
+        if (!$this->request->isMethod('post')) {
+            // Method not allowed
+            abort(405);
+        }
+
+        $page = $this->request->input('page');
+
+        if (empty($page)) {
+            abort(400);
+        }
+
+        $data = $this->data->$page;
+
+        if (hash(self::HASH_ALGORITHM, $data) !== $this->request->input('hash')) {
+            // 編集中に別の人が編集をした（競合をおこした）
+
+            // TODO: この処理は動かない。3way-diffを出力
+            $merger = new PhpMerge\PhpMerge();
+            $result = $merger->merge(
+                $this->request->input('original'),
+                $data,
+                $this->request->input('source')
+            );
+            dd($result);
+
+            return view(
+                'default.conflict',
+                [
+                    'page'   => $page,
+                    'diff'   => $result,
+                    'source' => $this->request->input('source'),
+                    'title'  => 'Conflict '.$page,
+                    'hash'   => hash(self::HASH_ALGORITHM, $data),
+                ]
+            );
+        }
+
+        // 保存処理
+        //dd($page, $this->request->input('source'));
+        $this->data->__set($page, $this->request->input('source'));
+
+        $this->request->session()->flash('message', 'Saved');
+
+        return redirect($page);
     }
 
     /**

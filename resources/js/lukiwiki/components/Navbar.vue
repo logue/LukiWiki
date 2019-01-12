@@ -77,35 +77,52 @@
   </b-navbar>
 </template>
 <script>
+// Button
+import bButton from 'bootstrap-vue/es/components/button/button';
+// Collapse
+import bCollapse from 'bootstrap-vue/es/components/collapse/collapse';
+// Dropdown
+import bDropdownItem from 'bootstrap-vue/es/components/dropdown/dropdown-item';
+// Form
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+// Nav
+import bNavItemDropdown from 'bootstrap-vue/es/components/nav/nav-item-dropdown';
+import bNavForm from 'bootstrap-vue/es/components/nav/nav-form';
+// Navbar
+import bNavbar from 'bootstrap-vue/es/components/navbar/navbar';
+import bNavbarBrand from 'bootstrap-vue/es/components/navbar/navbar-brand';
+import bNavbarNav from 'bootstrap-vue/es/components/navbar/navbar-nav';
+import bNavbarToggle from 'bootstrap-vue/es/components/navbar/navbar-toggle';
+
 // 使用するアイコンの登録
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
-  faFile,
+  faClock,
   faCopy,
   faEdit,
+  faFile,
   faFileCode,
   faHistory,
-  faPaperclip,
-  faLock,
-  faUnlock,
-  faSearch,
   faListAlt,
-  faClock
+  faLock,
+  faPaperclip,
+  faSearch,
+  faUnlock
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
-  faEdit,
+  faClock,
   faCopy,
-  faPaperclip,
-  faHistory,
-  faLock,
-  faUnlock,
-  faSearch,
+  faEdit,
   faFile,
   faFileCode,
+  faHistory,
   faListAlt,
-  faClock
+  faLock,
+  faPaperclip,
+  faSearch,
+  faUnlock
 );
 
 export default {
@@ -122,6 +139,16 @@ export default {
     };
   },
   components: {
+    "b-button": bButton,
+    "b-collapse": bCollapse,
+    "b-dropdown-item": bDropdownItem,
+    "b-form-input": bFormInput,
+    "b-nav-item-dropdown": bNavItemDropdown,
+    "b-nav-form": bNavForm,
+    "b-navbar": bNavbar,
+    "b-navbar-brand": bNavbarBrand,
+    "b-navbar-nav": bNavbarNav,
+    "b-navbar-toggle": bNavbarToggle,
     "font-awesome-icon": FontAwesomeIcon
   }
 };

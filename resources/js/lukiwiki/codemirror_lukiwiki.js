@@ -19,17 +19,17 @@
         start: [
             // ul, ol, li,
             {
-                regex: /^(-|\+){1,3}(.+?)$/,
+                regex: /^(-|\+){1,3}/,
                 token: 'def'
             },
             // dt, dl
             {
-                regex: /^\:(.+?)\|(.+?)$/,
+                regex: /^\:.+\|.+$/,
                 token: 'def'
             },
             // table
             {
-                regex: /^\|(.+)$/,
+                regex: /^\|/,
                 token: 'qualifier'
             },
             // h2~h6

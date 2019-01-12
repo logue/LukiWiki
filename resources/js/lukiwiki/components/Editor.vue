@@ -1,5 +1,6 @@
 <template>
   <div>
+    <input type="hidden" name="source" v-bind:value="source">
     <b-button-toolbar aria-label="Editor Toolbar" class="align-items-baseline form-row" justify>
       <div class="col-12 col-md-4">
         <b-input-group>
@@ -121,7 +122,15 @@
         </b-button-group>
       </div>
     </b-button-toolbar>
-    <codemirror v-model="editor" :options="cmOption" ref="cm" class="my-1"></codemirror>
+    <codemirror
+      ref="cm"
+      v-model="source"
+      v-bind:options="cmOption"
+      @ready="onCmReady"
+      @focus="onCmFocus"
+      @input="onCmCodeChange"
+      class="my-1"
+    ></codemirror>
     <div class="form-row align-items-center" aria-label="Editor Footer">
       <div class="col-md-3 col-sm-6">
         <b-form-checkbox
@@ -146,11 +155,11 @@
         </b-input-group>
       </div>
       <div class="col-md-4 col-sm-12 text-right mr-0 mt-1 mt-md-0">
-        <b-button variant="primary" type="submit" name="action" value="post">
-          <font-awesome-icon fas fixed-width icon="check"/>Submit
+        <b-button variant="primary" type="submit" name="action" value="save">
+          <font-awesome-icon fas fixed-width icon="check" class="mr-1"/>Submit
         </b-button>
         <b-button variant="secondary" type="submit" name="action" value="cancel">
-          <font-awesome-icon fas fixed-width icon="ban"/>Cancel
+          <font-awesome-icon fas fixed-width icon="ban" class="mr-1"/>Cancel
         </b-button>
       </div>
     </div>
@@ -158,39 +167,56 @@
 </template>
 
 <script>
+// Button
+import bButton from "bootstrap-vue/es/components/button/button";
+// Button Group
+import bButtonGroup from "bootstrap-vue/es/components/button-group/button-group";
+// Button Toolbar
+import bButtonToolbar from "bootstrap-vue/es/components/button-toolbar/button-toolbar";
+// Form Checkbox
+import bFormCheckbox from "bootstrap-vue/es/components/form-checkbox/form-checkbox";
+// Form Input
+import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
+// Input Group
+import bInputGroup from "bootstrap-vue/es/components/input-group/input-group";
+import bInputGroupText from "bootstrap-vue/es/components/input-group/input-group-text";
+// Tooltip
+import vBTooltip from "bootstrap-vue/es/directives/tooltip/tooltip";
+
+// FontAwesome
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
-  faFileSignature,
+  faBan,
   faBold,
-  faItalic,
-  faStrikethrough,
-  faUnderline,
+  faCheck,
   faCode,
-  faQuoteLeft,
+  faFileSignature,
+  faItalic,
+  faKey,
   faLink,
-  faTextHeight,
   faPalette,
   faQuestionCircle,
-  faKey,
-  faCheck,
-  faBan
+  faQuoteLeft,
+  faStrikethrough,
+  faTextHeight,
+  faUnderline
 } from "@fortawesome/free-solid-svg-icons";
 library.add(
-  faFileSignature,
+  faBan,
   faBold,
-  faItalic,
-  faStrikethrough,
-  faUnderline,
+  faCheck,
   faCode,
-  faQuoteLeft,
+  faFileSignature,
+  faItalic,
+  faKey,
   faLink,
-  faTextHeight,
   faPalette,
   faQuestionCircle,
-  faKey,
-  faCheck,
-  faBan
+  faQuoteLeft,
+  faStrikethrough,
+  faTextHeight,
+  faUnderline
 );
 
 // language
@@ -223,14 +249,20 @@ import "codemirror/addon/fold/foldgutter.js";
 import "codemirror/addon/fold/indent-fold.js";
 import "codemirror/addon/fold/markdown-fold.js";
 import "codemirror/addon/fold/xml-fold.js";
+// Show hint
+import "./../codemirror_show-hint-modded.js";
+import "codemirror/addon/hint/show-hint.css";
 
 export default {
   data() {
+    let source, page;
+    try {
+      source = this.$slots.body[0].children[0].text;
+      page = this.$slots.header[0].children[2].data.attrs.value;
+    } catch (e) {}
     return {
-      editor: this.$slots.body[0] ? this.$slots.body[0].children[0].text : "",
-      page: this.$slots.header[0]
-        ? this.$slots.header[0].children[2].data.attrs.value
-        : "",
+      source: source,
+      page: page,
       keep_timestamp: false,
       cmOption: {
         tabSize: 4,
@@ -252,8 +284,8 @@ export default {
       }
     };
   },
-  created: function() {
-    //console.log(this.$slots)
+  mounted: function() {
+    //console.log(this.$slots);
   },
   methods: {
     insert(v) {
@@ -329,10 +361,80 @@ export default {
       }
       this.$refs.cm.codemirror.replaceSelection(ret);
     },
-    hint() {}
+    hint() {},
+    onCmReady(cm) {
+      // 絵文字一覧を取得
+      // https://qiita.com/yymm@github/items/6aa5b869ef8c22683ccc
+      let emojiList = [];
+      axios
+        .get("https://api.github.com/emojis")
+        .then(response => {
+          for (let key in response.data) {
+            emojiList.push({
+              text: `${key}:`,
+              render: element => {
+                element.innerHTML = `<img width="15" height="15" src="${
+                  response.data[key]
+                }" alt="${key}" async /> ${key}`;
+              }
+            });
+          }
+        })
+        .catch(error => console.error(error));
+      cm.on("keypress", () => {
+        CodeMirror.showHint(
+          cm,
+          function() {
+            let cur = cm.getCursor(),
+              token = cm.getTokenAt(cur);
+            let start = token.start,
+              end = cur.ch,
+              word = token.string.slice(0, end - start);
+            let ch = cur.ch,
+              line = cur.line;
+            let currentWord = token.string;
+            while (ch-- > -1) {
+              let t = cm.getTokenAt({ ch, line }).string;
+              if (t === ":") {
+                let filteredList = emojiList.filter(item => {
+                  return item.text.indexOf(currentWord) == 0 ? true : false;
+                });
+                if (filteredList.length >= 1) {
+                  return {
+                    list: filteredList,
+                    from: CodeMirror.Pos(line, ch),
+                    to: CodeMirror.Pos(line, end)
+                  };
+                }
+              }
+              currentWord = t + currentWord;
+            }
+          },
+          { completeSingle: false }
+        );
+      });
+    },
+    onCmFocus(cm) {
+      //console.log("the editor is focus!", cm);
+    },
+    onCmCodeChange(newCode) {
+      //console.log("this is new code", newCode);
+      //this.code = newCode;
+      this.source = newCode;
+    }
   },
   components: {
+    "b-button": bButton,
+    "b-button-group": bButtonGroup,
+    "b-button-toolbar": bButtonToolbar,
+    "b-form-checkbox": bFormCheckbox,
+    "b-form-input": bFormInput,
+    "b-input-group": bInputGroup,
+    "b-input-group-text": bInputGroupText,
     "font-awesome-icon": FontAwesomeIcon
+  },
+  directives: {
+    "b-tooltip": vBTooltip
   }
 };
 </script>
