@@ -14,7 +14,7 @@ npm install
 npm run prod
 ```
 
-完了したら`php artisan serv`でhttp://localhost:8000/からプログラムを走らせることができます。
+完了したら`php artisan serve`でhttp://localhost:8000/ からプログラムを走らせることができます。
 
 ## ライセンス
 

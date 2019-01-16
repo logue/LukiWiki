@@ -3,7 +3,7 @@
  * インライン要素クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright (c)2018 by Logue
+ * @copyright (c)2018-2019 by Logue
  * @license   MIT
  */
 
@@ -192,7 +192,7 @@ abstract class AbstractInline
         if (Config::get('lukiwiki.render.expand_external_media_file')) {
             // 拡張子を取得
             $ext = substr($parsed_url, strrpos($parsed_url, '.') + 1);
-            
+
             if ($this->isAmp) {
                 switch ($ext) {
                     case 'jpeg':
@@ -204,7 +204,7 @@ abstract class AbstractInline
                     case 'webp':
                     case 'bmp':
                     case 'ico':
-                        return '<amp-img src="" alt="'.self::processText($term).'" width="1" height="1" class="external-media"><div fallback>'.self::processText($term).'</div></amp-img>';
+                        return '<amp-img src="'.$url.'" alt="'.self::processText($term).'" width="1" height="1" class="external-media"><div fallback>'.self::processText($term).'</div></amp-img>';
                         break;
                     case 'mp4':
                     case 'ogm':
@@ -218,14 +218,15 @@ abstract class AbstractInline
                         return '<amp-audio  src="'.$url.'" controls '.$_tooltip.' width="auto" height="50"><div fallback>'.self::processText($term).'</div></amp-audio>';
                         break;
                 }
+
                 return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.'</a>';
-            }else if (!empty($ext)) {
-               return '<lw-media '.$_tooltip.'><a href="'.$url.'" rel="'.$rel.'">'.$term.'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a></lw-media>';
+            } elseif (!empty($ext)) {
+                return '<lw-media><a href="'.$url.'" rel="'.$rel.'">'.$term.'</a></lw-media>';
             }
         }
 
         // リンクを出力
-        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.' v-bs-tooltip>'.$term.'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
+        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.' v-b-tooltip>'.$term.'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
     }
 
     /**

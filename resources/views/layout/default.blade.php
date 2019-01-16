@@ -25,6 +25,9 @@
             </nav>
         </lw-navbar>
         <main class="container py-2">
+@if(Session::has('message'))
+            <b-alert show dismissible>{{ session('message') }}</b-alert>
+@endif
             <h1>{{ $title }}</h1>
             <hr />
             @yield('content')

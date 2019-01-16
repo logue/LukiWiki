@@ -19,7 +19,7 @@
         start: [
             // ul, ol, li,
             {
-                regex: /^(-|\+){1,3}/,
+                regex: /^[-\+]{1,3}/,
                 token: 'def'
             },
             // dt, dl
@@ -62,6 +62,11 @@
             {
                 regex: /\&(.+)\;/,
                 token: 'string'
+            },
+            // Emoji
+            {
+                regex: /\:\w+.\:/,
+                token: 'def'
             },
             // Align
             {

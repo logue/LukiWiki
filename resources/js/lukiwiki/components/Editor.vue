@@ -232,7 +232,7 @@ import "codemirror/addon/search/matchesonscrollbar.js";
 import "codemirror/addon/search/searchcursor.js";
 import "codemirror/addon/search/match-highlighter.js";
 // keyMap
-import "codemirror/mode/clike/clike.js";
+//import "codemirror/mode/clike/clike.js";
 import "codemirror/addon/edit/matchbrackets.js";
 import "codemirror/addon/comment/comment.js";
 import "codemirror/addon/dialog/dialog.js";
@@ -242,15 +242,15 @@ import "codemirror/addon/search/search.js";
 import "codemirror/keymap/sublime.js";
 // foldGutter
 //import 'codemirror/addon/fold/foldgutter.css'
-import "codemirror/addon/fold/brace-fold.js";
-import "codemirror/addon/fold/comment-fold.js";
-import "codemirror/addon/fold/foldcode.js";
-import "codemirror/addon/fold/foldgutter.js";
-import "codemirror/addon/fold/indent-fold.js";
-import "codemirror/addon/fold/markdown-fold.js";
-import "codemirror/addon/fold/xml-fold.js";
+//import "codemirror/addon/fold/brace-fold.js";
+//import "codemirror/addon/fold/comment-fold.js";
+//import "codemirror/addon/fold/foldcode.js";
+//import "codemirror/addon/fold/foldgutter.js";
+//import "codemirror/addon/fold/indent-fold.js";
+//import "codemirror/addon/fold/markdown-fold.js";
+//import "codemirror/addon/fold/xml-fold.js";
 // Show hint
-import "./../codemirror_show-hint-modded.js";
+import "codemirror/addon/hint/show-hint.js";
 import "codemirror/addon/hint/show-hint.css";
 
 export default {
@@ -284,8 +284,23 @@ export default {
       }
     };
   },
-  mounted: function() {
-    //console.log(this.$slots);
+  created: function() {
+    // 絵文字一覧を保存
+    let emojiList = [];
+    axios
+      .get("/js/emoji.json")
+      .then(response => {
+        const data = response.data;
+        for (let line in data) {
+          emojiList.push({
+            text: data[line],
+            displayText: `${line} ${data[line]}`
+          });
+        }
+      })
+      .catch(error => console.error(error));
+
+    this.emojiList = emojiList;
   },
   methods: {
     insert(v) {
@@ -307,7 +322,7 @@ export default {
     },
     replace(v) {
       let ret = "";
-      let str = this.$refs.cm.codemirror.getSelection();
+      const str = this.$refs.cm.codemirror.getSelection();
       if (str === "") {
         alert("Please select text.");
         return;
@@ -336,13 +351,13 @@ export default {
           ret = "__" + str + "__";
           break;
         case "s":
-          ret = "%%" + str + "%%";
+          ret = "~~" + str + "~~";
           break;
         case "code":
           ret = "`" + str + "`";
           break;
         case "q":
-          ret = "@@@" + str + "@@@";
+          ret = "``" + str + "``";
           break;
 
         case "url":
@@ -363,25 +378,11 @@ export default {
     },
     hint() {},
     onCmReady(cm) {
-      // 絵文字一覧を取得
-      // https://qiita.com/yymm@github/items/6aa5b869ef8c22683ccc
-      let emojiList = [];
-      axios
-        .get("https://api.github.com/emojis")
-        .then(response => {
-          for (let key in response.data) {
-            emojiList.push({
-              text: `${key}:`,
-              render: element => {
-                element.innerHTML = `<img width="15" height="15" src="${
-                  response.data[key]
-                }" alt="${key}" async /> ${key}`;
-              }
-            });
-          }
-        })
-        .catch(error => console.error(error));
+      const emojiList = this.emojiList;
+      //console.log(this.emojiList);
       cm.on("keypress", () => {
+        // 絵文字メニュー
+        // https://qiita.com/yymm@github/items/6aa5b869ef8c22683ccc
         CodeMirror.showHint(
           cm,
           function() {
@@ -393,12 +394,16 @@ export default {
             let ch = cur.ch,
               line = cur.line;
             let currentWord = token.string;
+
             while (ch-- > -1) {
               let t = cm.getTokenAt({ ch, line }).string;
               if (t === ":") {
                 let filteredList = emojiList.filter(item => {
-                  return item.text.indexOf(currentWord) == 0 ? true : false;
+                  return item.text.indexOf(":" + currentWord) == 0
+                    ? true
+                    : false;
                 });
+                console.log(filteredList);
                 if (filteredList.length >= 1) {
                   return {
                     list: filteredList,
@@ -407,7 +412,7 @@ export default {
                   };
                 }
               }
-              currentWord = t + currentWord;
+              //currentWord = t + currentWord;
             }
           },
           { completeSingle: false }

@@ -3,7 +3,7 @@
  * LukiWikiコントローラー.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2018 Logue
+ * @copyright 2018-2019 Logue
  * @license   MIT
  */
 
@@ -12,6 +12,7 @@ namespace App\Http\Controllers;
 use App\LukiWiki\Element\RootElement;
 use App\LukiWiki\Utility\WikiFileSystem;
 use Config;
+use Debugbar;
 use Illuminate\Http\Request;
 
 class WikiController extends Controller
@@ -100,6 +101,9 @@ class WikiController extends Controller
                     ->view('api.sitemap', ['entries' => $filelist()])
                     ->header('Content-Type', ' application/xml; charset=UTF-8');
                 break;
+            case 'cancel':
+                return redirect($request->input('page'));
+                break;
             case 'amp':
                 return $this->read(true);
                 break;
@@ -126,11 +130,14 @@ class WikiController extends Controller
             \Debugbar::disable();
         }
 
+        Debugbar::startMeasure('parse', 'Converting wiki data...');
+
         $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $data));
 
         $body = new RootElement('', 0, ['id' => 0, 'isAmp' => $isAmp]);
         $body->parse($lines);
         $meta = $body->getMeta();
+        Debugbar::stopMeasure('parse');
 
         return view(
            $isAmp ? 'default.amp' : 'default.content',
@@ -223,7 +230,10 @@ class WikiController extends Controller
 
         // 保存処理
         //dd($page, $this->request->input('source'));
+        // $this->data->$page = $this->request->input('source'); ←動かない（マジックメソッドが使えない）
         $this->data->__set($page, $this->request->input('source'));
+
+        // TODO:バックアップ処理
 
         $this->request->session()->flash('message', 'Saved');
 
