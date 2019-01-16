@@ -172,7 +172,7 @@ abstract class AbstractInline
     public function setLink(string $term, string $url, string $tooltip = '', string $rel = '', bool $is_redirect = false)
     {
         $parsed_url = parse_url($url, PHP_URL_PATH);
-        $_tooltip = !empty($tooltip) ? ' title="'.self::processText($tooltip).'" v-b-tooltip' : '';
+        $_tooltip = !empty($tooltip) ? ' title="'.self::processText($tooltip).'"' : '';
         if (!$parsed_url) {
             // パースできないURLだった場合リンクを貼らない。
             return self::processText($term);
@@ -192,48 +192,40 @@ abstract class AbstractInline
         if (Config::get('lukiwiki.render.expand_external_media_file')) {
             // 拡張子を取得
             $ext = substr($parsed_url, strrpos($parsed_url, '.') + 1);
-
-            switch ($ext) {
-                case 'jpeg':
-                case 'jpg':
-                case 'gif':
-                case 'png':
-                case 'svg':
-                case 'svgz':
-                case 'webp':
-                case 'bmp':
-                case 'ico':
-                    if ($this->isAmp) {
-                        $term = '<amp-img src="'.$url.'" alt="'.self::processText($term).'" width="1" height="1" class="external-media"><div fallback>'.$tooltip.'</div></amp-img>';
-                    } else {
-                        $term = '<img src="'.$url.'" alt="'.self::processText($term).'" '.$_tooltip.' />';
-                    }
-
-                    break;
-                case 'mp4':
-                case 'ogm':
-                case 'webm':
-                    if ($this->isAmp) {
+            
+            if ($this->isAmp) {
+                switch ($ext) {
+                    case 'jpeg':
+                    case 'jpg':
+                    case 'gif':
+                    case 'png':
+                    case 'svg':
+                    case 'svgz':
+                    case 'webp':
+                    case 'bmp':
+                    case 'ico':
+                        return '<amp-img src="" alt="'.self::processText($term).'" width="1" height="1" class="external-media"><div fallback>'.self::processText($term).'</div></amp-img>';
+                        break;
+                    case 'mp4':
+                    case 'ogm':
+                    case 'webm':
                         return '<amp-video src="'.$url.'" controls '.$_tooltip.' width="1" height="1" class="external-media"><div fallback>'.self::processText($term).'</div></amp-video>';
-                    } else {
-                        return '<video src="'.$url.'" alt="'.self::processText($term).'" controls="controls"'.$_tooltip.'/>';
-                    }
-                     break;
-                case 'wav':
-                case 'ogg':
-                case 'm4a':
-                case 'mp3':
-                    if ($this->isAmp) {
+                        break;
+                    case 'wav':
+                    case 'ogg':
+                    case 'm4a':
+                    case 'mp3':
                         return '<amp-audio  src="'.$url.'" controls '.$_tooltip.' width="auto" height="50"><div fallback>'.self::processText($term).'</div></amp-audio>';
-                    } else {
-                        return '<audio src="'.$url.'" alt="'.self::processText($term).'" controls="controls"'.$_tooltip.'/>';
-                    }
-                    break;
+                        break;
+                }
+                return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.'</a>';
+            }else if (!empty($ext)) {
+               return '<lw-media '.$_tooltip.'><a href="'.$url.'" rel="'.$rel.'">'.$term.'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a></lw-media>';
             }
         }
 
         // リンクを出力
-        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
+        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.' v-bs-tooltip>'.$term.'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
     }
 
     /**
