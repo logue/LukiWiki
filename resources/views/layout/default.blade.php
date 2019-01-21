@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ app()->getLocale() }}" xml:lang="{{ app()->getLocale() }}">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ app()->getLocale() }}" xml:lang="{{ app()->getLocale() }}" class="h-100">
 
 <head>
     <meta charset="utf-8" />
@@ -17,22 +17,26 @@
     @yield('styles')
 </head>
 
-<body>
-    <div id="app">
-        <lw-navbar brand="{{ Config::get('lukiwiki.sitename') }}" baseUri="{{ url('/') }}" page="{{ $page ?? '' }}">
-            <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-                <a class="navbar-brand" href="{{ url('/') }}">{{ Config::get('lukiwiki.sitename') }}</a>
-            </nav>
-        </lw-navbar>
-        <main class="container py-2">
-@if(Session::has('message'))
-            <b-alert show dismissible>{{ session('message') }}</b-alert>
-@endif
-            <h1>{{ $title }}</h1>
-            <hr />
-            @yield('content')
+<body class="h-100">
+    <div id="app" class="d-flex flex-column h-100">
+        <header>
+            <lw-navbar brand="{{ Config::get('lukiwiki.sitename') }}" baseUri="{{ url('/') }}" page="{{ $page ?? '' }}">
+                <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+                    <a class="navbar-brand" href="{{ url('/') }}">{{ Config::get('lukiwiki.sitename') }}</a>
+                </nav>
+            </lw-navbar>
+        </header>
+        <main role="main" class="flex-shrink-0">
+            <div class="container py-2">
+                @if(Session::has('message'))
+                <b-alert show dismissible>{{ session('message') }}</b-alert>
+                @endif
+                <h1>{{ $title }}</h1>
+                <hr />
+                @yield('content')
+            </div>
         </main>
-        <footer class="bg-light">
+        <footer class="bg-light mt-auto py-3">
             <div class="container">
                 <p><strong>LukiWiki</strong> v{{ \App\LukiWiki\Parser::VERSION }} / <small>Process Time: <var>{{
                             sprintf('%0.3f', microtime(true) - LARAVEL_START) }}</var> sec.</small></p>

@@ -19,6 +19,13 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
+        if (\Config::get('database.default') !== 'sqlite') {
+            // sqliteのとき、DBファイルが自動生成されないみたいなので・・・。
+            $file = \Config::get('database.connections.sqlite.database');
+            if (!file_exsists($file)){
+                touch($file);
+            }
+        }
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id')->comment('ユーザID');
             $table->string('name')->unique()->comment('ユーザ名');
@@ -41,5 +48,11 @@ class CreateUsersTable extends Migration
     public function down()
     {
         Schema::dropIfExists('users');
+        if (\Config::get('database.default') !== 'sqlite') {
+            $file = \Config::get('database.connections.sqlite.database');
+            if (file_exsists($file)){
+                unlink($file);
+            }
+        }
     }
 }

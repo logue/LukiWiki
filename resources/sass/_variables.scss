@@ -1,14 +1,33 @@
-// Typography
+@charset "utf-8";
+/* 標準フォント */
+
+@font-face {
+    font-family: "Yu Gothic M";
+    src: local("Yu Gothic Medium");
+}
+
+// font-weight: bold の時は通常どおり Bold 書体を使わせる
+@font-face {
+    font-family: "Yu Gothic M";
+    src: local("Yu Gothic Bold");
+    font-weight: bold;
+}
+
 $font-family-sans-serif: -apple-system,
+// 英文
 BlinkMacSystemFont,
-"Helvetica Neue",
-HelveticaNeue,
 "Segoe UI",
+Roboto,
+"Helvetica Neue",
+Arial,
+"Noto Sans",
+// 和文
 "游ゴシック体",
 YuGothic,
 "Yu Gothic M",
 "游ゴシック Medium",
 "Yu Gothic Medium",
+// MacOS向け
 "ヒラギノ角ゴ ProN W3",
 "Hiragino Kaku Gothic ProN W3",
 HiraKakuProN-W3,
@@ -16,41 +35,39 @@ HiraKakuProN-W3,
 "Hiragino Kaku Gothic ProN",
 "ヒラギノ角ゴ Pro",
 "Hiragino Kaku Gothic Pro",
+// 旧環境向け設定
 "メイリオ",
 Meiryo,
 Osaka,
 "ＭＳ Ｐゴシック",
 "MS PGothic",
-sans-serif;
+sans-serif,
+// 絵文字
+"Apple Color Emoji",
+"Segoe UI Emoji",
+"Segoe UI Symbol",
+"Noto Color Emoji";
+/* 明朝体 */
+
 $font-family-serif:Georgia,
+Times,
+"Times New Roman",
 "游明朝体",
-"YuMincho",
+YuMincho,
 "游明朝",
 "Yu Mincho",
-"ヒラギノ明朝 ProN W3",
-"Hiragino Mincho ProN W3",
-HiraMinProN-W3,
-"ヒラギノ明朝 ProN",
-"Hiragino Mincho ProN",
-"ヒラギノ明朝 Pro",
-"Hiragino Mincho Pro",
-"HGS明朝E",
-"ＭＳ Ｐ明朝",
-"MS PMincho",
 serif;
-$font-family-monospace: MeiryoKe_Gothic,
-"Ricty Diminished",
+/* 等幅フォント */
+
+$font-family-monospace: SFMono-Regular,
+Menlo,
+Monaco,
+Consolas,
+"Liberation Mono",
+"Courier New",
 "Osaka－等幅",
 "Osaka-等幅",
 Osaka-mono,
 "ＭＳ ゴシック",
 "MS Gothic",
-"Courier New",
-Courier,
-Monaco,
-Menlo,
-Consolas,
-"Lucida Console",
 monospace;
-// misc
-$footer-height: 64px;

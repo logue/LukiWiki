@@ -35,4 +35,5 @@
     },
     "css.validate": false,
     "eslint.autoFixOnSave": true,
+    "vscode-php-cs-fixer.allowRisky": true,
 }

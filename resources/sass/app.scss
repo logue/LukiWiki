@@ -1,6 +1,11 @@
-@charset "utf-8";
-// Fonts
-@import "Yu-Gothic";
+/*!
+ * LukiWiki スタイルシート
+ *
+ * @author    Logue <logue@hotmail.co.jp>
+ * @copyright 2018-2019 Logue
+ * @license   MIT
+ */
+
 // Variables
 @import "variables";
 // Bootstrap: 4;
@@ -14,10 +19,6 @@
 //@import "~@fortawesome/fontawesome-free/scss/brands";
 //@import "~@fortawesome/fontawesome-free/scss/regular";
 //@import "~@fortawesome/fontawesome-free/scss/solid";
-// Sticky footer with fixed navbar
-// https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/
-@import "sticky-footer-navibar";
 // overrides
 @import "overrides";
-
 @import "codemirror";
