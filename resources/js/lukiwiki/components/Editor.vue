@@ -1,6 +1,5 @@
 <template>
   <div>
-    <input type="hidden" name="source" v-bind:value="source">
     <b-button-toolbar aria-label="Editor Toolbar" class="align-items-baseline form-row" justify>
       <div class="col-12 col-md-4">
         <b-input-group>
@@ -124,6 +123,7 @@
     </b-button-toolbar>
     <codemirror
       ref="cm"
+      name="source"
       v-model="source"
       v-bind:options="cmOption"
       @ready="onCmReady"
@@ -403,7 +403,7 @@ export default {
                     ? true
                     : false;
                 });
-                console.log(filteredList);
+                //console.log(filteredList);
                 if (filteredList.length >= 1) {
                   return {
                     list: filteredList,

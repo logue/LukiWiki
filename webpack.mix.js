@@ -13,5 +13,6 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js').sourceMaps()
     .sass('resources/sass/app.scss', 'public/css')
+    .sass('resources/sass/admin.scss', 'public/css')
     .copy('node_modules/codemirror/LICENSE', 'public/js/codemirror/LICENSE')
     .copyDirectory('node_modules/codemirror/mode', 'public/js/codemirror/mode');

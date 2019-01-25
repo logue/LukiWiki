@@ -45,12 +45,12 @@ class WikiController extends Controller
      *
      * @return Response
      */
-    public function __invoke(Request $request, $page = null)
+    public function __invoke(Request $request, $page = null, $action = null)
     {
         $this->page = $page;
         $this->request = $request;
 
-        switch ($request->input('action')) {
+        switch ($action) {
             case 'new':
             case 'edit':
                 return $this->edit();
@@ -116,9 +116,8 @@ class WikiController extends Controller
     /**
      * ページを読み込む
      */
-    private function read($isAmp)
+    public function read($page = null)
     {
-        $page = $this->page ?? $this->config['special_page']['default'];
         $data = $this->data->$page;
 
         if (!$data) {
@@ -126,24 +125,20 @@ class WikiController extends Controller
             return abort(404);
         }
 
-        if ($isAmp) {
-            \Debugbar::disable();
-        }
-
         Debugbar::startMeasure('parse', 'Converting wiki data...');
 
         $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $data));
 
-        $body = new RootElement('', 0, ['id' => 0, 'isAmp' => $isAmp]);
+        $body = new RootElement('', 0, ['id' => 0]);
         $body->parse($lines);
         $meta = $body->getMeta();
         Debugbar::stopMeasure('parse');
 
         return view(
-           $isAmp ? 'default.amp' : 'default.content',
+           'default.content',
            [
                 'page'    => $page,
-                'content' => $body->__toString(),
+                'content' => $body,
                 'title'   => $meta['title'] ?? $page,
                 'notes'   => $meta['note'] ?? null,
             ]
@@ -153,10 +148,9 @@ class WikiController extends Controller
     /**
      * 編集画面表示.
      */
-    private function edit()
+    public function edit($page = null)
     {
-        $page = $this->page;
-        if (!$page || $this->request->input('action') === 'new') {
+        if (!$page) {
             // 新規ページ
             return view(
                 'default.edit',
@@ -189,7 +183,7 @@ class WikiController extends Controller
      *
      * @return Response
      */
-    private function save()
+    public function save()
     {
         if (!$this->request->isMethod('post')) {
             // Method not allowed

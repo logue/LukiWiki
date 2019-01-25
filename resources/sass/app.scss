@@ -6,6 +6,18 @@
  * @license   MIT
  */
 
+@font-face {
+    font-family: "Yu Gothic M";
+    src: local("Yu Gothic Medium");
+}
+
+// font-weight: bold の時は通常どおり Bold 書体を使わせる
+@font-face {
+    font-family: "Yu Gothic M";
+    src: local("Yu Gothic Bold");
+    font-weight: bold;
+}
+
 // Variables
 @import "variables";
 // Bootstrap: 4;

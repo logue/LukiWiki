@@ -2,7 +2,7 @@
  * CodeMirror for Bootstrap
  * 
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2018 Logue
+ * @copyright 2018-2019 Logue
  * @license   MIT
  */
 
@@ -479,6 +479,16 @@ pre.CodeMirror {
 }
 
 .CodeMirror-focused {
+    color: $input-focus-color;
+    background-color: $input-focus-bg;
+    border-color: $input-focus-border-color;
+    outline: 0;
+    // Avoid using mixin so we can pass custom focus shadow properly
+    @if $enable-shadows {
+        box-shadow: $input-box-shadow, $input-focus-box-shadow;
+    } @else {
+        box-shadow: $input-focus-box-shadow;
+    }
     .CodeMirror-cursors {
         visibility: visible;
     }

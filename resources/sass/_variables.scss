@@ -1,18 +1,5 @@
 @charset "utf-8";
 /* 標準フォント */
-
-@font-face {
-    font-family: "Yu Gothic M";
-    src: local("Yu Gothic Medium");
-}
-
-// font-weight: bold の時は通常どおり Bold 書体を使わせる
-@font-face {
-    font-family: "Yu Gothic M";
-    src: local("Yu Gothic Bold");
-    font-weight: bold;
-}
-
 $font-family-sans-serif: -apple-system,
 // 英文
 BlinkMacSystemFont,

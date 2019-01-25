@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Schema;
 
 class CreatePasswordResetsTable extends Migration
 {
+    const TABLE_NAME = 'password_resets';
+    const TABLE_COMMENT = 'パスワード初期化管理';
+
     /**
      * Run the migrations.
      *
@@ -19,13 +22,13 @@ class CreatePasswordResetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('password_resets', function (Blueprint $table) {
+        Schema::create(self::TABLE_NAME, function (Blueprint $table) {
             $table->string('email')->index()->comment('メールアドレス');
             $table->string('token')->comment('トークン');
             $table->timestamp('created_at')->nullable();
         });
         if (\Config::get('database.default') !== 'sqlite') {
-            \DB::statement("ALTER TABLE `password_resets` comment 'パスワード初期化'");
+            \DB::statement('ALTER TABLE '.DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
         }
     }
 
@@ -36,6 +39,6 @@ class CreatePasswordResetsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('password_resets');
+        Schema::dropIfExists(self::TABLE_NAME);
     }
 }

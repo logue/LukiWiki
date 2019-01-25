@@ -16,7 +16,7 @@ class InlineRules
     /**
      * InterWikiNameのマッチパターン.
      */
-    const INTERWIKINAME_PATTERN = '(\[\[)?((?:(?!\s|:|\]\]).)+):(.+)(?(1)\]\])';
+    const INTERWIKINAME_PATTERN = '\\[([^\\]]+)\\]\\(([^\\)\"\\s]+)(?:\\s+\"(.*)\")?\\)';
     /**
      * WikiNameのマッチパターン.
      */

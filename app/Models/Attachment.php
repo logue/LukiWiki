@@ -1,6 +1,6 @@
 <?php
 /**
- * 添付ファイルモデル.
+ * 豺ｻ莉倥ヵ繧｡繧､繝ｫ繝｢繝�繝ｫ.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
@@ -13,5 +13,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attachment extends Model
 {
-    //
+    protected $guarded = ['id'];
 }

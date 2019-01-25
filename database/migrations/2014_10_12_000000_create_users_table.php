@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
 {
+    const TABLE_NAME = 'users';
+    const TABLE_COMMENT = 'ユーザ情報';
+
     /**
      * Run the migrations.
      *
@@ -19,15 +22,8 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        if (\Config::get('database.default') !== 'sqlite') {
-            // sqliteのとき、DBファイルが自動生成されないみたいなので・・・。
-            $file = \Config::get('database.connections.sqlite.database');
-            if (!file_exsists($file)){
-                touch($file);
-            }
-        }
-        Schema::create('users', function (Blueprint $table) {
-            $table->increments('id')->comment('ユーザID');
+        Schema::create(self::TABLE_NAME, function (Blueprint $table) {
+            $table->increments('id')->unsigned()->comment('ユーザID');
             $table->string('name')->unique()->comment('ユーザ名');
             $table->string('email')->unique()->comment('メールアドレス');
             $table->timestamp('email_verified_at')->nullable()->comment('メールアドレス認証日');
@@ -36,7 +32,7 @@ class CreateUsersTable extends Migration
             $table->timestamps();
         });
         if (\Config::get('database.default') !== 'sqlite') {
-            \DB::statement("ALTER TABLE `users` comment 'ユーザ'");
+            \DB::statement('ALTER TABLE '.DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
         }
     }
 
@@ -47,12 +43,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
-        if (\Config::get('database.default') !== 'sqlite') {
-            $file = \Config::get('database.connections.sqlite.database');
-            if (file_exsists($file)){
-                unlink($file);
-            }
-        }
+        Schema::dropIfExists(self::TABLE_NAME);
     }
 }

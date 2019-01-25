@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Schema;
 
 class CreatePagesTable extends Migration
 {
+    const TABLE_NAME = 'pages';
+    const TABLE_COMMENT = 'ページ情報';
+
     /**
      * Run the migrations.
      *
@@ -19,18 +22,18 @@ class CreatePagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('pages', function (Blueprint $table) {
+        Schema::create(self::TABLE_NAME, function (Blueprint $table) {
             $table->increments('id')->unsigned()->comment('記事番号');
-            $table->integer('user_id')->comment('ユーザID')->default(0);
+            $table->integer('user_id')->references('id')->on('paguserses')->comment('ユーザID');
             $table->string('title')->unique()->comment('記事名');
             $table->longText('source')->comment('内容');
-            $table->boolean('locked')->comment('ロックフラグ')->default(false);
-            $table->integer('status')->comment('公開状況')->default(0);
+            $table->boolean('locked')->comment('ロックフラグ');
+            $table->integer('status')->unsigned()->comment('公開状況');
             $table->ipAddress('ip')->comment('編集者のIP');
             $table->timestamps();
         });
         if (\Config::get('database.default') !== 'sqlite') {
-            \DB::statement("ALTER TABLE `pages` comment 'ページ情報'");
+            \DB::statement('ALTER TABLE '.DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
         }
     }
 
@@ -41,6 +44,6 @@ class CreatePagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pages');
+        Schema::dropIfExists(self::TABLE_NAME);
     }
 }

@@ -3,7 +3,7 @@
  * 位置決めクラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2018 Logue
+ * @copyright 2018-2019 Logue
  * @license   MIT
  */
 
@@ -43,6 +43,8 @@ class Alignment
                 // ↓
                 return 'mt-auto mb-0';
         }
+
+        return '';
     }
 
     /**
@@ -79,6 +81,8 @@ class Alignment
                 // ↓
                 return 'align-bottom';
         }
+
+        return '';
     }
 
     /**
@@ -120,5 +124,17 @@ class Alignment
             case 'stretch':
                 return 'align-items-stretch';
         }
+
+        return '';
+    }
+
+    /**
+     * 回り込み解除.
+     *
+     * @return string
+     */
+    public static function clear()
+    {
+        return '<div class="clearfix"></div>';
     }
 }

@@ -27,7 +27,7 @@ class Align extends AbstractElement
 
     public function canContain($obj)
     {
-        if ($obj instanceof Table || $obj instanceof YTable) {
+        if ($obj instanceof Table) {
             $obj->align = $this->align;
         }
 

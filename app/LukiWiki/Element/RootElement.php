@@ -44,7 +44,7 @@ class RootElement extends AbstractElement
                 continue;
             }
 
-            if (preg_match('/^(LEFT|CENTER|RIGHT|JUSTIFY|TITLE):(.*)$/', $line, $matches)) {
+            if (preg_match('/^(LEFT|CENTER|RIGHT|JUSTIFY|TOP|MIDDLE|BOTTOM|CLEAR):(.*)$/', $line, $matches)) {
                 $cmd = strtolower($matches[1]);
 
                 if (!empty($cmd)) {
