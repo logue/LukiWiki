@@ -1,6 +1,6 @@
 <?php
 /**
- * バックアップデータ格納テーブル.
+ * バックアップデータ格納テーブル作成.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue

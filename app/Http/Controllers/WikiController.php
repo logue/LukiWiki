@@ -10,7 +10,6 @@
 namespace App\Http\Controllers;
 
 use App\LukiWiki\Element\RootElement;
-use App\LukiWiki\Utility\WikiFileSystem;
 use Config;
 use Debugbar;
 use Illuminate\Http\Request;
@@ -34,7 +33,6 @@ class WikiController extends Controller
     {
         // 設定読み込み
         $this->config = Config::get('lukiwiki');
-        $this->data = WikiFileSystem::getInstance();
     }
 
     /**

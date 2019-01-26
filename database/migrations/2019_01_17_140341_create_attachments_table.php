@@ -1,6 +1,6 @@
 <?php
 /**
- * 添付ファイル管理テーブル.
+ * 添付ファイル管理テーブル作成.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue

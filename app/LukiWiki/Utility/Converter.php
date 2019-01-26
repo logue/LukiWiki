@@ -9,6 +9,7 @@
 
 namespace App\LukiWiki\Utility;
 
+use App\Models\Page;
 use Carbon\Carbon;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Config;
@@ -42,6 +43,8 @@ class Converter
      */
     public function wiki()
     {
+        \Log::debug('Start Wiki data convertion.');
+
         foreach (Storage::files($this->wiki_dir) as &$file) {
             // ページ名
             $page = hex2bin(pathinfo($file, PATHINFO_FILENAME));
@@ -53,41 +56,40 @@ class Converter
 
             // :configから始まるページ名はPukiWikiのプラグインの初期設定で使う。
             // この値は使用しないため移行しない
-            if (substr($page, 0, 7) === ':config' || substr($page, 0, 3) === ':log') {
+            if (substr($page, 0, 7) === ':config' || substr($page, 0, 3) === ':log' || substr($page, 0, 9) === 'PukiWiki/') {
                 continue;
             }
             // :が含まれるページ名は_に変更する。
             $page = preg_replace('/\:/', '_', $page);
             $data = explode("\n", rtrim(Storage::get($file)));
 
-            if ($page !== 'Web素材') {
-                continue;
-            }
-
             $ret = self::pukiwiki2lukiwiki($data);
 
             $source = implode("\n", $ret['data']);
 
             try {
-                $created = filectime(storage_path($file));
+                $created = Carbon::createFromTimestamp(filectime(storage_path($file)));
             } catch (\Exception $e) {
                 //dd($e);
                 $created = null;
             }
 
-            $buf[] = [
-                'name'        => $page,
+            //if ($page !== 'Web素材') continue;
+
+            \Log::debug('Import '.$file.'... ('.$page.')');
+            Page::updateOrCreate([
+                'name'        => $page, ], [
                 'user_id'     => 0,
                 'source'      => $source,
-                'description' => $ret['description'] ?? mb_strimwidth($source, 0, 256, '...'),
+                'description' => $ret['description'] ?? null,
                 'locked'      => $ret['locked'],
                 'status'      => 0,
                 'ip'          => $_SERVER['REMOTE_ADDR'],
                 'created_at'  => $created,
-                'updated_at'  => Storage::lastModified($file),
-            ];
+                'updated_at'  => Carbon::createFromTimestamp(Storage::lastModified($file)),
+            ]);
         }
-        dd($buf);
+        \Log::debug('Finish.');
     }
 
     /**
@@ -142,8 +144,8 @@ class Converter
                 unset($pre);
             }
 
-            // リンクの形式変更
-            $line = preg_replace_callback('/\[{2}([^\]*].+)?\]{2}/u', function ($matches) {
+            // リンクの形式変更（LukiWikiでは[...](...)という形式）
+            $line = preg_replace_callback('/\[{2}(.+?)\]{2}/u', function ($matches) {
                 if (!isset($matches[1])) {
                     return '';
                 }
@@ -153,93 +155,54 @@ class Converter
                     // [[foo>bar]]、[[foo>bar:fiz]]、[[foo>http://aaa]]
                     return '['.$m[1].']('.$m[2].')';
                 } elseif (count($tmp) > 2) {
+                    // 正規表現でやるのがめんどうなのでexplodeで:で分割して最初の値がリンク名、残りはアドレスという扱い
                     // [[foo:bar]]、[[foo:http://aaa]]
                     return '['.array_shift($tmp).']('.implode(':', $tmp).')';
                 } else {
+                    // 通常のリンク（Braketが1個になるだけだが・・・）
                     return '['.$matches[1].']';
                 }
             }, $line);
 
             // 打ち消し線
-            $line = preg_replace('/%{2}(?!%)((?:(?!%{2}).)*)%{2}/u', '~~${1}~~', $line);
+            $line = preg_replace('/%{2}(.+)%{2}/u', '~~${1}~~', $line);
             // コード
-            $line = preg_replace('/@{2}(?!@)((?:(?!@{2}).)*)@{2}/u', '`${1}`', $line);
+            $line = preg_replace('/@{2}(.+)@{2}/u', '`${1}`', $line);
             // イタリック
-            $line = preg_replace('/\'{3}(?!%)((?:(?!\'{3}).)*)\'{3}/u', '** ${1} **', $line);
+            $line = preg_replace('/\'{3}(.+)\'{3}/u', '** ${1} **', $line);
             // 強調
-            $line = preg_replace('/\'{2}(?!%)((?:(?!\'{2}).)*)\'{2}/u', '* ${1} *', $line);
+            $line = preg_replace('/\'{2}(.+)\'{2}/u', '* ${1} *', $line);
 
-            // 添付ファイル
-            $line = preg_replace_callback('/&(\w+)\(((?:(?!\)).)*)\)?(?:\{((?:(?!\)).)*)\})?;/u', function ($matches) {
-                switch ($matches[1]) {
-                        case 'new':
-                            // 新着
-                            $t = preg_replace('/\((.+)\)/u', '', $matches[3]);
-                            $dt = Carbon::parse($t);
+            // インライン型プラグイン
+            $line = preg_replace_callback('/&((\w+)(?:\(((?:(?!\)[;{]).)*)\))?)(?:\{((?:(?R)|(?!};).)*)\})?;/u', function ($matches) {
+                $plugin = $matches[2];
+                $option = isset($matches[3]) ? explode(',', trim($matches[3])) : [];
+                $body = isset($matches[4]) ? trim($matches[4]) : null;
 
-                            return '&timestamp('.$dt->timestamp.');';
-                            break;
-                        case 'epoch':
-                            // 時差を考慮した新着（Adv.）
-                            return '&timestamp('.$matches[2].');';
-                            break;
-                        case 'attach':
-                        case 'ref':
-                        case 'attachref':
-                        case 'img':
-                            $params = explode(',', $matches[2].(isset($matches[3]) ? (','.$matches[3]) : ''));
-                            $file = array_shift($params);
-                            if (isset($params[1]) && preg_match('/\[{2}([^\]{2}].+)?\]{2}/u', $params[1])) {
-                                // 古い形式の添付ファイル
-                                $file = $matches[1].'/'.$file;
-                            }
-
-                            return '{{'.$file.'|'.implode(',', $params).'}}';
-                            break;
-                    }
-
-                return $matches[0];
+                return self::processPlugin('&', $plugin, $option, $body).';';
             },
                 $line
             );
 
             switch ($char) {
-                // プラグインの変換処理
+                // ブロック型プラグイン
                 case '#':
                     preg_match('/^#([^\(\{]+)(?:\(([^\r]*)\))?(?:\{\{*(.+?)\}\}*)?/', $line, $matches);
                     $plugin = trim($matches[1]);
-                    $option = isset($matches[2]) ? trim($matches[2]) : null;
+                    $option = isset($matches[2]) ? explode(',', trim($matches[2])) : [];
                     $body = isset($matches[3]) ? str_replace("\r", "\n", trim($matches[3])) : null;
                     //dd($line, $matches, $body);
-                    switch ($plugin) {
-                        case 'hr':
-                            $ret[] = '----';
-                            break;
-                        case 'pre':
-                        case 'sh':
-                        case 'code':
-                            $ret[] = '```'.$option."\n".$body."\n".'```';
-                            break;
-                        case 'attach':
-                        case 'attachref':
-                        case 'ref':
-                            if (empty($body)) {
-                                $ret[] = '{{'.$option.'}}';
-                            } else {
-                                $ret[] = '{{'.$option.'|'.$body.'}}';
-                            }
-                            break;
-                        case 'freeze':
-                            $freezed = true;
-                            break;
-                        case 'description':
-                            $description = $option;
-                            break;
-                        default:
-                            // ブロック型プラグインは#から@に変える
-                            $ret[] = str_replace_first('#', '@', $line);
-                            break;
+
+                    if ($plugin === 'freeze') {
+                        // 凍結フラグ
+                        $freezed = true;
+                    } elseif ($plugin === 'description') {
+                        // 説明文
+                        $description = $option[0];
+                    } else {
+                        $ret[] = self::processPlugin('@', $plugin, $option, $body);
                     }
+
                     break;
                 case '*':
                     // 見出しの整形
@@ -270,6 +233,100 @@ class Converter
         }
 
         return ['data' => $ret, 'locked' => $freezed, 'description' => $description];
+    }
+
+    /**
+     * プラグインの処理.
+     *
+     * @param string $char   識別子
+     * @param string $plugin プラグイン名
+     * @param array  $option 因数
+     * @param string $body   中身
+     *
+     * @return string
+     */
+    private static function processPlugin(string $char, string $plugin, array $option = [], string $body = null)
+    {
+        switch ($plugin) {
+            case 'aname':
+                if (!empty($body)) {
+                    return  '['.$body.'](#'.$option[0].')';
+                } else {
+                    return  '[#'.$option[0].']';
+                }
+                // no break
+            case 'new':
+                // 新着
+                $t = preg_replace('/\((.+)\)/u', '', $body);
+                $dt = Carbon::parse($t);
+
+                return $char.'timestamp('.$dt->timestamp.');';
+                break;
+            case 'epoch':
+                // 時差を考慮した新着（Adv.）
+                return $char.'timestamp('.$option[0].');';
+                break;
+            case 'hr':
+                return  '----';
+                break;
+            case 'pre':
+            case 'sh':
+            case 'code':
+                return  '```'.$option[0]."\n".$body."\n".'```';
+                break;
+            case 'attach':
+            case 'attachref':
+            case 'ref':
+                $file = array_shift($option);   // 一番最初の配列にはファイル名が入る。
+                if (isset($option[1]) && preg_match('/\[{2}([^\]{2}].+)?\]{2}/u', $option[1], $m)) {
+                    // 古い形式の添付ファイル（#ref(ファイル名, [[ページ名]], ...);という形式
+                    $file = $m[1].'/'.$file;
+                }
+
+                if (count($option) !== 0) {
+                    return  '{{'.$file.'|'.implode(',', $option).'}}';
+                } else {
+                    return  '{{'.$file.'}}';
+                }
+
+                break;
+            case 'ruby':
+                // ルビはoptionとbodyを逆転させる　&ruby(ルビの内容){対象}; →　&ruby(対象){ルビの内容};
+                // tooltipの仕様と合わせる。LaTeX互換。
+                return 'ruby('.$body.'){'.$option[0].'}';
+            case 'ls':
+            case 'ls2':
+            case 'ls3':
+                return $char.'ls'.isset($option) ? '('.implode(',', $option).')' : '';
+                break;
+            case 'edit':
+            case 'counter':
+            case 'norelated':
+            case 'tboff':
+            case 'menu':
+            case 'nomenubar':
+            case 'nofollow':
+            case 'nosidebar':
+            case 'keywords':
+            case 'interwiki':
+            case 'lastmod':
+            case 'lookup':
+            case 'paint':
+            case 'server':
+            case 'stationary':
+            case 'version':
+            case 'versionlist':
+                // 無視するプラグイン
+                return '/*'.'deprecated:'.$plugin.'*/';
+                break;
+        }
+        if (preg_match('/\n/', $body)) {
+            $body = '{'."\n".$body."\n".'}';
+        }
+
+        return $char.$plugin.
+            (!empty($option) ? '('.implode(',', $option).')' : '').
+            (!empty($body) ? '{'.$body.'}' : '');
     }
 
     /**

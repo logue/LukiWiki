@@ -1,6 +1,6 @@
 <?php
 /**
- * ユーザ情報テーブル.
+ * ユーザ情報テーブル作成.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue

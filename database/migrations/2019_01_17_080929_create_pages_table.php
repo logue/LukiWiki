@@ -1,6 +1,6 @@
 <?php
 /**
- * ページデーター格納テーブル.
+ * ページデーター格納テーブル作成.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
@@ -25,12 +25,14 @@ class CreatePagesTable extends Migration
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
             $table->increments('id')->unsigned()->comment('記事番号');
             $table->integer('user_id')->references('id')->on('paguserses')->comment('ユーザID');
-            $table->string('title')->unique()->comment('記事名');
+            $table->string('name')->unique()->comment('記事名');
             $table->longText('source')->comment('内容');
+            $table->string('description')->nullable()->comment('要約');
             $table->boolean('locked')->comment('ロックフラグ');
             $table->integer('status')->unsigned()->comment('公開状況');
             $table->ipAddress('ip')->comment('編集者のIP');
             $table->timestamps();
+            $table->softDeletes();  // ソフトデリート
         });
         if (\Config::get('database.default') !== 'sqlite') {
             \DB::statement('ALTER TABLE '.DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');

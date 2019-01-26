@@ -1,6 +1,6 @@
 <?php
 /**
- * パスワード初期化テーブル.
+ * パスワード初期化テーブル作成.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue

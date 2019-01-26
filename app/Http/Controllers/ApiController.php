@@ -1,6 +1,6 @@
 <?php
 /**
- * 管理画面コントローラー.
+ * APIコントローラー.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
