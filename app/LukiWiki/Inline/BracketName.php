@@ -22,8 +22,9 @@ class BracketName extends AbstractInline
         $s2 = $this->start + 2;
         // [[ (1) > (3) # (4) ]]
         // [[ (2) ]]
+        /*
         return
-            '\[\['.                     // Open bracket [[
+            '\['.                     // Open bracket [[
             '(?:((?:(?!\]\]).)+)>)?'.   // (1) Alias >
             '(\[\[)?'.                  // (2) Open bracket
             '('.                        // (3) PageName
@@ -34,6 +35,24 @@ class BracketName extends AbstractInline
             '(\#(?:[A-Za-z0-9][\w-]*)?)?'. // (4) Anchor
             '(?('.$s2.')\]\])'.     // Close bracket if (2)
             '\]\]';                     // Close bracket ]]
+        */
+        // [page]
+        // [alias](page)
+        return
+            '\['.   // blacket open
+                '((?:(?!\]).)+)'. // [1] Link Text
+            '\]'.
+            '(?:\('.
+                '('.    // [2] Link to
+                    '(?:'.InlineRules::WIKINAME_PATTERN.')'.
+                    '|'.
+                    '(?:'.InlineRules::BRACKETNAME_PATTERN.')'.
+                ')'.    // [2] Link to end
+                '((?:\#).+)?'. // [3] Anchor
+                '(?:\s{1,}?"'.
+                    '((?:(?!"\)).)+)'. // [4] title
+                '")?'.
+            '\))?';
     }
 
     public function getCount()
@@ -44,7 +63,11 @@ class BracketName extends AbstractInline
     public function setPattern(array $arr, string $page = null)
     {
         list(, $alias, , $name, $this->anchor) = $this->splice($arr);
+        //dd($name);
         if (empty($name)) {
+            if (strpos($alias, '#')) {
+                $this->anchor = $alias = $name;
+            }
             if (empty($this->anchor)) {
                 return false;
             } elseif (!InlineRules::isWikiName($name) && empty($alias)) {

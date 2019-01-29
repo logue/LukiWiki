@@ -28,7 +28,8 @@ Route::get(':admin/clearCache', 'AdministratorController@clearCache');
 //Route::get(':{action}', 'ActionController');
 
 // Wikiページ
-Route::get(':new', 'WikiController@create');
+Route::get(':create', 'WikiController@create');
+Route::get(':list', 'WikiController@list');
 Route::get('{page?}:edit', 'WikiController@edit');
 Route::get('{page?}:attachment', 'WikiController@attachment');
 Route::get('{page?}:history', 'WikiController@history');
@@ -37,4 +38,4 @@ Route::post('{page?}:delete', 'WikiController@destroy');
 // LukiWikiでは:を含まないアドレスはすべてページ名として処理する。
 // これらの行は必ず最後に入れること。
 Route::post('{page?}', 'WikiController@save');
-Route::get('{page?}', 'WikiController');
+Route::get('{page?}', 'WikiController@read');

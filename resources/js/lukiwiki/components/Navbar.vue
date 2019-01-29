@@ -6,43 +6,43 @@
       <b-navbar-nav class="ml-auto">
         <b-nav-item-dropdown text="Page" v-bind:disabled="this.$attrs.page === ''">
           <b-dropdown-item
-            v-bind:href="pageUri + '?action=new'"
+            v-bind:href="baseUri + ':new'"
             v-bind:active="isPageAction && action === 'new'"
           >
             <font-awesome-icon far fixed-width icon="file" class="mr-1"/>New
           </b-dropdown-item>
           <b-dropdown-item
-            v-bind:href="pageUri + '?action=edit'"
+            v-bind:href="pageUri + ':edit'"
             v-bind:active="isPageAction && action === 'edit'"
           >
             <font-awesome-icon fas fixed-width icon="edit" class="mr-1"/>Edit
           </b-dropdown-item>
           <b-dropdown-item
-            v-bind:href="pageUri + '?action=copy'"
+            v-bind:href="pageUri + ':copy'"
             v-bind:active="isPageAction && action === 'copy'"
           >
             <font-awesome-icon fas fixed-width icon="copy" class="mr-1"/>Copy
           </b-dropdown-item>
           <b-dropdown-item
-            v-bind:href="pageUri + '?action=source'"
+            v-bind:href="pageUri + ':source'"
             v-bind:active="isPageAction && action === 'source'"
           >
             <font-awesome-icon far fixed-width icon="file-code" class="mr-1"/>Source
           </b-dropdown-item>
           <b-dropdown-item
-            v-bind:href="pageUri + '?action=attachment'"
+            v-bind:href="pageUri + ':attachment'"
             v-bind:active="isPageAction && action === 'attachment'"
           >
             <font-awesome-icon fas fixed-width icon="paperclip" class="mr-1"/>Attachment
           </b-dropdown-item>
           <b-dropdown-item
-            v-bind:href="pageUri + '?action=history'"
+            v-bind:href="pageUri + ':history'"
             v-bind:active="isPageAction && action === 'history'"
           >
             <font-awesome-icon fas fixed-width icon="history" class="mr-1"/>History
           </b-dropdown-item>
           <b-dropdown-item
-            v-bind:href="pageUri + '?action=lock'"
+            v-bind:href="pageUri + ':lock'"
             v-bind:active="isPageAction && action === 'lock'"
           >
             <font-awesome-icon fas fixed-width icon="unlock" class="mr-1"/>Lock
@@ -50,13 +50,13 @@
         </b-nav-item-dropdown>
         <b-nav-item-dropdown text="List">
           <b-dropdown-item
-            v-bind:href="baseUri + '?action=list'"
+            v-bind:href="baseUri + ':list'"
             v-bind:active="isPageAction && action === 'list'"
           >
             <font-awesome-icon far fixed-width icon="list-alt" class="mr-1"/>Page List
           </b-dropdown-item>
           <b-dropdown-item
-            v-bind:href="baseUri + '?action=recent'"
+            v-bind:href="baseUri + ':recent'"
             v-bind:active="isPageAction && action === 'recent'"
           >
             <font-awesome-icon far fixed-width icon="clock" class="mr-1"/>Recent Changes

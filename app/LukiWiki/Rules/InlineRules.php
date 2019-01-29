@@ -16,7 +16,7 @@ class InlineRules
     /**
      * InterWikiNameのマッチパターン.
      */
-    const INTERWIKINAME_PATTERN = '\\[([^\\]]+)\\]\\(([^\\)\"\\s]+)(?:\\s+\"(.*)\")?\\)';
+    const INTERWIKINAME_PATTERN = '\[.*\]\((https?|ftp)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)[\t{1,}|\s{1,}]"".*""\)';
     /**
      * WikiNameのマッチパターン.
      */

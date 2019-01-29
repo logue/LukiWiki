@@ -11,7 +11,7 @@ namespace App\LukiWiki;
 
 use App\LukiWiki\Inline\InlineConverter;
 use App\LukiWiki\Rules\InlineRules;
-use App\LukiWIki\Utility\WikiFileSystem;
+use App\Models\Page;
 use Illuminate\Support\Facades\Config;
 
 /**
@@ -39,11 +39,11 @@ abstract class AbstractInline
      *
      * @param int $start
      */
-    public function __construct(int $start, bool $isAmp)
+    public function __construct(int $start, bool $isAmp = false)
     {
         $this->start = $start;
         $this->isAmp = $isAmp;
-        $this->pages = WikiFileSystem::getInstance();
+        $this->pages = Page::getEntries();
     }
 
     /**
@@ -100,7 +100,7 @@ abstract class AbstractInline
     }
 
     // Set basic parameters
-    public function setParam(string $page, string $name, string $body, string $alias = '')
+    public function setParam(string $page, string $name, string $body, string $alias = '', string $title = '')
     {
         $converter = new InlineConverter(['InlinePlugin'], [], $this->isAmp);
 
@@ -112,6 +112,8 @@ abstract class AbstractInline
         $this->page = $page;
         $this->name = $name;
         $this->body = $body;
+        $this->title = $title;
+
         if (!empty($alias)) {
             $alias = $converter->convert($alias, $page);
             // aタグのみ削除
@@ -143,15 +145,15 @@ abstract class AbstractInline
             // ページ内リンク
             return '<a href="'.self::processText($anchor).'">'.self::processText($alias).'</a>';
         }
-        $wikis = $this->pages;
 
         $anchor_name = trim(empty($alias) ? $page : $alias);
 
-        if (isset($wikis->$page)) {
-            $this->meta['pages'] = $page;
+        $title = !empty($this->title) ? $this->title : $page;
+
+        if (isset($this->pages[$page])) {
 
             return '<a href="'.url($page).$anchor.'"'.
-                ($isautolink === true ? ' class="autolink"' : '').' title="'.$page.'" data-timestamp="'.$wikis->timestamp($page).'" v-lw-passage v-b-tooltip>'.$anchor_name.'</a>';
+                ($isautolink === true ? ' class="autolink"' : '').' title="'.$title.'" v-b-tooltip>'.$anchor_name.'</a>';
         } else {
             $retval = $anchor_name.'<a href="'.url($page).'?action=edit" rel="nofollow" title="Edit '.$page.'" v-b-tooltip>?</a>';
 

@@ -2,9 +2,9 @@
 
 @section('content')
 <ul class="entries">
-    @foreach ($entries as $name=>$info)
-    <li><a href="{{ url($name) }}" title="{{ $name }}" data-timestamp="{{ $info['timestamp'] }}" v-lw-passage
-            v-b-tooltip>{{ $name }}</a></li>
+    @foreach ($entries as $entry)
+    <li><a href="{{ url($entry->name) }}" title="{{ $entry->name }}" data-timestamp="{{ $entry->updated_at }}" v-lw-passage
+            v-b-tooltip>{{ $entry->name }}</a></li>
     @endforeach
 </ul>
 @endsection

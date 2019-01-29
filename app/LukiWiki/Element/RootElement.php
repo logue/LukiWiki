@@ -113,16 +113,31 @@ class RootElement extends AbstractElement
                         }
                         break;
                     case '-':
+                        // List / Holizonal
                         if (substr($line, 0, 4) === '----') {
                             // Horizontal Rule
                             $this->insert(new HorizontalRule($this, $line, $this->isAmp));
                             continue 2;
                         }
-                        // List
-                        $content = new UnorderedList($this, $line, $this->isAmp);
-                        break;
                     case '+':
-                        $content = new OrderedList($this, $line, $this->isAmp);
+                    case '*':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                    case ' ':
+                        if (preg_match('/^\s{0,3}(\-|\+|\*|\d+\.)\s+.*$/', $line, $matches)){
+                            if ($matches[1] === '-' || $matches[1] === '*') {
+                                $content = new UnorderedList($this, $line, $this->isAmp);
+                            }else{
+                                $content = new OrderedList($this, $line, $this->isAmp);
+                            }
+                        }
                         break;
                     case '>':
                     case '<':

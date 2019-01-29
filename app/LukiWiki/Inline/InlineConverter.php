@@ -51,7 +51,7 @@ class InlineConverter
      * @param array $excludes   除外する変換クラス名
      * @param bool  $isAmp      AMP用HTMLを出力するか？
      */
-    public function __construct(array $converters, array $excludes, bool $isAmp)
+    public function __construct(array $converters = [], array $excludes = [], bool $isAmp = false)
     {
         static $converters;
         if (!isset($converters)) {

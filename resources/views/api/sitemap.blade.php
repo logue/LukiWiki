@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-    @foreach ($entries as $name=>$info)
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+    @foreach ($entries as $entry)
     <url>
-        <loc>{{ url($name) }}</loc>
-        <lastmod>{{ date('Y-m-d\TH:i:sP', $info['timestamp']) }}</lastmod>
-        <xhtml:link rel="alternate" media="only screen and (max-width: 640px)" href="{{ url($name) }}?action=amp" />
+        <loc>{{ url($entry->name) }}</loc>
+        <lastmod>{{ $entry->updated_at }}</lastmod>
     </url>
     @endforeach
 </urlset>

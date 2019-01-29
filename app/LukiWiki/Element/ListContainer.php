@@ -25,7 +25,9 @@ class ListContainer extends AbstractElement
         parent::__construct();
         $this->tag = $tag;
         $this->tag2 = $tag2;
-        $this->level = min(3, strspn($text, $head));
+        // $this->level = min(3, strspn($text, $head));
+        $this->level = strlen(explode($head, $text)[0]) + 1;    // 識別子より前の空白の数がレベル
+
         $text = ltrim(substr($text, $this->level));
 
         $element = new ListElement($this->level, $tag2);

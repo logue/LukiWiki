@@ -47,10 +47,21 @@ class AdministratorController extends Controller
 
             switch ($request->input('type')) {
                 case 'wiki':
-                   $request->session()->flash('message', $converter->wiki() ? 'Success' : 'Error');
-                   break;
+                    $request->session()->flash('message', $converter->wiki() ? 'Success' : 'Error');
+                    break;
+                case 'attach':
+                    $request->session()->flash('message', $converter->attach() ? 'Success' : 'Error');
+                    break;
+                case 'backup':
+                    $request->session()->flash('message', $converter->backup() ? 'Success' : 'Error');
+                    break;
+                case 'counter':
+                    $request->session()->flash('message', $converter->counter() ? 'Success' : 'Error');
+                    break;
+
             }
-            retrun redirect(':admin/convert');
+
+            return redirect(':admin/convert');
         }
 
         return view('admin/convert', ['title'=>'Convert PukiWiki data.']);

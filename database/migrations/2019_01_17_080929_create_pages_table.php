@@ -25,7 +25,8 @@ class CreatePagesTable extends Migration
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
             $table->increments('id')->unsigned()->comment('記事番号');
             $table->integer('user_id')->references('id')->on('paguserses')->comment('ユーザID');
-            $table->string('name')->unique()->comment('記事名');
+            $table->string('name')->unique()->comment('ページ名');
+            $table->string('title')->nullable()->comment('記事名');
             $table->longText('source')->comment('内容');
             $table->string('description')->nullable()->comment('要約');
             $table->boolean('locked')->comment('ロックフラグ');

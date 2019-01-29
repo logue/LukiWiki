@@ -10,17 +10,13 @@
 namespace App\Http\Controllers;
 
 use App\LukiWiki\Element\RootElement;
+use App\Models\Page;
 use Config;
 use Debugbar;
 use Illuminate\Http\Request;
 
 class WikiController extends Controller
 {
-    // 設定
-    private $config = [];
-    // ページ名
-    private $page = null;
-
     // 新旧のデーターの比較に用いる要約用のハッシュのアルゴリズム
     // 使用可能な値：http://php.net/manual/ja/function.hash-algos.php
     // あくまでも新旧のデーターに変化があったかのチェック用途であるため、高速なcrc32で十分だと思う。
@@ -36,96 +32,20 @@ class WikiController extends Controller
     }
 
     /**
-     * Wikiを表示.
-     *
-     * @param Request $request
-     * @param string  $page    ページ名
-     *
-     * @return Response
-     */
-    public function __invoke(Request $request, $page = null, $action = null)
-    {
-        $this->page = $page;
-        $this->request = $request;
-
-        switch ($action) {
-            case 'new':
-            case 'edit':
-                return $this->edit();
-                break;
-            case 'save':
-                return $this->save();
-                break;
-            case 'attachment':
-                return $this->attachment();
-                break;
-            case 'history':
-                return $this->history();
-                break;
-            case 'source':
-                return view(
-                   'default.source',
-                   [
-                       'source' => $this->data->$page,
-                       'title'  => 'Source of '.$page,
-                       'page'   => $page,
-                   ]
-               );
-            case 'list':
-                return $this->list();
-                break;
-            case 'lock':
-                return $this->lock();
-                break;
-            case 'recent':
-               // 最終更新
-               return view(
-                   'default.recent',
-                   [
-                       'entries' => $this->getLatest(),
-                       'title'   => 'RecentChanges',
-                   ]
-               );
-               break;
-            case 'atom':
-                // ATOM
-                return response()
-                    ->view('api.atom', ['entries' => $this->getLatest()])
-                    ->header('Content-Type', ' application/xml; charset=UTF-8');
-                break;
-            case 'sitemap':
-                // Sitemap
-                return response()
-                    ->view('api.sitemap', ['entries' => $filelist()])
-                    ->header('Content-Type', ' application/xml; charset=UTF-8');
-                break;
-            case 'cancel':
-                return redirect($request->input('page'));
-                break;
-            case 'amp':
-                return $this->read(true);
-                break;
-            default:
-                return $this->read(false);
-                break;
-        }
-    }
-
-    /**
      * ページを読み込む
      */
-    public function read($page = null)
+    public function read(Request $request, $page = null)
     {
-        $data = $this->data->$page;
-
-        if (!$data) {
+        Debugbar::startMeasure('db', 'Get data from db.');
+        $entry = Page::where('name', $page ?? $request->input('page') ?? Config::get('lukiwiki.special_page.default'))->first();
+        Debugbar::stopMeasure('db');
+        if (!$entry) {
             // ページが見つからない場合は404エラー
             return abort(404);
         }
 
         Debugbar::startMeasure('parse', 'Converting wiki data...');
-
-        $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $data));
+        $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $entry->source));
 
         $body = new RootElement('', 0, ['id' => 0]);
         $body->parse($lines);
@@ -144,10 +64,28 @@ class WikiController extends Controller
     }
 
     /**
+     * ソース.
+     */
+    public function source(Request $request, $page = null)
+    {
+        $entry = Page::where('name', $page)->first();
+
+        return view(
+           'default.source',[
+           'page'    => $entry->name,
+                'source' => $entry->source,
+                'title'   => $entry->title
+                ]
+        );
+    }
+
+    /**
      * 編集画面表示.
      */
-    public function edit($page = null)
+    public function edit(Request $request, $page = null)
     {
+        $this->page = $page ?? $request->input('page') ?? Config::get('lukiwiki.special_page.default');
+
         if (!$page) {
             // 新規ページ
             return view(
@@ -161,15 +99,16 @@ class WikiController extends Controller
              );
         }
 
-        $data = $this->data->$page;
+        $entry = Page::where('name', $this->page)->first();
 
         return view(
             'default.edit',
             [
-                'page'   => $page,
-                'source' => $data,
-                'title'  => 'Edit '.$page,
-                'hash'   => hash(self::HASH_ALGORITHM, $data),
+                'page'        => $page,
+                'source'      => $entry->source,
+                'description' => $entry->description,
+                'title'       => 'Edit '.$page,
+                'hash'        => hash(self::HASH_ALGORITHM, $entry->source),
             ]
          );
     }
@@ -181,30 +120,30 @@ class WikiController extends Controller
      *
      * @return Response
      */
-    public function save()
+    public function save(Request $request)
     {
-        if (!$this->request->isMethod('post')) {
+        if (!$request->isMethod('post')) {
             // Method not allowed
             abort(405);
         }
 
-        $page = $this->request->input('page');
+        $page = $request->input('page');
 
         if (empty($page)) {
             abort(400);
         }
 
-        $data = $this->data->$page;
+        $entry = Page::where('name', $this->page)->first();
 
-        if (hash(self::HASH_ALGORITHM, $data) !== $this->request->input('hash')) {
+        if (hash(self::HASH_ALGORITHM, $data) !== $request->input('hash')) {
             // 編集中に別の人が編集をした（競合をおこした）
 
             // TODO: この処理は動かない。3way-diffを出力
             $merger = new PhpMerge\PhpMerge();
             $result = $merger->merge(
-                $this->request->input('original'),
+                $request->input('original'),
                 $data,
-                $this->request->input('source')
+                $request->input('source')
             );
             dd($result);
 
@@ -213,7 +152,7 @@ class WikiController extends Controller
                 [
                     'page'   => $page,
                     'diff'   => $result,
-                    'source' => $this->request->input('source'),
+                    'source' => $equest->input('source'),
                     'title'  => 'Conflict '.$page,
                     'hash'   => hash(self::HASH_ALGORITHM, $data),
                 ]
@@ -223,11 +162,11 @@ class WikiController extends Controller
         // 保存処理
         //dd($page, $this->request->input('source'));
         // $this->data->$page = $this->request->input('source'); ←動かない（マジックメソッドが使えない）
-        $this->data->__set($page, $this->request->input('source'));
+        //$this->data->__set($page, $this->request->input('source'));
 
         // TODO:バックアップ処理
 
-        $this->request->session()->flash('message', 'Saved');
+        $request->session()->flash('message', 'Saved');
 
         return redirect($page);
     }
@@ -239,42 +178,20 @@ class WikiController extends Controller
      *
      * @return Response
      */
-    public function list($type)
+    public function list()
     {
-        // 全ファイル一覧（WikiFileSystemオブジェクト）
-        $filelist = $this->data;
-        $entries = [];
+        $pages = Page::getEntries();
+
+        
+
+        dd($pages);
 
         return view(
             'default.list',
             [
-                'entries' => $filelist(),
+                'entries' => Page::all()->orderBy('name'),
                 'title'   => 'List',
             ]
         );
-    }
-
-    /**
-     * ページ一覧を新しい順に並び替える.
-     *
-     * @param int $limit 制限件数
-     *
-     * @return array
-     */
-    private function getLatest($limit = 10)
-    {
-        $data = $this->data;
-        $entries = $data();
-        $i = 0;
-        foreach ($entries as $key => $value) {
-            if ($i === $limit) {
-                break;
-            }
-            $modified[$key] = $value['timestamp'];
-            ++$i;
-        }
-        array_multisort($entries, SORT_DESC, $modified);
-
-        return $entries;
     }
 }

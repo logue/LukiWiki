@@ -35,14 +35,14 @@ class TableCell extends AbstractElement
             // スイッチ
             if ($matches[1]) {
                 // LEFT CENTER RIGHT JUSTIFY
-                $this->class[] = 'text-'.self::processParam($matches[1]);
+                $this->class[] = 'text-'.self::processText($matches[1]);
             } elseif ($matches[3]) {
                 // COLOR / BGCOLOR
                 $name = $matches[2] ? 'background-color' : 'color';
-                $this->style[$name] = self::processParam($matches[3]);
+                $this->style[$name] = self::processText($matches[3]);
             } elseif ($matches[4]) {
                 // SIZE
-                $value = self::processParam($matches[4]);
+                $value = self::processText($matches[4]);
                 if (is_numeric($value)) {
                     // 10px = 1rem
                     $this->style['font-size'] = (int) $value.'rem';
@@ -52,10 +52,10 @@ class TableCell extends AbstractElement
                 }
             } elseif ($matches[5]) {
                 // LANG
-                $this->lang = self::processParam($matches[5]);
+                $this->lang = self::processText($matches[5]);
             } elseif ($matches[6]) {
                 // BASELINE / TOP / MIDDLE / BOTTOM / TEXT-TOP / TEXT-BOTTOM
-                $this->class[] = 'align-'.self::processParam($matches[6]);
+                $this->class[] = 'align-'.self::processText($matches[6]);
             } elseif ($matches[7]) {
                 // NOWRAP
                 $this->class[] = 'text-nowrap';
@@ -99,6 +99,15 @@ class TableCell extends AbstractElement
 
         $this->meta = $obj->getMeta();
         $this->insert($obj);
+    }
+
+    public function setStyle(&$style)
+    {
+        foreach ($style as $key=>$value) {
+            if (!isset($this->style[$key])) {
+                $this->style[$key] = $value;
+            }
+        }
     }
 
     public function __toString()

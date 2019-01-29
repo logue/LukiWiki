@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateAttachmentsTable extends Migration
 {
-    const TABLE_NAME = 'attachements';
+    const TABLE_NAME = 'attachments';
     const TABLE_COMMENT = '添付ファイル管理';
 
     /**
@@ -28,7 +28,7 @@ class CreateAttachmentsTable extends Migration
             $table->integer('user_id')->unsigned()->references('id')->on('users')->comment('ユーザID');
             $table->integer('attachment_id')->unsigned()->nullable()->comment('元ファイルのID');    // バックアップ用途
             $table->string('name')->comment('ファイル名');
-            $table->string('path')->comment('実体へのパス');
+            $table->string('stored_name')->comment('実体名');
             $table->string('mime')->default('application/octet-stream')->comment('MIMEタイプ');
             $table->ipAddress('ip')->comment('投稿者のIP');
             $table->boolean('locked')->comment('ロックフラグ');

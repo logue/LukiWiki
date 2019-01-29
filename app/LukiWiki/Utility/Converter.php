@@ -9,12 +9,15 @@
 
 namespace App\LukiWiki\Utility;
 
+use App\Models\Attachment;
 use App\Models\Page;
+
 use Carbon\Carbon;
-use Illuminate\Http\File;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 class Converter
 {
     /**
@@ -24,11 +27,6 @@ class Converter
      */
     public function __construct(string $path)
     {
-        // mimeを保存するため、コンストラクト時に使用可能かをチェック
-        if (class_exists('finfo') === false) {
-            throw new \Exception('fileinfo is not installed. Please install fileinfo extention and modify php.ini first.');
-        }
-
         // 各ディレクトリを取得
         $this->wiki_dir = $path.'/wiki/';
         $this->attach_dir = $path.'/attach/';
@@ -43,7 +41,7 @@ class Converter
      */
     public function wiki()
     {
-        \Log::debug('Start Wiki data convertion.');
+        Log::debug('Start Wiki data convertion.');
 
         foreach (Storage::files($this->wiki_dir) as &$file) {
             // ページ名
@@ -53,6 +51,8 @@ class Converter
                 // ファイル名が存在しない場合スキップ（.gitignoreとかの隠しファイルも省ける）
                 continue;
             }
+
+            Log::debug('Import '.$file.'... ('.$page.')');
 
             // :configから始まるページ名はPukiWikiのプラグインの初期設定で使う。
             // この値は使用しないため移行しない
@@ -65,8 +65,6 @@ class Converter
 
             $ret = self::pukiwiki2lukiwiki($data);
 
-            $source = implode("\n", $ret['data']);
-
             try {
                 $created = Carbon::createFromTimestamp(filectime(storage_path($file)));
             } catch (\Exception $e) {
@@ -75,23 +73,25 @@ class Converter
             }
 
             //if ($page !== 'Web素材') continue;
-
-            \Log::debug('Import '.$file.'... ('.$page.')');
-            Page::updateOrCreate([
-                'name'        => $page, ], [
-                'user_id'     => 0,
-                'source'      => $source,
-                'description' => $ret['description'] ?? null,
-                'locked'      => $ret['locked'],
-                'status'      => 0,
-                'ip'          => $_SERVER['REMOTE_ADDR'],
-                'created_at'  => $created,
-                'updated_at'  => Carbon::createFromTimestamp(Storage::lastModified($file)),
-            ]);
+            Page::updateOrCreate(
+                [
+                    // 更新対象
+                    'name'        => $page, 
+                ], [
+                    'user_id'     => 0,
+                    'source'      => implode("\n", $ret['source']),
+                    'title'       => $ret['title'],
+                    'description' => $ret['description'],
+                    'locked'      => $ret['locked'],
+                    'status'      => 0,
+                    'ip'          => $_SERVER['REMOTE_ADDR'],
+                    'created_at'  => $created,
+                    'updated_at'  => Carbon::createFromTimestamp(Storage::lastModified($file)),
+                ]
+        );
         }
-        \Log::debug('Finish.');
+        Log::debug('Finish.');
     }
-
     /**
      * PukiWiki文法をLukiWiki文法に変換.
      *
@@ -99,8 +99,9 @@ class Converter
      *
      * @return array
      */
-    public static function pukiwiki2lukiwiki(array $lines)
+    private static function pukiwiki2lukiwiki(array $lines)
     {
+        $title = null;
         $freezed = false;
         $description = null;
         $ori = $lines;
@@ -142,6 +143,10 @@ class Converter
                     $ret[] = '```'."\n".trim(implode("\n", $pre))."\n".'```';
                 }
                 unset($pre);
+            }
+
+            if (substr($line, 0, 7) === 'TITLE:'){
+                $title = substr($line,-8);
             }
 
             // リンクの形式変更（LukiWikiでは[...](...)という形式）
@@ -219,9 +224,8 @@ class Converter
                 case '+':
                     if (preg_match('/^([\+|\-]{1,3})(.+)$/s', $line, $matches) !== 0) {
                         $level = strlen($matches[1]);
-                        $type = trim($matches[1]);
                         $text = trim($matches[2]);
-                        $ret[] = str_repeat($type, $level).' '.$text;
+                        $ret[] = str_repeat(' ', $level-1).$char.' '.$text;
                         $matches = [];
                     }
                     break;
@@ -232,7 +236,7 @@ class Converter
             }
         }
 
-        return ['data' => $ret, 'locked' => $freezed, 'description' => $description];
+        return ['source' => $ret, 'locked' => $freezed, 'title' => $title, 'description' => $description];
     }
 
     /**
@@ -240,13 +244,15 @@ class Converter
      *
      * @param string $char   識別子
      * @param string $plugin プラグイン名
-     * @param array  $option 因数
-     * @param string $body   中身
+     * @param array  $option 引数 ()内
+     * @param string $body   中身 {}内
      *
      * @return string
      */
     private static function processPlugin(string $char, string $plugin, array $option = [], string $body = null)
     {
+        // #プラグイン名(引数){中身} or &プラグイン名(引数){中身};
+        // ※帰り値の末尾に;を入れないこと。
         switch ($plugin) {
             case 'aname':
                 if (!empty($body)) {
@@ -260,7 +266,11 @@ class Converter
                 $t = preg_replace('/\((.+)\)/u', '', $body);
                 $dt = Carbon::parse($t);
 
-                return $char.'timestamp('.$dt->timestamp.');';
+                return $char.'timestamp('.$dt->timestamp.')';
+                break;
+            case 'size':
+                // サイズはrem単位に変換する。
+                return $char.'size'.self::px2rem($option[0]);
                 break;
             case 'epoch':
                 // 時差を考慮した新着（Adv.）
@@ -286,7 +296,7 @@ class Converter
                 if (count($option) !== 0) {
                     return  '{{'.$file.'|'.implode(',', $option).'}}';
                 } else {
-                    return  '{{'.$file.'}}';
+                    return  '![]('.$file.')';
                 }
 
                 break;
@@ -317,7 +327,7 @@ class Converter
             case 'version':
             case 'versionlist':
                 // 無視するプラグイン
-                return '/*'.'deprecated:'.$plugin.'*/';
+                return '/*'.'deprecated:'.$plugin.' param:'.implode(',', $option).' body:'.$body.'*/';
                 break;
         }
         if (preg_match('/\n/', $body)) {
@@ -330,30 +340,67 @@ class Converter
     }
 
     /**
+     * pxをremに変換.
+     *
+     * @param int $px ピクセル
+     *
+     * @return string
+     */
+    private static function px2rem(int $px)
+    {
+        return round($px / 16, 5);
+    }
+
+    /**
+     * 添付ファイルディレクトリの処理
+     */
+    public function attach(){
+        foreach (Storage::files($this->attach_dir) as &$file) {
+            $a = $this->processAttach($file);
+
+            if (empty($a)) continue;
+
+            $ret[] = $a;
+        }
+    }
+    /**
      * 添付ファイルを変換.
      *
      * @param string $file ファイル
      *
      * @return array
      */
-    public function processAttach(string $file)
+    private function processAttach(string $file)
     {
+        $count = 0;
+        $locked = false;
         // 添付ファイルの名前を取得（かなりいい加減な正規表現だが・・・）
         // [ページ名]_[ファイル名].[バックアップ世代]という形式。
         // 添付するファイル名に制約がかかるため、LukiWikiではDBで管理する。
         //if (preg_match('/^(\w+)_(\w+)[\.]?(\d+|log)?$/', $file, $matches) === FALSE){
-        if (preg_match('/^(\w+)_(\w+)$/', $file, $matches) === false) {
+        
+        if (!preg_match('/^(\w+)_(\w+)(\.\w+)?$/', pathinfo($file, PATHINFO_FILENAME), $matches)) {
             return;
         }
+        
+        if (isset($matches[3])) return;
+        if (!empty(substr($file, strrpos($file, '.') + 1))) return;
 
         $page = hex2bin($matches[1]);
 
         // ページが存在しない場合、移行はしない。（IDで管理するため）
-        if (!in_array($page, $this->pages)) {
+        $page = preg_replace('/\:/', '_', $page);
+        $page_id = Page::where('name', $page)->pluck('id')->first();
+        if (!$page_id) {
             return;
         }
 
-        $filename = hex2bin($matches[2]);
+        $original_name = hex2bin($matches[2]);
+
+        if (Attachment::where(['page_id'=>$page_id, 'name' => $original_name])->exists()){
+            // すでにデーターベースに登録されている場合スキップ
+            return;
+        }
 
         // 添付ファイルのバックアップは移行しない
         //if (!empty($matches[3]) {
@@ -365,31 +412,45 @@ class Converter
         //}
 
         // 拡張子を取得
-        $ext = substr($filename, strrpos($filename, '.') + 1);
+        $ext = substr($original_name, strrpos($original_name, '.') + 1);
 
         // 閲覧回数を取得
         $count = 0;
-        if (file_exists($this->attachments_dir.'/'.$file.'.log')) {
-            $count = (int) trim(file_get_contents($this->attachments_dir.'/'.$file.'.log'));
+        if (Storage::exists($file.'.log')) {
+            $log = explode("\n", trim(Storage::get($file.'.log')));
+            $count = (int)explode(',', array_unshift($log))[0];
+            $locked = $count !== 1 && array_shift($log) === '1';
         }
 
         // サーバーに保存する実際のファイル名は40文字のランダムの文字列＋拡張子
-        $realname = Str::random(40).$ext;
+        $stored_name = Str::random(40).'.'.$ext;
+
+        $dest = Config::get('lukiwiki.directory.attach').'/'.$stored_name;
 
         // LukiWikiの添付ディレクトリにコピー
-        Storage::copy($file, $this->attachments_dir.'/'.$realname);
+        Storage::copy($file, $dest);
 
-        return [
-           'page'        => $page,
-           'name'        => $filename,
+        try {
+            $created = Carbon::createFromTimestamp(filectime($file));
+        } catch (\Exception $e) {
+            //dd($e);
+            $created = null;
+        }
+
+        $r = [
+           'page_id'     => $page_id,
+           'name'        => $original_name,
            'count'       => $count,
-           'realname'    => $realname,
-           'mime'        => finfo_file($finfo, $file),
+           'locked'      => $locked,
+           'stored_name' => $stored_name,
+           'mime'        => Storage::mimeType($dest),
            'hash'        => hash_file('sha256', $file),
-           'size'        => filesize($file),
-           'created_at'  => filectime($file),
-           'updated_at'  => filemtime($file),
+           'size'        => Storage::size($file),
+           'meta'        => Storage::getMetaData($dest),
+           'created_at'  => $created,
+           'updated_at'  => Carbon::createFromTimestamp(Storage::lastModified($file)),
         ];
+        dd($r);
     }
 
     public function processCounter(string $file)
