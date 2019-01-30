@@ -23,10 +23,10 @@ class CreateAttachmentsTable extends Migration
     public function up()
     {
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
-            $table->increments('id')->unsigned()->comment('ファイル番号');
-            $table->integer('page_id')->unsigned()->references('id')->on('pages')->comment('記事ID');
-            $table->integer('user_id')->unsigned()->references('id')->on('users')->comment('ユーザID');
-            $table->integer('attachment_id')->unsigned()->nullable()->comment('元ファイルのID');    // バックアップ用途
+            $table->bigIncrements('id')->comment('ファイル番号');
+            $table->unsignedInteger('page_id')->references('id')->on('pages')->comment('記事ID');
+            $table->unsignedInteger('user_id')->references('id')->on('users')->comment('ユーザID');
+            $table->unsignedInteger('attachment_id')->default('0')->comment('元ファイルのID');    // バックアップ用途
             $table->string('name')->comment('ファイル名');
             $table->string('stored_name')->comment('実体名');
             $table->string('mime')->default('application/octet-stream')->comment('MIMEタイプ');
@@ -37,7 +37,7 @@ class CreateAttachmentsTable extends Migration
             $table->timestamps();
         });
         if (\Config::get('database.default') !== 'sqlite') {
-            \DB::statement('ALTER TABLE '.DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
+            \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
         }
     }
 

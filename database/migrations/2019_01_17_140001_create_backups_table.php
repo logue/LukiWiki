@@ -23,15 +23,15 @@ class CreateBackupsTable extends Migration
     public function up()
     {
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
-            $table->increments('id')->unsigned()->comment('バックアップ番号');
-            $table->integer('post_id')->unsigned()->references('id')->on('pages')->comment('記事番号');
-            $table->integer('user_id')->unsigned()->references('id')->on('users')->comment('ユーザID');
+            $table->bigIncrements('id')->comment('バックアップ番号');
+            $table->unsignedInteger('post_id')->references('id')->on('pages')->comment('記事番号');
+            $table->unsignedInteger('user_id')->references('id')->on('users')->comment('ユーザID');
             $table->longText('source')->comment('内容');
             $table->ipAddress('ip')->comment('編集者のIP');
             $table->timestamps();
         });
         if (\Config::get('database.default') !== 'sqlite') {
-            \DB::statement('ALTER TABLE '.DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
+            \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
         }
     }
 

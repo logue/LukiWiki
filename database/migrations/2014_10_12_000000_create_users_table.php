@@ -23,7 +23,7 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
-            $table->increments('id')->unsigned()->comment('ユーザID');
+            $table->bigIncrements('id')->comment('ユーザID');
             $table->string('name')->unique()->comment('ユーザ名');
             $table->string('email')->unique()->comment('メールアドレス');
             $table->timestamp('email_verified_at')->nullable()->comment('メールアドレス認証日');
@@ -32,7 +32,7 @@ class CreateUsersTable extends Migration
             $table->timestamps();
         });
         if (\Config::get('database.default') !== 'sqlite') {
-            \DB::statement('ALTER TABLE '.DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
+            \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
         }
     }
 

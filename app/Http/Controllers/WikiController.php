@@ -71,10 +71,10 @@ class WikiController extends Controller
         $entry = Page::where('name', $page)->first();
 
         return view(
-           'default.source',[
-           'page'    => $entry->name,
-                'source' => $entry->source,
-                'title'   => $entry->title
+           'default.source', [
+           'page'         => $entry->name,
+                'source'  => $entry->source,
+                'title'   => $entry->title,
                 ]
         );
     }
@@ -181,8 +181,6 @@ class WikiController extends Controller
     public function list()
     {
         $pages = Page::getEntries();
-
-        
 
         dd($pages);
 

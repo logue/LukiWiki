@@ -61,7 +61,7 @@ class InterWiki extends AbstractInline
             // 国際化ドメインのときにアドレスをpunycode変換する。（https://日本語.jp → https://xn--wgv71a119e.jp）
             $url = preg_replace('/'.$purl['host'].'/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $target);
         } else {
-           $url = $target;
+            $url = $target;
         }
 
         return parent::setLink($this->alias, $url, $this->name);

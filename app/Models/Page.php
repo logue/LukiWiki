@@ -11,7 +11,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Symfony\Component\Intl\Collator\Collator;
+use App\Models\Attachment;
+use App\Models\Backup;
 use Config;
 
 class Page extends Model
@@ -21,18 +24,22 @@ class Page extends Model
 
     /**
      * ページに貼り付けられた添付ファイル.
+     *
+     * @return HasMany
      */
-    public function attachements()
+    public function attachements(): HasMany
     {
-        return $this->hasMany('App\Models\Attachment');
+        return $this->hasMany(Attachment::class);
     }
 
     /**
      * ページのバックアップ.
+     *
+     * @return HasMany
      */
-    public function backups()
+    public function backups(): HasMany
     {
-        return $this->hasMany('App\Models\Backup');
+        return $this->hasMany(Backup::class);
     }
 
     /**
@@ -49,12 +56,25 @@ class Page extends Model
 
     /**
      * 全ページを取得.
+     * @return array
      */
-    public static function getEntries()
+    public static function getEntries():array
     {
         $pages = self::pluck('name')->toArray();
         $collator = new Collator(Config::get('locale'));
         $collator->asort($pages, Collator::SORT_STRING);
         return $pages;
+    }
+
+    /**
+     * ページの存在チェック.
+     *
+     * @param string $page
+     *
+     * @return boolean
+     */
+    public static function exsists(string $page):boolean
+    {
+        return self::where('page', $page)->exists();
     }
 }

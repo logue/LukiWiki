@@ -9,6 +9,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ImportPukiWikiAttach;
+use App\Jobs\ImportPukiWikiBackup;
+use App\Jobs\ImportPukiWikiCounter;
+use App\Jobs\ImportPukiWikiData;
 use App\LukiWiki\Utility\Converter;
 use App\User;
 use Cache;
@@ -42,23 +46,34 @@ class AdministratorController extends Controller
     public function convert(Request $request)
     {
         if ($request->isMethod('post')) {
-            // Method not allowed
-            $converter = new Converter($request->input('path'));
+            $path = $request->input('path');
 
-            switch ($request->input('type')) {
-                case 'wiki':
-                    $request->session()->flash('message', $converter->wiki() ? 'Success' : 'Error');
-                    break;
-                case 'attach':
-                    $request->session()->flash('message', $converter->attach() ? 'Success' : 'Error');
-                    break;
-                case 'backup':
-                    $request->session()->flash('message', $converter->backup() ? 'Success' : 'Error');
-                    break;
-                case 'counter':
-                    $request->session()->flash('message', $converter->counter() ? 'Success' : 'Error');
-                    break;
+            if (\Storage::exists($path)) {
+                $converter = new Converter($path);
 
+                switch ($request->input('type')) {
+                    case 'attach':
+                        $request->session()->flash('message', '添付ファイルのインポートのキューを実行しました。');
+                        $this->dispatch(new ImportPukiWikiAttach($path));
+                        break;
+                    case 'backup':
+                        $request->session()->flash('message', 'バックアップのインポートのキューを実行しました。');
+                        $this->dispatch(new ImportPukiWikiBackup($path));
+                        break;
+                    case 'counter':
+                        $request->session()->flash('message', 'カウンターのインポートのキューを実行しました。');
+                        $this->dispatch(new ImportPukiWikiCounter($path));
+                        break;
+                    case 'wiki':
+                        $request->session()->flash('message', 'Wikiデータのインポートのキューを実行しました。');
+                        $this->dispatch(new ImportPukiWikiData($path));
+                        break;
+                    default:
+                        $request->session()->flash('message', 'キューの実行をキャンセルしました。');
+
+                }
+            } else {
+                $request->session()->flash('message', 'ディレクトリが見つかりません。');
             }
 
             return redirect(':admin/convert');

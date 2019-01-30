@@ -63,29 +63,29 @@ class RootElement extends AbstractElement
             // Multiline-enabled block plugin #plugin{{ ... }}
             if (preg_match('/^@[^{]+(\{\{+)\s*$/', $line, $matches)) {
                 $len = strlen($matches[1]);
-                $line .= self::MULTILINE_DELIMITER;
+                $line .= "\r";
                 while (!empty($lines)) {
-                    $next_line = preg_replace('/['.self::MULTILINE_DELIMITER.'\n]*$/', '', array_shift($lines));
+                    $next_line = preg_replace('/[\r\n]*$/', '', array_shift($lines));
                     if (preg_match('/\}{'.$len.'}/', $next_line)) {
                         $line .= $next_line;
                         break;
                     } else {
-                        $line .= $next_line .= self::MULTILINE_DELIMITER;
+                        $line .= $next_line .= "\r";
                     }
                 }
             }
 
             // Github Markdown互換シンタックスハイライト記法
             $lang = null;
-            if (preg_match('/^```.+?$/', $line, $matches)) {
-                $line .= self::MULTILINE_DELIMITER;
+            if (preg_match('/^```/', $line, $matches)) {
+                $line .= "\r";
                 while (!empty($lines)) {
-                    $next_line = preg_replace('/['.self::MULTILINE_DELIMITER.'\n]*$/', '', array_shift($lines));
+                    $next_line = preg_replace('/[\r\n]*$/', '', array_shift($lines));
                     if (preg_match('/^```$/', $next_line)) {
                         $line .= $next_line;
                         break;
                     } else {
-                        $line .= $next_line .= self::MULTILINE_DELIMITER;
+                        $line .= $next_line .= "\r";
                     }
                 }
             }
@@ -108,17 +108,18 @@ class RootElement extends AbstractElement
                         break;
                     case '`':
                         // GFM:pre
-                        if (preg_match('/\```(.+?)\r(.*)\r```/', $line, $matches)) {
+                        if (preg_match('/^```(.+?)\r(.*)\r```/', $line, $matches)) {
                             $content = new PreformattedText($this, $matches[2], $matches[1]);
                         }
                         break;
                     case '-':
                         // List / Holizonal
-                        if (substr($line, 0, 4) === '----') {
+                        if (substr($line, -1) === '-') {
                             // Horizontal Rule
                             $this->insert(new HorizontalRule($this, $line, $this->isAmp));
                             continue 2;
                         }
+                        // no break
                     case '+':
                     case '*':
                     case '1':
@@ -131,10 +132,10 @@ class RootElement extends AbstractElement
                     case '8':
                     case '9':
                     case ' ':
-                        if (preg_match('/^\s{0,3}(\-|\+|\*|\d+\.)\s+.*$/', $line, $matches)){
+                        if (preg_match('/^\s{0,3}(\-|\+|\*|\d+\.)\s+.*$/', $line, $matches)) {
                             if ($matches[1] === '-' || $matches[1] === '*') {
                                 $content = new UnorderedList($this, $line, $this->isAmp);
-                            }else{
+                            } else {
                                 $content = new OrderedList($this, $line, $this->isAmp);
                             }
                         }

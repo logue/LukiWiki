@@ -40,6 +40,6 @@ class Align extends AbstractElement
             return $this->wrap(parent::__toString(), 'div', [], false);
         }
 
-        return $this->wrap(parent::__toString(), 'div', ['class' => Alignment::block($this->align)], false);
+        return $this->wrap(parent::__toString(), 'div', ['class' => Alignment::inline($this->align)], false);
     }
 }

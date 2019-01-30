@@ -151,7 +151,6 @@ abstract class AbstractInline
         $title = !empty($this->title) ? $this->title : $page;
 
         if (isset($this->pages[$page])) {
-
             return '<a href="'.url($page).$anchor.'"'.
                 ($isautolink === true ? ' class="autolink"' : '').' title="'.$title.'" v-b-tooltip>'.$anchor_name.'</a>';
         } else {
