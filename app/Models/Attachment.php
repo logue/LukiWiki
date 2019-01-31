@@ -15,11 +15,28 @@ class Attachment extends Model
 {
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'meta' => 'json',
+    ];
+
     /**
      * この添付ファイルの貼り付けられたページ.
      */
     public function page()
     {
-        return $this->belongsTo('App\Models\Page');
+        return $this->hasOne(Page::class);
+    }
+
+    /**
+     * ファイルの存在チェック.
+     *
+     * @param string $page
+     * @param string $file
+     *
+     * @return bool
+     */
+    public static function exsists(string $page, string $file):boolean
+    {
+        // TODO:
     }
 }

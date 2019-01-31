@@ -58,7 +58,7 @@ class ImportPukiWikiData implements ShouldQueue
             // :configから始まるページ名はPukiWikiのプラグインの初期設定で使う。
             // この値は使用しないため移行しない
             if (substr($page, 0, 7) === ':config' || substr($page, 0, 3) === ':log' || substr($page, 0, 9) === 'PukiWiki/') {
-                 Log::info('Skipped "'.$page.'".');
+                Log::info('Skipped "'.$page.'".');
                 continue;
             }
             // :が含まれるページ名は_に変更する。
@@ -67,12 +67,8 @@ class ImportPukiWikiData implements ShouldQueue
 
             $ret = self::pukiwiki2lukiwiki($data);
 
-            try {
-                $created = Carbon::createFromTimestamp(filectime(storage_path($file)))->format('Y-m-d H:i:s');
-            } catch (\Exception $e) {
-                //dd($e);
-                $created = null;
-            }
+            // Storageクラスに作成日を取得する関数がないためファイルの実体のパスを取得
+            $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/'.$file));
 
             Log::info('Save "'.$page.'" to DB.');
 
@@ -91,7 +87,7 @@ class ImportPukiWikiData implements ShouldQueue
                     'locked'      => $ret['locked'],
                     'status'      => 0,
                     'ip'          => $_SERVER['REMOTE_ADDR'],
-                    'created_at'  => $created,
+                    'created_at'  => Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s'),
                     'updated_at'  => Carbon::createFromTimestamp(Storage::lastModified($file))->format('Y-m-d H:i:s'),
                 ]
             );
@@ -161,9 +157,9 @@ class ImportPukiWikiData implements ShouldQueue
                 continue;
             }
 
-            $line = preg_replace_callback('/SIZE\((\d+)?\){(.+)?}/u', function($matches){
+            $line = preg_replace_callback('/SIZE\((\d+)?\){(.+)?}/u', function ($matches) {
                 // サイズはrem指定に変更
-                return 'SIZE(' . self::px2rem($matches[1]) . '){' . $matches[2] . '}';
+                return 'SIZE('.self::px2rem($matches[1]).'){'.$matches[2].'}';
             }, $line);
 
             // リンクの形式変更（LukiWikiでは[...](...)という形式。添付ファイルとの区別は!でする）
@@ -339,7 +335,7 @@ class ImportPukiWikiData implements ShouldQueue
                     if ($option === 'nolink') {
                         // 無視するパラメータ
                         continue;
-                    }else if ($option === 'left' || $option === 'center' || $option === 'right' || $option === 'justify') {
+                    } elseif ($option === 'left' || $option === 'center' || $option === 'right' || $option === 'justify') {
                         // インライン型のときは処理をしない
                         if ($char === '#') {
                             // 位置決めパラメータが含まれていた場合、

@@ -13,10 +13,10 @@
   </a>
 </template>
 <script>
-// imgƒ^ƒO‚Ì“WŠJ‚ğ’x‚ç‚¹‚é‚±‚Æ‚Å•`‰æ•‰‰×‚ğŒ¸‚ç‚·
+// imgã‚¿ã‚°ã®å±•é–‹ã‚’é…ã‚‰ã›ã‚‹ã“ã¨ã§æç”»è² è·ã‚’æ¸›ã‚‰ã™
 import bImgLazy from "bootstrap-vue/es/components/image/img-lazy";
 
-// TODO: ƒI[ƒfƒBƒIƒvƒŒƒCƒ„[‚ÆƒrƒfƒIƒvƒŒƒCƒ„[
+// TODO: ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ãƒ“ãƒ‡ã‚ªãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
 
 export default {
   data(){

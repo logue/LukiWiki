@@ -32,13 +32,16 @@ class CreateAttachmentsTable extends Migration
             $table->string('mime')->default('application/octet-stream')->comment('MIMEタイプ');
             $table->ipAddress('ip')->comment('投稿者のIP');
             $table->boolean('locked')->comment('ロックフラグ');
-            $table->integer('size')->comment('ファイル容量');       // バイトで管理（1G前後ファイルを添付することは想像したくないが・・・。）
-            $table->string('hash', 32)->comment('ハッシュ');        // Sha-256で管理。改ざん対策。
+            $table->unsignedInteger('size')->comment('ファイル容量');   // バイトで管理（1G前後ファイルを添付することは想像したくないが・・・。）
+            $table->string('hash', 32)->comment('ハッシュ');            // Sha-256で管理。改ざん対策。
+            $table->unsignedInteger('count')->comment('カウンタ');
+            $table->json('meta')->comment('メタ情報');
             $table->timestamps();
         });
         if (\Config::get('database.default') !== 'sqlite') {
             \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
         }
+        \Storage::makeDirectory(\Config::get('lukiwiki.directory.attach'));
     }
 
     /**
@@ -49,5 +52,6 @@ class CreateAttachmentsTable extends Migration
     public function down()
     {
         Schema::dropIfExists(self::TABLE_NAME);
+        \Storage::deleteDirectory(\Config::get('lukiwiki.directory.attach'));
     }
 }

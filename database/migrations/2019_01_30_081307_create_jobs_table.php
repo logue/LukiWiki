@@ -1,19 +1,20 @@
 <?php
 /**
- * キュー管理テーブル作成.
+ * ジョブ管理テーブル作成.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
  * @license   MIT
  */
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateJobsTable extends Migration
 {
     const TABLE_NAME = 'jobs';
     const TABLE_COMMENT = 'ジョブ';
+
     /**
      * Run the migrations.
      *

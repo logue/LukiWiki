@@ -166,6 +166,7 @@ return [
          * Package Service Providers...
          */
         Barryvdh\Debugbar\ServiceProvider::class,
+        Owenoj\LaravelGetId3\GetId3ServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -225,7 +226,8 @@ return [
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
 
-        'Debugbar' => Barryvdh\Debugbar\Facade::class,
+        'Debugbar'  => Barryvdh\Debugbar\Facade::class,
+        'MediaInfo' => Owenoj\LaravelGetId3\Facades\MediaInfo::class,
     ],
 
 ];

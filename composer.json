@@ -13,6 +13,7 @@
         "florianwolters/component-util-singleton": "^0.3.2",
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0",
+        "owen-oj/laravel-getid3": "^0.1.0@alpha",
         "sters/regexp-trie": "^0.0.4",
         "symfony/intl": "^4.2",
         "symfony/polyfill-intl-idn": "^1.10"

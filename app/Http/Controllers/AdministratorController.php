@@ -13,7 +13,6 @@ use App\Jobs\ImportPukiWikiAttach;
 use App\Jobs\ImportPukiWikiBackup;
 use App\Jobs\ImportPukiWikiCounter;
 use App\Jobs\ImportPukiWikiData;
-use App\LukiWiki\Utility\Converter;
 use App\User;
 use Cache;
 use Illuminate\Http\Request;
@@ -49,8 +48,6 @@ class AdministratorController extends Controller
             $path = $request->input('path');
 
             if (\Storage::exists($path)) {
-                $converter = new Converter($path);
-
                 switch ($request->input('type')) {
                     case 'attach':
                         $request->session()->flash('message', '添付ファイルのインポートのキューを実行しました。');
