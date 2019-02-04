@@ -34,7 +34,7 @@ class Telephone extends AbstractInline
 
     public function setPattern(array $arr, string $page = null)
     {
-        list(, $alias, $tel) = $this->splice($arr);
+        list($alias, $tel) = $this->splice($arr);
         $name = $orginalname = $tel;
 
         return parent :: setParam($page, $name, '', $alias === '' ? $orginalname : $alias);

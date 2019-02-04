@@ -20,73 +20,58 @@ class BracketName extends AbstractInline
     public function getPattern()
     {
         $s2 = $this->start + 2;
-        // [[ (1) > (3) # (4) ]]
-        // [[ (2) ]]
-        /*
+        // [alt](WikiName "title"){option}
         return
-            '\['.                     // Open bracket [[
-            '(?:((?:(?!\]\]).)+)>)?'.   // (1) Alias >
-            '(\[\[)?'.                  // (2) Open bracket
-            '('.                        // (3) PageName
-             '(?:'.InlineRules::WIKINAME_PATTERN.')'.
-             '|'.
-             '(?:'.InlineRules::BRACKETNAME_PATTERN.')'.
+            '(?:\['.
+                '(.[^\]\[]+)'.                          // [1] alias
+            '\])'.
+            '(?:'.
+                '\('.
+                   '(.[^\r\n\t\f\[\]<>#&":\(\)]+?)'.    // [2] Name
+                   '(?:\#(\w[^\#]+?))?'.                // [3] Anchor
+                   '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.   // [4] Title
+                '\)'.
             ')?'.
-            '(\#(?:[A-Za-z0-9][\w-]*)?)?'. // (4) Anchor
-            '(?('.$s2.')\]\])'.     // Close bracket if (2)
-            '\]\]';                     // Close bracket ]]
-        */
-        // [page]
-        // [alias](page)
-        return
-            '\['.   // blacket open
-                '((?:(?!\]).)+)'. // [1] Link Text
-            '\]'.
-            '(?:\('.
-                '('.    // [2] Link to
-                    '(?:'.InlineRules::WIKINAME_PATTERN.')'.
-                    '|'.
-                    '(?:'.InlineRules::BRACKETNAME_PATTERN.')'.
-                ')'.    // [2] Link to end
-                '((?:\#).+)?'. // [3] Anchor
-                '(?:\s{1,}?"'.
-                    '((?:(?!"\)).)+)'. // [4] title
-                '")?'.
-            '\))?';
+            '(?:\{'.
+                '(.*[^\}]?)'.                       // [5] Body (option)
+            '\})?';
     }
 
     public function getCount()
     {
-        return 4;
+        return 5;
     }
 
     public function setPattern(array $arr, string $page = null)
     {
-        list(, $alias, , $name, $this->anchor) = $this->splice($arr);
-        //dd($name);
-        if (empty($name)) {
-            if (strpos($alias, '#')) {
-                $this->anchor = $alias = $name;
-            }
+        //dd($this->getPattern(), $arr,  $this->splice($arr));
+
+        list($this->alias, $this->href, $this->anchor, $this->title, $this->body) = $this->splice($arr);
+
+        if (empty($this->href)) {
+            $this->href = $this->anchor;
+        }
+        if (strpos($this->alias, '#')) {
+            $this->anchor = $alias;
+        }
+        /*
+        if (empty($page)) {
+
+
             if (empty($this->anchor)) {
-                return false;
-            } elseif (!InlineRules::isWikiName($name) && empty($alias)) {
+                //return false;
+            } elseif (!InlineRules::isWikiName($page) && empty($alias)) {
                 $alias = $name.$this->anchor;
             }
-//        } elseif (!isset($this->pages->$name)) {
-//            return false;
-        }
 
-        return parent::setParam($page, $name, '', $alias);
+        }
+        */
+
+        //self::setParam(['page'=>$page, 'href'=>url($page), 'alias' => $alias, 'title'=> $title, 'option' => $option]);
     }
 
     public function __toString()
     {
-        return parent::setAutoLink(
-            $this->name,
-            $this->alias,
-            $this->anchor,
-            $this->page
-        );
+        return '<a href="'.$this->alias.'" title="'.$this->title.'">'.$this->alias.'</a>';
     }
 }

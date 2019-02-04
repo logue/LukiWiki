@@ -14,7 +14,6 @@ use App\Models\Page;
 use Config;
 use Debugbar;
 use Illuminate\Http\Request;
-use Symfony\Component\Intl\Collator;
 
 class WikiController extends Controller
 {
@@ -183,15 +182,10 @@ class WikiController extends Controller
     {
         $pages = Page::getEntries();
 
-        $collator = new Collator(Config::get('locale'));
-        $collator->sortWithSortKeys($pages, Collator::SORT_STRING);
-
-        dd($pages);
-
         return view(
             'default.list',
             [
-                'entries' => Page::all()->orderBy('name'),
+                'entries' => $pages,
                 'title'   => 'List',
             ]
         );

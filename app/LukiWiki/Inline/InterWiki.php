@@ -10,7 +10,6 @@
 namespace App\LukiWiki\Inline;
 
 use App\LukiWiki\AbstractInline;
-use Symfony\Polyfill\Intl\Idn\Idn;
 
 /**
  * URLs (InterWiki definition on "InterWikiName").
@@ -19,51 +18,41 @@ class InterWiki extends AbstractInline
 {
     public function getPattern()
     {
-        // [Link Text](URL "title")
+        // [alias](URL "title"){option}
         return
             '\['.
-                '((?:(?!\]).)+)'. // [1] Link Text
+                '(.+[^\]\[])'.              // [1] alias
             '\]'.
             '\('.
-                '('.    // [2] Link to
-                    '(?:https?|ftp|ssh)'.  // protocol
+                '('.                        // [2] Link to
+                    '[^\(\)]'.
+                    '(?:https?|ftp|ssh)'.   // protocol
                     '(?::\/\/[-_.!~*\'a-zA-Z0-9;\/?:\@&=+\$,%#]+)'. // path, port, etc
-                ')'.    // [2] Link to end
-                '(?:\s{1,}?"'.
-                    '((?:(?!"\)).)+)'. // [3] title
-                '")?'.
-            '\)';
+                ')'.                        // [2] Name end
+                '\s*("(?:.*[^"])")?\s*'.    // [3] Title
+            '\)'.
+            '(?:\{'.
+                '(.*[^\}])'.                // [4] Body (option)
+            '\})?';
     }
 
     public function getCount()
     {
-        return 3;
+        return 4;
     }
 
     public function setPattern(array $arr, string $page = null)
     {
-        //dd($this->getPattern(), $this->splice($arr));
-        list(, $alias, $name, $title) = $this->splice($arr);
+        dd($this->getPattern(), $arr, $this->splice($arr));
+        list($alias, $href, $title, $body) = $this->splice($arr);
 
-        if (empty($name)) {
-            return parent::setParam($alias, $alias, $alias);
-        }
-
-        return parent::setParam('', $name, '', $alias, $title);
+        return parent::setParam(['alias'=>$alias, 'href' => $href, 'title' => $title, 'body'=>$body]);
     }
 
     public function __toString()
     {
         $target = empty($this->redirect) ? $this->name : $this->redirect.rawurlencode($this->name);
 
-        $purl = parse_url($target);
-        if (isset($purl['host']) && substr($purl['host'], 0, 4) === 'xn--') {
-            // 国際化ドメインのときにアドレスをpunycode変換する。（https://日本語.jp → https://xn--wgv71a119e.jp）
-            $url = preg_replace('/'.$purl['host'].'/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $target);
-        } else {
-            $url = $target;
-        }
-
-        return parent::setLink($this->alias, $url, $this->name);
+        return parent::setLink($this->alias, $target, $this->name);
     }
 }

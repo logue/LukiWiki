@@ -26,7 +26,6 @@ class ImportPukiWikiAttach implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $files = [];
-    private static $ignore_keys = ['GETID3_VERSION', 'filesize', 'filepath', 'filename', 'filenamepath', 'fileformat', 'gif', 'png', 'tags', 'mpeg', 'midi', 'id3v2', 'id3v1', 'tags_html', 'comments_html'];
 
     /**
      * Create a new job instance.
@@ -119,26 +118,43 @@ class ImportPukiWikiAttach implements ShouldQueue
 
             // ファイルのメタ情報を取得
             $info = \MediaInfo::extract($from);
-            // 無視するキーを除外
-            $meta = array_diff_key($info, array_flip(static::$ignore_keys));
 
-            if (isset($meta['comments']['picture'])){
-                $picture = $meta['comments']['picture'][0];
-                switch ($picture['image_mime']){
-                    case 'image/jpeg':
-                        $thumb_name = $s.'.jpg';
-                        break;
-                    case 'image/png':
-                        $thumb_name = $s.'.png';
-                        break;
-                    case 'image/gif':
-                        $thumb_name = $s.'.gif';
-                        break;
-
+            if (!isset($info['error'])) {
+                // 画像の大きさを取得
+                if (isset($meta['video'])) {
+                    $meta['width'] = $info['resolution_x'];
+                    $meta['height'] = $info['resolution_y'];
                 }
-                Storage::put('thumbnails/'.$thumb_name, $picture['data']);
+                // 演奏時間を取得
+                if (isset($meta['playtime'])) {
+                    $meta['playtime'] = $info['playtime_string'];
+                }
+
+                if (isset($meta['comments']['picture'])) {
+                    // アルバムアートがある場合サムネイルディレクトリに保存
+                    $picture = $meta['comments']['picture'][0];
+                    switch ($picture['image_mime']) {
+                        case 'image/jpeg':
+                            $thumb_name = $s.'.jpg';
+                            break;
+                        case 'image/png':
+                            $thumb_name = $s.'.png';
+                            break;
+                        case 'image/gif':
+                            $thumb_name = $s.'.gif';
+                            break;
+                    }
+                    Storage::put('thumbnails/'.$thumb_name, $picture['data']);
+                }
+                if (strpos($info['mime_type'], 5) === 'image') {
+                    // 画像の場合サムネイル作成
+                }
+                $mime = $info['mime_type'];
+                $size = $info['filesize'];
+            } else {
+                $mime = Storage::mimeType($dest);
+                $size = Storage::size($file);
             }
-            unset($meta['comments']);
 
             try {
                 Attachment::updateOrCreate([
@@ -150,9 +166,9 @@ class ImportPukiWikiAttach implements ShouldQueue
                     'ip'          => $_SERVER['REMOTE_ADDR'],
                     'locked'      => $locked,
                     'stored_name' => $stored_name,
-                    'mime'        => $info['mime_type'] ?? Storage::mimeType($dest),
+                    'mime'        => $mime,
                     'hash'        => hash_file('md5', $from),
-                    'size'        => Storage::size($file),
+                    'size'        => $size,
                     'meta'        => $meta,
                     'created_at'  => Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s'),
                     'updated_at'  => Carbon::createFromTimestamp(Storage::lastModified($file))->format('Y-m-d H:i:s'),

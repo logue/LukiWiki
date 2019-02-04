@@ -26,7 +26,7 @@ class InlineRules
     /**
      * BracketNameのマッチパターン.
      */
-    const BRACKETNAME_PATTERN = '(?!\s):?[^\r\n\t\f\[\]<>#&":]+:?(?<!\s)';
+    const BRACKETNAME_PATTERN = '(?!\s):?[^\r\n\t\f\[\]<>#&":\(\)]+:?(?<!\s)';
     /**
      * 注釈のパターン.
      */

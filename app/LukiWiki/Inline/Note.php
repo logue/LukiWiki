@@ -44,8 +44,8 @@ class Note extends AbstractInline
 
     public function setPattern(array $arr, string $page = null)
     {
-        list(, $body) = $this->splice($arr);
-        $converter = new InlineConverter([], [get_class()], $this->isAmp);
+        list($body) = $this->splice($arr);
+        $converter = new InlineConverter([], [get_class()]);
         $note = $converter->convert($body);
 
         $id = self::$note_id;
@@ -56,7 +56,7 @@ class Note extends AbstractInline
         $name = '<sup><a id="note-anchor-'.$id.'" href="#note-'.$id.'" class="note-anchor"><font-awesome-icon fas icon="thumbtack" size="xs">*</font-awesome-icon>'.$id.'</a></sup>';
         ++self::$note_id;
 
-        return parent::setParam($page, $name, $body);
+        parent::setParam(['page'=>$page, 'href' => $name, 'body'=>$body]);
     }
 
     public function __toString()

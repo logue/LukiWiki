@@ -23,7 +23,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Route::pattern('page', '[^\!\#\$\&\*\+\,:;=?\@\[\]\~\0]+');
+        Route::pattern('page', '[^\!\#\$\&\*\+\,:;=?\@\[\]\~\0\.]+');
 
         parent::boot();
     }

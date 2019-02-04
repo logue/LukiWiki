@@ -19,7 +19,7 @@ class InlinePlugin extends AbstractInline
     protected $plain;
     protected $param;
 
-    public function getPattern()
+    public function getPattern():string
     {
         $this->pattern =
             '&'.
@@ -41,22 +41,16 @@ class InlinePlugin extends AbstractInline
             ';';
     }
 
-    public function getCount()
+    public function getCount():int
     {
-        return 4;
+        return 5;
     }
 
-    public function setPattern(array $arr, string $page = null)
+    public function setPattern(array $arr, string $page = null):void
     {
-        list($all, $this->plain, $name, $this->param, $body) = $this->splice($arr);
+        list($this->plain, $name, $this->param, $body) = $this->splice($arr);
 
-        // Re-get true plugin name and patameters (for PHP 4.1.2)
-        $matches = [];
-        if (preg_match('/^'.$this->pattern.'/x', $all, $matches) && $matches[1] !== $this->plain) {
-            list(, $this->plain, $name, $this->param) = $matches;
-        }
-
-        return parent::setParam($page, $name, $body);
+        parent::setParam(['page'=>$page, 'href'=>$name, 'body'=>$body]);
     }
 
     public function __toString()

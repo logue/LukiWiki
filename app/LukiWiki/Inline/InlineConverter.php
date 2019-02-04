@@ -20,16 +20,16 @@ class InlineConverter
      * デフォルトの変換パターン.
      */
     private static $default_converters = [
-        'App\LukiWiki\Inline\InlinePlugin',     // Inline plugins
+        //'App\LukiWiki\Inline\InlinePlugin',     // Inline plugins
+        'App\LukiWiki\Inline\Media',            // Media Link: ![alt](media file "title"){option}
+        'App\LukiWiki\Inline\Link',              // Link: [alt](media file "title"){option}
         'App\LukiWiki\Inline\Note',             // Footnotes
-        'App\LukiWiki\Inline\Url',              // URLs
-        'App\LukiWiki\Inline\InterWiki',        // URLs (interwiki definition)
-        'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
-        'App\LukiWiki\Inline\InterWikiName',    // InterWikiName
-        'App\LukiWiki\Inline\BracketName',      // BracketName
-    //    'App\LukiWiki\Inline\WikiName',         // WikiName
-        'App\LukiWiki\Inline\AutoLink',         // AutoLink
-        'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
+        //'App\LukiWiki\Inline\InterWiki',         // AutoLink
+        'App\LukiWiki\Inline\BracketName',         // AutoLink
+        //'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
+        //'App\LukiWiki\Inline\InterWikiName',    // InterWikiName
+        //'App\LukiWiki\Inline\AutoLink',         // AutoLink
+        //'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
     ];
     /**
      * 変換クラス.
@@ -129,7 +129,7 @@ class InlineConverter
      *
      * @return string
      */
-    public function convert(string $string, string $page = '')
+    public function convert(string $string, ?string $page = '')
     {
         $input = trim($string);
         if (empty($input)) {

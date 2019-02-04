@@ -45,8 +45,8 @@ class Url extends AbstractInline
     {
         list(, $bracket, $alias, $scheme, $mail, $host, $uri) = $this->splice($arr);
         $this->has_bracket = substr($bracket, 0, 2) === '[[';
-        if (extension_loaded('intl') && $host !== '/' && preg_match('/[^A-Za-z0-9.-]/', $host)) {
-            $host = idn_to_ascii($host);
+        if (substr($host, 0, 4) === 'xn--') {
+            $host = Idn::idn_to_ascii($host, IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46);
         }
 
         $name = $scheme.$mail.$host.$uri;

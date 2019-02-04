@@ -12,7 +12,7 @@ namespace App\LukiWiki;
 use App\LukiWiki\Inline\InlineConverter;
 use App\LukiWiki\Rules\InlineRules;
 use App\Models\Page;
-use Illuminate\Support\Facades\Config;
+use Symfony\Polyfill\Intl\Idn\Idn;
 
 /**
  * インライン要素パースクラス.
@@ -23,16 +23,18 @@ abstract class AbstractInline
     protected $text;    // Matched string
 
     protected $page;
-    protected $pages;
-    public $name;
+
+    protected $name;
     protected $body;
+    protected $href;
+    protected $anchor;
     protected $alias;
+    protected $title;
+    protected $option;
 
     protected $redirect;
 
     protected $meta;
-
-    protected $isAmp;
 
     /**
      * コンストラクタ
@@ -43,7 +45,6 @@ abstract class AbstractInline
     {
         $this->start = $start;
         $this->isAmp = $isAmp;
-        $this->pages = Page::getEntries();
     }
 
     /**
@@ -72,7 +73,7 @@ abstract class AbstractInline
      * @param array  $arr
      * @param string $page
      */
-    public function setPattern(array $arr, string $page = null)
+    public function setPattern(array $arr, ?string $page = null)
     {
         return '';
     }
@@ -82,7 +83,7 @@ abstract class AbstractInline
      */
     public function __toString()
     {
-        return trim($this->body);
+        return trim($this->name);
     }
 
     /**
@@ -90,41 +91,58 @@ abstract class AbstractInline
      *
      * @param array $arr
      */
-    protected function splice(array $arr)
+    protected function splice(array $arr):array
     {
         $count = $this->getCount() + 1;
         $arr = array_pad(array_splice($arr, $this->start, $count), $count, '');
-        $this->text = $arr[0];
+        $this->text = array_shift($arr);
 
         return $arr;
     }
 
-    // Set basic parameters
-    public function setParam(string $page, string $name, string $body, string $alias = '', string $title = '')
+    /**
+     * リンクを貼る場合の処理.
+     *
+     * @param array $params パラメータ
+     *
+     * @return void
+     */
+    protected function setParam(array $params) :void
     {
-        $converter = new InlineConverter(['InlinePlugin'], [], $this->isAmp);
+        //$converter = new InlineConverter(['InlinePlugin'], []);
 
-        $meta = $converter->getMeta();
+        //$meta = $converter->getMeta();
         if (!empty($meta)) {
             $this->meta = array_merge($this->meta, $meta);
         }
 
-        $this->page = $page;
-        $this->name = $name;
-        $this->body = $body;
-        $this->title = $title;
+        if (preg_match('/^[https?|ftps?|git|ssh]/', $params['href'])) {
+            $purl = parse_url($params['href']);
+            if (isset($purl['host']) && substr($purl['host'], 0, 4) === 'xn--') {
+                // 国際化ドメインのときにアドレスをpunycode変換する。（https://日本語.jp → https://xn--wgv71a119e.jp）
+                $this->name = preg_replace('/'.$purl['host'].'/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $params['href']);
+            }
+        } else {
+            $this->href = url($params['href']);
+        }
 
-        if (!empty($alias)) {
-            $alias = $converter->convert($alias, $page);
+        $this->page = $params['page'] ?? null;
+        $this->title = $params['title'] ?? $this->page;
+        $this->anchor = $params['anchor'] ?? null;
+        $this->option = $params['option'] ?? null;
+        $this->alias = $params['alias'] ?? null;
+
+        //dd($this);
+
+/*
+        if (!empty($this->alias)) {
+            $alias = $converter->convert($params['alias'], $params['page']);
             // aタグのみ削除
             $alias = preg_replace('#</?a[^>]*>#i', '', $alias);
             $this->alias = InlineRules::replace($alias);
-            $this->meta = $converter->getMeta();
-        } else {
-            $this->alias = $body;
-        }
 
-        return true;
+        }
+        */
     }
 
     /**
@@ -138,10 +156,13 @@ abstract class AbstractInline
      *
      * @return string
      */
-    public function setAutoLink(string $page, string $alias = '', string $anchor = '', string $refer = '', bool $isautolink = false)
+    public function setAutoLink(?string $page, ?string $alias = '', ?string $anchor = '', string $refer = '', bool $isautolink = false):?string
     {
-        $page = self::processText($page);
-        if (empty($page)) {
+        if (!empty($page)) {
+            $page = self::processText($page);
+        }
+
+        if (empty($page) && !empty($anchor)) {
             // ページ内リンク
             return '<a href="'.self::processText($anchor).'">'.self::processText($alias).'</a>';
         }
@@ -150,14 +171,16 @@ abstract class AbstractInline
 
         $title = !empty($this->title) ? $this->title : $page;
 
-        if (isset($this->pages[$page])) {
+        if (in_array($page, Page::getEntries())) {
             return '<a href="'.url($page).$anchor.'"'.
                 ($isautolink === true ? ' class="autolink"' : '').' title="'.$title.'" v-b-tooltip>'.$anchor_name.'</a>';
-        } else {
-            $retval = $anchor_name.'<a href="'.url($page).'?action=edit" rel="nofollow" title="Edit '.$page.'" v-b-tooltip>?</a>';
+        } elseif (!empty($page)) {
+            $retval = $anchor_name.'<a href="'.url($page).':edit" rel="nofollow" title="Edit '.$page.'" v-b-tooltip>?</a>';
 
             return '<span class="bg-light text-dark">'.$retval.'</span>';
         }
+
+        return $alias;
     }
 
     /**
@@ -170,10 +193,10 @@ abstract class AbstractInline
      *
      * @return string
      */
-    public function setLink(string $term, string $url, string $tooltip = '', string $rel = '', bool $is_redirect = false)
+    public function setLink(?string $term = '', ?string $url = '', ?string $rel = '', bool $is_redirect = false)
     {
         $parsed_url = parse_url($url, PHP_URL_PATH);
-        $_tooltip = !empty($tooltip) ? ' title="'.self::processText($tooltip).'"' : '';
+        $_tooltip = !empty($this->title) ? ' title="'.$this->title.'"  v-b-tooltip' : '';
         if (!$parsed_url) {
             // パースできないURLだった場合リンクを貼らない。
             return self::processText($term);
@@ -189,45 +212,8 @@ abstract class AbstractInline
         }
         $ext_rel = implode(' ', $rels);
 
-        // メディアファイル
-        if (Config::get('lukiwiki.render.expand_external_media_file')) {
-            // 拡張子を取得
-            $ext = substr($parsed_url, strrpos($parsed_url, '.') + 1);
-
-            if ($this->isAmp) {
-                switch ($ext) {
-                    case 'jpeg':
-                    case 'jpg':
-                    case 'gif':
-                    case 'png':
-                    case 'svg':
-                    case 'svgz':
-                    case 'webp':
-                    case 'bmp':
-                    case 'ico':
-                        return '<amp-img src="'.$url.'" alt="'.self::processText($term).'" width="1" height="1" class="external-media"><div fallback>'.self::processText($term).'</div></amp-img>';
-                        break;
-                    case 'mp4':
-                    case 'ogm':
-                    case 'webm':
-                        return '<amp-video src="'.$url.'" controls '.$_tooltip.' width="1" height="1" class="external-media"><div fallback>'.self::processText($term).'</div></amp-video>';
-                        break;
-                    case 'wav':
-                    case 'ogg':
-                    case 'm4a':
-                    case 'mp3':
-                        return '<amp-audio  src="'.$url.'" controls '.$_tooltip.' width="auto" height="50"><div fallback>'.self::processText($term).'</div></amp-audio>';
-                        break;
-                }
-
-                return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.'</a>';
-            } elseif (!empty($ext)) {
-                return '<lw-media><a href="'.$url.'" rel="'.$rel.'">'.$term.'</a></lw-media>';
-            }
-        }
-
         // リンクを出力
-        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.' v-b-tooltip>'.$term.'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
+        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
     }
 
     /**
