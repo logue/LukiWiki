@@ -11,17 +11,17 @@
     },
     "devDependencies": {
         "axios": "^0.18",
-        "bootstrap": "^4.0.0",
+        "bootstrap": "^4.3.0",
         "cross-env": "^5.1",
         "jquery": "^3.2",
         "laravel-mix": "^4.0.14",
         "lodash": "^4.17.5",
         "popper.js": "^1.14.7",
         "resolve-url-loader": "^2.3.1",
-        "sass": "^1.16.1",
+        "sass": "^1.17.0",
         "sass-loader": "^7.1.0",
-        "vue": "^2.5.22",
-        "vue-template-compiler": "^2.5.22"
+        "vue": "^2.6.5",
+        "vue-template-compiler": "^2.6.5"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.14",
@@ -31,7 +31,7 @@
         "@fortawesome/vue-fontawesome": "^0.1.5",
         "bootstrap-vue": "^2.0.0-rc.11",
         "codemirror": "^5.43.0",
-        "jquery-confirm": "^3.3.3",
+        "jquery-confirm": "^3.3.4",
         "query-string": "^6.2.0",
         "vue-codemirror": "^4.0.6"
     }

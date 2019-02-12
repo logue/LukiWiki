@@ -8,7 +8,7 @@
     @foreach ($entries as $entry)
     <entry>
         <title>{{ $entry->name }}</title>
-        <link href="{{ url($entry->name) }}" />
+        <link href="{{ url('/') . '/' .str_replace('%2F', '/', rawurlencode($entry->name)) }}" />
         <id>{{ $entry->id }}</id>
         <updated>{{ Carbon\Carbon::parse($entry->updated_at)->format('Y-m-d\TH:i:sP') }}</updated>
         <summary>{{ $entry->description }}</summary>

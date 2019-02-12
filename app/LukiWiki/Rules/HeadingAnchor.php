@@ -14,7 +14,7 @@ class HeadingAnchor
     /**
      * 見出しの固有IDのマッチパターン.
      */
-    const HEADING_ID_PATTERN = '/^(\#{1,5})(.*?)(?:\[([A-Za-z0-9][\w-]*)\]\s*)?$/m';
+    const HEADING_ID_PATTERN = '/^(\#{1,5})\s(.*?)\s(?:\[\#(\w+)\]\s*)?$/m';
     /**
      * 見出しのIDの生成で使用出来る文字.
      */

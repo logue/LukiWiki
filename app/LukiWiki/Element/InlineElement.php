@@ -3,7 +3,7 @@
  * インライン要素クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018-2019 Logue
  * @license   MIT
  */
 
@@ -17,22 +17,24 @@ use App\LukiWiki\Inline\InlineConverter;
  */
 class InlineElement extends AbstractElement
 {
-    public function __construct($text, $isAmp)
+    protected $page;
+
+    public function __construct($text, $page)
     {
         parent::__construct();
         $text = trim($text);
-
         if (substr($text, 0, 1) === "\n") {
             $this->elements[] = $text;
         } else {
             if (!isset(self::$converter)) {
-                self::$converter = new InlineConverter([], [], $isAmp);
+                self::$converter = new InlineConverter([], [], $page);
             }
 
             $clone = self::$converter->getClone(self::$converter);
             $this->elements[] = $clone->convert($text);
             $this->meta = $clone->getMeta();
         }
+        $this->page = $page;
     }
 
     public function insert($obj)

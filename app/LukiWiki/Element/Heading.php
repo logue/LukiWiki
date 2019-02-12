@@ -3,7 +3,7 @@
  * 見出しクラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018-2019 Logue
  * @license   MIT
  */
 
@@ -25,14 +25,16 @@ class Heading extends AbstractElement
     protected $id;
     protected $text;
 
-    public function __construct($root, $text, $isAmp = false)
+    public function __construct($root, $text, $page)
     {
         parent::__construct();
 
         $this->level = min(5, strspn($text, '#'));
+        $this->page = $page;
         list($text, $this->msg_top, $this->id) = $root->getAnchor($text, $this->level);
+        //dd($this->id);
 
-        $content = new InlineElement($text, $isAmp);
+        $content = new InlineElement($text, $this->page);
         $this->meta = $content->getMeta();
         $this->insert($content);
 

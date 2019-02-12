@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ app()->getLocale() }}" xml:lang="{{ app()->getLocale() }}" class="h-100">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ app()->getLocale() }}" xml:lang="{{ app()->getLocale() }}"
+    class="h-100">
 
 <head>
     <meta charset="utf-8" />
@@ -10,9 +11,10 @@
     <title>{{ $title }} - {{ Config::get('lukiwiki.sitename') }}</title>
     @if(isset($page))
     <link rel="canonical" href="{{ $page ? url($page) : url('/') }}" />
-    <link rel="amphtml" href="{{ $page ? url($page) : url('/') }}?action=amp" />
+    <link rel="amphtml" href="{{ $page ? url($page) : url('/') }}:amp" />
+    <link rel="print" href="{{ $page ? url($page) : url('/') }}:print" />
     @endif
-    <link rel="alternate" type="application/atom+xml" title="RecentChanges" href="{{ url('/') }}?action=atom" />
+    <link rel="alternate" type="application/atom+xml" title="RecentChanges" href="{{ url('/api/:atom') }}" />
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
     @yield('styles')
 </head>

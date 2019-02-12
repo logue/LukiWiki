@@ -42,10 +42,10 @@ class Note extends AbstractInline
         return 1;
     }
 
-    public function setPattern(array $arr, string $page = null)
+    public function setPattern(array $arr)
     {
         list($body) = $this->splice($arr);
-        $converter = new InlineConverter([], [get_class()]);
+        $converter = new InlineConverter([], [get_class()], $this->page);
         $note = $converter->convert($body);
 
         $id = self::$note_id;
@@ -56,7 +56,7 @@ class Note extends AbstractInline
         $name = '<sup><a id="note-anchor-'.$id.'" href="#note-'.$id.'" class="note-anchor"><font-awesome-icon fas icon="thumbtack" size="xs">*</font-awesome-icon>'.$id.'</a></sup>';
         ++self::$note_id;
 
-        parent::setParam(['page'=>$page, 'href' => $name, 'body'=>$body]);
+        parent::setParam(['page'=>$this->page, 'href' => $name, 'body'=>$body]);
     }
 
     public function __toString()

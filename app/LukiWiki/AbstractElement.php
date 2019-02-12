@@ -3,7 +3,7 @@
  * ブロック要素クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018-2019 Logue
  * @license   MIT
  */
 
@@ -20,6 +20,7 @@ abstract class AbstractElement
     protected static $converter;
     protected $elements = [];    // References of childs
     protected $isAmp = false;
+    protected $page;
 
     /**
      * コンストラクタ
@@ -149,8 +150,9 @@ abstract class AbstractElement
      *
      * @return string
      */
-    protected static function processText(string $str)
+    protected static function processText(string $str):string
     {
-        return htmlspecialchars(trim($str), ENT_HTML5, 'UTF-8');
+        return htmlspecialchars(
+            trim(str_replace("\r", "\n", $str)), ENT_HTML5, 'UTF-8');
     }
 }

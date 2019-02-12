@@ -3,7 +3,7 @@
  * 電話番号変換クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018-2019 Logue
  * @license   MIT
  */
 
@@ -19,17 +19,22 @@ class Telephone extends AbstractInline
         $s1 = $this->start + 1;
 
         return
+            '(?:(?:\['.
+                '(.[^\]\[]+)'.                          // [1] alias
+            '\])'.
             '(?:'.
-             '\[\['.
-             '((?:(?!\]\]).)+)(?:>|:)'.         // (1) alias
-            ')?'.
-            'tel:(([0-9]+-?)?[0-9]+-?[0-9]+)'.  // (2) telephone
-            '(?('.$s1.')\]\])';	                // close bracket if (1)
+                '\('.
+                    'tel:(([0-9]+-?)?[0-9]+-?[0-9]+)'.  // [2] telephone
+                '\)'.
+            ')'.
+            '(?:\{'.
+                '(.*[^\}]?)'.                           // [3] Body (option)
+            '\})?)';
     }
 
     public function getCount()
     {
-        return 2;
+        return 3;
     }
 
     public function setPattern(array $arr, string $page = null)

@@ -14,6 +14,7 @@ use App\Models\Page;
 use Config;
 use Debugbar;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class WikiController extends Controller
 {
@@ -25,7 +26,7 @@ class WikiController extends Controller
     /**
      * コンストラクタ
      */
-    public function __construct()
+    public function __construct(Request $request)
     {
         // 設定読み込み
         $this->config = Config::get('lukiwiki');
@@ -34,31 +35,46 @@ class WikiController extends Controller
     /**
      * ページを読み込む
      */
-    public function read(Request $request, $page = null)
+    public function __invoke(Request $request, string $query):View
     {
+        $page = rawurldecode($query);
+
         Debugbar::startMeasure('db', 'Get data from db.');
-        $entry = Page::where('name', $page ?? $request->input('page') ?? Config::get('lukiwiki.special_page.default'))->first();
+
+        //dd($page_obj->attachments()->where('name', '=', $page)->get());
+
+        $ext = substr($query, strrpos($query, '.', -1), strlen($query));
+
+        if (empty($page)) {
+            $page = Config::get('lukiwiki.special_page.default');
+        }
+        $id = Page::getPageId($page);
         Debugbar::stopMeasure('db');
-        if (!$entry) {
+        if (!$id) {
             // ページが見つからない場合は404エラー
+            //dd($page);
             return abort(404);
         }
+        $entry = Page::find($id);
 
         Debugbar::startMeasure('parse', 'Converting wiki data...');
+        //dd($entry->source);
         $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $entry->source));
 
-        $body = new RootElement('', 0, ['id' => 0]);
-        $body->parse($lines);
+        $body = new RootElement($page, 0, ['id' => 0]);
+
         $meta = $body->getMeta();
+        $body->parse($lines);
         Debugbar::stopMeasure('parse');
 
         return view(
            'default.content',
            [
-                'page'    => $page,
-                'content' => $body,
-                'title'   => $meta['title'] ?? $page,
-                'notes'   => $meta['note'] ?? null,
+                'page'      => $page,
+                'content'   => $body->__toString(),
+                'title'     => $entry->title ?? $page,
+                'notes'     => $meta['note'] ?? null,
+                'attaches'  => $entry->attachments()->get(),
             ]
         );
     }
@@ -66,15 +82,62 @@ class WikiController extends Controller
     /**
      * ソース.
      */
-    public function source(Request $request, $page = null)
+    public function source(Request $request, string $page):View
     {
         $entry = Page::where('name', $page)->first();
 
         return view(
            'default.source', [
-           'page'         => $entry->name,
+                'page'    => $entry->name,
                 'source'  => $entry->source,
-                'title'   => $entry->title,
+                'title'   => 'Source of '.$entry->name,
+            ]
+        );
+    }
+
+    /**
+     * 添付ファイル一覧.
+     */
+    public function attachments(Request $request, string $page, ?string $file = null)
+    {
+        $attachments = Page::getAttachments($page);
+
+        if (!empty($file)) {
+            //dd($attachments->where('attachments.name', $file)->first()->id);
+            return redirect(':api/attachment/'.$attachments->where('attachments.name', $file)->first()->id);
+        }
+
+        return view(
+           'default.attachment', [
+                'page'         => $page,
+                'attachments'  => $attachments->select('attachments.*')->get(),
+                'title'        => 'Attached files of '.$page,
+            ]
+        );
+    }
+
+    /**
+     * 印刷.
+     */
+    public function print(Request $request, string $page):View
+    {
+        $entry = Page::where('name', $page)->first();
+
+        Debugbar::startMeasure('parse', 'Converting wiki data...');
+        //dd($entry->source);
+        $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $entry->source));
+
+        $body = new RootElement($page, 0, ['id' => 0]);
+
+        $meta = $body->getMeta();
+        $body->parse($lines);
+        Debugbar::stopMeasure('parse');
+
+        return view(
+           'layout.print', [
+                'page'    => $entry->name,
+                'body'    => $body,
+                'title'   => $entry->name,
             ]
         );
     }
@@ -82,7 +145,7 @@ class WikiController extends Controller
     /**
      * 編集画面表示.
      */
-    public function edit(Request $request, $page = null)
+    public function edit(Request $request, string $page = null):View
     {
         $this->page = $page ?? $request->input('page') ?? Config::get('lukiwiki.special_page.default');
 
@@ -117,8 +180,6 @@ class WikiController extends Controller
      * 保存処理.
      *
      * @param Request $request
-     *
-     * @return Response
      */
     public function save(Request $request)
     {
@@ -172,21 +233,37 @@ class WikiController extends Controller
     }
 
     /**
-     * ファイル一覧.
+     * ページ一覧.
      *
      * @param string $type
      *
-     * @return Response
+     * @return View
      */
-    public function list()
+    public function list():View
     {
-        $pages = Page::getEntries();
-
         return view(
             'default.list',
             [
-                'entries' => $pages,
+                'entries' => Page::getEntries(),
                 'title'   => 'List',
+            ]
+        );
+    }
+
+    /**
+     * ページ一覧.
+     *
+     * @param string $type
+     *
+     * @return View
+     */
+    public function recent():View
+    {
+        return view(
+            'default.recent',
+            [
+                'entries' => Page::getLatest(),
+                'title'   => 'RecentChanges',
             ]
         );
     }

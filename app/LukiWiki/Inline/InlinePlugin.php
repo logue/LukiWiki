@@ -3,7 +3,7 @@
  * インライン型プラグイン変換クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018-2019 Logue
  * @license   MIT
  */
 
@@ -15,47 +15,42 @@ use App\LukiWiki\Rules\InlineRules;
 // Inline plugins
 class InlinePlugin extends AbstractInline
 {
-    protected $pattern;
-    protected $plain;
+    protected $plugin;
     protected $param;
 
     public function getPattern():string
     {
-        $this->pattern =
-            '&'.
-             '('.        // (1) plain
-              '(\w+)'.   // (2) plugin name
-               '(?:'.
-               '\('.
-                '((?:(?!\)[;{]).)*)'. // (3) parameter
-               '\)'.
-              ')?'.
-             ')';
-
-        return $this->pattern.
-             '(?:'.
-              '\{'.
-               '((?:(?R)|(?!};).)*)'. // (4) body
-              '\}'.
-             ')?'.
-            ';';
+        return
+            '(?:&'.
+                '(?:'.
+                    '(\w+)'.                        // [1] plugin name
+                    '(?:'.
+                        '\('.
+                            '((?:(?!\)[;{]).)*)'.   // [2] parameter
+                        '\)'.
+                    ')?'.
+                ')'.
+                '(?:'.
+                    '\{'.
+                        '((?:(?R)|(?!};).)*)'.      // [3] body
+                    '\}'.
+                ')?'.
+            ';)';
     }
 
     public function getCount():int
     {
-        return 5;
+        return 4;
     }
 
-    public function setPattern(array $arr, string $page = null):void
+    public function setPattern(array $arr):void
     {
-        list($this->plain, $name, $this->param, $body) = $this->splice($arr);
-
-        parent::setParam(['page'=>$page, 'href'=>$name, 'body'=>$body]);
+        list($this->plugin, $this->param, $this->body) = $this->splice($arr);
     }
 
     public function __toString()
     {
-        $body = (empty($this->body)) ? null : InlineFactory::factory($this->body);
+        //$body = (empty($this->body)) ? null : InlineFactory::factory($this->body);
         //$str = false;
 
         // Try to call the plugin
@@ -72,7 +67,7 @@ class InlinePlugin extends AbstractInline
 
         }
         */
-        return InlineRules::replace('&'.$this->plain.$body);
-        //return '<span class="badge badge-pill badge-primary" title="Plugin">&amp;'.$this->name.'(<var>'.$this->param.'</var>)'.'</span>';
+        //return InlineRules::replace('&'.$this->plain.$body);
+        return '<span class="badge badge-pill badge-primary" title="Plugin">&amp;'.$this->plugin.'(<var>'.$this->param.'</var>)'.'</span>';
     }
 }

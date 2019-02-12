@@ -18,4 +18,12 @@
     </ul>
 </aside>
 @endif
+<hr />
+<ul class="fa-ul">
+    @foreach ($attaches as $attach)
+    <li>
+        {!! $attach->name !!}
+    </li>
+    @endforeach
+</ul>
 @endsection

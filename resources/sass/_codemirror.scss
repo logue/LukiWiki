@@ -9,7 +9,7 @@
 /* BASICS */
 
 .CodeMirror {
-    height: 300px; // Set height, width, borders, and global font properties here
+    height: auto; // Set height, width, borders, and global font properties here
     font-family: $font-family-monospace;
     direction: ltr; // berow Copy from bootstrap's .form-control
     display: block;
@@ -482,11 +482,11 @@ pre.CodeMirror {
     color: $input-focus-color;
     background-color: $input-focus-bg;
     border-color: $input-focus-border-color;
-    outline: 0;
-    // Avoid using mixin so we can pass custom focus shadow properly
+    outline: 0; // Avoid using mixin so we can pass custom focus shadow properly
     @if $enable-shadows {
         box-shadow: $input-box-shadow, $input-focus-box-shadow;
-    } @else {
+    }
+    @else {
         box-shadow: $input-focus-box-shadow;
     }
     .CodeMirror-cursors {

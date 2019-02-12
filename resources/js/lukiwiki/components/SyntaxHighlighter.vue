@@ -89,7 +89,7 @@ export default {
 
     let options = {};
     let text = [];
-    let mode = data.lang || "text";
+    let mode = data.lang || null;
     options.tabsize = data.tabSize || 4;
     options.state = data.state || null;
     options.lineNumbers = data.lineNumbers || true;

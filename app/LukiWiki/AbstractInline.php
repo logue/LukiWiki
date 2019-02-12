@@ -12,6 +12,7 @@ namespace App\LukiWiki;
 use App\LukiWiki\Inline\InlineConverter;
 use App\LukiWiki\Rules\InlineRules;
 use App\Models\Page;
+use Config;
 use Symfony\Polyfill\Intl\Idn\Idn;
 
 /**
@@ -41,10 +42,10 @@ abstract class AbstractInline
      *
      * @param int $start
      */
-    public function __construct(int $start, bool $isAmp = false)
+    public function __construct(int $start, string $page)
     {
         $this->start = $start;
-        $this->isAmp = $isAmp;
+        $this->page = $page;
     }
 
     /**
@@ -73,7 +74,7 @@ abstract class AbstractInline
      * @param array  $arr
      * @param string $page
      */
-    public function setPattern(array $arr, ?string $page = null)
+    public function setPattern(array $arr)
     {
         return '';
     }
@@ -123,10 +124,10 @@ abstract class AbstractInline
                 $this->name = preg_replace('/'.$purl['host'].'/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $params['href']);
             }
         } else {
-            $this->href = url($params['href']);
+            $this->href = url(self::getPageName($params['href']));
         }
 
-        $this->page = $params['page'] ?? null;
+        $this->page = $params['page'] ?? $this->page;
         $this->title = $params['title'] ?? $this->page;
         $this->anchor = $params['anchor'] ?? null;
         $this->option = $params['option'] ?? null;
@@ -156,24 +157,23 @@ abstract class AbstractInline
      *
      * @return string
      */
-    public function setAutoLink(?string $page, ?string $alias = '', ?string $anchor = '', string $refer = '', bool $isautolink = false):?string
+    public function setAutoLink():?string
     {
-        if (!empty($page)) {
-            $page = self::processText($page);
+        if (!empty($this->page)) {
+            $page = self::processText($this->page);
         }
 
-        if (empty($page) && !empty($anchor)) {
+        if (empty($page) && !empty($this->anchor)) {
             // ページ内リンク
-            return '<a href="'.self::processText($anchor).'">'.self::processText($alias).'</a>';
+            return '<a href="'.self::processText($this->anchor).'">'.self::processText($this->alias).'</a>';
         }
 
-        $anchor_name = trim(empty($alias) ? $page : $alias);
+        $anchor_name = trim(empty($this->alias) ? $this->page : $this->alias);
 
-        $title = !empty($this->title) ? $this->title : $page;
+        $title = !empty($this->title) ? $this->title : $this->page;
 
         if (in_array($page, Page::getEntries())) {
-            return '<a href="'.url($page).$anchor.'"'.
-                ($isautolink === true ? ' class="autolink"' : '').' title="'.$title.'" v-b-tooltip>'.$anchor_name.'</a>';
+            return '<a href="'.url($page).$anchor.'" title="'.$title.'" v-b-tooltip>'.$anchor_name.'</a>';
         } elseif (!empty($page)) {
             $retval = $anchor_name.'<a href="'.url($page).':edit" rel="nofollow" title="Edit '.$page.'" v-b-tooltip>?</a>';
 
@@ -213,7 +213,73 @@ abstract class AbstractInline
         $ext_rel = implode(' ', $rels);
 
         // リンクを出力
-        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.'>'.$term.'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
+        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.'>'.preg_replace('#</?a[^>]*>#i', '', $term).'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
+    }
+
+    /**
+     * 相対指定のページ名から全ページ名を取得.
+     *
+     * @param string $name      名前の入力値
+     * @param string $reference 引用元のページ名
+     *
+     * @return string ページのフルパス
+     */
+    public function getPageName(string $name = './')
+    {
+        $defaultpage = Config::get('lukiwiki.special_page.default');
+
+        // 'Here'
+        if (empty($name) || $name === './') {
+            // ページ名が指定されてない場合、引用元のページ名を返す
+            return $this->page;
+        }
+        //dd($this->page);
+
+        // Absolute path
+        if ($name[0] === '/') {
+            $name = substr($name, 1);
+
+            return empty($name) ? $defaultpage : $name;
+        }
+
+        // Relative path from 'Here'
+        if (substr($name, 0, 2) === './') {
+            // 同一ディレクトリ
+            $arrn = preg_split('#/#', $name, -1, PREG_SPLIT_NO_EMPTY);
+            $arrn[0] = $this->page;
+
+            return implode('/', $arrn);
+        }
+
+        // Relative path from dirname()
+        if (substr($name, 0, 3) === '../') {
+            // 上の階層
+            $arrn = preg_split('#/#', $name, -1, PREG_SPLIT_NO_EMPTY);
+            $arrp = preg_split('#/#', $this->page, -1, PREG_SPLIT_NO_EMPTY);
+
+            // 階層を遡る
+            while (!empty($arrn) && $arrn[0] === '..') {
+                array_shift($arrn);
+                array_pop($arrp);
+            }
+            // ディレクトリを結合する
+            $name = !empty($arrp) ? implode('/', array_merge($arrp, $arrn)) :
+                (!empty($arrn) ? $defaultpage.'/'.implode('/', $arrn) : $defaultpage);
+        }
+
+        return $name;
+    }
+
+    /**
+     * パスを含まないページ名を取得.
+     *
+     * @param $page ページ名
+     */
+    public static function getPageNameShort($page)
+    {
+        $pagestack = explode('/', $page);
+
+        return array_pop($pagestack);
     }
 
     /**

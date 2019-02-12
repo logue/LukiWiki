@@ -1,6 +1,6 @@
 <?php
 /**
- * ユーザ情報テーブル作成.
+ * キャッシュ管理テーブル作成.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
@@ -10,10 +10,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersTable extends Migration
+class CreateCacheTable extends Migration
 {
-    const TABLE_NAME = 'users';
-    const TABLE_COMMENT = 'ユーザ情報';
+    const TABLE_NAME = 'cache';
+    const TABLE_COMMENT = 'キャッシュ';
 
     /**
      * Run the migrations.
@@ -23,13 +23,9 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
-            $table->bigIncrements('id')->index()->comment('ユーザID');
-            $table->string('name')->unique()->comment('ユーザ名');
-            $table->string('email')->unique()->comment('メールアドレス');
-            $table->timestamp('email_verified_at')->nullable()->comment('メールアドレス認証日');
-            $table->string('password')->comment('パスワード');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->string('key')->unique()->comment('キー');
+            $table->mediumText('value')->comment('値');
+            $table->integer('expiration')->comment('有効期限');
         });
         if (\Config::get('database.default') !== 'sqlite') {
             \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');

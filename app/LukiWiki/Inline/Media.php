@@ -40,10 +40,22 @@ class Media extends AbstractInline
         return 4;
     }
 
-    public function setPattern(array $arr, string $page = null)
+    public function setPattern(array $arr)
     {
         //dd($this->getPattern(), $this->splice($arr));
         list($this->alias, $this->href, $this->title, $this->body) = $this->splice($arr);
+
+        if (empty($this->alias)) {
+            $this->alias = $this->href;
+        }
+        if (empty($this->title)) {
+            $this->title = $this->href;
+        }
+
+        if (strpos($this->href, 'http') === false) {
+            $this->title = $this->href;
+            $this->href = url($this->page.':attachments/'.$this->href);
+        }
 
         // TODO:添付ファイルの処理
         // TODO:ページに貼り付けられた添付ファイルの処理
@@ -55,7 +67,7 @@ class Media extends AbstractInline
         if (\Config::get('lukiwiki.render.expand_external_media_file')) {
             // 拡張子を取得
             $ext = substr($this->name, strrpos($this->href, '.') + 1);
-
+            /*
             if ($this->isAmp) {
                 switch ($ext) {
                     case 'jpeg':
@@ -84,10 +96,11 @@ class Media extends AbstractInline
 
                 return '<a href="'.$this->href.'" title="'.$this->title.'">'.$this->alias.'</a>';
             }
+            */
 
             return '<lw-media><a href="'.$this->href.'" title="'.$this->title.'">'.$this->alias.'</a></lw-media>';
         }
 
-        return parent::setLink($this->alias, $url, $this->name);
+        return parent::setLink($this->alias, $this->href, $this->name);
     }
 }

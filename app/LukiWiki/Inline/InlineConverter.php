@@ -3,7 +3,7 @@
  * インライン要素変換クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018-2019 Logue
  * @license   MIT
  */
 
@@ -20,16 +20,17 @@ class InlineConverter
      * デフォルトの変換パターン.
      */
     private static $default_converters = [
-        //'App\LukiWiki\Inline\InlinePlugin',     // Inline plugins
-        'App\LukiWiki\Inline\Media',            // Media Link: ![alt](media file "title"){option}
-        'App\LukiWiki\Inline\Link',              // Link: [alt](media file "title"){option}
+        'App\LukiWiki\Inline\Media',            // Media Link: ![alt](url file "title"){option}
+        'App\LukiWiki\Inline\BracketName',      // AutoLink
+
         'App\LukiWiki\Inline\Note',             // Footnotes
-        //'App\LukiWiki\Inline\InterWiki',         // AutoLink
-        'App\LukiWiki\Inline\BracketName',         // AutoLink
-        //'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
+        'App\LukiWiki\Inline\AutoLink',         // AutoLink
+        'App\LukiWiki\Inline\InterWiki',        // AutoLink
+        'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
         //'App\LukiWiki\Inline\InterWikiName',    // InterWikiName
-        //'App\LukiWiki\Inline\AutoLink',         // AutoLink
-        //'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
+        'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
+        'App\LukiWiki\Inline\Link',             // Link: [alt](media file "title"){option}
+        'App\LukiWiki\Inline\InlinePlugin',     // Inline plugins
     ];
     /**
      * 変換クラス.
@@ -44,14 +45,16 @@ class InlineConverter
 
     private $meta;
 
+    public $page;
+
     /**
      * コンストラクタ
      *
-     * @param array $converters 使用する変換クラス名
-     * @param array $excludes   除外する変換クラス名
-     * @param bool  $isAmp      AMP用HTMLを出力するか？
+     * @param array  $converters 使用する変換クラス名
+     * @param array  $excludes   除外する変換クラス名
+     * @param string $page       ページ名
      */
-    public function __construct(array $converters = [], array $excludes = [], bool $isAmp = false)
+    public function __construct(array $converters, array $excludes, string $page)
     {
         static $converters;
         if (!isset($converters)) {
@@ -62,6 +65,8 @@ class InlineConverter
             $converters = array_diff($converters, $excludes);
         }
 
+        //dd($page);
+
         $this->converters = $patterns = [];
         $start = 1;
 
@@ -70,7 +75,7 @@ class InlineConverter
                 continue;
             }
 
-            $converter = new $name($start, $isAmp);
+            $converter = new $name($start, $page);
 
             $pattern = $converter->getPattern();
             if (empty($pattern)) {
@@ -125,18 +130,18 @@ class InlineConverter
      * WikiをHTMLに変換するメイン処理.
      *
      * @param string $string
-     * @param string $page
      *
      * @return string
      */
-    public function convert(string $string, ?string $page = '')
+    public function convert(string $string)
     {
         $input = trim($string);
         if (empty($input)) {
             return;
         }
         $this->result = [];
-        $string = preg_replace_callback('/'.$this->pattern.'/x', function ($arr) use ($page) {
+        $page = $this->page;
+        $string = preg_replace_callback('/'.$this->pattern.'/ux', function ($arr) use ($page) {
             $obj = $this->getConverter($arr);
 
             if ($obj !== null) {

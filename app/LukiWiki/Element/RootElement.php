@@ -22,10 +22,10 @@ class RootElement extends AbstractElement
     protected $id;
     protected $count = 0;
 
-    public function __construct(string $text, int $level, array $option)
+    public function __construct(string $page, int $level, array $option)
     {
         $this->id = $option['id'] ?? 0;
-        $this->isAmp = $option['isAmp'] ?? false;
+        $this->page = $page;
         parent::__construct();
     }
 
@@ -103,12 +103,12 @@ class RootElement extends AbstractElement
                 $content = null;
                 switch ($head) {
                     case '#':
-                        $this->insert(new Heading($this, $line, $this->isAmp));
+                        $this->insert(new Heading($this, $line, $this->page));
                         continue 2;
                         break;
                     case '`':
                         // GFM:pre
-                        if (preg_match('/^```(.+?)\r(.*)\r```/', $line, $matches)) {
+                        if (preg_match('/^```(\:\w+\r)?(.+?)```$/', $line, $matches)) {
                             $content = new PreformattedText($this, $matches[2], $matches[1]);
                         }
                         break;
@@ -116,7 +116,7 @@ class RootElement extends AbstractElement
                         // List / Holizonal
                         if (substr($line, -1) === '-') {
                             // Horizontal Rule
-                            $this->insert(new HorizontalRule($this, $line, $this->isAmp));
+                            $this->insert(new HorizontalRule($this, $line, $this->page));
                             continue 2;
                         }
                         // no break
@@ -134,34 +134,31 @@ class RootElement extends AbstractElement
                     case ' ':
                         if (preg_match('/^\s{0,3}(\-|\+|\*|\d+\.)\s+.*$/', $line, $matches)) {
                             if ($matches[1] === '-' || $matches[1] === '*') {
-                                $content = new UnorderedList($this, $line, $this->isAmp);
+                                $content = new UnorderedList($this, $line, $this->page);
                             } else {
-                                $content = new OrderedList($this, $line, $this->isAmp);
+                                $content = new OrderedList($this, $line, $this->page);
                             }
                         }
                         break;
                     case '>':
                     case '<':
-                        $content = new Blockquote($this, $line, $this->isAmp);
+                        $content = new Blockquote($this, $line, $this->page);
                         break;
                     case ':':
                         $out = explode('|', ltrim($line), 2);
                         if (!count($out) < 2) {
-                            $content = new DefinitionList($out, $this->isAmp);
+                            $content = new DefinitionList($out, $this->page);
                         }
                         break;
                     case '|':
                         if (preg_match('/^\|(.+)\|([hHfFcC]?)$/', $line, $out)) {
-                            $content = new Table($out, $this->isAmp);
+                            $content = new Table($out, $this->page);
                         }
                         break;
                     case '@':
                         $matches = [];
 
-                        if ($line[1] === ' ' || $line[1] === "\t") {
-                            // CPre (Plus!)
-                            $content = $this->last->add(new SharpPre($this, $line));
-                        } elseif (preg_match('/^@([^\(\{]+)(?:\(([^\r]*)\))?(\{*)/', $line, $matches)) {
+                        if (preg_match('/^@([^\(\{]+)(?:\(([^\r]*)\))?(\{*)/', $line, $matches)) {
                             // Plugin
                             $len = strlen($matches[3]);
                             $body = [];
@@ -169,11 +166,11 @@ class RootElement extends AbstractElement
                                 // Seems multiline-enabled block plugin
                                 $matches[2] .= "\r".$body[1]."\r";
                             }
-                            $content = new BlockPlugin($matches);
+                            $content = new BlockPlugin($matches, $this->page);
                         }
                         break;
                     case '~':
-                        $content = new Paragraph(' '.substr($line, 1), $this->isAmp);
+                        $content = new Paragraph(' '.substr($line, 1));
                         break;
                     case '/':
                         // Escape comments
@@ -182,7 +179,7 @@ class RootElement extends AbstractElement
                         }
                         break;
                     default:
-                        $content = new InlineElement($line, $this->isAmp);
+                        $content = new InlineElement($line, $this->page);
                         break;
                 }
 

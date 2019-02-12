@@ -21,7 +21,7 @@ class InterWiki extends AbstractInline
         // [alias](URL "title"){option}
         return
             '\['.
-                '(.+[^\]\[])'.              // [1] alias
+                '(.[^\]\[]+)'.              // [1] alias
             '\]'.
             '\('.
                 '('.                        // [2] Link to
@@ -41,12 +41,12 @@ class InterWiki extends AbstractInline
         return 4;
     }
 
-    public function setPattern(array $arr, string $page = null)
+    public function setPattern(array $arr)
     {
-        dd($this->getPattern(), $arr, $this->splice($arr));
-        list($alias, $href, $title, $body) = $this->splice($arr);
+        //dd($this->getPattern(), $arr, $this->splice($arr));
+        list($this->alias, $this->href, $this->title, $this->body) = $this->splice($arr);
 
-        return parent::setParam(['alias'=>$alias, 'href' => $href, 'title' => $title, 'body'=>$body]);
+        //return parent::setParam(['alias'=>$alias, 'href' => $href, 'title' => $title, 'body'=>$body]);
     }
 
     public function __toString()

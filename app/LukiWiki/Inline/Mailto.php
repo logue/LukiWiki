@@ -3,13 +3,14 @@
  * メールアドレス変換クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018,2019 Logue
  * @license   MIT
  */
 
 namespace App\LukiWiki\Inline;
 
 use App\LukiWiki\AbstractInline;
+use Symfony\Polyfill\Intl\Idn\Idn;
 
 // mailto: URL schemes
 class Mailto extends AbstractInline
@@ -19,38 +20,35 @@ class Mailto extends AbstractInline
         $s1 = $this->start + 1;
 
         return
+            '(?:(?:\['.
+                '(.[^\]\[]+)'.                          // [1] alias
+            '\])'.
             '(?:'.
-             '\[\['.
-             '((?:(?!\]\]).)+)(?:>|:)'.     // (1) alias
-            ')?'.
-            '([\w.-]+@)'.                   // (2) toname
-            '([^\/"<>\s]+\.[A-Za-z0-9-]+)'. // (3) host
-            '(?('.$s1.')\]\])';	        // close bracket if (1)
+                '\('.
+                    '([\w.-]+@)'.                       // [2] toname
+                    '([^\/"<>\s]+\.[A-Za-z0-9-]+)'.     // [3] host
+                    '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.  // [4] Title
+                '\)'.
+            ')'.
+            '(?:\{'.
+                '(.*[^\}]?)'.                           // [5] Body (option)
+            '\})?)';
     }
 
     public function getCount()
     {
-        return 3;
+        return 5;
     }
 
     public function setPattern(array $arr, string $page = null)
     {
-        list(, $alias, $toname, $host) = $this->splice($arr);
-        //dd($this->splice($arr));
-        $name = $toname.$host;
-        /*
-        if (extension_loaded('intl')) {
-            // 国際化ドメイン対応
-            if (preg_match('/[^A-Za-z0-9.-]/', $host)) {
-                $name = $toname.idn_to_ascii($host);
-            } elseif (!$alias && strtolower(substr($host, 0, 4)) === 'xn--') {
-                $orginalname = $toname.idn_to_utf8($host);
-            }
-        }
-        return parent::setParam($page, $name, '', 'mailto', $alias === '' ? $orginalname : $alias);
-        */
+        list($this->alias, $toname, $host, $this->title, $this->body) = $this->splice($arr);
 
-        return parent::setParam($page, $name, $name, $alias);
+        if (substr($host, 0, 4) === 'xn--') {
+            $this->href = $toname.preg_replace('/'.$host.'/', Idn::idn_to_ascii($host, IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $this->href);
+        } else {
+            $this->href = $toname.$host;
+        }
     }
 
     public function __toString()

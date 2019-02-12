@@ -30,10 +30,10 @@
             <font-awesome-icon far fixed-width icon="file-code" class="mr-1"/>Source
           </b-dropdown-item>
           <b-dropdown-item
-            v-bind:href="pageUri + ':attachment'"
-            v-bind:active="isPageAction && action === 'attachment'"
+            v-bind:href="pageUri + ':attachments'"
+            v-bind:active="isPageAction && action === 'attachments'"
           >
-            <font-awesome-icon fas fixed-width icon="paperclip" class="mr-1"/>Attachment
+            <font-awesome-icon fas fixed-width icon="paperclip" class="mr-1"/>Attachments
           </b-dropdown-item>
           <b-dropdown-item
             v-bind:href="pageUri + ':history'"
@@ -46,6 +46,12 @@
             v-bind:active="isPageAction && action === 'lock'"
           >
             <font-awesome-icon fas fixed-width icon="unlock" class="mr-1"/>Lock
+          </b-dropdown-item>
+          <b-dropdown-item
+            v-bind:href="pageUri + ':print'"
+            v-bind:active="isPageAction && action === 'print'"
+          >
+            <font-awesome-icon fas fixed-width icon="print" class="mr-1"/>Print
           </b-dropdown-item>
         </b-nav-item-dropdown>
         <b-nav-item-dropdown text="List">
@@ -78,21 +84,21 @@
 </template>
 <script>
 // Button
-import bButton from 'bootstrap-vue/es/components/button/button';
+import bButton from "bootstrap-vue/es/components/button/button";
 // Collapse
-import bCollapse from 'bootstrap-vue/es/components/collapse/collapse';
+import bCollapse from "bootstrap-vue/es/components/collapse/collapse";
 // Dropdown
-import bDropdownItem from 'bootstrap-vue/es/components/dropdown/dropdown-item';
+import bDropdownItem from "bootstrap-vue/es/components/dropdown/dropdown-item";
 // Form
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
 // Nav
-import bNavItemDropdown from 'bootstrap-vue/es/components/nav/nav-item-dropdown';
-import bNavForm from 'bootstrap-vue/es/components/nav/nav-form';
+import bNavItemDropdown from "bootstrap-vue/es/components/nav/nav-item-dropdown";
+import bNavForm from "bootstrap-vue/es/components/nav/nav-form";
 // Navbar
-import bNavbar from 'bootstrap-vue/es/components/navbar/navbar';
-import bNavbarBrand from 'bootstrap-vue/es/components/navbar/navbar-brand';
-import bNavbarNav from 'bootstrap-vue/es/components/navbar/navbar-nav';
-import bNavbarToggle from 'bootstrap-vue/es/components/navbar/navbar-toggle';
+import bNavbar from "bootstrap-vue/es/components/navbar/navbar";
+import bNavbarBrand from "bootstrap-vue/es/components/navbar/navbar-brand";
+import bNavbarNav from "bootstrap-vue/es/components/navbar/navbar-nav";
+import bNavbarToggle from "bootstrap-vue/es/components/navbar/navbar-toggle";
 
 // 使用するアイコンの登録
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -108,7 +114,8 @@ import {
   faLock,
   faPaperclip,
   faSearch,
-  faUnlock
+  faUnlock,
+  faPrint
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -122,18 +129,19 @@ library.add(
   faLock,
   faPaperclip,
   faSearch,
-  faUnlock
+  faUnlock,
+  faPrint
 );
 
 export default {
   data() {
-    this.page = this.$attrs.page;
+    this.page = encodeURI(this.$attrs.page).replace("%2F", "/");
     this.action = qs.action;
     this.isPageAction = this.action !== void 0 && this.page !== "";
 
     return {
-      pageUri: this.$attrs.baseuri + "/" + encodeURIComponent(this.page),
-      baseUri: this.$attrs.baseuri,
+      pageUri: this.$attrs.baseuri + "/" + this.page,
+      baseUri: this.$attrs.baseuri + "/",
       brand: this.$attrs.brand,
       token: window.axios.defaults.headers.common["X-CSRF-TOKEN"]
     };

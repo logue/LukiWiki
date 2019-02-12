@@ -11,10 +11,12 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Config;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
+use RegexpTrie\RegexpTrie;
 use Symfony\Component\Intl\Collator\Collator;
 
 class Page extends Model
@@ -22,15 +24,23 @@ class Page extends Model
     use SoftDeletes;
     protected $guarded = ['id'];
 
+    const PAGELIST_TRIE_CACHE = 'page_trie';
     const PAGELIST_CACHE = 'pages';
-    const PAGELIST_CACHE_DATE = 'pages-modified';
+
+    protected function setKeysForSaveQuery(Builder $query):Builder
+    {
+        Cache::forget(self::PAGELIST_CACHE);
+        Cache::forget(self::PAGELIST_TRIE_CACHE);
+
+        return parent::setKeysForSaveQuery($query);
+    }
 
     /**
      * ページに貼り付けられた添付ファイル.
      *
      * @return HasMany
      */
-    public function attachements(): HasMany
+    public function attachments(): HasMany
     {
         return $this->hasMany(Attachment::class);
     }
@@ -45,6 +55,20 @@ class Page extends Model
         return $this->hasMany(Backup::class);
     }
 
+    public static function getPageId(string $page)
+    {
+        return self::where('name', '=', $page)->value('id');
+    }
+
+    /**
+     * ページに貼り付けられた添付ファイル一覧.
+     */
+    public static function getAttachments(string $page)
+    {
+        return self::where('pages.name', $page)
+            ->join('attachments', 'pages.id', '=', 'attachments.page_id');
+    }
+
     /**
      * 新着記事を取得.
      *
@@ -54,7 +78,7 @@ class Page extends Model
      */
     public static function getLatest(int $limit = 20)
     {
-        return self::select('id', 'name', 'description', 'updated_at')->orderBy('updated_at', 'desc')->limit($limit)->get();
+        return self::select('id', 'name', 'description', 'updated_at')->orderBy('updated_at', 'desc')->limit($limit);
     }
 
     /**
@@ -64,20 +88,25 @@ class Page extends Model
      */
     public static function getEntries(): array
     {
-        $lastmod = self::lastModified();
-        if ($lastmod->timestamp > (int) Cache::get(self::PAGELIST_CACHE_DATE)) {
-            // DBの更新日時がキャッシュ生成日時よりも新しい場合、キャッシュを削除
-            Cache::forget(self::PAGELIST_CACHE);
-            Cache::forget(self::PAGELIST_CACHE_DATE);
-        }
-        $pages = self::pluck('name')->toArray();
-        $collator = new Collator(Config::get('locale'));
-        $collator->asort($pages, Collator::SORT_STRING);
+        return Cache::rememberForever(self::PAGELIST_CACHE, function () {
+            $pages = self::pluck('name', 'updated_at')->all();
+            $collator = new Collator(Config::get('locale'));
+            $collator->asort($pages, Collator::SORT_STRING);
 
-        Cache::put(self::PAGELIST_CACHE, $pages);
-        Cache::put(self::PAGELIST_CACHE_DATE, time());
+            return array_flip($pages);
+        });
+    }
 
-        return $pages;
+    /**
+     * 自動リンク用トライ木を生成.
+     *
+     * @return string
+     */
+    public static function getTrie(): string
+    {
+        return Cache::rememberForever(self::PAGELIST_TRIE_CACHE, function () {
+            return RegexpTrie::union(array_keys(self::getEntries()))->build();
+        });
     }
 
     /**

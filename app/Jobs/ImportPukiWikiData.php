@@ -157,13 +157,13 @@ class ImportPukiWikiData implements ShouldQueue
                 continue;
             }
 
-            $line = preg_replace_callback('/SIZE\((\d+)?\){(.+)?}/u', function ($matches) {
+            $line = preg_replace_callback('/(?:SIZE\((\d+)\))/u', function ($matches) {
                 // サイズはrem指定に変更
-                return 'SIZE('.self::px2rem($matches[1]).'){'.$matches[2].'}';
+                return 'SIZE('.self::px2rem($matches[1]).')';
             }, $line);
 
             // リンクの形式変更（LukiWikiでは[...](...)という形式。添付ファイルとの区別は!でする）
-            $line = preg_replace_callback('/\[{2}(.+?)\]{2}/u', function ($matches) {
+            $line = preg_replace_callback('/(?:\[{2}(.+?)\]{2})/u', function ($matches) {
                 if (!isset($matches[1])) {
                     return '';
                 }

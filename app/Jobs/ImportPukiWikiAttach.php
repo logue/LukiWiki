@@ -20,6 +20,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Image;
 
 class ImportPukiWikiAttach implements ShouldQueue
 {
@@ -47,6 +48,7 @@ class ImportPukiWikiAttach implements ShouldQueue
         Log::info('Start Attached file convertion.');
 
         foreach ($this->files as &$file) {
+            $meta = [];
             $count = 0;
             $locked = false;
             // 添付ファイルの名前を取得（かなりいい加減な正規表現だが・・・）
@@ -57,12 +59,14 @@ class ImportPukiWikiAttach implements ShouldQueue
             }
 
             // ログやバックアップファイルは無視
-            if (isset($matches[3])) {
+            if (!empty($matches[3])) {
                 continue;
             }
 
             // ページ名を取得
             $page = hex2bin($matches[1]);
+
+            //if ($page !== 'FF11裏話/第５章　ギルド追放～情報操作') continue;
 
             // :が含まれるページ名は_に変更
             $page = preg_replace('/\:/', '_', $page);
@@ -78,7 +82,7 @@ class ImportPukiWikiAttach implements ShouldQueue
 
             if (Attachment::where(['page_id'=>$page_id, 'name' => $original_name])->exists()) {
                 // すでにデーターベースに登録されている場合スキップ
-                Log::info('->File: '.$original_name.' Skipped.');
+                Log::info('-> File: '.$original_name.' is already registed to db. Skipped.');
 
                 continue;
             }
@@ -110,28 +114,33 @@ class ImportPukiWikiAttach implements ShouldQueue
             $dest = \Config::get('lukiwiki.directory.attach').'/'.$stored_name;
 
             // LukiWikiの添付ディレクトリにコピー
+            Log::info('-> File: '.$original_name.' Copied to '.$stored_name.'.');
             Storage::copy($file, $dest);
-            Log::info('->File: '.$original_name.' Copied to '.$stored_name.'.');
 
             // Storageクラスにハッシュなどの命令がないためファイルの実体のパスを取得
             $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/'.$file));
 
             // ファイルのメタ情報を取得
             $info = \MediaInfo::extract($from);
+            $mime = $info['mime_type'] ?? Storage::mimeType($dest);
 
-            if (!isset($info['error'])) {
+            if (empty($info['error'])) {
+                Log::info('-> Extract meta data.');
                 // 画像の大きさを取得
-                if (isset($meta['video'])) {
-                    $meta['width'] = $info['resolution_x'];
-                    $meta['height'] = $info['resolution_y'];
+                if (isset($info['video'])) {
+                    Log::info('-> Fetch image size.');
+                    $meta['width'] = $info['video']['resolution_x'];
+                    $meta['height'] = $info['video']['resolution_y'];
                 }
                 // 演奏時間を取得
-                if (isset($meta['playtime'])) {
-                    $meta['playtime'] = $info['playtime_string'];
+                if (isset($info['playtime_string'])) {
+                    Log::info('-> Fetch play time.');
+                    $meta['playtime'] = $info['playtime_string'] ?? null;
                 }
 
-                if (isset($meta['comments']['picture'])) {
+                if (isset($info['comments']['picture'])) {
                     // アルバムアートがある場合サムネイルディレクトリに保存
+                    Log::info('-> Extract album art.');
                     $picture = $meta['comments']['picture'][0];
                     switch ($picture['image_mime']) {
                         case 'image/jpeg':
@@ -145,37 +154,45 @@ class ImportPukiWikiAttach implements ShouldQueue
                             break;
                     }
                     Storage::put('thumbnails/'.$thumb_name, $picture['data']);
+                    $meta['thumbnail'] = $thumb_name;
                 }
-                if (strpos($info['mime_type'], 5) === 'image') {
+
+                if (strpos($mime, 'image') !== false) {
                     // 画像の場合サムネイル作成
+                    Log::info('-> Process image file.');
+                    $image = Image::make(file_get_contents($from));
+                    $meta['width'] = $image->width();
+                    $meta['height'] = $image->height();
+                    Log::info('-> Generate thumbnail.');
+                    $image->resize(256, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    // え、jpeg固定！？
+                    //$image->save(str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/thumbnails/'.$s.'.jpg')));
+                    Storage::put('thumbnails/'.$s.'.jpg', $image->encode('jpg'));
+                    $meta['thumbnail'] = $s.'.jpg';
                 }
-                $mime = $info['mime_type'];
                 $size = $info['filesize'];
             } else {
-                $mime = Storage::mimeType($dest);
                 $size = Storage::size($file);
             }
 
-            try {
-                Attachment::updateOrCreate([
-                    'page_id'     => $page_id,
-                    'name'        => $original_name,
-                ], [
-                    'count'       => $count,
-                    'user_id'     => 0,
-                    'ip'          => $_SERVER['REMOTE_ADDR'],
-                    'locked'      => $locked,
-                    'stored_name' => $stored_name,
-                    'mime'        => $mime,
-                    'hash'        => hash_file('md5', $from),
-                    'size'        => $size,
-                    'meta'        => $meta,
-                    'created_at'  => Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s'),
-                    'updated_at'  => Carbon::createFromTimestamp(Storage::lastModified($file))->format('Y-m-d H:i:s'),
-                ]);
-            } catch (\Exception $e) {
-                dd($meta);
-            }
+            Attachment::updateOrCreate([
+                'page_id'     => $page_id,
+                'name'        => $original_name,
+            ], [
+                'count'       => $count,
+                'user_id'     => 0,
+                'ip'          => $_SERVER['REMOTE_ADDR'],
+                'locked'      => $locked,
+                'stored_name' => $stored_name,
+                'mime'        => $mime,
+                'hash'        => hash_file('md5', $from),
+                'size'        => $size,
+                'meta'        => $meta,
+                'created_at'  => Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s'),
+                'updated_at'  => Carbon::createFromTimestamp(Storage::lastModified($file))->format('Y-m-d H:i:s'),
+            ]);
         }
         Log::info('Finish.');
     }

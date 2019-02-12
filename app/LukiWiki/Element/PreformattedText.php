@@ -3,7 +3,7 @@
  * Preformatted Text.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2018 Logue
+ * @copyright 2018-2019 Logue
  * @license   MIT
  */
 
@@ -22,14 +22,13 @@ class PreformattedText extends AbstractElement
     {
         parent::__construct();
         if (strpos($meta, ':')) {
-            list($lang, $name) = explode(':', $meta);
+            list($this->meta['lang'], $this->meta['name']) = explode(':', $meta);
         } else {
-            $lang = $meta;
-            $name = '';
+            $this->meta['lang'] = $meta;
+            $this->meta['name'] = '';
         }
-        $this->meta = ['lang' => $lang, 'name' => $name];
 
-        $this->elements[] = parent::processText($text);
+        $this->elements[] = $text;
     }
 
     public function canContain($obj)
@@ -46,6 +45,11 @@ class PreformattedText extends AbstractElement
 
     public function __toString()
     {
-        return $this->wrap(implode("\n", $this->elements), 'pre', ['v-lw-sh' => null, 'class' => 'CodeMirror', 'data-lang' => $this->meta['lang']], false);
+        $content = self::processText(implode("\n", $this->elements));
+        if (empty($this->meta['lang'])) {
+            return $this->wrap($content, 'pre', ['class' => 'CodeMirror'], false);
+        }
+
+        return $this->wrap($content, 'pre', ['v-lw-sh' => null, 'class' => 'CodeMirror', 'data-lang' => $this->meta['lang']], false);
     }
 }

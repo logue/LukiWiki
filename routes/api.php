@@ -19,3 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('atom', 'ApiController@atom');
 Route::get('sitemap', 'ApiController@sitemap');
+Route::get('attachment/{id}', 'ApiController@attachment');

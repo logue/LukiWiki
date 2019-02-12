@@ -3,7 +3,7 @@
  * ブラケット名クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018-2019 Logue
  * @license   MIT
  */
 
@@ -27,13 +27,18 @@ class BracketName extends AbstractInline
             '\])'.
             '(?:'.
                 '\('.
-                   '(.[^\r\n\t\f\[\]<>#&":\(\)]+?)'.    // [2] Name
-                   '(?:\#(\w[^\#]+?))?'.                // [3] Anchor
-                   '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.   // [4] Title
+                    '('.
+                        '(?:https?|ftp|ssh)'.   // protocol
+                        '(?::\/\/[^\(\)][-_.!~*\'a-zA-Z0-9;\/?:\@&=+\$,%#]+)'.
+                        '|'.
+                        '(?:.[^\r\n\t\f&":\(\)]+?)'.
+                        '(?:\#(\w[^\#]+?))?'.               // [3] Anchor
+                    ')'.
+                    '(?:\s+(?:"(.*[^\(\)"]?)"))?'.  // [4] Title
                 '\)'.
             ')?'.
             '(?:\{'.
-                '(.*[^\}]?)'.                       // [5] Body (option)
+                '(.*[^\}]?)'.                           // [5] Body (option)
             '\})?';
     }
 
@@ -42,36 +47,41 @@ class BracketName extends AbstractInline
         return 5;
     }
 
-    public function setPattern(array $arr, string $page = null)
+    public function setPattern(array $arr)
     {
         //dd($this->getPattern(), $arr,  $this->splice($arr));
 
         list($this->alias, $this->href, $this->anchor, $this->title, $this->body) = $this->splice($arr);
 
+        //dd($this->splice($arr));
+
         if (empty($this->href)) {
-            $this->href = $this->anchor;
+            $this->href = $this->alias;
         }
+
+        if (strpos($this->href, 'http') === false) {
+            $this->href = parent::getPageName($this->href);
+        }
+
+        //dd($this->href);
+
         if (strpos($this->alias, '#')) {
-            $this->anchor = $alias;
+            $this->anchor = $this->alias;
         }
-        /*
-        if (empty($page)) {
-
-
+        if (!empty($page)) {
             if (empty($this->anchor)) {
                 //return false;
             } elseif (!InlineRules::isWikiName($page) && empty($alias)) {
-                $alias = $name.$this->anchor;
+                $this->alias = $this->href.$this->anchor;
             }
-
         }
-        */
 
-        //self::setParam(['page'=>$page, 'href'=>url($page), 'alias' => $alias, 'title'=> $title, 'option' => $option]);
+        //self::setParam(['page'=>$page, 'href'=>url(parent::getPageName($page)), 'alias' => $alias, 'title'=> $title, 'option' => $option]);
     }
 
     public function __toString()
     {
-        return '<a href="'.$this->alias.'" title="'.$this->title.'">'.$this->alias.'</a>';
+        //dd($this->alias);
+        return '<a href="'.url($this->href).'" title="'.$this->title.'">'.$this->alias.'</a>';
     }
 }

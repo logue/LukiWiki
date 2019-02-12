@@ -42,6 +42,7 @@ class Link extends AbstractInline
 
     public function setPattern(array $arr, string $page = null)
     {
+        //dd($this->getPattern(), $arr, $this->splice($arr));
         list($this->alias, $this->href, $this->anchor, $this->title, $this->body) = $this->splice($arr);
     }
 
@@ -55,8 +56,6 @@ class Link extends AbstractInline
             // ページリンク
             $url = $this->href;
         }
-
-        // TODO:階層リンクの処理
 
         return parent::setLink($this->alias, $url, $this->name);
     }

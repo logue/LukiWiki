@@ -22,9 +22,9 @@ class Attachment extends Model
     /**
      * この添付ファイルの貼り付けられたページ.
      */
-    public function page()
+    public function page() : belongsTo
     {
-        return $this->hasOne(Page::class);
+        return $this->belongsTo(Page::class);
     }
 
     /**
