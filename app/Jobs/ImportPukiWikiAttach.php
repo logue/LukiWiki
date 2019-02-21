@@ -27,6 +27,8 @@ class ImportPukiWikiAttach implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $files = [];
+    private $attach_dir;
+    private $thumb_dir;
 
     /**
      * Create a new job instance.
@@ -107,18 +109,23 @@ class ImportPukiWikiAttach implements ShouldQueue
                 $locked = $count !== 1 && array_shift($log) === '1';
             }
 
+            // Storageクラスにハッシュなどの命令がないためファイルの実体のパスを取得
+            $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/'.$file));
+
             // サーバーに保存する実際のファイル名はハッシュ値＋拡張子
             $s = hash_file('sha1', $from);
             $stored_name = $s.'.'.$ext;
             // 保存先のパス
             $dest = $this->attach_dir.'/'.$stored_name;
 
-            // LukiWikiの添付ディレクトリにコピー
-            Log::info('-> File: '.$original_name.' Copied to '.$stored_name.'.');
-            Storage::copy($file, $dest);
-
-            // Storageクラスにハッシュなどの命令がないためファイルの実体のパスを取得
-            $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/'.$file));
+            if (!Storage::exists($dest)) {
+                // LukiWikiの添付ディレクトリにコピー
+                Log::info('-> File: '.$original_name.' Copied to '.$stored_name.'.');
+                Storage::copy($file, $dest);
+            }else{
+                // TODO:同一のファイルが別ページにアップされている
+                Log::info('-> File: '.$stored_name.' is already exists. Skipped. But saved to database for compatibility.');
+            }
 
             // ファイルのメタ情報を取得（getID3を使用）
             $info = \MediaInfo::extract($from);
@@ -140,7 +147,7 @@ class ImportPukiWikiAttach implements ShouldQueue
                     $meta['playtime'] = $info['playtime_string'] ?? null;
                 }
 
-                if (isset($info['comments']['picture'])) {
+                if (isset($info['comments']) && isset($info['comments']['picture'])) {
                     // アルバムアートがある場合、最初の画像（通常アルバムアート）をサムネイルとしてサムネイルディレクトリに保存
                     Log::info('-> Extract album art.');
                     $picture = $meta['comments']['picture'][0];
@@ -211,9 +218,11 @@ class ImportPukiWikiAttach implements ShouldQueue
      *
      * @return void
      */
+    /*
     public function failed(Exception $exception)
     {
         Log::error('Import Attach data Job has been failed.');
         Log::error($exception);
     }
+    */
 }
