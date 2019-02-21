@@ -12,24 +12,26 @@ class PagesTableSeeder extends Seeder
     public function run()
     {
         DB::table('pages')->insert([
-            'title'  => 'MainPage',
-            'source' => '# Welcome to LukiWiki
-ƒCƒ“ƒXƒg[ƒ‹¬Œ÷‚¨‚ß‚Å‚Æ‚¤‚²‚´‚¢‚Ü‚·B‚±‚Ì‰æ–Ê‚ª³í‚É•\¦‚³‚ê‚Ä‚¢‚é‚Æ‚¢‚¤‚±‚Æ‚ÍAƒCƒ“ƒXƒg[ƒ‹‚É¬Œ÷‚µ‚½‚Æ‚¢‚¤‚±‚Æ‚Å‚·B
-‚Ü‚¸‚ÍA[[SandBox]]‚Ås‚«LukiWiki‚Ì‹@”\‚ğ‚µ‚Ä‚İ‚Ü‚µ‚å‚¤B
+            'name'    => 'MainPage',
+            'user_id' => 0,
+            'ip'      => '127.0.0.1',
+            'source'  => '# Welcome to LukiWiki
 
-À“­ŠÂ‹«‚É’u‚­‘O‚ÉA.env‚Ì‘‚«Š·‚¦‚ğs‚Á‚Ä‚­‚¾‚³‚¢B
+ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«æˆåŠŸãŠã‚ã§ã¨ã†ã”ã–ã„ã¾ã™ã€‚ã“ã®ç”»é¢ãŒæ­£å¸¸ã«è¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹ã¨ã„ã†ã“ã¨ã¯ã€ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã«æˆåŠŸã—ãŸã¨ã„ã†ã“ã¨ã§ã™ã€‚
+ã¾ãšã¯ã€[SandBox]ã§è¡ŒãLukiWikiã®æ©Ÿèƒ½ã‚’è©¦ã—ã¦ã¿ã¾ã—ã‚‡ã†ã€‚
 
-# ƒJƒXƒ^ƒ}ƒCƒY
--[[MainPage]] - ‚±‚Ìƒy[ƒW‚Å‚·B
--[[SideBar]] - ƒTƒCƒhƒƒjƒ…[‚ğ’è‹`‚µ‚Ü‚·
--[[InterWikiName]] - ŠO•”‚ÌWiki‚Æ˜AŒg‚³‚¹‚éê‡‚Í‚±‚±‚Åİ’è‚µ‚Ü‚·BÚ×‚ÍA[[Help/InterWiki]]‚ğ‚²——‚É‚È‚Á‚Ä‰º‚³‚¢B
+å®Ÿåƒç’°å¢ƒã«ç½®ãå‰ã«ã€.envã®æ›¸ãæ›ãˆã‚’è¡Œã£ã¦ãã ã•ã„ã€‚
 
-# ƒTƒ|[ƒg
--[[ƒwƒ‹ƒv>Help]]
--[[PukiWiki Adv.Œö®ƒTƒCƒg>https://lukiwiki.logue.be/]]
---[[–â‘è•ñ>https://github.com/logue/LukiWiki/issues]]
--[[Twitter>https://twitter.com/pukiwiki_adv]]
--[[ƒvƒƒWƒFƒNƒgƒTƒCƒg>https://github.com/logue/LukiWiki]]',
+# ã‚«ã‚¹ã‚¿ãƒã‚¤ã‚º
+
+- [MainPage] - ã“ã®ãƒšãƒ¼ã‚¸ã§ã™ã€‚
+- [SideBar] - ã‚µã‚¤ãƒ‰ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’å®šç¾©ã—ã¾ã™
+
+# ã‚µãƒãƒ¼ãƒˆ
+
+- [ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚µã‚¤ãƒˆ](https://github.com/logue/LukiWiki)
+ - [å•é¡Œå ±å‘Š](https://github.com/logue/LukiWiki/issues)
+- [Twitter](https://twitter.com/pukiwiki_adv)',
         ]);
     }
 }

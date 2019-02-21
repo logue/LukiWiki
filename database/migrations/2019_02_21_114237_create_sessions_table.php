@@ -1,6 +1,6 @@
 <?php
 /**
- * ページデーター格納テーブル作成.
+ * セッション管理テーブル作成.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
@@ -10,10 +10,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePagesTable extends Migration
+class CreateSessionsTable extends Migration
 {
-    const TABLE_NAME = 'pages';
-    const TABLE_COMMENT = 'ページ情報';
+    const TABLE_NAME = 'sessions';
+    const TABLE_COMMENT = 'セッション';
 
     /**
      * Run the migrations.
@@ -23,17 +23,12 @@ class CreatePagesTable extends Migration
     public function up()
     {
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
-            $table->bigIncrements('id')->comment('記事番号');
+            $table->string('id')->unique()->comment('セッションID');
             $table->unsignedInteger('user_id')->nullable()->references('id')->on('users')->comment('ユーザID');
-            $table->string('name')->index()->comment('ページ名');
-            $table->string('title')->nullable()->comment('記事名');
-            $table->longText('source')->comment('内容');
-            $table->string('description')->nullable()->comment('要約');
-            $table->boolean('locked')->default(false)->comment('ロックフラグ');
-            $table->unsignedInteger('status')->default('0')->comment('公開状況');
-            $table->ipAddress('ip')->comment('編集者のIP');
-            $table->timestamps();   // 更新日／作成日
-            $table->softDeletes();  // ソフトデリート
+            $table->string('ip_address', 45)->nullable()->comment('IPアドレス');
+            $table->text('user_agent')->nullable()->comment('ユーザエージェント');
+            $table->text('payload')->comment('セッション内容');
+            $table->integer('last_activity')->comment('行動フラグ');
         });
         if (\Config::get('database.default') !== 'sqlite') {
             \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');

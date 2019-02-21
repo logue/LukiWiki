@@ -96,6 +96,19 @@ class ImportPukiWikiData implements ShouldQueue
     }
 
     /**
+     * 失敗したジョブの処理.
+     *
+     * @param Exception $exception
+     *
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        Log::error('Import Wiki data Job has been failed.');
+        Log::error($exception);
+    }
+
+    /**
      * PukiWiki文法をLukiWiki文法に変換.
      *
      * @param array $lines

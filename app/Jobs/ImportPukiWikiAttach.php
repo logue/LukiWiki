@@ -36,6 +36,8 @@ class ImportPukiWikiAttach implements ShouldQueue
     public function __construct(string $path)
     {
         $this->files = Storage::files($path.'/attach/');
+        $this->attach_dir = \Config::get('lukiwiki.directory.attach');
+        $this->thumb_dir = \Config::get('lukiwiki.directory.thumb');
     }
 
     /**
@@ -65,8 +67,6 @@ class ImportPukiWikiAttach implements ShouldQueue
 
             // ページ名を取得
             $page = hex2bin($matches[1]);
-
-            //if ($page !== 'FF11裏話/第５章　ギルド追放～情報操作') continue;
 
             // :が含まれるページ名は_に変更
             $page = preg_replace('/\:/', '_', $page);
@@ -107,11 +107,11 @@ class ImportPukiWikiAttach implements ShouldQueue
                 $locked = $count !== 1 && array_shift($log) === '1';
             }
 
-            // サーバーに保存する実際のファイル名は40文字のランダムの文字列＋拡張子
-            $s = Str::random(40);
+            // サーバーに保存する実際のファイル名はハッシュ値＋拡張子
+            $s = hash_file('sha1', $from);
             $stored_name = $s.'.'.$ext;
             // 保存先のパス
-            $dest = \Config::get('lukiwiki.directory.attach').'/'.$stored_name;
+            $dest = $this->attach_dir.'/'.$stored_name;
 
             // LukiWikiの添付ディレクトリにコピー
             Log::info('-> File: '.$original_name.' Copied to '.$stored_name.'.');
@@ -120,11 +120,13 @@ class ImportPukiWikiAttach implements ShouldQueue
             // Storageクラスにハッシュなどの命令がないためファイルの実体のパスを取得
             $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/'.$file));
 
-            // ファイルのメタ情報を取得
+            // ファイルのメタ情報を取得（getID3を使用）
             $info = \MediaInfo::extract($from);
+            // メタ情報はgetID3の出力する値を優先する。
             $mime = $info['mime_type'] ?? Storage::mimeType($dest);
 
             if (empty($info['error'])) {
+                // getID3で判断できないファイルは返り値にerrorキーが存在する。
                 Log::info('-> Extract meta data.');
                 // 画像の大きさを取得
                 if (isset($info['video'])) {
@@ -139,7 +141,7 @@ class ImportPukiWikiAttach implements ShouldQueue
                 }
 
                 if (isset($info['comments']['picture'])) {
-                    // アルバムアートがある場合サムネイルディレクトリに保存
+                    // アルバムアートがある場合、最初の画像（通常アルバムアート）をサムネイルとしてサムネイルディレクトリに保存
                     Log::info('-> Extract album art.');
                     $picture = $meta['comments']['picture'][0];
                     switch ($picture['image_mime']) {
@@ -153,25 +155,31 @@ class ImportPukiWikiAttach implements ShouldQueue
                             $thumb_name = $s.'.gif';
                             break;
                     }
-                    Storage::put('thumbnails/'.$thumb_name, $picture['data']);
+                    // サムネイルディレクトリに保存
+                    Storage::put($this->thumb_dir.'/'.$thumb_name, $picture['data']);
                     $meta['thumbnail'] = $thumb_name;
                 }
 
                 if (strpos($mime, 'image') !== false) {
-                    // 画像の場合サムネイル作成
+                    // Mimeタイプの判定が画像だった場合サムネイルを作成する。
                     Log::info('-> Process image file.');
+                    // サムネイル作成（Laravel Imageを使用）
                     $image = Image::make(file_get_contents($from));
                     $meta['width'] = $image->width();
                     $meta['height'] = $image->height();
+
                     Log::info('-> Generate thumbnail.');
+                    // サムネイルの幅は最大256pxとし、アスペクト比は保持する。
                     $image->resize(256, null, function ($constraint) {
                         $constraint->aspectRatio();
                     });
+
                     // え、jpeg固定！？
                     //$image->save(str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/thumbnails/'.$s.'.jpg')));
-                    Storage::put('thumbnails/'.$s.'.jpg', $image->encode('jpg'));
+                    Storage::put($this->thumb_dir.'/'.$s.'.jpg', $image->encode('jpg'));
                     $meta['thumbnail'] = $s.'.jpg';
                 }
+                // ファイルサイズ
                 $size = $info['filesize'];
             } else {
                 $size = Storage::size($file);
@@ -187,7 +195,6 @@ class ImportPukiWikiAttach implements ShouldQueue
                 'locked'      => $locked,
                 'stored_name' => $stored_name,
                 'mime'        => $mime,
-                'hash'        => hash_file('md5', $from),
                 'size'        => $size,
                 'meta'        => $meta,
                 'created_at'  => Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s'),
@@ -195,5 +202,18 @@ class ImportPukiWikiAttach implements ShouldQueue
             ]);
         }
         Log::info('Finish.');
+    }
+
+    /**
+     * 失敗したジョブの処理.
+     *
+     * @param Exception $exception
+     *
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        Log::error('Import Attach data Job has been failed.');
+        Log::error($exception);
     }
 }
