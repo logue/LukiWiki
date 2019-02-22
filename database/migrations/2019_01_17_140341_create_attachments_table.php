@@ -24,9 +24,9 @@ class CreateAttachmentsTable extends Migration
     {
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
             $table->bigIncrements('id')->comment('ファイル番号');
-            $table->unsignedInteger('page_id')->references('id')->on('pages')->comment('記事ID');
+            $table->unsignedInteger('page_id')->references('id')->on('pages')->onDelete('cascade')->comment('記事ID');
             $table->unsignedInteger('user_id')->nullable()->references('id')->on('users')->comment('ユーザID');
-            $table->unsignedInteger('attachment_id')->nullable()->comment('元ファイルのID');    // バックアップ用途
+            $table->unsignedInteger('attachment_id')->nullable()->onDelete('cascade')->comment('元ファイルのID');    // バックアップ用途
             $table->string('name')->comment('ファイル名');
             $table->string('stored_name')->comment('実体名');
             $table->string('mime')->default('application/octet-stream')->comment('MIMEタイプ');
@@ -53,15 +53,14 @@ class CreateAttachmentsTable extends Migration
 
         // 添付ファイルディレクトリとサムネイルディレクトリを初期化する
         $dirs = [\Config::get('lukiwiki.directory.attach'), \Config::get('lukiwiki.directory.thumb')];
-        $tempdir = storage_path();
 
         foreach ($dirs as $dir) {
             // .gitignoreは退避
-            \File::move($dir.'/.gitignore', storage_path().'/.gitignore');
+            \File::move(storage_path('app'.DIRECTORY_SEPARATOR.$dir.DIRECTORY_SEPARATOR.'.gitignore'), storage_path('.gitignore'));
             // 初期化
-            \File::cleanDirectory($dir);
+            \File::cleanDirectory(storage_path('app'.DIRECTORY_SEPARATOR.$dir));
             // 戻す
-            \File::move(storage_path().'/.gitignore', $dir.'/.gitignore');
+            \File::move(storage_path('.gitignore'), storage_path('app'.DIRECTORY_SEPARATOR.$dir.DIRECTORY_SEPARATOR.'.gitignore'));
         }
     }
 }

@@ -13,7 +13,6 @@ class PagesTableSeeder extends Seeder
     {
         DB::table('pages')->insert([
             'name'    => 'MainPage',
-            'user_id' => 0,
             'ip'      => '127.0.0.1',
             'source'  => '# Welcome to LukiWiki
 
