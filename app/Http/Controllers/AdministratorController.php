@@ -9,7 +9,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ImportPukiWikiAttach;
+use App\Jobs\ImportPukiWikiAttachment;
 use App\Jobs\ImportPukiWikiBackup;
 use App\Jobs\ImportPukiWikiCounter;
 use App\Jobs\ImportPukiWikiData;
@@ -51,7 +51,7 @@ class AdministratorController extends Controller
                 switch ($request->input('type')) {
                     case 'attach':
                         $request->session()->flash('message', '添付ファイルのインポートのキューを実行しました。');
-                        $this->dispatch(new ImportPukiWikiAttach($path));
+                        $this->dispatch(new ImportPukiWikiAttachment($path));
                         break;
                     case 'backup':
                         $request->session()->flash('message', 'バックアップのインポートのキューを実行しました。');

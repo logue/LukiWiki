@@ -34,13 +34,12 @@ class CreateAttachmentsTable extends Migration
             $table->boolean('locked')->comment('ロックフラグ');
             $table->unsignedInteger('size')->comment('ファイル容量');   // バイトで管理（1G前後ファイルを添付することは想像したくないが・・・。）
             $table->unsignedInteger('count')->comment('カウンタ');
-            $table->json('meta')->comment('メタ情報');
+            $table->json('meta')->nullable()->comment('メタ情報');
             $table->timestamps();
         });
         if (\Config::get('database.default') !== 'sqlite') {
             \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
         }
-        \Storage::makeDirectory(\Config::get('lukiwiki.directory.attach'));
     }
 
     /**
@@ -51,6 +50,18 @@ class CreateAttachmentsTable extends Migration
     public function down()
     {
         Schema::dropIfExists(self::TABLE_NAME);
-        \Storage::deleteDirectory(\Config::get('lukiwiki.directory.attach'));
+
+        // 添付ファイルディレクトリとサムネイルディレクトリを初期化する
+        $dirs = [\Config::get('lukiwiki.directory.attach'), \Config::get('lukiwiki.directory.thumb')];
+        $tempdir = storage_path();
+
+        foreach ($dirs as $dir) {
+            // .gitignoreは退避
+            \File::move($dir.'/.gitignore', storage_path().'/.gitignore');
+            // 初期化
+            \File::cleanDirectory($dir);
+            // 戻す
+            \File::move(storage_path().'/.gitignore', $dir.'/.gitignore');
+        }
     }
 }
