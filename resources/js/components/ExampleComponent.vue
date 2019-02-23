@@ -1,24 +1,23 @@
 <template>
-    <b-card header="Vue Component" style="max-width: 20rem;" class="mx-auto">
-        <font-awesome-icon size="lg" :icon="['fab', 'vuejs']" />
-        <p class="card-text">I'm an example component!</p>
-    </b-card>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">Example Component</div>
+
+                    <div class="card-body">
+                        I'm an example component.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { bCard } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-library.add(bCard)
-
-export default {
-  mounted() {
-    console.log("Component mounted.");
-  },
-  components: {
-    FontAwesomeIcon,
-    bCard
-  }
-};
+    export default {
+        mounted() {
+            console.log('Component mounted.')
+        }
+    }
 </script>

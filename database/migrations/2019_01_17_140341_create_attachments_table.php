@@ -30,7 +30,7 @@ class CreateAttachmentsTable extends Migration
             $table->string('name')->comment('ファイル名');
             $table->string('stored_name')->comment('実体名');
             $table->string('mime')->default('application/octet-stream')->comment('MIMEタイプ');
-            $table->ipAddress('ip')->comment('投稿者のIP');
+            $table->ipAddress('ip_address')->nullable()->comment('IPアドレス');
             $table->boolean('locked')->comment('ロックフラグ');
             $table->unsignedInteger('size')->comment('ファイル容量');   // バイトで管理（1G前後ファイルを添付することは想像したくないが・・・。）
             $table->unsignedInteger('count')->comment('カウンタ');

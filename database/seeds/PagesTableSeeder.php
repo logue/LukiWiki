@@ -13,7 +13,6 @@ class PagesTableSeeder extends Seeder
     {
         DB::table('pages')->insert([
             'name'    => 'MainPage',
-            'ip'      => '127.0.0.1',
             'source'  => '# Welcome to LukiWiki
 
 インストール成功おめでとうございます。この画面が正常に表示されているということは、インストールに成功したということです。

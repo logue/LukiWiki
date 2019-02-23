@@ -1,14 +1,12 @@
 <?php
 /**
- * Sqliteを使用する設定だった場合、データベースファイルを作成
+ * Sqliteを使用する設定だった場合、データベースファイルを作成.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
  * @license   MIT
  */
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class TouchSqliteDatabaseFile extends Migration
 {

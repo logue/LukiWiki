@@ -27,6 +27,11 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        // キューの実行
+        //
+        $schedule->command('queue:restart')->everyTenMinutes();
+        $schedule->command('queue:work --tries=3')->everyMinute()->withoutOverlapping();
     }
 
     /**

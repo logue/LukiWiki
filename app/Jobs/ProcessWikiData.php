@@ -81,8 +81,6 @@ class ProcessWikiData implements ShouldQueue
                 'title'       => $ret['title'],
                 'description' => $ret['description'],
                 'locked'      => $ret['locked'],
-                'status'      => 0,
-                'ip'          => $_SERVER['REMOTE_ADDR'],
                 'created_at'  => Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s'),
                 'updated_at'  => Carbon::createFromTimestamp(Storage::lastModified($this->file))->format('Y-m-d H:i:s'),
             ]

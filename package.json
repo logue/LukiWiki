@@ -18,10 +18,10 @@
         "lodash": "^4.17.5",
         "popper.js": "^1.14.7",
         "resolve-url-loader": "^2.3.2",
-        "sass": "^1.17.1",
+        "sass": "^1.17.2",
         "sass-loader": "^7.1.0",
-        "vue": "^2.6.6",
-        "vue-template-compiler": "^2.6.6"
+        "vue": "^2.6.7",
+        "vue-template-compiler": "^2.6.7"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.15",
@@ -30,8 +30,7 @@
         "@fortawesome/free-solid-svg-icons": "^5.7.2",
         "@fortawesome/vue-fontawesome": "^0.1.5",
         "bootstrap-vue": "^2.0.0-rc.13",
-        "codemirror": "^5.43.0",
-        "jquery-confirm": "^3.3.4",
+        "codemirror": "^5.44.0",
         "query-string": "^6.2.0",
         "vue-codemirror": "^4.0.6"
     }

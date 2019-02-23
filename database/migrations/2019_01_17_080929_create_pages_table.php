@@ -30,8 +30,8 @@ class CreatePagesTable extends Migration
             $table->longText('source')->comment('内容');
             $table->string('description')->nullable()->comment('要約');
             $table->boolean('locked')->default(false)->comment('ロックフラグ');
-            $table->unsignedInteger('status')->default('0')->comment('公開状況');
-            $table->ipAddress('ip')->comment('編集者のIP');
+            $table->unsignedInteger('status')->nullable()->comment('公開状況');
+            $table->ipAddress('ip_address')->nullable()->comment('IPアドレス');
             $table->timestamps();   // 更新日／作成日
             $table->softDeletes();  // ソフトデリート
         });

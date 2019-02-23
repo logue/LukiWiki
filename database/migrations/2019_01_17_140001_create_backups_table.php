@@ -27,7 +27,7 @@ class CreateBackupsTable extends Migration
             $table->unsignedInteger('post_id')->references('id')->on('pages')->comment('記事番号');
             $table->unsignedInteger('user_id')->references('id')->on('users')->nullable()->comment('ユーザID');
             $table->longText('source')->comment('内容');
-            $table->ipAddress('ip')->comment('編集者のIP');
+            $table->ipAddress('ip_address')->nullable()->comment('IPアドレス');
             $table->timestamps();
         });
         if (\Config::get('database.default') !== 'sqlite') {

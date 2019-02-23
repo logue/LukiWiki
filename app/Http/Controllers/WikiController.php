@@ -35,27 +35,23 @@ class WikiController extends Controller
     /**
      * ページを読み込む
      */
-    public function __invoke(Request $request, string $query):View
+    public function __invoke(Request $request, ?string $query = null):View
     {
         $page = rawurldecode($query);
-
-        Debugbar::startMeasure('db', 'Get data from db.');
-
-        //dd($page_obj->attachments()->where('name', '=', $page)->get());
-
         $ext = substr($query, strrpos($query, '.', -1), strlen($query));
 
         if (empty($page)) {
             $page = Config::get('lukiwiki.special_page.default');
         }
+
+        Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $id = Page::getPageId($page);
-        Debugbar::stopMeasure('db');
         if (!$id) {
             // ページが見つからない場合は404エラー
-            //dd($page);
             return abort(404);
         }
         $entry = Page::find($id);
+        Debugbar::stopMeasure('db');
 
         Debugbar::startMeasure('parse', 'Converting wiki data...');
         //dd($entry->source);
@@ -194,7 +190,7 @@ class WikiController extends Controller
             abort(400);
         }
 
-        $entry = Page::where('name', $this->page)->first();
+        $entry = Page::where('name', $page)->first();
 
         if (hash(self::HASH_ALGORITHM, $data) !== $request->input('hash')) {
             // 編集中に別の人が編集をした（競合をおこした）
@@ -222,8 +218,6 @@ class WikiController extends Controller
 
         // 保存処理
         //dd($page, $this->request->input('source'));
-        // $this->data->$page = $this->request->input('source'); ←動かない（マジックメソッドが使えない）
-        //$this->data->__set($page, $this->request->input('source'));
 
         // TODO:バックアップ処理
 

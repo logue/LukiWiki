@@ -1,5 +1,5 @@
 @charset "utf-8";
-/* 標準フォント */
+// 標準フォント
 $font-family-sans-serif: -apple-system,
 // 英文
 BlinkMacSystemFont,
@@ -34,8 +34,7 @@ sans-serif,
 "Segoe UI Emoji",
 "Segoe UI Symbol",
 "Noto Color Emoji";
-/* 明朝体 */
-
+//明朝体
 $font-family-serif:Georgia,
 Times,
 "Times New Roman",
@@ -44,8 +43,7 @@ YuMincho,
 "游明朝",
 "Yu Mincho",
 serif;
-/* 等幅フォント */
-
+// 等幅フォント
 $font-family-monospace: SFMono-Regular,
 Menlo,
 Monaco,

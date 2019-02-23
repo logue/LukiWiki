@@ -25,7 +25,7 @@ class CreateSessionsTable extends Migration
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
             $table->string('id')->unique()->comment('セッションID');
             $table->unsignedInteger('user_id')->nullable()->references('id')->on('users')->comment('ユーザID');
-            $table->string('ip_address', 45)->nullable()->comment('IPアドレス');
+            $table->ipAddress('ip_address')->nullable()->comment('IPアドレス');
             $table->text('user_agent')->nullable()->comment('ユーザエージェント');
             $table->text('payload')->comment('セッション内容');
             $table->integer('last_activity')->comment('行動フラグ');

@@ -118,7 +118,7 @@ class ProcessAttachmentData implements ShouldQueue
             Storage::copy($this->file, $dest);
         } else {
             // TODO:同一のファイルが別ページにアップされている
-            Log::info('-> File: '.$stored_name.' is already exists or same file. Skipped.');
+            Log::info('-> File: '.$this->original_name.' is already exists or same file('.$stored_name.'). Skipped.');
         }
 
         Attachment::updateOrCreate([
@@ -126,7 +126,6 @@ class ProcessAttachmentData implements ShouldQueue
             'name'        => $this->original_name,
         ], [
             'count'       => $count,
-            'ip'          => $_SERVER['REMOTE_ADDR'],
             'locked'      => $locked,
             'stored_name' => $stored_name,
             'mime'        => Storage::mimeType($dest),
