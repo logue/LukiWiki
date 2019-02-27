@@ -42,10 +42,9 @@ abstract class AbstractInline
      *
      * @param int $start
      */
-    public function __construct(int $start, string $page)
+    public function __construct(int $start)
     {
         $this->start = $start;
-        $this->page = $page;
     }
 
     /**
@@ -71,8 +70,9 @@ abstract class AbstractInline
     /**
      * マッチするパターンを設定.
      *
-     * @param array  $arr
-     * @param string $page
+     * @param array $arr
+     *
+     * @return string
      */
     public function setPattern(array $arr)
     {
@@ -127,11 +127,11 @@ abstract class AbstractInline
             $this->href = url(self::getPageName($params['href']));
         }
 
-        $this->page = $params['page'] ?? $this->page;
-        $this->title = $params['title'] ?? $this->page;
-        $this->anchor = $params['anchor'] ?? null;
-        $this->option = $params['option'] ?? null;
-        $this->alias = $params['alias'] ?? null;
+        $this->page = self::processText($params['page'] ?? $this->page);
+        $this->title = self::processText($params['title'] ?? $this->page);
+        $this->anchor = self::processText($params['anchor'] ?? null);
+        $this->option = self::processText($params['option'] ?? null);
+        $this->alias = self::processText($params['alias'] ?? null);
 
         //dd($this);
 
@@ -149,33 +149,23 @@ abstract class AbstractInline
     /**
      * ページの自動リンクを作成.
      *
-     * @param string $page       ページ名
-     * @param string $alias      リンクの名前
-     * @param string $anchor     ページ内アンカー（アドレスの#以降のテキスト）
-     * @param string $refer      リンク元
-     * @param bool   $isautolink 自動リンクか？
-     *
      * @return string
      */
     public function setAutoLink():?string
     {
-        if (!empty($this->page)) {
-            $page = self::processText($this->page);
-        }
-
-        if (empty($page) && !empty($this->anchor)) {
+        if (empty($this->page) && !empty($this->anchor)) {
             // ページ内リンク
-            return '<a href="'.self::processText($this->anchor).'">'.self::processText($this->alias).'</a>';
+            return '<a href="'.$this->anchor.'">'.$this->alias.'</a>';
         }
 
         $anchor_name = trim(empty($this->alias) ? $this->page : $this->alias);
 
         $title = !empty($this->title) ? $this->title : $this->page;
 
-        if (in_array($page, Page::getEntries())) {
-            return '<a href="'.url($page).$anchor.'" title="'.$title.'" v-b-tooltip>'.$anchor_name.'</a>';
-        } elseif (!empty($page)) {
-            $retval = $anchor_name.'<a href="'.url($page).':edit" rel="nofollow" title="Edit '.$page.'" v-b-tooltip>?</a>';
+        if (in_array($this->page, array_keys(Page::getEntries()), true)) {
+            return '<a href="'.url($this->page).$anchor.'" title="'.$this->title.'" v-b-tooltip>'.$anchor_name.'</a>';
+        } elseif (!empty($this->page)) {
+            $retval = $anchor_name.'<a href="'.url($this->page).':edit" rel="nofollow" title="Edit '.$this->page.'" v-b-tooltip>?</a>';
 
             return '<span class="bg-light text-dark">'.$retval.'</span>';
         }
@@ -193,7 +183,7 @@ abstract class AbstractInline
      *
      * @return string
      */
-    public function setLink(?string $term = '', ?string $url = '', ?string $rel = '', bool $is_redirect = false)
+    public function setLink(?string $term = '', ?string $url = '', ?string $rel = '', bool $is_redirect = false):string
     {
         $parsed_url = parse_url($url, PHP_URL_PATH);
         $_tooltip = !empty($this->title) ? ' title="'.$this->title.'"  v-b-tooltip' : '';
@@ -224,7 +214,7 @@ abstract class AbstractInline
      *
      * @return string ページのフルパス
      */
-    public function getPageName(string $name = './')
+    public function getPageName(string $name = './'):string
     {
         $defaultpage = Config::get('lukiwiki.special_page.default');
 
@@ -289,9 +279,9 @@ abstract class AbstractInline
      *
      * @return string
      */
-    protected static function processText(string $str)
+    protected static function processText(?string $str):?string
     {
-        return htmlspecialchars(trim($str), ENT_HTML5, 'UTF-8');
+        return $str ? htmlspecialchars(trim($str), ENT_HTML5, 'UTF-8') : null;
     }
 
     /**

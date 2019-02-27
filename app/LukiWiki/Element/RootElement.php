@@ -48,9 +48,7 @@ class RootElement extends AbstractElement
                 $cmd = strtolower($matches[1]);
 
                 if (!empty($cmd)) {
-                    if ($cmd === 'title') {
-                        $this->meta['title'] = $matches[2];
-                    } elseif (is_object($this->last)) {
+                    if (is_object($this->last)) {
                         $this->last = $this->last->add(new Align($cmd));
                     }
                 }
@@ -108,7 +106,8 @@ class RootElement extends AbstractElement
                         break;
                     case '`':
                         // GFM:pre
-                        if (preg_match('/^```(\:\w+\r)?(.+?)```$/', $line, $matches)) {
+                        if (preg_match('/^(?:```(.+?)\r)(.+)\r```$/m', $line, $matches)) {
+                            //dd($matches);
                             $content = new PreformattedText($this, $matches[2], $matches[1]);
                         }
                         break;
@@ -170,7 +169,7 @@ class RootElement extends AbstractElement
                         }
                         break;
                     case '~':
-                        $content = new Paragraph(' '.substr($line, 1));
+                        $content = new Paragraph(' '.substr($line, 1), $this->page);
                         break;
                     case '/':
                         // Escape comments

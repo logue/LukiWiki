@@ -48,7 +48,7 @@ class WikiController extends Controller
         $id = Page::getPageId($page);
         if (!$id) {
             // ページが見つからない場合は404エラー
-            return abort(404);
+            return abort(404, 'Page '.$page.' is not found.');
         }
         $entry = Page::find($id);
         Debugbar::stopMeasure('db');
@@ -177,47 +177,36 @@ class WikiController extends Controller
      *
      * @param Request $request
      */
-    public function save(Request $request)
+    public function save(Request $request, ?string $page = null)
     {
         if (!$request->isMethod('post')) {
             // Method not allowed
-            abort(405);
+            abort(405, 'Method not allowd.');
         }
-
-        $page = $request->input('page');
 
         if (empty($page)) {
-            abort(400);
+            abort(400, 'Page name is undefined.');
         }
 
-        $entry = Page::where('name', $page)->first();
+        $source = Page::where('name', $page)->first()->value('source');
 
-        if (hash(self::HASH_ALGORITHM, $data) !== $request->input('hash')) {
-            // 編集中に別の人が編集をした（競合をおこした）
-
-            // TODO: この処理は動かない。3way-diffを出力
-            $merger = new PhpMerge\PhpMerge();
-            $result = $merger->merge(
-                $request->input('original'),
-                $data,
-                $request->input('source')
-            );
-            dd($result);
-
-            return view(
-                'default.conflict',
+        //if (hash(self::HASH_ALGORITHM, $source) !== $request->input('hash')) {
+        // 編集中に別の人が編集をした（競合をおこした）
+        return view(
+                'default.merge',
                 [
                     'page'   => $page,
-                    'diff'   => $result,
-                    'source' => $equest->input('source'),
+                    'origin' => $request->input('original'),
+                    'remote' => $source,
+                    'local'  => $request->input('source'),
                     'title'  => 'Conflict '.$page,
-                    'hash'   => hash(self::HASH_ALGORITHM, $data),
+                    'hash'   => hash(self::HASH_ALGORITHM, $source),
                 ]
             );
-        }
+        //}
 
         // 保存処理
-        //dd($page, $this->request->input('source'));
+        //Page::save
 
         // TODO:バックアップ処理
 
@@ -256,7 +245,7 @@ class WikiController extends Controller
         return view(
             'default.recent',
             [
-                'entries' => Page::getLatest(),
+                'entries' => dd(Page::getLatest()),
                 'title'   => 'RecentChanges',
             ]
         );

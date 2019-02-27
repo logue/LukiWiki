@@ -27,6 +27,13 @@ class Page extends Model
     const PAGELIST_TRIE_CACHE = 'page_trie';
     const PAGELIST_CACHE = 'pages';
 
+    /**
+     * 保存時にキャッシュ削除.
+     *
+     * @param Builder $query
+     *
+     * @return Builder
+     */
     protected function setKeysForSaveQuery(Builder $query):Builder
     {
         Cache::forget(self::PAGELIST_CACHE);
@@ -55,15 +62,26 @@ class Page extends Model
         return $this->hasMany(Backup::class);
     }
 
-    public static function getPageId(string $page)
+    /**
+     * ページ名からIDを取得.
+     *
+     * @param string $page
+     *
+     * @return int
+     */
+    public static function getPageId(string $page):?int
     {
         return self::where('name', '=', $page)->value('id');
     }
 
     /**
      * ページに貼り付けられた添付ファイル一覧.
+     *
+     * @param string $page
+     *
+     * @return Builder
      */
-    public static function getAttachments(string $page)
+    public static function getAttachments(string $page):Builder
     {
         return self::where('pages.name', $page)
             ->join('attachments', 'pages.id', '=', 'attachments.page_id');
@@ -74,9 +92,9 @@ class Page extends Model
      *
      * @param int $limit
      *
-     * @return object
+     * @return Builder
      */
-    public static function getLatest(int $limit = 20)
+    public static function getLatest(int $limit = 20):Builder
     {
         return self::select('id', 'name', 'description', 'updated_at')->orderBy('updated_at', 'desc')->limit($limit);
     }

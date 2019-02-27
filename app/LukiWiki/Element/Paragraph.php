@@ -16,14 +16,14 @@ use App\LukiWiki\AbstractElement;
  */
 class Paragraph extends AbstractElement
 {
-    public function __construct($text, $isAmp)
+    public function __construct($text, $page)
     {
         parent::__construct();
 
         if (substr($text, 0, 1) === '~') {
             $text = ' '.substr($text, 1);
         }
-        $obj = new InlineElement($text, $isAmp);
+        $obj = new InlineElement($text, $page);
         $this->meta = $obj->getMeta();
         $this->insert($obj);
     }

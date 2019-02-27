@@ -31,14 +31,14 @@ Route::get(':admin/clearCache', 'AdministratorController@clearCache');
 Route::get(':create', 'WikiController@create');
 Route::get(':list', 'WikiController@list');
 Route::get(':recent', 'WikiController@recent');
-Route::get('{page}:edit', 'WikiController@edit')->where('page', '.[^:\.]+');
-Route::get('{page}:attachments', 'WikiController@attachments')->where('page', '.[^:\.]+');
-Route::get('{page}:attachments/{file}', 'WikiController@attachments')->where('page', '.[^:\.]+');
-Route::get('{page}:history', 'WikiController@history')->where('page', '.[^:\.]+');
-Route::get('{page}:source', 'WikiController@source')->where('page', '.[^:\.]+');
-Route::get('{page}:print', 'WikiController@print')->where('page', '.[^:\.]+');
-Route::post('{page}:delete', 'WikiController@destroy')->where('page', '.[^:\.]+');
+Route::get('{page}:edit', 'WikiController@edit')->where('page', '.[^:]+');
+Route::get('{page}:attachments', 'WikiController@attachments')->where('page', '.[^:]+');
+Route::get('{page}:attachments/{file}', 'WikiController@attachments')->where('page', '.[^:]+');
+Route::get('{page}:history', 'WikiController@history')->where('page', '.[^:]+');
+Route::get('{page}:source', 'WikiController@source')->where('page', '.[^:]+');
+Route::get('{page}:print', 'WikiController@print')->where('page', '.[^:]+');
+Route::post('{page}:delete', 'WikiController@destroy')->where('page', '.[^:]+');
 // LukiWikiでは:を含まないアドレスはすべてページ名として処理する。
 // これらの行は必ず最後に入れること。
-Route::post('{page}', 'WikiController@save')->where('page', '.[^:\.]+');
-Route::get('{page}', 'WikiController')->where('page', '.[^:\.]+');
+Route::post('{page?}', 'WikiController@save')->where('page', '.[^:]+');
+Route::get('{page?}{file?}', 'WikiController')->where('page', '.[^:]+');

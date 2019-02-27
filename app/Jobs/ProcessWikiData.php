@@ -247,6 +247,17 @@ class ProcessWikiData implements ShouldQueue
                         $matches = [];
                     }
                     break;
+                case '|':
+                    if (preg_match('/^\|(.+)\|([HFC]?)$/i', $line, $matches) !== 0) {
+                        if (isset($matches[2]) && strtolower($matches[2]) === 'c'){
+                            $cells = explode('|', $matches[0]);
+                            foreach ($cells as $cell){
+                               if (is_numeric($cell)){
+                                    
+                               }
+                        }
+                    }
+                    break;
                 default:
                     // 他の行は右トリム
                     $ret[] = rtrim($line);

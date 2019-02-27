@@ -20,6 +20,6 @@ class Backup extends Model
      */
     public function page()
     {
-        return $this->belongsTo('App\Models\Page');
+        return $this->belongsTo(Page::class);
     }
 }

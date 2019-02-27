@@ -38,6 +38,8 @@ class CreatePagesTable extends Migration
         if (\Config::get('database.default') !== 'sqlite') {
             \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' comment \''.self::TABLE_COMMENT.'\'');
         }
+        // ページ名はBINARY属性を加えて大文字小文字を区別する
+        \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' MODIFY name varchar BINARY');
     }
 
     /**

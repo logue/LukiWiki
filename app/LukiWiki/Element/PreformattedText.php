@@ -21,11 +21,13 @@ class PreformattedText extends AbstractElement
     public function __construct($root, $text, $meta)
     {
         parent::__construct();
-        if (strpos($meta, ':')) {
-            list($this->meta['lang'], $this->meta['name']) = explode(':', $meta);
-        } else {
-            $this->meta['lang'] = $meta;
-            $this->meta['name'] = '';
+        if (!empty($meta)) {
+            if (strpos($meta, ':')) {
+                list($this->meta['lang'], $this->meta['name']) = explode(':', $meta);
+            } else {
+                $this->meta['lang'] = $meta;
+                $this->meta['name'] = '';
+            }
         }
 
         $this->elements[] = $text;

@@ -11,6 +11,7 @@ namespace App\LukiWiki\Inline;
 
 use App\LukiWiki\AbstractInline;
 use App\LukiWiki\Rules\InlineRules;
+use App\Models\Page;
 
 class BracketName extends AbstractInline
 {
@@ -32,13 +33,13 @@ class BracketName extends AbstractInline
                         '(?::\/\/[^\(\)][-_.!~*\'a-zA-Z0-9;\/?:\@&=+\$,%#]+)'.
                         '|'.
                         '(?:.[^\r\n\t\f&":\(\)]+?)'.
-                        '(?:\#(\w[^\#]+?))?'.               // [3] Anchor
+                        '(?:\#(\w[^\#]+?))?'.       // [3] Anchor
                     ')'.
                     '(?:\s+(?:"(.*[^\(\)"]?)"))?'.  // [4] Title
                 '\)'.
             ')?'.
             '(?:\{'.
-                '(.*[^\}]?)'.                           // [5] Body (option)
+                '(.*[^\}]?)'.                       // [5] Body (option)
             '\})?';
     }
 
@@ -60,10 +61,10 @@ class BracketName extends AbstractInline
         }
 
         if (strpos($this->href, 'http') === false) {
-            $this->href = parent::getPageName($this->href);
+            $this->page = parent::getPageName($this->href);
         }
 
-        //dd($this->href);
+        //dd($this->page);
 
         if (strpos($this->alias, '#')) {
             $this->anchor = $this->alias;
@@ -81,7 +82,14 @@ class BracketName extends AbstractInline
 
     public function __toString()
     {
-        //dd($this->alias);
-        return '<a href="'.url($this->href).'" title="'.$this->title.'">'.$this->alias.'</a>';
+        if (!empty($this->page)) {
+            if (in_array($this->page, array_keys(Page::getEntries()))) {
+                return '<a href="'.url($this->page).'" title="'.$this->title.'">'.$this->alias.'</a>';
+            }
+
+            return '<span class="bg-light text-dark">'.$this->alias.'<a href="'.url($this->page).':edit" rel="nofollow" title="Edit '.$this->page.'" v-b-tooltip>?</a></span>';
+        }
+
+        return '<a href="'.$this->href.'" title="'.$this->title.'">'.$this->alias.'</a>';
     }
 }

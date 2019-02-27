@@ -32,6 +32,6 @@ class AutoLink extends AbstractInline
 
     public function __toString()
     {
-        return '<a href="'.url($this->name).'">'.$this->name.'</a>';
+        return '<a href="'.url($this->name).'" class="autolink">'.$this->name.'</a>';
     }
 }
