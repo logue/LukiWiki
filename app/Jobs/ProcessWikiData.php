@@ -249,13 +249,20 @@ class ProcessWikiData implements ShouldQueue
                     break;
                 case '|':
                     if (preg_match('/^\|(.+)\|([HFC]?)$/i', $line, $matches) !== 0) {
-                        if (isset($matches[2]) && strtolower($matches[2]) === 'c'){
+                        if (isset($matches[2]) && strtolower($matches[2]) === 'c') {
                             $cells = explode('|', $matches[0]);
-                            foreach ($cells as $cell){
-                               if (is_numeric($cell)){
-                                    
-                               }
+                            foreach ($cells as $cell) {
+                                $c = trim($cell);
+                                if (is_numeric($c)) {
+                                    $l[] = self::px2rem($c);
+                                } else {
+                                    $l[] = $c;
+                                }
+                            }
+                            $ret[] = implode('|', $l);
                         }
+                    } else {
+                        $ret[] = $line;
                     }
                     break;
                 default:
