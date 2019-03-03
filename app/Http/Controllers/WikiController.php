@@ -10,7 +10,9 @@
 namespace App\Http\Controllers;
 
 use App\LukiWiki\Element\RootElement;
+use App\Models\Backup;
 use App\Models\Page;
+use Carbon\Carbon;
 use Config;
 use Debugbar;
 use Illuminate\Http\Request;
@@ -22,15 +24,6 @@ class WikiController extends Controller
     // 使用可能な値：http://php.net/manual/ja/function.hash-algos.php
     // あくまでも新旧のデーターに変化があったかのチェック用途であるため、高速なcrc32で十分だと思う。
     const HASH_ALGORITHM = 'crc32';
-
-    /**
-     * コンストラクタ
-     */
-    public function __construct(Request $request)
-    {
-        // 設定読み込み
-        $this->config = Config::get('lukiwiki');
-    }
 
     /**
      * ページを読み込む
@@ -188,27 +181,71 @@ class WikiController extends Controller
             abort(400, 'Page name is undefined.');
         }
 
-        $source = Page::where('name', $page)->first()->value('source');
+        if (Page::exists($page)) {
+            // ページが存在する場合、DB上のソースを取得。
+            $remote = Page::where('name', $page)->first();
+            $page_id = $remote->id;
+            $hash = hash(self::HASH_ALGORITHM, $remote->source);
 
-        //if (hash(self::HASH_ALGORITHM, $source) !== $request->input('hash')) {
-        // 編集中に別の人が編集をした（競合をおこした）
-        return view(
-                'default.merge',
-                [
-                    'page'   => $page,
-                    'origin' => $request->input('original'),
-                    'remote' => $source,
-                    'local'  => $request->input('source'),
-                    'title'  => 'Conflict '.$page,
-                    'hash'   => hash(self::HASH_ALGORITHM, $source),
-                ]
-            );
-        //}
+            if ($hash === hash(self::HASH_ALGORITHM, $request->input('hash'))) {
+                // ハッシュが同じだった場合処理しない
+                return redirect($page);
+            } elseif ($hash !== $request->input('hash')) {
+                // 編集前のデータのハッシュ値と比較し、違いがある場合、編集の競合が起きたと判断。
+                // マージ画面を表示する。
+                return view(
+                    'default.merge',
+                    [
+                        'page'   => $page,
+                        'origin' => $request->input('origin'),
+                        'remote' => $remote->source,
+                        'source' => $request->input('source'),
+                        'title'  => sprintf('On updating %1s, a collision has occurred.', $page),
+                        'hash'   => hash(self::HASH_ALGORITHM, $request->input('origin')),
+                    ]
+                );
+            }
 
-        // 保存処理
-        //Page::save
+            // 更新処理
+            Page::where('name', $page)->update([
+                'source'     => $request->input('source'),
+                'ip_address' => $request->ip(),
+            ]);
 
-        // TODO:バックアップ処理
+            // バックアップ処理
+            $backup = Backup::where('page_id', $page_id)->latest()->first();
+            //dd(Carbon::now()->timestamp - Carbon::parse($backup->created_at)->timestamp);
+            //dd(Config::get('lukiwiki.backup.interval') * 60);
+            if ($backup &&
+                !(Carbon::now()->timestamp - Carbon::parse($backup->created_at)->timestamp) <
+                Config::get('lukiwiki.backup.interval')) {
+                // バックアップが存在するが、インターバルの時間未満だった場合、最新のバックアップを上書きする。
+                Backup::where('id', $backup->id)->update([
+                    'source'     => $remote->source,
+                    'ip_address' => $request->ip(),
+                    'updated_at' => Carbon::now()->toDateTimeString(),
+                ]);
+            } else {
+                //dd(Backup::where('page_id', $page_id)->latest()->first());
+                // そうでない場合はバックアップを追記
+                Backup::insert([
+                    'page_id'    => $page_id,
+                    'source'     => $remote->source,
+                    'ip_address' => $request->ip(),
+                    'created_at' => Carbon::now()->toDateTimeString(),
+                    'updated_at' => Carbon::now()->toDateTimeString(),
+                ]);
+            }
+        } else {
+            // 新規作成
+            Page::insert([
+                'name'       => $page,
+                'source'     => $request->input('source'),
+                'ip_address' => $request->ip(),
+                'created_at' => Carbon::now()->toDateTimeString(),
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
+        }
 
         $request->session()->flash('message', 'Saved');
 
@@ -234,7 +271,7 @@ class WikiController extends Controller
     }
 
     /**
-     * ページ一覧.
+     * 更新履歴表示.
      *
      * @param string $type
      *
@@ -245,7 +282,7 @@ class WikiController extends Controller
         return view(
             'default.recent',
             [
-                'entries' => dd(Page::getLatest()),
+                'entries' => Page::getLatest()->get(),
                 'title'   => 'RecentChanges',
             ]
         );

@@ -131,31 +131,39 @@
       @input="onCmCodeChange"
       class="my-1"
     ></codemirror>
-    <div class="form-row align-items-center" aria-label="Editor Footer">
-      <div class="col-md-3 col-sm-6">
+    <div class="form-row align-items-center d-flex" aria-label="Editor Footer">
+      <div class="p-1">
         <b-form-checkbox
-          id="keep_timestamp"
+          switch
           v-model="keep_timestamp"
+          name="keep_timestamp"
           value="1"
           unchecked-value="0"
         >Keep Timestamp</b-form-checkbox>
       </div>
-      <div class="col-md col-sm-6">
+      <div class="p-1">
         <b-input-group>
           <b-input-group-text slot="prepend">
             <font-awesome-icon fas icon="key"/>
           </b-input-group-text>
           <b-form-input
             name="password"
+            type="password"
+            v-model="key"
             autocomplete="off"
-            v-b-tooltip
-            title="Password"
-            v-bind:disabled="keep_timestamp === 0"
+            placeholder="Password"
+            v-bind:disabled="keep_timestamp == 0"
           />
         </b-input-group>
       </div>
-      <div class="col-md-4 col-sm-12 text-right mr-0 mt-1 mt-md-0">
-        <b-button variant="primary" type="submit" name="action" value="save">
+      <div class="ml-auto px-1">
+        <b-button
+          variant="primary"
+          type="submit"
+          name="action"
+          value="save"
+          v-bind:disabled="keep_timestamp == 1 && key == ''"
+        >
           <font-awesome-icon fas fixed-width icon="check" class="mr-1"/>Submit
         </b-button>
         <b-button variant="secondary" type="submit" name="action" value="cancel">
@@ -175,6 +183,10 @@ import bButtonGroup from "bootstrap-vue/es/components/button-group/button-group"
 import bButtonToolbar from "bootstrap-vue/es/components/button-toolbar/button-toolbar";
 // Form Checkbox
 import bFormCheckbox from "bootstrap-vue/es/components/form-checkbox/form-checkbox";
+// Form Checkbox group
+import bFormCheckboxGroup from "bootstrap-vue/es/components/form-checkbox/form-checkbox-group";
+// Form Group
+import bFormGroup from "bootstrap-vue/es/components/form-group/form-group";
 // Form Input
 import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
 // Input Group
@@ -256,14 +268,11 @@ import "codemirror/addon/hint/show-hint.css";
 export default {
   data() {
     let source, page;
-    try {
-      source = this.$slots.body[0].children[0].text;
-      page = this.$slots.header[0].children[2].data.attrs.value;
-    } catch (e) {}
     return {
-      source: source,
-      page: page,
-      keep_timestamp: false,
+      source: this.$slots.body[0].children[0].text || "",
+      page: this.$slots.header[0].children[2].data.attrs.value,
+      keep_timestamp: 0,
+      key: "",
       cmOption: {
         tabSize: 4,
         foldGutter: true,
@@ -364,7 +373,7 @@ export default {
           //	var regex = "^s?https?://[-_.!~*'()a-zA-Z0-9;/?:@&=+$,%#]+$";
           var my_link = prompt("URL:", "https://");
           if (my_link !== null) {
-            ret = "[[" + str + ">" + my_link + "]]";
+            ret = "[" + str + "](" + my_link + ")";
           } else {
             return;
           }
@@ -433,6 +442,8 @@ export default {
     "b-button-group": bButtonGroup,
     "b-button-toolbar": bButtonToolbar,
     "b-form-checkbox": bFormCheckbox,
+    "b-form-checkbox-group": bFormCheckboxGroup,
+    "b-form-group": bFormGroup,
     "b-form-input": bFormInput,
     "b-input-group": bInputGroup,
     "b-input-group-text": bInputGroupText,

@@ -24,7 +24,7 @@ class CreateBackupsTable extends Migration
     {
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
             $table->bigIncrements('id')->comment('バックアップ番号');
-            $table->unsignedInteger('post_id')->references('id')->on('pages')->comment('記事番号');
+            $table->unsignedInteger('page_id')->references('id')->on('pages')->comment('記事番号');
             $table->unsignedInteger('user_id')->references('id')->on('users')->nullable()->comment('ユーザID');
             $table->longText('source')->comment('内容');
             $table->ipAddress('ip_address')->nullable()->comment('IPアドレス');

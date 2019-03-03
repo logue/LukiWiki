@@ -134,9 +134,9 @@ class Page extends Model
      *
      * @return bool
      */
-    public static function exsists(string $page):boolean
+    public static function exists(string $page):bool
     {
-        return self::where('page', $page)->exists();
+        return self::where('name', $page)->exists();
     }
 
     /**

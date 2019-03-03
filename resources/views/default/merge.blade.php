@@ -1,6 +1,7 @@
 @extends('layout.default')
 
 @section('content')
+<p>It seems that someone has already updated this page while you were editing it.</p>
 <form action="{{ url($page) }}" method="POST">
     @csrf
     <input type="hidden" name="hash" value="{{ $hash }}" />
@@ -11,7 +12,7 @@
                 <textarea name="remote" class="form-control" slot="remote">{{ $remote }}</textarea>
             </div>
             <div class="col-sm">
-                <textarea name="local" class="form-control" slot="local">{{ $local }}</textarea>
+                <textarea name="source" class="form-control" slot="source">{{ $source }}</textarea>
             </div>
         </div>
         <div class="text-right" slot="footer">

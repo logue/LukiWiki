@@ -1,8 +1,25 @@
 <template>
-  <div class="codemirror">
+  <div>
+    <div class="d-flex">
+      <div class="mx-auto">Remote
+        <b-button
+          size="sm"
+          variant="outline-secondary"
+          v-b-tooltip
+          title="Help"
+          v-on:click="help('remote')"
+        >
+          <font-awesome-icon fas size="sm" fixed-width icon="question"/>
+        </b-button>
+      </div>
+      <div class="mx-auto">Local</div>
+      <div class="mx-auto">Origin</div>
+    </div>
     <codemirror
       :merge="true"
       :options="cmOption"
+      name="source"
+      v-model="source"
       @cursorActivity="onCmCursorActivity"
       @ready="onCmReady"
       @focus="onCmFocus"
@@ -10,31 +27,39 @@
       @input="onCmInput"
       @scroll="onCmScroll"
     ></codemirror>
-    <div class="form-row align-items-center" aria-label="Editor Footer">
-      <div class="col-md-3 col-sm-6">
+    <div class="form-row align-items-center d-flex" aria-label="Editor Footer">
+      <div class="p-1">
         <b-form-checkbox
-          id="keep_timestamp"
+          switch
           v-model="keep_timestamp"
+          name="keep_timestamp"
           value="1"
           unchecked-value="0"
         >Keep Timestamp</b-form-checkbox>
       </div>
-      <div class="col-md col-sm-6">
+      <div class="p-1">
         <b-input-group>
           <b-input-group-text slot="prepend">
             <font-awesome-icon fas icon="key"/>
           </b-input-group-text>
           <b-form-input
             name="password"
+            type="password"
+            v-model="key"
             autocomplete="off"
-            v-b-tooltip
-            title="Password"
-            v-bind:disabled="keep_timestamp === 0"
+            placeholder="Password"
+            v-bind:disabled="keep_timestamp == 0"
           />
         </b-input-group>
       </div>
-      <div class="col-md-4 col-sm-12 text-right mr-0 mt-1 mt-md-0">
-        <b-button variant="primary" type="submit" name="action" value="save">
+      <div class="ml-auto px-1">
+        <b-button
+          variant="primary"
+          type="submit"
+          name="action"
+          value="save"
+          v-bind:disabled="keep_timestamp == 1 && key == ''"
+        >
           <font-awesome-icon fas fixed-width icon="check" class="mr-1"/>Submit
         </b-button>
         <b-button variant="secondary" type="submit" name="action" value="cancel">
@@ -50,6 +75,8 @@
 import bButton from "bootstrap-vue/es/components/button/button";
 // Form Checkbox
 import bFormCheckbox from "bootstrap-vue/es/components/form-checkbox/form-checkbox";
+// Form Checkbox group
+import bFormCheckboxGroup from "bootstrap-vue/es/components/form-checkbox/form-checkbox-group";
 // Form Input
 import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
 // Input Group
@@ -57,18 +84,20 @@ import bInputGroup from "bootstrap-vue/es/components/input-group/input-group";
 import bInputGroupText from "bootstrap-vue/es/components/input-group/input-group-text";
 
 // language
-import "codemirror/mode/css/css.js";
-import "codemirror/mode/xml/xml.js";
-import "codemirror/mode/htmlmixed/htmlmixed.js";
+//import "codemirror/mode/css/css.js";
+//import "codemirror/mode/xml/xml.js";
+//import "codemirror/mode/htmlmixed/htmlmixed.js";
 
 // merge css
-import "codemirror/addon/merge/merge.css";
+//import "codemirror/addon/merge/merge.css";
 
 // merge js
 import "codemirror/addon/merge/merge.js";
 
 // google DiffMatchPatch
 import DiffMatchPatch from "diff-match-patch";
+
+import "codemirror/addon/selection/active-line.js";
 
 // DiffMatchPatch config with global
 window.diff_match_patch = DiffMatchPatch;
@@ -79,8 +108,8 @@ window.DIFF_EQUAL = 0;
 // FontAwesome
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
-library.add(faBan, faCheck);
+import { faBan, faCheck, faQuestion } from "@fortawesome/free-solid-svg-icons";
+library.add(faBan, faCheck, faQuestion);
 
 export default {
   beforeCreate() {},
@@ -89,7 +118,11 @@ export default {
   data() {
     // console.log('html', html, 'orig1', 'orig2', orig2)
     const slot = this.$slots;
+
     return {
+      keep_timestamp: 0,
+      key: "",
+      source: "",
       cmOption: {
         value: slot.default[1].children[2].children[0].children[0].text,
         origLeft: slot.default[1].children[0].children[0].children[0].text,
@@ -126,6 +159,8 @@ export default {
     "b-button": bButton,
     "b-form-checkbox": bFormCheckbox,
     "b-form-input": bFormInput,
+    "b-form-checkbox": bFormCheckbox,
+    "b-form-checkbox-group": bFormCheckboxGroup,
     "b-input-group": bInputGroup,
     "b-input-group-text": bInputGroupText,
     "font-awesome-icon": FontAwesomeIcon

@@ -4,13 +4,13 @@
 <form action="{{ url($page) }}" method="POST">
     @csrf
     <input type="hidden" name="hash" value="{{ $hash }}" />
-    <input type="hidden" name="original" value="{{ $source }}" />
+    <input type="hidden" name="origin" value="{{ $source }}" />
     <lw-editor>
         <div class="input-group" slot="header">
             <div class="input-group-prepend">
-                <label class="input-group-text" for="pagename-textbox">Page Name</label>
+                <label class="input-group-text" for="txt_page">Page Name</label>
             </div>
-            <input type="text" class="form-control" id="pagename-textbox" name="page" value="{{ $page }}" />
+            <input type="text" class="form-control" id="txt_page" name="page" value="{{ $page }}" />
         </div>
         <textarea name="source" class="form-control" slot="body">{{ $source }}</textarea>
         <div class="text-right" slot="footer">

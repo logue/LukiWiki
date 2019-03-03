@@ -42,9 +42,10 @@ abstract class AbstractInline
      *
      * @param int $start
      */
-    public function __construct(int $start)
+    public function __construct(int $start, string $page)
     {
         $this->start = $start;
+        $this->page = $page;
     }
 
     /**
