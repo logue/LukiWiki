@@ -49,7 +49,7 @@ class Page extends Model
      */
     public function attachments(): HasMany
     {
-        return $this->hasMany(Attachment::class);
+        return $this->hasMany('App\Models\Attachment');
     }
 
     /**
@@ -85,6 +85,19 @@ class Page extends Model
     {
         return self::where('pages.name', $page)
             ->join('attachments', 'pages.id', '=', 'attachments.page_id');
+    }
+
+    /**
+     * ページのバックアップ一覧.
+     *
+     * @param string $page
+     *
+     * @return Builder
+     */
+    public static function getBackups(string $page):Builder
+    {
+        return self::where('pages.name', $page)
+            ->join('backups', 'pages.id', '=', 'backups.page_id');
     }
 
     /**

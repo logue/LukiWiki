@@ -28,15 +28,14 @@
 <section id="upload">
   <fieldset>
     <legend>Upload</legend>
-    <form enctype="multipart/form-data" action="{{ url('/:upload') }}" method="post" class="form-inline">
+    <form enctype="multipart/form-data" action="{{ url($page.':upload') }}" method="post" class="form-inline">
       @csrf
       <input type="hidden" name="action" value="attachment" />
-      <input type="hidden" name="page" value="{{ $page }}" />
       <div class="custom-file">
         <input type="file" class="custom-file-input" id="attachment">
         <label class="custom-file-label" for="attachment" multiple="multiple">Select attachment file</label>
       </div>
-      <button class="btn btn-primary" type="submit"><span class="fa fa-upload"></span>アップロード</button>
+      <button class="btn btn-primary" type="submit" ><span class="fa fa-upload"></span>アップロード</button>
     </form>
   </fieldset>
 </section>

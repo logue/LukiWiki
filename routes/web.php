@@ -35,6 +35,7 @@ Route::get('{page}:edit', 'WikiController@edit')->where('page', '.[^:]+');
 Route::get('{page}:attachments', 'WikiController@attachments')->where('page', '.[^:]+');
 Route::get('{page}:attachments/{file}', 'WikiController@attachments')->where('page', '.[^:]+');
 Route::get('{page}:history', 'WikiController@history')->where('page', '.[^:]+');
+Route::get('{page}:history/{age}', 'WikiController@history')->where('page', '.[^:]+')->where('age', '\d+');
 Route::get('{page}:source', 'WikiController@source')->where('page', '.[^:]+');
 Route::get('{page}:print', 'WikiController@print')->where('page', '.[^:]+');
 Route::post('{page}:delete', 'WikiController@destroy')->where('page', '.[^:]+');

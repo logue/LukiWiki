@@ -42,7 +42,7 @@ class ApiController extends Controller
     /**
      * 添付ファイルを出力.
      */
-    public function attachment(Request $request, string $id):Response
+    public function attachment(Request $request, int $id):Response
     {
         $file = Attachment::where('attachments.id', $id)->first();
 

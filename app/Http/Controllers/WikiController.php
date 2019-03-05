@@ -25,6 +25,11 @@ class WikiController extends Controller
     // あくまでも新旧のデーターに変化があったかのチェック用途であるため、高速なcrc32で十分だと思う。
     const HASH_ALGORITHM = 'crc32';
 
+    public function __construct()
+    {
+        $this->page = new Page();
+    }
+
     /**
      * ページを読み込む
      */
@@ -38,12 +43,10 @@ class WikiController extends Controller
         }
 
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
-        $id = Page::getPageId($page);
-        if (!$id) {
-            // ページが見つからない場合は404エラー
+        $entry = $this->page->where('name', $page)->first();
+        if (!$entry) {
             return abort(404, 'Page '.$page.' is not found.');
         }
-        $entry = Page::find($id);
         Debugbar::stopMeasure('db');
 
         Debugbar::startMeasure('parse', 'Converting wiki data...');
@@ -73,7 +76,7 @@ class WikiController extends Controller
      */
     public function source(Request $request, string $page):View
     {
-        $entry = Page::where('name', $page)->first();
+        $entry = $this->page->where('name', $page)->first();
 
         return view(
            'default.source', [
@@ -89,10 +92,11 @@ class WikiController extends Controller
      */
     public function attachments(Request $request, string $page, ?string $file = null)
     {
-        $attachments = Page::getAttachments($page);
+        Debugbar::startMeasure('db', 'Fetch '.$page.' attached files from db.');
+        $attachments = $this->page->getAttachments($page);
+        Debugbar::stopMeasure('db');
 
         if (!empty($file)) {
-            //dd($attachments->where('attachments.name', $file)->first()->id);
             return redirect(':api/attachment/'.$attachments->where('attachments.name', $file)->first()->id);
         }
 
@@ -101,6 +105,37 @@ class WikiController extends Controller
                 'page'         => $page,
                 'attachments'  => $attachments->select('attachments.*')->get(),
                 'title'        => 'Attached files of '.$page,
+            ]
+        );
+    }
+
+    /**
+     * バックアップ.
+     */
+    public function history(Request $request, string $page, ?int $age = null):View
+    {
+        Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
+        $backups = $this->page->getBackups($page)->select('backups.*')->orderBy('updated_at', 'desc');
+        if (!empty($age)) {
+            $backups->offset($age - 1)->limit(1);
+        }
+        Debugbar::stopMeasure('db');
+
+        if (!empty($age)) {
+            return view(
+               'default.source', [
+                    'page'    => $page,
+                    'source'  => $backups->first()->source,
+                    'title'   => 'Backup of '.$page.'('.$age.')',
+                ]
+            );
+        }
+
+        return view(
+           'default.history', [
+                'page'         => $page,
+                'entries'      => $backups->get(),
+                'title'        => 'Histories of '.$page,
             ]
         );
     }
@@ -169,6 +204,7 @@ class WikiController extends Controller
      * 保存処理.
      *
      * @param Request $request
+     * @param string  $page
      */
     public function save(Request $request, ?string $page = null)
     {
@@ -181,73 +217,79 @@ class WikiController extends Controller
             abort(400, 'Page name is undefined.');
         }
 
-        if (Page::exists($page)) {
-            // ページが存在する場合、DB上のソースを取得。
-            $remote = Page::where('name', $page)->first();
-            $page_id = $remote->id;
-            $hash = hash(self::HASH_ALGORITHM, $remote->source);
+        if ($request->input('action') === 'save') {
+            if ($this->page->exists($page)) {
+                // ページが存在する場合、DB上のソースを取得。
+                $remote = $this->page->where('name', $page)->first();
+                $page_id = $remote->id;
+                $hash = hash(self::HASH_ALGORITHM, $remote->source);
 
-            if ($hash === hash(self::HASH_ALGORITHM, $request->input('hash'))) {
-                // ハッシュが同じだった場合処理しない
-                return redirect($page);
-            } elseif ($hash !== $request->input('hash')) {
-                // 編集前のデータのハッシュ値と比較し、違いがある場合、編集の競合が起きたと判断。
-                // マージ画面を表示する。
-                return view(
-                    'default.merge',
-                    [
-                        'page'   => $page,
-                        'origin' => $request->input('origin'),
-                        'remote' => $remote->source,
-                        'source' => $request->input('source'),
-                        'title'  => sprintf('On updating %1s, a collision has occurred.', $page),
-                        'hash'   => hash(self::HASH_ALGORITHM, $request->input('origin')),
-                    ]
-                );
-            }
+                if ($hash === hash(self::HASH_ALGORITHM, $request->input('hash'))) {
+                    // ハッシュが同じだった場合処理しない
+                    return redirect($page);
+                } elseif ($hash !== $request->input('hash')) {
+                    // 編集前のデータのハッシュ値と比較し、違いがある場合、編集の競合が起きたと判断。
+                    // マージ画面を表示する。
+                    return view(
+                        'default.merge',
+                        [
+                            'page'   => $page,
+                            'origin' => $request->input('origin'),
+                            'remote' => $remote->source,
+                            'source' => $request->input('source'),
+                            'title'  => sprintf('On updating %1s, a collision has occurred.', $page),
+                            'hash'   => hash(self::HASH_ALGORITHM, $request->input('origin')),
+                        ]
+                    );
+                }
 
-            // 更新処理
-            Page::where('name', $page)->update([
-                'source'     => $request->input('source'),
-                'ip_address' => $request->ip(),
-            ]);
-
-            // バックアップ処理
-            $backup = Backup::where('page_id', $page_id)->latest()->first();
-            //dd(Carbon::now()->timestamp - Carbon::parse($backup->created_at)->timestamp);
-            //dd(Config::get('lukiwiki.backup.interval') * 60);
-            if ($backup &&
-                !(Carbon::now()->timestamp - Carbon::parse($backup->created_at)->timestamp) <
-                Config::get('lukiwiki.backup.interval')) {
-                // バックアップが存在するが、インターバルの時間未満だった場合、最新のバックアップを上書きする。
-                Backup::where('id', $backup->id)->update([
-                    'source'     => $remote->source,
+                // 更新処理
+                $this->page->where('name', $page)->update([
+                    'source'     => $request->input('source'),
                     'ip_address' => $request->ip(),
-                    'updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
+
+                // バックアップ処理
+                $backup = Backup::where('page_id', $page_id)->latest()->first();
+                //dd(Carbon::now()->timestamp - Carbon::parse($backup->created_at)->timestamp);
+                //dd(Config::get('lukiwiki.backup.interval') * 60);
+                if ($backup &&
+                    !(Carbon::now()->timestamp - Carbon::parse($backup->created_at)->timestamp) <
+                    Config::get('lukiwiki.backup.interval')) {
+                    // バックアップが存在するが、インターバルの時間未満だった場合、最新のバックアップを上書きする。
+                    Backup::where('id', $backup->id)->update([
+                        'source'     => $remote->source,
+                        'ip_address' => $request->ip(),
+                        'updated_at' => Carbon::now()->toDateTimeString(),
+                    ]);
+                } else {
+                    //dd(Backup::where('page_id', $page_id)->latest()->first());
+                    // そうでない場合はバックアップを追記
+                    Backup::insert([
+                        'page_id'    => $page_id,
+                        'source'     => $remote->source,
+                        'ip_address' => $request->ip(),
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                        'updated_at' => Carbon::now()->toDateTimeString(),
+                    ]);
+                }
             } else {
-                //dd(Backup::where('page_id', $page_id)->latest()->first());
-                // そうでない場合はバックアップを追記
-                Backup::insert([
-                    'page_id'    => $page_id,
-                    'source'     => $remote->source,
+                // 新規作成
+                Page::insert([
+                    'name'       => $page,
+                    'source'     => $request->input('source'),
                     'ip_address' => $request->ip(),
                     'created_at' => Carbon::now()->toDateTimeString(),
                     'updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
             }
-        } else {
-            // 新規作成
-            Page::insert([
-                'name'       => $page,
-                'source'     => $request->input('source'),
-                'ip_address' => $request->ip(),
-                'created_at' => Carbon::now()->toDateTimeString(),
-                'updated_at' => Carbon::now()->toDateTimeString(),
-            ]);
-        }
 
-        $request->session()->flash('message', 'Saved');
+            $request->session()->flash('message', 'Saved');
+        } elseif ($request->input('action') === 'upload') {
+            // TODO
+        } else {
+            $request->session()->flash('message', 'Cancelled');
+        }
 
         return redirect($page);
     }
@@ -264,7 +306,7 @@ class WikiController extends Controller
         return view(
             'default.list',
             [
-                'entries' => Page::getEntries(),
+                'entries' => $this->page->getEntries(),
                 'title'   => 'List',
             ]
         );
@@ -282,7 +324,7 @@ class WikiController extends Controller
         return view(
             'default.recent',
             [
-                'entries' => Page::getLatest()->get(),
+                'entries' => $this->page->getLatest()->get(),
                 'title'   => 'RecentChanges',
             ]
         );
