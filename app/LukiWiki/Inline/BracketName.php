@@ -32,7 +32,7 @@ class BracketName extends AbstractInline
                         '(?:https?|ftp|ssh)'.   // protocol
                         '(?::\/\/[^\(\)][-_.!~*\'a-zA-Z0-9;\/?:\@&=+\$,%#]+)'.
                         '|'.
-                        '(?:.[^\r\n\t\f&":\(\)]+?)'.
+                        '(?:.[^\r\n\t\f&"(\)]+?)'.
                         '(?:\#(\w[^\#]+?))?'.       // [3] Anchor
                     ')'.
                     '(?:\s+(?:"(.*[^\(\)"]?)"))?'.  // [4] Title
@@ -50,11 +50,13 @@ class BracketName extends AbstractInline
 
     public function setPattern(array $arr)
     {
-        //dd($this->getPattern(), $arr,  $this->splice($arr));
-
         list($this->alias, $this->href, $this->anchor, $this->title, $this->body) = $this->splice($arr);
 
-        //dd($this->splice($arr));
+        //dd($this);
+
+        if (strpos($this->alias, '#')) {
+            $this->anchor = $this->alias;
+        }
 
         if (empty($this->href)) {
             $this->href = $this->alias;
@@ -66,9 +68,6 @@ class BracketName extends AbstractInline
 
         //dd($this->page);
 
-        if (strpos($this->alias, '#')) {
-            $this->anchor = $this->alias;
-        }
         if (!empty($page)) {
             if (empty($this->anchor)) {
                 //return false;
@@ -82,14 +81,18 @@ class BracketName extends AbstractInline
 
     public function __toString()
     {
+        //dd($this->href);
+        if (strpos($this->href, 'http') !== false) {
+            return '<a href="'.$this->href.'" title="'.$this->title.'">'.$this->alias.'</a>';
+        }
+
         if (!empty($this->page)) {
+            // 自動リンク
             if (in_array($this->page, array_keys(Page::getEntries()))) {
                 return '<a href="'.url($this->page).'" title="'.$this->title.'">'.$this->alias.'</a>';
             }
-
+            // ページが見つからない場合のリンク
             return '<span class="bg-light text-dark">'.$this->alias.'<a href="'.url($this->page).':edit" rel="nofollow" title="Edit '.$this->page.'" v-b-tooltip>?</a></span>';
         }
-
-        return '<a href="'.$this->href.'" title="'.$this->title.'">'.$this->alias.'</a>';
     }
 }

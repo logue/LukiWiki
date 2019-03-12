@@ -62,6 +62,8 @@ class Kernel extends HttpKernel
         'verified'      => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'redirect' => \App\Http\Middleware\RedirectIfDirectAccess::class,
+        'sanitize' => \App\Http\Middleware\Sanitize::class,
+        'keyword'  => \App\Http\Middleware\KeywordExploder::class,
     ];
 
     /**

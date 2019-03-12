@@ -1,5 +1,7 @@
 @extends('layout.default')
 
+@section('title', __('List'))
+
 @section('content')
 <ul class="entries">
     @foreach ($entries as $entry=>$updated)

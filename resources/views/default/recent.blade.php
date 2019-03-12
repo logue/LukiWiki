@@ -1,5 +1,7 @@
 @extends('layout.default')
 
+@section('title', __('Recent Changes'))
+
 @section('content')
 <ol class="recent">
     @foreach ($entries as $entry)

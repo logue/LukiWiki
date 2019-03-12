@@ -248,7 +248,7 @@ import "codemirror/addon/search/match-highlighter.js";
 import "codemirror/addon/edit/matchbrackets.js";
 import "codemirror/addon/comment/comment.js";
 import "codemirror/addon/dialog/dialog.js";
-import "codemirror/addon/dialog/dialog.css";
+//import "codemirror/addon/dialog/dialog.css";
 import "codemirror/addon/search/searchcursor.js";
 import "codemirror/addon/search/search.js";
 import "codemirror/keymap/sublime.js";
@@ -263,14 +263,16 @@ import "codemirror/keymap/sublime.js";
 //import "codemirror/addon/fold/xml-fold.js";
 // Show hint
 import "codemirror/addon/hint/show-hint.js";
-import "codemirror/addon/hint/show-hint.css";
+//import "codemirror/addon/hint/show-hint.css";
+
+import axios from "axios";
 
 export default {
   data() {
     let source, page;
     return {
       source: this.$slots.body[0].children[0].text || "",
-      page: this.$slots.header[0].children[2].data.attrs.value,
+      page: this.$slots.header[0].children[2].data.attrs.value || "",
       keep_timestamp: 0,
       key: "",
       cmOption: {

@@ -10,13 +10,17 @@
 namespace App\Http\Controllers;
 
 use App\LukiWiki\Element\RootElement;
+use App\Models\Attachment;
 use App\Models\Backup;
 use App\Models\Page;
 use Carbon\Carbon;
 use Config;
 use Debugbar;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\View\View;
+use SebastianBergmann\Diff\Differ;
 
 class WikiController extends Controller
 {
@@ -32,11 +36,15 @@ class WikiController extends Controller
 
     /**
      * ページを読み込む
+     *
+     * @param Illuminate\Http\Request $request
+     * @param string                  $query
+     *
+     * @return Illuminate\View\View
      */
     public function __invoke(Request $request, ?string $query = null):View
     {
         $page = rawurldecode($query);
-        $ext = substr($query, strrpos($query, '.', -1), strlen($query));
 
         if (empty($page)) {
             $page = Config::get('lukiwiki.special_page.default');
@@ -47,6 +55,7 @@ class WikiController extends Controller
         if (!$entry) {
             return abort(404, 'Page '.$page.' is not found.');
         }
+        $attachments = $this->page->attachments()->get();
         Debugbar::stopMeasure('db');
 
         Debugbar::startMeasure('parse', 'Converting wiki data...');
@@ -66,13 +75,17 @@ class WikiController extends Controller
                 'content'   => $body->__toString(),
                 'title'     => $entry->title ?? $page,
                 'notes'     => $meta['note'] ?? null,
-                'attaches'  => $entry->attachments()->get(),
+                'attaches'  => $attachments,
             ]
         );
     }
 
     /**
      * ソース.
+     *
+     * @param Illuminate\Http\Request $request
+     *
+     * @return Illuminate\View\View
      */
     public function source(Request $request, string $page):View
     {
@@ -89,6 +102,12 @@ class WikiController extends Controller
 
     /**
      * 添付ファイル一覧.
+     *
+     * @param Illuminate\Http\Request $request
+     * @param string                  $page
+     * @param string                  $file
+     *
+     * @return Illuminate\View\View
      */
     public function attachments(Request $request, string $page, ?string $file = null)
     {
@@ -97,20 +116,26 @@ class WikiController extends Controller
         Debugbar::stopMeasure('db');
 
         if (!empty($file)) {
-            return redirect(':api/attachment/'.$attachments->where('attachments.name', $file)->first()->id);
+            // TODO
+            return redirect(':api/attachment/'.$attachments->select('attachments.id')->where('attachments.name', $file)->first()->id);
         }
 
         return view(
            'default.attachment', [
                 'page'         => $page,
                 'attachments'  => $attachments->select('attachments.*')->get(),
-                'title'        => 'Attached files of '.$page,
             ]
         );
     }
 
     /**
      * バックアップ.
+     *
+     * @param Illuminate\Http\Request $request
+     * @param string                  $page
+     * @param int                     $age
+     *
+     * @return Illuminate\View\View
      */
     public function history(Request $request, string $page, ?int $age = null):View
     {
@@ -135,19 +160,47 @@ class WikiController extends Controller
            'default.history', [
                 'page'         => $page,
                 'entries'      => $backups->get(),
-                'title'        => 'Histories of '.$page,
+            ]
+        );
+    }
+
+    /**
+     * 差分.
+     *
+     * @param Illuminate\Http\Request $request
+     * @param string                  $page
+     * @param int                     $age
+     *
+     * @return Illuminate\View\View
+     */
+    public function diff(Request $request, string $page, int $age = 1):View
+    {
+        Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
+        $old = $this->page->getBackups($page)->orderBy('backups.updated_at', 'desc')->offset($age - 1)->value('backups.source');
+        $new = $entry = $this->page->select('source')->where('name', $page)->value('source');
+        $differ = new Differ();
+        Debugbar::stopMeasure('db');
+
+        return view(
+           'default.diff', [
+                'page'  => $page,
+                'diff'  => $differ->diff($old, $new),
             ]
         );
     }
 
     /**
      * 印刷.
+     *
+     * @param Illuminate\Http\Request $request
+     * @param string                  $page
+     *
+     * @return Illuminate\View\View
      */
     public function print(Request $request, string $page):View
     {
-        $entry = Page::where('name', $page)->first();
+        $entry = $this->page->where('name', $page)->first();
 
-        Debugbar::startMeasure('parse', 'Converting wiki data...');
         //dd($entry->source);
         $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $entry->source));
 
@@ -161,13 +214,17 @@ class WikiController extends Controller
            'layout.print', [
                 'page'    => $entry->name,
                 'body'    => $body,
-                'title'   => $entry->name,
             ]
         );
     }
 
     /**
      * 編集画面表示.
+     *
+     * @param Illuminate\Http\Request $request
+     * @param string                  $page
+     *
+     * @return Illuminate\View\View
      */
     public function edit(Request $request, string $page = null):View
     {
@@ -180,7 +237,6 @@ class WikiController extends Controller
                 [
                     'page'   => '',
                     'source' => '',
-                    'title'  => 'Create New Page',
                     'hash'   => 0,
                 ]
              );
@@ -194,7 +250,6 @@ class WikiController extends Controller
                 'page'        => $page,
                 'source'      => $entry->source,
                 'description' => $entry->description,
-                'title'       => 'Edit '.$page,
                 'hash'        => hash(self::HASH_ALGORITHM, $entry->source),
             ]
          );
@@ -203,10 +258,13 @@ class WikiController extends Controller
     /**
      * 保存処理.
      *
-     * @param Request $request
-     * @param string  $page
+     * @param Illuminate\Http\Request $request
+     * @param string                  $page
+     * @param string                  $file
+     *
+     * @return Illuminate\Http\Response
      */
-    public function save(Request $request, ?string $page = null)
+    public function save(Request $request, ?string $page = null):Response
     {
         if (!$request->isMethod('post')) {
             // Method not allowed
@@ -237,7 +295,6 @@ class WikiController extends Controller
                             'origin' => $request->input('origin'),
                             'remote' => $remote->source,
                             'source' => $request->input('source'),
-                            'title'  => sprintf('On updating %1s, a collision has occurred.', $page),
                             'hash'   => hash(self::HASH_ALGORITHM, $request->input('origin')),
                         ]
                     );
@@ -284,22 +341,87 @@ class WikiController extends Controller
                 ]);
             }
 
-            $request->session()->flash('message', 'Saved');
-        } elseif ($request->input('action') === 'upload') {
-            // TODO
+            $request->session()->flash('message', __('Saved'));
         } else {
-            $request->session()->flash('message', 'Cancelled');
+            $request->session()->flash('message', __('Cancelled'));
         }
 
         return redirect($page);
     }
 
     /**
+     * アップロード.
+     *
+     * @param Illuminate\Http\Request $request
+     * @param string                  $page
+     *
+     * @return Illuminate\Http\Response
+     */
+    public function upload(Request $request, string $page)
+    {
+        // ファイルのバリデーション
+        $this->validate($request, [
+            'file.*, file' => [
+                // 必須
+                'required',
+                // バリデーター
+                'file',
+                // アップロード可能なMIMEタイプを指定
+                'mimes:doc,docx,pdf|image|archive',
+            ],
+        ]);
+
+        $page_id = $this->page->getId($page);
+
+        if (is_array($request->file('file'))) {
+            // 複数のファイルを一度にアップロードしたときは配列になるので一つづつ処理
+            foreach ($request->file('file') as $entry) {
+                self::processUpload($entry, $page_id);
+            }
+        } else {
+            // 一つのファイルのみをアップロードしたときはオブジェクトになる。
+            self::processUpload($request->file('file'), $page_id);
+        }
+
+        $request->session()->flash('message', __('Uploaded'));
+
+        return redirect($page.':attachments');
+    }
+
+    /**
+     * アップロード内部処理.
+     *
+     * @param Illuminate\Http\UploadedFile $entry
+     * @param string                       $page
+     *
+     * @return Illuminate\Http\Response
+     */
+    private function processUpload(UploadedFile $entry, int $page_id) :bool
+    {
+        $attach = new Attachment();
+
+        if ($entry->isValid()) {
+            $md5Name = hash_file('sha1', $entry->getRealPath());
+            $ext = $entry->guessExtension();
+
+            $attach->page_id = $page_id;
+            $attach->locked = false;
+            $attach->name = $entry->getClientOriginalName();
+            $attach->stored_name = basename($entry->storeAs('attachments', $md5Name.'.'.$ext));
+            $attach->mime = $entry->getMimeType();
+            $attach->size = $entry->getClientSize();
+            $attach->save();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * ページ一覧.
      *
-     * @param string $type
-     *
-     * @return View
+     * @return Illuminate\View\View
      */
     public function list():View
     {
@@ -307,7 +429,6 @@ class WikiController extends Controller
             'default.list',
             [
                 'entries' => $this->page->getEntries(),
-                'title'   => 'List',
             ]
         );
     }
@@ -315,9 +436,7 @@ class WikiController extends Controller
     /**
      * 更新履歴表示.
      *
-     * @param string $type
-     *
-     * @return View
+     * @return Illuminate\View\View
      */
     public function recent():View
     {
@@ -325,7 +444,33 @@ class WikiController extends Controller
             'default.recent',
             [
                 'entries' => $this->page->getLatest()->get(),
-                'title'   => 'RecentChanges',
+            ]
+        );
+    }
+
+    /**
+     * 検索処理.
+     *
+     * @param Request $request
+     *
+     * @return Illuminate\View\View
+     */
+    public function search(Request $request):View
+    {
+        $entries = [];
+        $keywords = $request->input('keyword');
+        if (!empty($keywords)) {
+            Debugbar::startMeasure('search', 'Searching...');
+            $entries = $this->page->search($keywords)->get()->toArray();
+            Debugbar::stopMeasure('parse');
+        }
+        //dd($entries);
+
+        return view(
+            'default.search',
+            [
+                'keywords' => $keywords,
+                'entries'  => $entries,
             ]
         );
     }

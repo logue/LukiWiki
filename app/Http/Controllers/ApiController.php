@@ -21,6 +21,8 @@ class ApiController extends Controller
 
     /**
      * Atomを出力.
+     *
+     * @retun Illuminate\Http\Response
      */
     public function atom():Response
     {
@@ -31,6 +33,8 @@ class ApiController extends Controller
 
     /**
      * Sitemap.xmlを出力.
+     *
+     * @retun Illuminate\Http\Response
      */
     public function sitemap():Response
     {
@@ -41,14 +45,23 @@ class ApiController extends Controller
 
     /**
      * 添付ファイルを出力.
+     *
+     * @retun Illuminate\Http\Response
      */
     public function attachment(Request $request, int $id):Response
     {
-        $file = Attachment::where('attachments.id', $id)->first();
+        $file = Attachment::select('stored_name')->where('attachments.id', $id)->first();
 
         return response(Storage::get('attachments/'.$file->stored_name))
             ->header('Content-Type', $file->mime)
             ->header('Content-length', $file->size)
             ->header('Last-Modified', $file->updated_at);
+    }
+
+    /**
+     * 添付ファイル存在確認.
+     */
+    public function checkExsists(Request $request, string $name):Response
+    {
     }
 }

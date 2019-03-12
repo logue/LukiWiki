@@ -10,6 +10,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Backup extends Model
 {
@@ -17,8 +18,10 @@ class Backup extends Model
 
     /**
      * このバックアップの元ページ.
+     *
+     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function page()
+    public function page():BelongsTo
     {
         return $this->belongsTo(Page::class);
     }

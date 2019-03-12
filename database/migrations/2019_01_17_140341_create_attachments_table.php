@@ -31,9 +31,9 @@ class CreateAttachmentsTable extends Migration
             $table->string('stored_name')->comment('実体名');
             $table->string('mime')->default('application/octet-stream')->comment('MIMEタイプ');
             $table->ipAddress('ip_address')->nullable()->comment('IPアドレス');
-            $table->boolean('locked')->comment('ロックフラグ');
+            $table->boolean('locked')->default(false)->comment('ロックフラグ');
             $table->unsignedInteger('size')->comment('ファイル容量');   // バイトで管理（1G前後ファイルを添付することは想像したくないが・・・。）
-            $table->unsignedInteger('count')->comment('カウンタ');
+            $table->unsignedInteger('count')->default(0)->comment('カウンタ');
             $table->json('meta')->nullable()->comment('メタ情報');
             $table->timestamps();
         });

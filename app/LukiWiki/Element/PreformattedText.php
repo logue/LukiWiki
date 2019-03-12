@@ -18,9 +18,11 @@ class PreformattedText extends AbstractElement
 {
     private $lang;
 
-    public function __construct($root, $text, $meta)
+    public function __construct($root, $text)
     {
         parent::__construct();
+        $body = explode("\r", $text);
+        $meta = array_shift($body);
         if (!empty($meta)) {
             if (strpos($meta, ':')) {
                 list($this->meta['lang'], $this->meta['name']) = explode(':', $meta);
@@ -30,7 +32,7 @@ class PreformattedText extends AbstractElement
             }
         }
 
-        $this->elements[] = $text;
+        $this->elements[] = implode("\n", $body);
     }
 
     public function canContain($obj)

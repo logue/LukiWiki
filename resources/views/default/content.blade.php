@@ -1,5 +1,7 @@
 @extends('layout.default')
 
+@section('title', $page )
+
 @section('content')
 {!! $content !!}
 @if($notes)

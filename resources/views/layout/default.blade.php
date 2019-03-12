@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="generator" content="LukiWiki v{{ \App\LukiWiki\Parser::VERSION }}" />
-    <title>{{ $title }} - {{ Config::get('lukiwiki.sitename') }}</title>
+    <title>@yield('title') - {{ Config::get('lukiwiki.sitename') }}</title>
     @if(isset($page))
     <link rel="canonical" href="{{ $page ? url($page) : url('/') }}" />
     <link rel="amphtml" href="{{ $page ? url($page) : url('/') }}:amp" />
@@ -21,7 +21,8 @@
 <body class="h-100">
     <div id="app" class="d-flex flex-column h-100">
         <header>
-            <lw-navbar brand="{{ Config::get('lukiwiki.sitename') }}" baseUri="{{ url('/') }}" page="{{ $page ?? '' }}">
+            <lw-navbar brand="{{ Config::get('lukiwiki.sitename') }}" base-uri="{{ url('/') }}"
+                page="{{ $page ?? '' }}">
                 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
                     <a class="navbar-brand" href="{{ url('/') }}">{{ Config::get('lukiwiki.sitename') }}</a>
                 </nav>
@@ -32,7 +33,7 @@
                 @if(Session::has('message'))
                 <b-alert show dismissible>{{ session('message') }}</b-alert>
                 @endif
-                <h1>{{ $title }}</h1>
+                <h1>@yield('title')</h1>
                 <hr />
                 @yield('content')
             </div>
@@ -44,6 +45,8 @@
             </div>
         </footer>
     </div>
+    <script src="{{ mix('js/manifest.js') }}"></script>
+    <script src="{{ mix('js/vendor.js') }}"></script>
     <script src="{{ mix('js/app.js') }}"></script>
     @yield('scripts')
 </body>

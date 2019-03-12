@@ -20,7 +20,7 @@
 <body class="A4">
     <main id="app" class="sheet padding-10mm mx-auto">
         <article>
-            <h1>{{ $title }}</h1>
+            <h1>{{ $page }}</h1>
             <hr />
             {!! $body !!}
         </article>

@@ -23,8 +23,10 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Route::pattern('page', '[^\!\#\$\&\*\+\,:;=?\@\[\]\~\0\.].+');
-        Route::pattern('attachment', '[^\!\#\$\&\*\+\,:;=?\@\[\]\~\0]\.+$');
+        // !, #, $, &, *, +, :, ;, @, [, ], ~, ?, ヌル文字は不許可
+        Route::pattern('page', '^[^\!\#\$\&\*\+\,:;=?\@\[\]\~\0].+$');
+        Route::pattern('file', '^[^\!\#\$\&\*\+\,:;=?\@\[\]\~\0].+$');  // ファイル名はページの規則以外に/も禁止する
+        Route::pattern('age', '^\d+$');
 
         parent::boot();
     }

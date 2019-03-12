@@ -106,9 +106,8 @@ class RootElement extends AbstractElement
                         break;
                     case '`':
                         // GFM:pre
-                        if (preg_match('/^(?:```(.+?)\r)(.+)\r```$/m', $line, $matches)) {
-                            //dd($matches);
-                            $content = new PreformattedText($this, $matches[2], $matches[1]);
+                        if (preg_match('/^```(.+)\r```$/m', $line, $matches)) {
+                            $content = new PreformattedText($this, $matches[1]);
                         }
                         break;
                     case '-':

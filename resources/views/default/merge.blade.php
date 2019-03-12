@@ -1,7 +1,9 @@
 @extends('layout.default')
 
+@section('title', sprintf(__('On updating %1s, a collision has occurred.'), $page))
+
 @section('content')
-<p>It seems that someone has already updated this page while you were editing it.</p>
+<p>{{ __('It seems that someone has already updated this page while you were editing it.') }}</p>
 <form action="{{ url($page) }}" method="POST">
     @csrf
     <input type="hidden" name="hash" value="{{ $hash }}" />

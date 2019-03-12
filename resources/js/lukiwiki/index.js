@@ -63,6 +63,7 @@ Vue.component('lw-editor', require('./components/Editor.vue').default);
 Vue.component('lw-navbar', require('./components/Navbar.vue').default);
 Vue.component('lw-media', require('./components/Media.vue').default);
 Vue.component('lw-merge', require('./components/Merge.vue').default);
+Vue.component('lw-breadcrumb', require('./components/Breadcrumb.vue').default);
 // ディレクティブ（作用する独自属性）の登録　例：<pre v-lw-sh>...</pre>
 //Vue.directive('lw-passage', require('./components/Passage.vue').default);
 Vue.directive('lw-sh', require('./components/SyntaxHighlighter.vue').default)

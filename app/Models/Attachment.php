@@ -10,6 +10,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Attachment extends Model
 {
@@ -21,6 +22,8 @@ class Attachment extends Model
 
     /**
      * この添付ファイルの貼り付けられたページ.
+     *
+     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function page() : belongsTo
     {
@@ -35,7 +38,7 @@ class Attachment extends Model
      *
      * @return bool
      */
-    public static function exsists(string $page, string $file):boolean
+    public static function exsists(string $page, string $file):bool
     {
         // TODO:
     }

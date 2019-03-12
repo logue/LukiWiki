@@ -30,9 +30,9 @@ class Page extends Model
     /**
      * 保存時にキャッシュ削除.
      *
-     * @param Builder $query
+     * @param Illuminate\Database\Eloquent\Builder $query
      *
-     * @return Builder
+     * @return Illuminate\Database\Eloquent\Builder
      */
     protected function setKeysForSaveQuery(Builder $query):Builder
     {
@@ -45,7 +45,7 @@ class Page extends Model
     /**
      * ページに貼り付けられた添付ファイル.
      *
-     * @return HasMany
+     * @return Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function attachments(): HasMany
     {
@@ -55,11 +55,30 @@ class Page extends Model
     /**
      * ページのバックアップ.
      *
-     * @return HasMany
+     * @return Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function backups(): HasMany
     {
         return $this->hasMany(Backup::class);
+    }
+
+    /**
+     * 検索.
+     *
+     * @param array $keywords
+     *
+     * @return Illuminate\Database\Eloquent\Builder
+     */
+    public static function search(array $keywords):Builder
+    {
+        $query = self::select('name');
+        foreach ($keywords as $keyword) {
+            $query
+                ->where('name', 'like', '%'.$keyword.'%')
+                ->orWhere('source', 'like', '%'.$keyword.'%');
+        }
+
+        return $query;
     }
 
     /**
@@ -69,7 +88,7 @@ class Page extends Model
      *
      * @return int
      */
-    public static function getPageId(string $page):?int
+    public static function getId(string $page):?int
     {
         return self::where('name', '=', $page)->value('id');
     }
@@ -79,7 +98,7 @@ class Page extends Model
      *
      * @param string $page
      *
-     * @return Builder
+     * @return Illuminate\Database\Eloquent\Builder
      */
     public static function getAttachments(string $page):Builder
     {
@@ -92,7 +111,7 @@ class Page extends Model
      *
      * @param string $page
      *
-     * @return Builder
+     * @return Illuminate\Database\Eloquent\Builder
      */
     public static function getBackups(string $page):Builder
     {
@@ -105,7 +124,7 @@ class Page extends Model
      *
      * @param int $limit
      *
-     * @return Builder
+     * @return Illuminate\Database\Eloquent\Builder
      */
     public static function getLatest(int $limit = 20):Builder
     {
@@ -157,7 +176,7 @@ class Page extends Model
      *
      * @param string $name ページ名
      *
-     * @return Carbon
+     * @return Carbon\Carbon
      */
     public static function lastModified(?string $name = null) : Carbon
     {
