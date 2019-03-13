@@ -113,6 +113,7 @@ class ProcessWikiData implements ShouldQueue
         $freezed = false;
         $description = null;
         $pre = [];
+        $ret = [];
 
         // LukiWiki文法に変換
         while (!empty($lines)) {

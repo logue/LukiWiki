@@ -16,8 +16,8 @@ use App\Models\Page;
 use Carbon\Carbon;
 use Config;
 use Debugbar;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\View\View;
 use SebastianBergmann\Diff\Differ;
@@ -111,13 +111,17 @@ class WikiController extends Controller
      */
     public function attachments(Request $request, string $page, ?string $file = null)
     {
+        $attach_id = null;
         Debugbar::startMeasure('db', 'Fetch '.$page.' attached files from db.');
         $attachments = $this->page->getAttachments($page);
+        if (!empty($file)) {
+            $attach_id = $attachments->where('attachments.name', $file)->select('attachments.id')->first()->id;
+        }
         Debugbar::stopMeasure('db');
 
-        if (!empty($file)) {
+        if (!empty($attach_id)) {
             // TODO
-            return redirect(':api/attachment/'.$attachments->select('attachments.id')->where('attachments.name', $file)->first()->id);
+            return redirect(':api/attachment/'.$attach_id);
         }
 
         return view(
@@ -262,9 +266,9 @@ class WikiController extends Controller
      * @param string                  $page
      * @param string                  $file
      *
-     * @return Illuminate\Http\Response
+     * @return Illuminate\Http\RedirectResponse
      */
-    public function save(Request $request, ?string $page = null):Response
+    public function save(Request $request, ?string $page = null):RedirectResponse
     {
         if (!$request->isMethod('post')) {
             // Method not allowed
@@ -355,9 +359,9 @@ class WikiController extends Controller
      * @param Illuminate\Http\Request $request
      * @param string                  $page
      *
-     * @return Illuminate\Http\Response
+     * @return Illuminate\Http\RedirectResponse
      */
-    public function upload(Request $request, string $page)
+    public function upload(Request $request, string $page):RedirectResponse
     {
         // ファイルのバリデーション
         $this->validate($request, [
@@ -394,7 +398,7 @@ class WikiController extends Controller
      * @param Illuminate\Http\UploadedFile $entry
      * @param string                       $page
      *
-     * @return Illuminate\Http\Response
+     * @return bool
      */
     private function processUpload(UploadedFile $entry, int $page_id) :bool
     {

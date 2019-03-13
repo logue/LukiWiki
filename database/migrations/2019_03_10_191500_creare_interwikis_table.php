@@ -1,6 +1,6 @@
 <?php
 /**
- * ページデーター格納テーブル作成.
+ * InterWiki、AutoAlias、Glossalyの定義テーブル.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
@@ -10,10 +10,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePagesTable extends Migration
+class CreareInterwikisTable extends Migration
 {
-    const TABLE_NAME = 'pages';
-    const TABLE_COMMENT = 'ページ情報';
+    const TABLE_NAME = 'interwikis';
+    const TABLE_COMMENT = 'InterWiki';
 
     /**
      * Run the migrations.
@@ -23,22 +23,14 @@ class CreatePagesTable extends Migration
     public function up()
     {
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
-            $table->bigIncrements('id')->comment('記事番号');
-            $table->unsignedInteger('user_id')->nullable()->references('id')->on('users')->comment('ユーザID');
-            $table->string('name')->index()->comment('ページ名');
-            $table->string('title')->nullable()->comment('記事名');
-            $table->longText('source')->comment('内容');
-            $table->string('description')->nullable()->comment('要約');
-            $table->boolean('locked')->default(false)->comment('ロックフラグ');
-            $table->unsignedInteger('status')->nullable()->comment('公開状況');
-            $table->ipAddress('ip_address')->nullable()->comment('IPアドレス');
-            $table->timestamps();   // 更新日／作成日
-            $table->softDeletes();  // ソフトデリート
+            $table->bigIncrements('id');
+            $table->string('name')->comment('名');
+            $table->string('value')->comment('値');
+            $table->integer('type')->nullable()->comment('種別');
+            $table->string('encode')->nullable()->comment('エンコード');
         });
         if (\Config::get('database.default') === 'mysql') {
             \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' COMMENT \''.self::TABLE_COMMENT.'\'');
-            // ページ名はBINARY属性を加えて大文字小文字を区別する
-            \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' MODIFY name varchar BINARY');
         } elseif (\Config::get('database.default') === 'pgsql') {
             \DB::statement('COMMENT ON DATABASE '.\DB::getTablePrefix().self::TABLE_NAME.' IS \''.self::TABLE_COMMENT.'\'');
         } elseif (\Config::get('database.default') === 'sqlserv') {

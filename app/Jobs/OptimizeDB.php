@@ -1,6 +1,6 @@
 <?php
 /**
- * PukiWikiの添付ファイルをLukiWikiの添付ファイルに変換してDBに保存するジョブ.
+ * DB最適化.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
@@ -15,24 +15,18 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
-class ImportPukiWikiAttachment implements ShouldQueue
+class OptimizeDB implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    private $files = [];
-    private $attach_dir;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(string $path)
+    public function __construct()
     {
-        $this->files = Storage::files($path.'/attach/');
-        $this->attach_dir = \Config::get('lukiwiki.directory.attach');
     }
 
     /**
@@ -42,13 +36,14 @@ class ImportPukiWikiAttachment implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('Start Attached file convertion.');
-
-        foreach ($this->files as &$file) {
-            ProcessAttachmentData::dispatch($file);
+        Log::info('Start Optimize');
+        if (\Config::get('database.default') === 'sqlite') {
+            \DB::statement('VACUUM');
+        } elseif (\Config::get('database.default') === 'mysql') {
+            \DB::statement('OPTIMIZE TABLE '.\DB::getTablePrefix().'.*');
+        } elseif (\Config::get('database.default') === 'pgsql') {
+            \DB::statement('VACUUM FULL');
         }
-        Log::info('Clear cache');
-        \Cache::flush();
         Log::info('Finish.');
     }
 
@@ -61,7 +56,7 @@ class ImportPukiWikiAttachment implements ShouldQueue
      */
     public function failed(\Exception $exception)
     {
-        Log::error('Import Attach data Job has been failed.');
+        Log::error('Optimize Job has been failed.');
         Log::error($exception);
     }
 }
