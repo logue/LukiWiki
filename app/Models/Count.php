@@ -1,6 +1,6 @@
 <?php
 /**
- * バックアップモデル.
+ * カウンターモデル.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
@@ -12,27 +12,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Backup extends Model
+class Count extends Model
 {
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'total'     => 'int',
+        'today'     => 'int',
+        'yesterday' => 'int',
+    ];
+
     /**
-     * このバックアップの元ページ.
+     * このカウンターの元ページ.
      *
      * @return Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function page():BelongsTo
     {
         return $this->belongsTo(Page::class);
-    }
-
-    /**
-     * このバックアップの作成者.
-     *
-     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function user() : BelongsTo
-    {
-        return $this->BelongsTo(User::class);
     }
 }

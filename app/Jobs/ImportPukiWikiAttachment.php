@@ -21,6 +21,13 @@ class ImportPukiWikiAttachment implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * 最大試行回数.
+     *
+     * @var int
+     */
+    public $tries = 1;
+
     private $files = [];
     private $attach_dir;
 
@@ -45,7 +52,7 @@ class ImportPukiWikiAttachment implements ShouldQueue
         Log::info('Start Attached file convertion.');
 
         foreach ($this->files as &$file) {
-            ProcessAttachmentData::dispatch($file);
+            ProcessAttachmentData::dispatch($file)->onQueue('attach');
         }
         Log::info('Clear cache');
         \Cache::flush();

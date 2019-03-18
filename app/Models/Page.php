@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Config;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
@@ -23,6 +24,11 @@ class Page extends Model
 {
     use SoftDeletes;
     protected $guarded = ['id'];
+
+    protected $casts = [
+        'locked' => 'bool',
+        'status' => 'int',
+    ];
 
     const PAGELIST_TRIE_CACHE = 'page_trie';
     const PAGELIST_CACHE = 'pages';
@@ -49,7 +55,7 @@ class Page extends Model
      */
     public function attachments(): HasMany
     {
-        return $this->hasMany('App\Models\Attachment');
+        return $this->hasMany(Attachment::class);
     }
 
     /**
@@ -63,6 +69,26 @@ class Page extends Model
     }
 
     /**
+     * このページの所有者.
+     *
+     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->hasOne(User::class);
+    }
+
+    /**
+     * ページのカウント.
+     *
+     * @return Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function counter(): HasOne
+    {
+        return $this->hasOne(Count::class);
+    }
+
+    /**
      * 検索.
      *
      * @param array $keywords
@@ -73,9 +99,15 @@ class Page extends Model
     {
         $query = self::select('name');
         foreach ($keywords as $keyword) {
-            $query
-                ->where('name', 'like', '%'.$keyword.'%')
-                ->orWhere('source', 'like', '%'.$keyword.'%');
+            if (\Config::get('database.default') === 'mysql') {
+                $query
+                    ->where('name', 'like', '%'.$keyword.'%')
+                    ->orWhereRaw('match(`source`) against (? IN NATURAL LANGUAGE MODE)', [$keyword]);
+            } else {
+                $query
+                    ->where('name', 'like', '%'.$keyword.'%')
+                    ->orWhere('source', 'like', '%'.$keyword.'%');
+            }
         }
 
         return $query;
@@ -184,5 +216,9 @@ class Page extends Model
             self::select('updated_at')->max('updated_at') :
             self::select('updated_at')->where('name', $name)
         );
+    }
+
+    public static function countUp(string $page):void
+    {
     }
 }

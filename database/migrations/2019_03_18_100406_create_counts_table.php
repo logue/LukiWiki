@@ -1,6 +1,6 @@
 <?php
 /**
- * バックアップデータ格納テーブル作成.
+ * カウンターテーブル作成.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
@@ -10,10 +10,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBackupsTable extends Migration
+class CreateCountsTable extends Migration
 {
-    const TABLE_NAME = 'backups';
-    const TABLE_COMMENT = 'バックアップ';
+    const TABLE_NAME = 'counts';
+    const TABLE_COMMENT = 'カウンタ';
 
     /**
      * Run the migrations.
@@ -23,12 +23,12 @@ class CreateBackupsTable extends Migration
     public function up()
     {
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
-            $table->bigIncrements('id')->comment('バックアップ番号');
-            $table->unsignedBigInteger('page_id')->references('id')->on('pages')->comment('記事番号');
-            $table->unsignedBigInteger('user_id')->references('id')->on('users')->nullable()->comment('ユーザID');
-            $table->longText('source')->comment('内容');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('page_id')->references('id')->on('pages')->onDelete('cascade')->comment('記事ID');
+            $table->unsignedInteger('total')->default(0)->comment('カウンタ');
+            $table->unsignedInteger('today')->default(0)->comment('本日のカウンタ');
+            $table->unsignedInteger('yesterday')->default(0)->comment('昨日のカウンタ');
             $table->ipAddress('ip_address')->nullable()->comment('IPアドレス');
-            $table->timestamps();
         });
         if (\Config::get('database.default') === 'mysql') {
             \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' COMMENT \''.self::TABLE_COMMENT.'\'');
@@ -46,6 +46,6 @@ class CreateBackupsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(self::TABLE_NAME);
+        Schema::dropIfExists('counts');
     }
 }

@@ -30,6 +30,8 @@ class PagesTableSeeder extends Seeder
 - [プロジェクトサイト](https://github.com/logue/LukiWiki)
  - [問題報告](https://github.com/logue/LukiWiki/issues)
 - [Twitter](https://twitter.com/pukiwiki_adv)',
+            'updated_at' => \Carbon\Carbon::now()->format('Y-m-d H:i:s'),
+            'created_at' => '2019-01-01 0:0:0',
         ]);
     }
 }

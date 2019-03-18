@@ -27,8 +27,8 @@ class ApiController extends Controller
     public function atom():Response
     {
         return response()
-            ->view('api.atom', ['entries' => Page::getLatest(20)])
-            ->header('Content-Type', ' application/xml; charset=UTF-8');
+            ->view('api.atom', ['entries' => Page::getLatest(20)->get()])
+            ->header('Content-Type', 'application/atom+xml; charset=UTF-8');
     }
 
     /**
@@ -40,7 +40,19 @@ class ApiController extends Controller
     {
         return response()
             ->view('api.sitemap', ['entries' => Page::all()])
-            ->header('Content-Type', ' application/xml; charset=UTF-8');
+            ->header('Content-Type', 'application/xml; charset=UTF-8');
+    }
+
+    /**
+     * opensearch.xmlを出力.
+     *
+     * @retun Illuminate\Http\Response
+     */
+    public function opensearch():Response
+    {
+        return response()
+            ->view('api.opensearch')
+            ->header('Content-Type', 'application/opensearchdescription+xml; charset=UTF-8');
     }
 
     /**

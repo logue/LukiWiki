@@ -21,6 +21,12 @@ class AdministratorController extends Controller
 {
     const DEFAULT_PATH = ':admin';
 
+    public function __construct()
+    {
+        // 認証用ミドルウェア
+        //$this->middleware('auth');
+    }
+
     /*
      * 管理トップページ
      */

@@ -17,7 +17,10 @@ class Attachment extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'meta' => 'json',
+        'size'   => 'int',
+        'count'  => 'int',
+        'locked' => 'bool',
+        'meta'   => 'json',
     ];
 
     /**
@@ -28,6 +31,16 @@ class Attachment extends Model
     public function page() : belongsTo
     {
         return $this->belongsTo(Page::class);
+    }
+
+    /**
+     * この添付ファイルの所有者.
+     *
+     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user() : BelongsTo
+    {
+        return $this->BelongsTo(User::class);
     }
 
     /**

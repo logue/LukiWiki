@@ -28,6 +28,7 @@ class CreareInterwikisTable extends Migration
             $table->string('value')->comment('値');
             $table->integer('type')->nullable()->comment('種別');
             $table->string('encode')->nullable()->comment('エンコード');
+            $table->boolean('enabled')->default(1)->comment('有効か');
         });
         if (\Config::get('database.default') === 'mysql') {
             \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' COMMENT \''.self::TABLE_COMMENT.'\'');

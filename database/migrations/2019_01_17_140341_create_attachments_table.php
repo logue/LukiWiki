@@ -24,10 +24,10 @@ class CreateAttachmentsTable extends Migration
     {
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
             $table->bigIncrements('id')->comment('ファイル番号');
-            $table->unsignedInteger('page_id')->references('id')->on('pages')->onDelete('cascade')->comment('記事ID');
-            $table->unsignedInteger('user_id')->nullable()->references('id')->on('users')->comment('ユーザID');
-            $table->unsignedInteger('attachment_id')->nullable()->onDelete('cascade')->comment('元ファイルのID');    // バックアップ用途
-            $table->string('name')->comment('ファイル名');
+            $table->unsignedBigInteger('page_id')->references('id')->on('pages')->onDelete('cascade')->comment('記事ID');
+            $table->unsignedBigInteger('user_id')->nullable()->references('id')->on('users')->comment('ユーザID');
+            $table->unsignedBigInteger('attachment_id')->nullable()->comment('元ファイルのID');    // バックアップ用途
+            $table->string('name', 255)->comment('ファイル名');
             $table->string('stored_name')->comment('実体名');
             $table->string('mime')->default('application/octet-stream')->comment('MIMEタイプ');
             $table->ipAddress('ip_address')->nullable()->comment('IPアドレス');
@@ -40,7 +40,7 @@ class CreateAttachmentsTable extends Migration
         if (\Config::get('database.default') === 'mysql') {
             \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' COMMENT \''.self::TABLE_COMMENT.'\'');
             // ファイル名は、BINARY属性を加えて大文字小文字を区別する
-            \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' MODIFY name varchar BINARY');
+            \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' MODIFY `name` varchar(255) BINARY');
         } elseif (\Config::get('database.default') === 'pgsql') {
             \DB::statement('COMMENT ON DATABASE '.\DB::getTablePrefix().self::TABLE_NAME.' IS \''.self::TABLE_COMMENT.'\'');
         } elseif (\Config::get('database.default') === 'sqlserv') {

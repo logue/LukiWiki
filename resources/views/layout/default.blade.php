@@ -13,7 +13,8 @@
     <link rel="amphtml" href="{{ $page ? url($page) : url('/') }}:amp" />
     <link rel="print" href="{{ $page ? url($page) : url('/') }}:print" />
     @endif
-    <link rel="alternate" type="application/atom+xml" title="RecentChanges" href="{{ url('/api/:atom') }}" />
+    <link rel="search" type="application/opensearchdescription+xml" href="{{ url(':api/opensearch') }}">
+    <link rel="alternate" type="application/atom+xml" href="{{ url(':api/atom') }}" />
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
     @yield('styles')
 </head>

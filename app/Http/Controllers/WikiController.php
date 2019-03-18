@@ -26,11 +26,12 @@ class WikiController extends Controller
 {
     // 新旧のデーターの比較に用いる要約用のハッシュのアルゴリズム
     // 使用可能な値：http://php.net/manual/ja/function.hash-algos.php
-    // あくまでも新旧のデーターに変化があったかのチェック用途であるため、高速なcrc32で十分だと思う。
+    // あくまでも新旧のデーターに変化があったかのチェック用途であるため、衝突性能は考慮しない。高速なcrc32で十分だと思う。
     const HASH_ALGORITHM = 'crc32';
 
     public function __construct()
     {
+        // ページモデルオブジェクト
         $this->page = new Page();
     }
 
@@ -47,6 +48,7 @@ class WikiController extends Controller
         $page = rawurldecode($query);
 
         if (empty($page)) {
+            // ページが指定されていないときは、デフォルトのページを読み込む
             $page = Config::get('lukiwiki.special_page.default');
         }
 
@@ -63,16 +65,17 @@ class WikiController extends Controller
         $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $entry->source));
 
         $body = new RootElement($page, 0, ['id' => 0]);
+        $body->parse($lines);
 
         $meta = $body->getMeta();
-        $body->parse($lines);
+        $content = $body->__toString();
         Debugbar::stopMeasure('parse');
 
         return view(
            'default.content',
            [
                 'page'      => $page,
-                'content'   => $body->__toString(),
+                'content'   => $content,
                 'title'     => $entry->title ?? $page,
                 'notes'     => $meta['note'] ?? null,
                 'attaches'  => $attachments,
@@ -89,7 +92,13 @@ class WikiController extends Controller
      */
     public function source(Request $request, string $page):View
     {
+        // DBからページデータを取得
+        Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', $page)->first();
+        if (!$entry) {
+            return abort(404, 'Page '.$page.' is not found.');
+        }
+        Debugbar::stopMeasure('db');
 
         return view(
            'default.source', [
@@ -120,7 +129,7 @@ class WikiController extends Controller
         Debugbar::stopMeasure('db');
 
         if (!empty($attach_id)) {
-            // TODO
+            // TODO: 効率が悪い
             return redirect(':api/attachment/'.$attach_id);
         }
 
@@ -203,15 +212,23 @@ class WikiController extends Controller
      */
     public function print(Request $request, string $page):View
     {
+        Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', $page)->first();
+        if (!$entry) {
+            return abort(404, 'Page '.$page.' is not found.');
+        }
+        $attachments = $this->page->attachments()->get();
+        Debugbar::stopMeasure('db');
 
+        Debugbar::startMeasure('parse', 'Converting wiki data...');
         //dd($entry->source);
         $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $entry->source));
 
         $body = new RootElement($page, 0, ['id' => 0]);
+        $body->parse($lines);
 
         $meta = $body->getMeta();
-        $body->parse($lines);
+        $content = $body->__toString();
         Debugbar::stopMeasure('parse');
 
         return view(
@@ -232,7 +249,9 @@ class WikiController extends Controller
      */
     public function edit(Request $request, string $page = null):View
     {
-        $this->page = $page ?? $request->input('page') ?? Config::get('lukiwiki.special_page.default');
+        $p = $page ?? $request->input('page') ?? Config::get('lukiwiki.special_page.default');
+
+        $entry = $this->page->where('name', $p)->first();
 
         if (!$page) {
             // 新規ページ
@@ -245,8 +264,6 @@ class WikiController extends Controller
                 ]
              );
         }
-
-        $entry = Page::where('name', $this->page)->first();
 
         return view(
             'default.edit',
@@ -292,6 +309,8 @@ class WikiController extends Controller
                 } elseif ($hash !== $request->input('hash')) {
                     // 編集前のデータのハッシュ値と比較し、違いがある場合、編集の競合が起きたと判断。
                     // マージ画面を表示する。
+
+                    // TODO: 編集した値が空っぽ
                     return view(
                         'default.merge',
                         [
@@ -311,21 +330,35 @@ class WikiController extends Controller
                 ]);
 
                 // バックアップ処理
-                $backup = Backup::where('page_id', $page_id)->latest()->first();
+                $backup = Backup::where('page_id', $page_id);
+
+                $entry = $backup->latest()->first();
                 //dd(Carbon::now()->timestamp - Carbon::parse($backup->created_at)->timestamp);
                 //dd(Config::get('lukiwiki.backup.interval') * 60);
-                if ($backup &&
-                    !(Carbon::now()->timestamp - Carbon::parse($backup->created_at)->timestamp) <
-                    Config::get('lukiwiki.backup.interval')) {
-                    // バックアップが存在するが、インターバルの時間未満だった場合、最新のバックアップを上書きする。
-                    Backup::where('id', $backup->id)->update([
+                if (
+                    // バックアップが存在する
+                    $entry
+                    &&
+                    // 過去のバックアップがインターバルの時間未満である
+                    !(Carbon::now()->timestamp - Carbon::parse($entry->created_at)->timestamp) <
+                    Config::get('lukiwiki.backup.interval')
+                    &&
+                    // 最新のバックアップのIPが同じIPである
+                    $entry->ip_address === $request->ip()
+                ) {
+                    // バックアップを上書きする
+                    // この実装のため、インターバル時間未満で更新があると、DBの作成日と更新日の値が異なることになる。
+                    $backup->update([
                         'source'     => $remote->source,
-                        'ip_address' => $request->ip(),
                         'updated_at' => Carbon::now()->toDateTimeString(),
                     ]);
                 } else {
-                    //dd(Backup::where('page_id', $page_id)->latest()->first());
-                    // そうでない場合はバックアップを追記
+                    if ($backup->count() >= 20) {
+                        // 20件以上あった場合は、一番古いエントリを削除する。
+                        $backup->oldest()->first()->delete();
+                    }
+
+                    // バックアップを追記
                     Backup::insert([
                         'page_id'    => $page_id,
                         'source'     => $remote->source,
@@ -402,24 +435,39 @@ class WikiController extends Controller
      */
     private function processUpload(UploadedFile $entry, int $page_id) :bool
     {
-        $attach = new Attachment();
+        $attach = $this->page->find($page_id)->attachment();
 
-        if ($entry->isValid()) {
-            $md5Name = hash_file('sha1', $entry->getRealPath());
-            $ext = $entry->guessExtension();
-
-            $attach->page_id = $page_id;
-            $attach->locked = false;
-            $attach->name = $entry->getClientOriginalName();
-            $attach->stored_name = basename($entry->storeAs('attachments', $md5Name.'.'.$ext));
-            $attach->mime = $entry->getMimeType();
-            $attach->size = $entry->getClientSize();
-            $attach->save();
-
-            return true;
+        if (!$entry->isValid()) {
+            return false;
         }
 
-        return false;
+        // 同名で登録されている添付ファイルがあるか
+        $old_attach = $attach->where('name', $entry->getClientOriginalName())->first();
+
+        if ($old_attach) {
+            if (!Attachement::where('stored_name', $old_attach->stored_name)->exists()) {
+                // 同一内容のファイルがDBに登録されていない場合、ファイルを削除する
+                Storage::delete('attachments/'.$old_attach->stored_name);
+            }
+        }
+
+        // 保存するファイル名
+        $md5Name = hash_file('sha1', $entry->getRealPath());
+        $ext = $entry->guessExtension();
+        $stored_name = $md5Name.'.'.$ext;
+
+        Attachment::updateOrCreate([
+            'page_id'     => $page_id,
+            'name'        => $entry->getClientOriginalName(),
+        ], [
+            'count'       => $count,
+            'locked'      => $locked,
+            'stored_name' => basename($entry->storeAs('attachments', $stored_name)),
+            'mime'        => $entry->getMimeType(),
+            'size'        => $entry->getClientSize(),
+        ]);
+
+        return true;
     }
 
     /**

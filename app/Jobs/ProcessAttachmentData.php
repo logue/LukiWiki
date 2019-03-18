@@ -22,6 +22,13 @@ use Illuminate\Support\Facades\Storage;
 
 class ProcessAttachmentData implements ShouldQueue
 {
+    /**
+     * 最大試行回数.
+     *
+     * @var int
+     */
+    public $tries = 1;
+
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $file;

@@ -19,6 +19,13 @@ use Illuminate\Support\Facades\Storage;
 
 class ImportPukiWikiData implements ShouldQueue
 {
+    /**
+     * 最大試行回数.
+     *
+     * @var int
+     */
+    public $tries = 1;
+
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $files = [];
@@ -43,8 +50,12 @@ class ImportPukiWikiData implements ShouldQueue
         Log::info('Start Wiki data convertion.');
 
         foreach ($this->files as &$file) {
-            ProcessWikiData::dispatch($file);
+            ProcessWikiData::dispatch($file)->onQueue('wiki');
         }
+        Log::info('Finish.');
+
+        Log::info('Clear cache');
+        \Cache::flush();
         Log::info('Finish.');
     }
 
