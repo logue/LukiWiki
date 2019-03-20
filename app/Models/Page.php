@@ -79,13 +79,13 @@ class Page extends Model
     }
 
     /**
-     * ページのカウント.
+     * ページのカウンター
      *
      * @return Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function counter(): HasOne
     {
-        return $this->hasOne(Count::class);
+        return $this->hasOne(Counter::class);
     }
 
     /**
@@ -149,6 +149,19 @@ class Page extends Model
     {
         return self::where('pages.name', $page)
             ->join('backups', 'pages.id', '=', 'backups.page_id');
+    }
+
+    /**
+     * ページのカウンターを取得.
+     *
+     * @param string $page
+     *
+     * @@return Illuminate\Database\Eloquent\Builder
+     */
+    public static function getCounter(string $page):Builder
+    {
+        return self::where('pages.name', $page)
+            ->join('counters', 'pages.id', '=', 'counters.page_id');
     }
 
     /**
@@ -218,7 +231,63 @@ class Page extends Model
         );
     }
 
-    public static function countUp(string $page):void
+    /**
+     * カウンター加算.
+     *
+     * @param string $page
+     *
+     * @return void
+     */
+    public static function countUp(string $page): void
     {
+        $query = self::getCounter($page);
+        $counter = $query->latest()->first();
+
+        $ip = \Request::ip();
+
+        if (!$query->exists()) {
+            // カウンタが存在しない場合
+            $query->insert([
+                'total'      => 1,
+                'today'      => 1,
+                'ip_address' => $ip,
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
+
+            return;
+        }
+
+        if (($counter->updated_dt->day - Carbon::now()->day) === 1) {
+            // 日付変更があった場合、本日のカウントを昨日のカウントに上書きして1を代入
+            $query->update([
+                'total'      => $counter->total++,
+                'today'      => 1,
+                'yesterday'  => $counter->today,
+                'ip_address' => $ip,
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
+        } elseif (($counter->updated_dt->day - Carbon::now()->day) >= 2) {
+            // 日付の差分が２日以上（前日にアクセスが無かった）の場合
+            $query->update([
+                'total'      => $counter->total++,
+                'today'      => 1,
+                'yesterday'  => 0,
+                'ip_address' => $ip,
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
+        } else {
+            // 通常のカウントアップ
+            if ($counter->ip_address === $ip) {
+                // 最後にアクセスしたひとのIPと同じ場合加算しない
+                return;
+            }
+            $query->update([
+                'total'      => $counter->total++,
+                'today'      => $counter->today++,
+                'yesterday'  => $counter->yesterday,
+                'ip_address' => $ip,
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
+        }
     }
 }

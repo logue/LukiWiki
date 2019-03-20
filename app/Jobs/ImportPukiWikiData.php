@@ -50,7 +50,7 @@ class ImportPukiWikiData implements ShouldQueue
         Log::info('Start Wiki data convertion.');
 
         foreach ($this->files as &$file) {
-            ProcessWikiData::dispatch($file)->onQueue('wiki');
+            ProcessWikiData::dispatch($file);
         }
         Log::info('Finish.');
 

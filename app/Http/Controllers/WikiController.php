@@ -155,7 +155,9 @@ class WikiController extends Controller
         Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
         $backups = $this->page->getBackups($page)->select('backups.*')->orderBy('updated_at', 'desc');
         if (!empty($age)) {
-            $backups->offset($age - 1)->limit(1);
+            $backup = $backups->offset($age - 1)->limit(1)->first();
+        } else {
+            $backup = $backups->get();
         }
         Debugbar::stopMeasure('db');
 
@@ -163,7 +165,7 @@ class WikiController extends Controller
             return view(
                'default.source', [
                     'page'    => $page,
-                    'source'  => $backups->first()->source,
+                    'source'  => $backup->source,
                     'title'   => 'Backup of '.$page.'('.$age.')',
                 ]
             );
@@ -172,7 +174,7 @@ class WikiController extends Controller
         return view(
            'default.history', [
                 'page'         => $page,
-                'entries'      => $backups->get(),
+                'entries'      => $backup,
             ]
         );
     }
@@ -296,92 +298,98 @@ class WikiController extends Controller
             abort(400, 'Page name is undefined.');
         }
 
-        if ($request->input('action') === 'save') {
-            if ($this->page->exists($page)) {
-                // ページが存在する場合、DB上のソースを取得。
-                $remote = $this->page->where('name', $page)->first();
-                $page_id = $remote->id;
-                $hash = hash(self::HASH_ALGORITHM, $remote->source);
+        if ($request->input('action') !== 'save') {
+            // キャンセル時の処理
+            $request->session()->flash('message', __('Cancelled'));
 
-                if ($hash === hash(self::HASH_ALGORITHM, $request->input('hash'))) {
-                    // ハッシュが同じだった場合処理しない
-                    return redirect($page);
-                } elseif ($hash !== $request->input('hash')) {
-                    // 編集前のデータのハッシュ値と比較し、違いがある場合、編集の競合が起きたと判断。
-                    // マージ画面を表示する。
+            return redirect($page);
+        }
 
-                    // TODO: 編集した値が空っぽ
-                    return view(
-                        'default.merge',
-                        [
-                            'page'   => $page,
-                            'origin' => $request->input('origin'),
-                            'remote' => $remote->source,
-                            'source' => $request->input('source'),
-                            'hash'   => hash(self::HASH_ALGORITHM, $request->input('origin')),
-                        ]
-                    );
-                }
+        if ($this->page->exists($page)) {
+            // ページが存在する場合、DB上のソースを取得。
+            $remote = $this->page->where('name', $page)->first();
+            $page_id = $remote->id;
+            $hash = hash(self::HASH_ALGORITHM, $remote->source);
 
-                // 更新処理
-                $this->page->where('name', $page)->update([
-                    'source'     => $request->input('source'),
-                    'ip_address' => $request->ip(),
+            if ($hash === hash(self::HASH_ALGORITHM, $request->input('hash'))) {
+                // ハッシュが同じだった場合処理しない
+                return redirect($page);
+            } elseif ($hash !== $request->input('hash')) {
+                // 編集前のデータのハッシュ値と比較し、違いがある場合、編集の競合が起きたと判断。
+                // マージ画面を表示する。
+
+                // TODO: 編集した値が空っぽ
+                return view(
+                    'default.merge',
+                    [
+                        'page'   => $page,
+                        'origin' => $request->input('origin'),
+                        'remote' => $remote->source,
+                        'source' => $request->input('source'),
+                        'hash'   => hash(self::HASH_ALGORITHM, $request->input('origin')),
+                    ]
+                );
+            }
+
+            // トランザクション開始
+            DB::beginTransaction();
+
+            // 更新処理
+            $this->page->where('name', $page)->update([
+                'source'     => $request->input('source'),
+                'ip_address' => $request->ip(),
+            ]);
+
+            // バックアップ処理
+            $backup = Backup::where('page_id', $page_id);
+
+            $entry = $backup->latest()->first();
+            if (
+                // バックアップが存在する
+                $entry
+                &&
+                // 過去のバックアップがインターバルの時間未満である
+                !(Carbon::now()->timestamp - Carbon::parse($entry->created_at)->timestamp) <
+                Config::get('lukiwiki.backup.interval')
+                &&
+                // 最新のバックアップのIPが同じIPである
+                $entry->ip_address === $request->ip()
+            ) {
+                // バックアップを上書きする
+                // この実装のため、インターバル時間未満で更新があると、DBの作成日と更新日の値が異なることになる。
+                $backup->update([
+                    'source'     => $remote->source,
+                    'updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
-
-                // バックアップ処理
-                $backup = Backup::where('page_id', $page_id);
-
-                $entry = $backup->latest()->first();
-                //dd(Carbon::now()->timestamp - Carbon::parse($backup->created_at)->timestamp);
-                //dd(Config::get('lukiwiki.backup.interval') * 60);
-                if (
-                    // バックアップが存在する
-                    $entry
-                    &&
-                    // 過去のバックアップがインターバルの時間未満である
-                    !(Carbon::now()->timestamp - Carbon::parse($entry->created_at)->timestamp) <
-                    Config::get('lukiwiki.backup.interval')
-                    &&
-                    // 最新のバックアップのIPが同じIPである
-                    $entry->ip_address === $request->ip()
-                ) {
-                    // バックアップを上書きする
-                    // この実装のため、インターバル時間未満で更新があると、DBの作成日と更新日の値が異なることになる。
-                    $backup->update([
-                        'source'     => $remote->source,
-                        'updated_at' => Carbon::now()->toDateTimeString(),
-                    ]);
-                } else {
-                    if ($backup->count() >= 20) {
-                        // 20件以上あった場合は、一番古いエントリを削除する。
-                        $backup->oldest()->first()->delete();
-                    }
-
-                    // バックアップを追記
-                    Backup::insert([
-                        'page_id'    => $page_id,
-                        'source'     => $remote->source,
-                        'ip_address' => $request->ip(),
-                        'created_at' => Carbon::now()->toDateTimeString(),
-                        'updated_at' => Carbon::now()->toDateTimeString(),
-                    ]);
-                }
             } else {
-                // 新規作成
-                Page::insert([
-                    'name'       => $page,
-                    'source'     => $request->input('source'),
+                if ($backup->count() >= 20) {
+                    // 20件以上あった場合は、一番古いエントリを削除する。
+                    $backup->oldest()->first()->delete();
+                }
+
+                // バックアップを追記
+                Backup::insert([
+                    'page_id'    => $page_id,
+                    'source'     => $remote->source,
                     'ip_address' => $request->ip(),
                     'created_at' => Carbon::now()->toDateTimeString(),
                     'updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
             }
 
-            $request->session()->flash('message', __('Saved'));
+            DB::commit();
         } else {
-            $request->session()->flash('message', __('Cancelled'));
+            // 新規作成
+            Page::insert([
+                'name'       => $page,
+                'source'     => $request->input('source'),
+                'ip_address' => $request->ip(),
+                'created_at' => Carbon::now()->toDateTimeString(),
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
         }
+
+        $request->session()->flash('message', __('Saved'));
 
         return redirect($page);
     }
@@ -433,7 +441,7 @@ class WikiController extends Controller
      *
      * @return bool
      */
-    private function processUpload(UploadedFile $entry, int $page_id) :bool
+    private function processUpload(UploadedFile $entry, int $page_id, bool $replace = false) :bool
     {
         $attach = $this->page->find($page_id)->attachment();
 
@@ -441,31 +449,51 @@ class WikiController extends Controller
             return false;
         }
 
-        // 同名で登録されている添付ファイルがあるか
-        $old_attach = $attach->where('name', $entry->getClientOriginalName())->first();
-
-        if ($old_attach) {
-            if (!Attachement::where('stored_name', $old_attach->stored_name)->exists()) {
-                // 同一内容のファイルがDBに登録されていない場合、ファイルを削除する
-                Storage::delete('attachments/'.$old_attach->stored_name);
-            }
-        }
+        // トランザクション開始
+        DB::beginTransaction();
 
         // 保存するファイル名
         $md5Name = hash_file('sha1', $entry->getRealPath());
         $ext = $entry->guessExtension();
         $stored_name = $md5Name.'.'.$ext;
 
-        Attachment::updateOrCreate([
-            'page_id'     => $page_id,
-            'name'        => $entry->getClientOriginalName(),
-        ], [
-            'count'       => $count,
-            'locked'      => $locked,
-            'stored_name' => basename($entry->storeAs('attachments', $stored_name)),
-            'mime'        => $entry->getMimeType(),
-            'size'        => $entry->getClientSize(),
-        ]);
+        if ($replace) {
+            // 同名で登録されている添付ファイルがあるか
+            $old_attach = $attach->where('name', $entry->getClientOriginalName())->first();
+
+            if ($old_attach) {
+                if (!Attachement::where('stored_name', $old_attach->stored_name)->exists()) {
+                    // 同一ハッシュのファイルがDBに登録されていない（他から参照されていない）場合、ファイルを削除する
+                    Storage::delete('attachments/'.$old_attach->stored_name);
+                }
+            }
+
+            // ファイル差し替え
+            Attachment::updateOrCreate([
+                'page_id'     => $page_id,
+                'name'        => $entry->getClientOriginalName(),
+            ], [
+                'count'       => $count,
+                'locked'      => $locked,
+                'stored_name' => basename($entry->storeAs('attachments', $stored_name)),
+                'mime'        => $entry->getMimeType(),
+                'size'        => $entry->getClientSize(),
+            ]);
+        } else {
+            // 上書き（追記）
+            Attachment::insert([
+                'page_id'     => $page_id,
+                'name'        => $entry->getClientOriginalName(),
+                'count'       => $count,
+                'locked'      => $locked,
+                'stored_name' => basename($entry->storeAs('attachments', $stored_name)),
+                'mime'        => $entry->getMimeType(),
+                'size'        => $entry->getClientSize(),
+            ]);
+        }
+
+        // トランザクション終了
+        DB::commit();
 
         return true;
     }

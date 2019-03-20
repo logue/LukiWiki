@@ -1,6 +1,6 @@
 <?php
 /**
- * PukiWikiの添付ファイルをLukiWikiの添付ファイルに変換してDBに保存するジョブ.
+ * PukiWiki書式をLukiWiki書式に変換してDBに保存するジョブ.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
@@ -17,10 +17,8 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-class ImportPukiWikiAttachment implements ShouldQueue
+class ImportPukiWikiBackup implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
     /**
      * 最大試行回数.
      *
@@ -28,8 +26,9 @@ class ImportPukiWikiAttachment implements ShouldQueue
      */
     public $tries = 1;
 
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     private $files = [];
-    private $attach_dir;
 
     /**
      * Create a new job instance.
@@ -38,8 +37,7 @@ class ImportPukiWikiAttachment implements ShouldQueue
      */
     public function __construct(string $path)
     {
-        $this->files = Storage::files($path.'/attach/');
-        $this->attach_dir = \Config::get('lukiwiki.directory.attach');
+        $this->files = Storage::files($path.'/backup/');
     }
 
     /**
@@ -49,11 +47,13 @@ class ImportPukiWikiAttachment implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('Start Attached file convertion.');
+        Log::info('Start Backup data convertion.');
 
         foreach ($this->files as &$file) {
-            ProcessAttachmentData::dispatch($file);
+            ProcessBackupData::dispatch($file);
         }
+        Log::info('Finish.');
+
         Log::info('Clear cache');
         \Cache::flush();
         Log::info('Finish.');
@@ -68,7 +68,7 @@ class ImportPukiWikiAttachment implements ShouldQueue
      */
     public function failed(\Exception $exception)
     {
-        Log::error('Import Attach data Job has been failed.');
+        Log::error('Import Wiki data Job has been failed.');
         Log::error($exception);
     }
 }

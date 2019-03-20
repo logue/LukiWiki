@@ -24,12 +24,12 @@
         "vue-template-compiler": "^2.6.9"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-svg-core": "^1.2.15",
-        "@fortawesome/free-brands-svg-icons": "^5.7.2",
-        "@fortawesome/free-regular-svg-icons": "^5.7.2",
-        "@fortawesome/free-solid-svg-icons": "^5.7.2",
-        "@fortawesome/vue-fontawesome": "^0.1.5",
-        "bootstrap-vue": "^2.0.0-rc.14",
+        "@fortawesome/fontawesome-svg-core": "^1.2.16",
+        "@fortawesome/free-brands-svg-icons": "^5.8.0",
+        "@fortawesome/free-regular-svg-icons": "^5.8.0",
+        "@fortawesome/free-solid-svg-icons": "^5.8.0",
+        "@fortawesome/vue-fontawesome": "^0.1.6",
+        "bootstrap-vue": "^2.0.0-rc.15",
         "codemirror": "^5.44.0",
         "query-string": "^6.4.0",
         "vue-codemirror": "^4.0.6"

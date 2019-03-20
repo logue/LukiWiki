@@ -23,6 +23,13 @@ class ProcessWikiData implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * 最大試行回数.
+     *
+     * @var int
+     */
+    public $tries = 1;
+
     private $file;
     private $page;
 

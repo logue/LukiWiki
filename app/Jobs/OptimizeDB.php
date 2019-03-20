@@ -20,6 +20,8 @@ class OptimizeDB implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    private $db;
+
     /**
      * Create a new job instance.
      *
@@ -27,6 +29,7 @@ class OptimizeDB implements ShouldQueue
      */
     public function __construct()
     {
+        $this->db = \Config::get('database.default');
     }
 
     /**
@@ -37,11 +40,11 @@ class OptimizeDB implements ShouldQueue
     public function handle()
     {
         Log::info('Start Optimize');
-        if (\Config::get('database.default') === 'sqlite') {
+        if ($this->db === 'sqlite') {
             \DB::statement('VACUUM');
-        } elseif (\Config::get('database.default') === 'mysql') {
+        } elseif ($this->db === 'mysql') {
             \DB::statement('OPTIMIZE TABLE '.\DB::getTablePrefix().'.*');
-        } elseif (\Config::get('database.default') === 'pgsql') {
+        } elseif ($this->db === 'pgsql') {
             \DB::statement('VACUUM FULL');
         }
         Log::info('Finish.');

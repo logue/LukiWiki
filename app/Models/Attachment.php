@@ -23,6 +23,8 @@ class Attachment extends Model
         'meta'   => 'json',
     ];
 
+    protected $touches = ['page'];
+
     /**
      * この添付ファイルの貼り付けられたページ.
      *
@@ -34,7 +36,7 @@ class Attachment extends Model
     }
 
     /**
-     * この添付ファイルの所有者.
+     * この添付ファイルの投稿者.
      *
      * @return Illuminate\Database\Eloquent\Relations\BelongsTo
      */
