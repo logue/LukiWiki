@@ -12,7 +12,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Count extends Model
+class Counter extends Model
 {
     protected $guarded = ['id'];
 

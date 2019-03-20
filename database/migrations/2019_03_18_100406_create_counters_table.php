@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateCountsTable extends Migration
 {
-    const TABLE_NAME = 'counts';
+    const TABLE_NAME = 'counters';
     const TABLE_COMMENT = 'カウンタ';
 
     /**
@@ -29,6 +29,7 @@ class CreateCountsTable extends Migration
             $table->unsignedInteger('today')->default(0)->comment('本日のカウンタ');
             $table->unsignedInteger('yesterday')->default(0)->comment('昨日のカウンタ');
             $table->ipAddress('ip_address')->nullable()->comment('IPアドレス');
+            $table->datetime('updated_at')->nullable()->comment('最終アクセス日時');
         });
         if (\Config::get('database.default') === 'mysql') {
             \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' COMMENT \''.self::TABLE_COMMENT.'\'');

@@ -26,7 +26,6 @@ class CreateAttachmentsTable extends Migration
             $table->bigIncrements('id')->comment('ファイル番号');
             $table->unsignedBigInteger('page_id')->references('id')->on('pages')->onDelete('cascade')->comment('記事ID');
             $table->unsignedBigInteger('user_id')->nullable()->references('id')->on('users')->comment('ユーザID');
-            $table->unsignedBigInteger('attachment_id')->nullable()->comment('元ファイルのID');    // バックアップ用途
             $table->string('name', 255)->comment('ファイル名');
             $table->string('stored_name')->comment('実体名');
             $table->string('mime')->default('application/octet-stream')->comment('MIMEタイプ');

@@ -1,4 +1,4 @@
-@extends('layout.admin')
+@extends('layout.dashboard')
 <table class="table">
 @foreach($users as $user)
 <tr>
@@ -7,4 +7,3 @@
 </tr>
 @endforeach
 </table>
-

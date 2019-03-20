@@ -1,4 +1,4 @@
-@extends('layout.admin')
+@extends('layout.dashboard')
 
 @section('content')
 <p>PukiWiki文法のデーターをLukiWiki文法に変換し、データベースにインポートします。</p>
@@ -11,7 +11,7 @@
   <li>バックアップの書式は変換しません。</li>
   <li>存在しない（削除済み）ページ、の添付ファイルや、バックアップの移行はしません。</li>
 </ul>
-<form action="{{ url(':admin/convert') }}" method="post">
+<form action="{{ url(':dashboard/convert') }}" method="post">
   @csrf
   <div class="form-group">
     <label for="path">PukiWikiのデーターの置かれている場所へのパス</label>

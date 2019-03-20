@@ -1,6 +1,6 @@
 <?php
 /**
- * 管理画面コントローラー.
+ * ダッシュボード面コントローラー.
  *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
@@ -17,9 +17,9 @@ use App\User;
 use Cache;
 use Illuminate\Http\Request;
 
-class AdministratorController extends Controller
+class DashboardController extends Controller
 {
-    const DEFAULT_PATH = ':admin';
+    const DEFAULT_PATH = ':dashboard';
 
     public function __construct()
     {
@@ -27,26 +27,32 @@ class AdministratorController extends Controller
         //$this->middleware('auth');
     }
 
-    /*
-     * 管理トップページ
+    /**
+     * 管理トップページ.
+     *
+     * @return Illuminate\View\View
      */
     public function __invoke()
     {
-        return view('admin/index', ['title'=>'Administrator']);
+        return view('dashboard/index', ['title'=>'Administrator']);
     }
 
     /**
      * ユーザ一覧.
+     *
+     * @return Illuminate\View\View
      */
     public function user(Request $request)
     {
         $users = User::paginate(15);
 
-        return view('admin/users', ['title'=>'User List']);
+        return view('dashboard/users', ['title'=>'User List']);
     }
 
     /**
      * WikiデータをLukiWiki形式に変換.
+     *
+     * @return Illuminate\View\View
      */
     public function convert(Request $request)
     {
@@ -79,14 +85,18 @@ class AdministratorController extends Controller
                 $request->session()->flash('message', 'ディレクトリが見つかりません。');
             }
 
-            return redirect(':admin/convert');
+            return redirect(':dashboard/convert');
         }
 
-        return view('admin/convert', ['title'=>'Convert PukiWiki data.']);
+        return view('dashboard/convert', ['title'=>'Convert PukiWiki data.']);
     }
 
     /**
      * キャッシュクリア.
+     *
+     * @param Illuminate\Http\Request $request
+     *
+     * @return Illuminate\View\View
      */
     public function clearCache(Request $request)
     {
@@ -122,5 +132,16 @@ class AdministratorController extends Controller
         $request->session()->flash('message', '以下のキャッシュを削除しました：<br />'.implode("<br />\n", $msg));
 
         return redirect(self::DEFAULT_PATH);
+    }
+
+    /**
+     * InterWiki登録.
+     *
+     * @param Illuminate\Http\Request $request
+     *
+     * @return Illuminate\View\View
+     */
+    public function interwiki(Request $request) :View
+    {
     }
 }

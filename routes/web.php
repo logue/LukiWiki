@@ -11,10 +11,10 @@
 |
 */
 // 管理
-Route::get(':admin', 'AdministratorController');
-Route::get(':admin/convert', 'AdministratorController@convert');
-Route::post(':admin/convert', 'AdministratorController@convert');
-Route::get(':admin/clearCache', 'AdministratorController@clearCache');
+Route::get(':dashboard', 'DashboardController');
+Route::get(':dashboard/convert', 'DashboardController@convert');
+Route::post(':dashboard/convert', 'DashboardController@convert');
+Route::get(':dashboard/clearCache', 'DashboardController@clearCache');
 
 // 認証系
 Route::get(':login', 'Auth\LoginController@showLoginForm')->name('login');
