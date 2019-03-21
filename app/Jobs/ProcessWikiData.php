@@ -436,8 +436,9 @@ class ProcessWikiData implements ShouldQueue
                 return '/*'.'deprecated plugin:"'.$plugin.'" param:'.implode(',', $options).' body:'.$body.'*/';
                 break;
         }
-        if (preg_match('/\n/', $body)) {
-            $body = '{'."\n".$body."\n".'}';
+        if ($char == '@' && strpos($body, "\r") !== false) {
+            // 複数行の場合
+            $body = '{'."\n".trim(str_replace("\r", "\n", $body))."\n".'}';
         }
 
         return $char.$plugin.

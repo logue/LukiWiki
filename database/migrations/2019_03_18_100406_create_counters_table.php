@@ -10,7 +10,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCountsTable extends Migration
+class CreateCountersTable extends Migration
 {
     const TABLE_NAME = 'counters';
     const TABLE_COMMENT = 'カウンタ';

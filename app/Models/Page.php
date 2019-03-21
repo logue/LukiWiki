@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use RegexpTrie\RegexpTrie;
@@ -243,11 +244,14 @@ class Page extends Model
         $query = self::getCounter($page);
         $counter = $query->latest()->first();
 
+        $page_id = self::getId($page);
+
         $ip = \Request::ip();
 
         if (!$query->exists()) {
             // カウンタが存在しない場合
-            $query->insert([
+            Counter::insert([
+                'page_id'    => $page_id,
                 'total'      => 1,
                 'today'      => 1,
                 'ip_address' => $ip,
@@ -257,18 +261,18 @@ class Page extends Model
             return;
         }
 
-        if (($counter->updated_dt->day - Carbon::now()->day) === 1) {
+        if (($counter->updated_at->day - Carbon::now()->day) === 1) {
             // 日付変更があった場合、本日のカウントを昨日のカウントに上書きして1を代入
-            $query->update([
+            Counter::where('page_id', $page_id)->update([
                 'total'      => $counter->total++,
                 'today'      => 1,
                 'yesterday'  => $counter->today,
                 'ip_address' => $ip,
                 'updated_at' => Carbon::now()->toDateTimeString(),
             ]);
-        } elseif (($counter->updated_dt->day - Carbon::now()->day) >= 2) {
+        } elseif (($counter->updated_at->day - Carbon::now()->day) >= 2) {
             // 日付の差分が２日以上（前日にアクセスが無かった）の場合
-            $query->update([
+            Counter::where('page_id', $page_id)->update([
                 'total'      => $counter->total++,
                 'today'      => 1,
                 'yesterday'  => 0,
@@ -281,7 +285,7 @@ class Page extends Model
                 // 最後にアクセスしたひとのIPと同じ場合加算しない
                 return;
             }
-            $query->update([
+            Counter::where('page_id', $page_id)->update([
                 'total'      => $counter->total++,
                 'today'      => $counter->today++,
                 'yesterday'  => $counter->yesterday,

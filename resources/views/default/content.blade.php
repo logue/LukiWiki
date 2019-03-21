@@ -4,6 +4,8 @@
 
 @section('content')
 {!! $content !!}
+
+<p class="text-right small">Total: {{ $counter->total ?? 0 }} / Today: {{ $counter->today ?? 0}} / Yesterday: {{$counter->yesterday ?? 0}}</p>
 @if($notes)
 <hr />
 <aside>

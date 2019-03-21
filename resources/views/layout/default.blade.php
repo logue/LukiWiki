@@ -35,6 +35,12 @@
                 <b-alert show dismissible>{{ session('message') }}</b-alert>
                 @endif
                 <h1>@yield('title')</h1>
+                <!--nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url('/')}}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Library</li>
+                    </ol>
+                </nav -->
                 <hr />
                 @yield('content')
             </div>

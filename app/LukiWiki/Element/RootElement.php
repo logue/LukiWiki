@@ -164,7 +164,8 @@ class RootElement extends AbstractElement
                                 // Seems multiline-enabled block plugin
                                 $matches[2] .= "\r".$body[1]."\r";
                             }
-                            $content = new BlockPlugin($matches, $this->page);
+                            //dd($matches);
+                            $content = new BlockPlugin([$matches[1], trim($matches[2])], $this->page);
                         }
                         break;
                     case '~':

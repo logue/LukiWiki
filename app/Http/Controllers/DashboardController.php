@@ -9,13 +9,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ImportPukiWikiAttachment;
-use App\Jobs\ImportPukiWikiBackup;
-use App\Jobs\ImportPukiWikiCounter;
-use App\Jobs\ImportPukiWikiData;
 use App\User;
 use Cache;
 use Illuminate\Http\Request;
+use Storage;
 
 class DashboardController extends Controller
 {
@@ -63,19 +60,43 @@ class DashboardController extends Controller
                 switch ($request->input('type')) {
                     case 'attach':
                         $request->session()->flash('message', '添付ファイルのインポートのキューを実行しました。');
-                        $this->dispatch(new ImportPukiWikiAttachment($path));
+                        foreach (Storage::files($path.'/attach/') as $file) {
+                            try {
+                                $this->dispatch(new \App\Jobs\ProcessAttachmentData($file));
+                            } catch (\Exception $e) {
+                                Log::error('An error has occurred at '.$file);
+                            }
+                        }
                         break;
                     case 'backup':
                         $request->session()->flash('message', 'バックアップのインポートのキューを実行しました。');
-                        $this->dispatch(new ImportPukiWikiBackup($path));
+                        foreach (Storage::files($path.'/backup/') as $file) {
+                            try {
+                                $this->dispatch(new \App\Jobs\ProcessBackupData($file));
+                            } catch (\Exception $e) {
+                                Log::error('An error has occurred at '.$file);
+                            }
+                        }
                         break;
                     case 'counter':
                         $request->session()->flash('message', 'カウンターのインポートのキューを実行しました。');
-                        $this->dispatch(new ImportPukiWikiCounter($path));
+                        foreach (Storage::files($path.'/counter/') as $file) {
+                            try {
+                                $this->dispatch(new \App\Jobs\ProcessCounterData($file));
+                            } catch (\Exception $e) {
+                                Log::error('An error has occurred at '.$file);
+                            }
+                        }
                         break;
                     case 'wiki':
                         $request->session()->flash('message', 'Wikiデータのインポートのキューを実行しました。');
-                        $this->dispatch(new ImportPukiWikiData($path));
+                        foreach (Storage::files($path.'/wiki/') as $file) {
+                            try {
+                                $this->dispatch(new \App\Jobs\ProcessWikiData($file));
+                            } catch (\Exception $e) {
+                                Log::error('An error has occurred at '.$file);
+                            }
+                        }
                         break;
                     default:
                         $request->session()->flash('message', 'キューの実行をキャンセルしました。');

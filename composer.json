@@ -9,7 +9,6 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
-        "ext-intl": "*",
         "fideloper/proxy": "^4.0",
         "florianwolters/component-util-singleton": "^0.3.2",
         "intervention/image": "^2.4",
@@ -32,12 +31,12 @@
         "phpunit/phpunit": "^8.0"
     },
     "suggest": {
-        "ext-intl": "for page listing.",
+        "ext-intl": "for page listing and process punycode etc.",
         "ext-bz2": "If you migrate from PukiWiki Adv.",
         "ext-pdo_mysql": "pdo_mysql or pdo_sqlite or pdo_pgsql is required for data store.",
         "ext-pdo_sqlite": "pdo_mysql or pdo_sqlite or pdo_pgsql is required for data store.",
-        "ext-pdo_psql": "pdo_mysql or pdo_sqlite or pdo_pgsql is required for data store.",
-    }
+        "ext-pdo_psql": "pdo_mysql or pdo_sqlite or pdo_pgsql is required for data store."
+    },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",

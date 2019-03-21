@@ -54,12 +54,14 @@ class WikiController extends Controller
 
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', $page)->first();
+        $this->page->countUp($page);
+
         if (!$entry) {
             return abort(404, 'Page '.$page.' is not found.');
         }
-        $attachments = $this->page->attachments()->get();
+        $attachments = $entry->attachments()->get();
+        $counter = $entry->counter()->select('total', 'today', 'yesterday')->first();
         Debugbar::stopMeasure('db');
-
         Debugbar::startMeasure('parse', 'Converting wiki data...');
         //dd($entry->source);
         $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $entry->source));
@@ -77,6 +79,7 @@ class WikiController extends Controller
                 'page'      => $page,
                 'content'   => $content,
                 'title'     => $entry->title ?? $page,
+                'counter'   => $counter,
                 'notes'     => $meta['note'] ?? null,
                 'attaches'  => $attachments,
             ]
