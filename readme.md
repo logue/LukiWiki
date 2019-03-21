@@ -1,54 +1,78 @@
 # LukiWiki
 
-LukiWiki�Ƃ�[Laravel](https://laravel.com/)��p����Wiki�V�X�e���ł��B
+LukiWikiとは[Laravel](https://laravel.com/)を用いたWikiシステムです。
 
-## �͂��߂�
+## はじめに
 
-LukiWiki�Ƃ́APukiWiki Advance�i�ȉ�PukiWiki Adv.�j�Ŕ�剻�����R�[�h��Laravel��p����0���珑�������AMIT���C�Z���X�ŊJ������Ƃ����̂���|�̃v���W�F�N�g�ł���B
+LukiWikiとは、PukiWiki Advance（以下PukiWiki Adv.）で肥大化したコードをLaravelを用いて0から書き直し、MITライセンスで開発するというのが趣旨のプロジェクトです。
 
+## インストール
 
-
-## �C���X�g�[��
-
-�ŏ��Ɉȉ��̃R�}���h�����s���A���𐮂��Ă��������B
+最初に以下のコマンドを実行し、環境を整えてください。デフォルトでは、DBにMySQL (MariaDB）を使用する設定になっていますが、.envを書き換えてsqliteでも使用可能です。
 
 ```sh
 composer install
 cp .example.env .env
 php artisan key:generate
+php artisan migrate
 ```
 
-����������`php artisan server`��http://localhost:8000/ ����v���O�����𑖂点�邱�Ƃ��ł��܂��B
+完了したら`php artisan server`でhttp://localhost:8000/ からプログラムを走らせることができます。
 
-## ���C�Z���X
+## PukiWikiからのデーター移行方法
+
+※この機能は開発途上です。
+
+LukiWikiは、[PukiWiki](https://pukiwiki,osdn.jp)（UTF-8版のみ）、[PukiWiki Plus!](https://github.com/miko2u/pukiwiki-plus-i18n)、
+[PukiWiki Advance](https://pukiwiki.logue.be/)からデータ移行することができます。
+
+まず、PukiWikiのデータディレクトリ（attach、wiki、counterなどのあるディレクトリ）を以下のディレクトリ内に設置します。
+
+```
+/lukiwiki/storage/app/[pukiwikiのルートディレクトリ]
+```
+
+コマンドラインで以下のように入力し、ジョブキューを常駐させてください。
+
+```
+php artisan queue:work
+```
+
+次に、<http://localhost:8000/dashboard/convert>にアクセスし、「PukiWikiのデーターの置かれている場所へのパス」にアップロードした場所のパスを入れます。
+例えば、`/lukiwiki/storage/app/pukiwiki`にアップした場合、`pukiwiki`と入れます。
+
+ここでは必ず、Wikiデータの移行から行ってください。なお、バックアップデーターは文法変換されずにそのままDBに保存されます。
+元データを上書きする処理はありませんが、必ずバックアップを取ってから作業を行ってください。
+
+## ライセンス
 
 [MIT](LISENCE)
 
-## PukiWiki Adv.�ŋN���Ă�����
+## PukiWiki Adv.で起きている問題
 
-�ȉ��̗��R����h���ł͂Ȃ�0�x�[�X�̃V�X�e���ɂ���K�v���������B
+以下の理由から派生ではない0ベースのシステムにする必要があった。
 
-### �Z�p�I����
+### 技術的負債
 
-PukiWiki Adv.�ł́APukiWiki�I���W�i���̃R�[�h�⎩��̃R�[�h���g�킸�AZend Framework2�̊֐���p���Ď�������悤�ɂ��A
-PHP�̃o�[�W�����A�b�v�œ����Ȃ��Ȃ郊�X�N���t���[�����[�N���Ɍ���������邱�ƂŁAPHP�̃o�[�W�����A�b�v�ɂ���ē����Ȃ��Ȃ郊�X�N�����炵�A
-�������⒊�ۉ��������߂�Ƃ����̂���|�������B
+PukiWiki Adv.では、PukiWikiオリジナルのコードや自作のコードを使わず、Zend Framework2の関数を用いて実装するようにし、
+PHPのバージョンアップで動かなくなるリスクをフレームワーク側に肩代わりをすることで、PHPのバージョンアップによって動かなくなるリスクを減らしつつ、
+高速化や抽象化をすすめるというのが趣旨だった。
 
-�������A�W���J���Ă݂�ƁAPukiWiki�Ƃ̃v���O�C���݊����̂��߂ɖ��߂������Ă��܂�����AZend Framework���قƂ�ǍL�܂�Ȃ��������߁A������l�����Ȃ���ԂɂȂ��Ă��܂��Ă���B
+しかし、蓋を開けてみると、PukiWikiとのプラグイン互換性のために命令が増えてしまったり、Zend Frameworkがほとんど広まらなかったため、分かる人がいない状態になってしまっている。
 
-�L���b�V�������Ȃǂ����Ȃ�A�O���b�V�u�ɍs���A���������������ł��邪�AZend Framework���̂��̂��d���A�����̖ژ_���Ƃ͑傫����������Ă����̂ɂȂ��Ă��܂��Ă����B
+キャッシュ処理などをかなりアグレッシブに行い、高速化をもくろんでいるが、Zend Frameworkそのものが重く、当初の目論見とは大きくかけ離れてたものになってしまっていた。
 
-�������Ƃ̓N���C�A���g�T�C�h�ł������Ă���AjQuery��jQuery UI��jQuery Mobile�Ȃǂւ̈ˑ��������A2.2�ڍs��bootstrap�ڍs���ɏ�Q�ɂȂ��Ă��܂��Ă���B
-�i�����́A���X�|���V�u�f�U�C���Ƃ����l���͈�ʓI�łȂ������j
+同じことはクライアントサイドでも言えており、jQueryやjQuery UIやjQuery Mobileなどへの依存が高く、2.2移行のbootstrap移行時に障害になってしまっている。
+（当時は、レスポンシブデザインという考えは一般的でなかった）
 
-### ���C�Z���X���
+### ライセンス問題
 
-PukiWiki��GPL2 or later�ŊJ������Ă���A���ꂪ���̃��C�u�������g�p�����ŁA�傫�ȏ�Q�ɂȂ��Ă��܂��Ă�B
-�O�q�̒ʂ�APukiWiki Adv.�ɗ͊O���t���[�����[�N�̖��߂��g���A�{�̂͒��ۉ���i�߂�Ƃ����J���w�j�Ƃ̑����������A�z�z�����ł��g���u���ɂȂ��Ă����B
+PukiWikiはGPL2 or laterで開発されており、これが他のライブラリを使用する上で、大きな障害になってしまってる。
+前述の通り、PukiWiki Adv.極力外部フレームワークの命令を使い、本体は抽象化を進めるという開発指針との相性が悪く、配布する上でもトラブルになっていた。
 
-����́APukiWiki Adv.�̔h�����ƂȂ���PukiWiki Plus!�ɂ������Ă���B
+これは、PukiWiki Adv.の派生元となったPukiWiki Plus!にも言えている。
 
-2.x����́A�I�u�W�F�N�g�w������i�߂��ŁA�R�A������0���珑���������S�ɕʕ��ɂȂ��Ă��邪�A�v���O�C�����T�|�[�g�����Ō��̃R�[�h���c���K�v�����������߁A
-���̎����ɔ����Ă���Ƃ����Ӗ��ł͕ς���Ă��Ȃ��B
+2.xからは、オブジェクト指向化を進める上で、コア部分を0から書き直し完全に別物になっているが、プラグインをサポートする上で元のコードを残す必要があったため、
+この呪縛に縛られているという意味では変わっていない。
 
-���̂��߁ALukiWiki�ł̓v���O�C���̌݊����╶�@�̌݊���������Ă��Ȃ��B
+このため、LukiWikiではプラグインの互換性や文法の互換性を取っていない。
