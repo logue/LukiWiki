@@ -9,7 +9,7 @@
     <meta name="generator" content="LukiWiki v{{ \App\LukiWiki\Parser::VERSION }}" />
     <title>{{ $title }} - {{ Config::get('lukiwiki.sitename') }}</title>
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
-    <link rel="stylesheet" href="{{ mix('css/admin.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ mix('css/dashboard.css') }}" type="text/css" />
     @yield('styles')
 </head>
 

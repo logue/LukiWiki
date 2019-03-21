@@ -4,12 +4,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>{{ $title }} - {{ Config::get('lukiwiki.sitename') }}</title>
+    <title>@yield('title')</title>
     @if(isset($page))
     <link rel="canonical" href="{{ $page ? url($page) : url('/') }}" />
     @endif
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.3.0/paper.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css" integrity="sha256-hktQKhVc7KEsNf1bx+RYdzCMHyDyUjsA4N10rS1h8WA=" crossorigin="anonymous" />
     <style>
         @page {
             size: A4
