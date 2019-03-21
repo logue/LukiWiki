@@ -185,11 +185,20 @@ class Page extends Model
     public static function getEntries(): array
     {
         return Cache::rememberForever(self::PAGELIST_CACHE, function () {
-            $pages = self::pluck('name', 'updated_at')->all();
-            $collator = new Collator(Config::get('locale'));
-            $collator->asort($pages, Collator::SORT_STRING);
+            // ページ名と更新日時を取得
+            $data = self::pluck('updated_at', 'name')->all();
+            $entries = array_keys($data);
 
-            return array_flip($pages);
+            // ページ名でソート
+            $collator = new Collator(Config::get('locale'));
+            $collator->asort($entries, Collator::SORT_STRING);
+
+            // ページ名と更新日時をマージする
+            foreach ($entries as $entry) {
+                $pages[$entry] = $data[$entry];
+            }
+
+            return $pages;
         });
     }
 
@@ -241,57 +250,33 @@ class Page extends Model
      */
     public static function countUp(string $page): void
     {
-        $query = self::getCounter($page);
-        $counter = $query->latest()->first();
+        $counter = self::getCounter($page)->latest()->first();
 
-        $page_id = self::getId($page);
+        $value = [
+            'ip_address' => \Request::ip(),
+            'today'      => $counter->today++,
+            'total'      => $counter->total++,
+            'updated_at' => Carbon::now()->toDateTimeString(),
+            'yesterday'  => $counter->yesterday,
+        ];
 
-        $ip = \Request::ip();
-
-        if (!$query->exists()) {
-            // カウンタが存在しない場合
-            Counter::insert([
-                'page_id'    => $page_id,
-                'total'      => 1,
-                'today'      => 1,
-                'ip_address' => $ip,
-                'updated_at' => Carbon::now()->toDateTimeString(),
-            ]);
-
+        // 通常のカウントアップ
+        if ($counter->ip_address === $value['ip_address']) {
+            // 最後にアクセスしたひとのIPと同じ場合加算しない
             return;
         }
 
         if (($counter->updated_at->day - Carbon::now()->day) === 1) {
             // 日付変更があった場合、本日のカウントを昨日のカウントに上書きして1を代入
-            Counter::where('page_id', $page_id)->update([
-                'total'      => $counter->total++,
-                'today'      => 1,
-                'yesterday'  => $counter->today,
-                'ip_address' => $ip,
-                'updated_at' => Carbon::now()->toDateTimeString(),
-            ]);
+            $value = [
+                'yesterday' => $counter->today,
+                'today'     => 1,
+            ];
         } elseif (($counter->updated_at->day - Carbon::now()->day) >= 2) {
             // 日付の差分が２日以上（前日にアクセスが無かった）の場合
-            Counter::where('page_id', $page_id)->update([
-                'total'      => $counter->total++,
-                'today'      => 1,
-                'yesterday'  => 0,
-                'ip_address' => $ip,
-                'updated_at' => Carbon::now()->toDateTimeString(),
-            ]);
-        } else {
-            // 通常のカウントアップ
-            if ($counter->ip_address === $ip) {
-                // 最後にアクセスしたひとのIPと同じ場合加算しない
-                return;
-            }
-            Counter::where('page_id', $page_id)->update([
-                'total'      => $counter->total++,
-                'today'      => $counter->today++,
-                'yesterday'  => $counter->yesterday,
-                'ip_address' => $ip,
-                'updated_at' => Carbon::now()->toDateTimeString(),
-            ]);
+            $value['yesterday'] = 0;
         }
+
+        Counter::updateOrCreate(['page_id' => $counter->page_id], $value);
     }
 }

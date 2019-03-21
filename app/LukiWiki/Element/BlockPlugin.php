@@ -41,7 +41,7 @@ class BlockPlugin extends AbstractElement
         if (count($this->params) !== 0 && $this->body) {
             $ret[] = '<div class="card-body">';
             if (count($this->params) !== 0) {
-                $ret[] = '<h5 class="card-title">'.implode(', ', $this->params).'</h5>';
+                $ret[] = '<h5 class="card-title">'.htmlspecialchars(implode(', ', $this->params)).'</h5>';
             }
             if ($this->body) {
                 $ret[] = '<p class="card-text">'.nl2br(htmlspecialchars($this->body)).'</p>';
