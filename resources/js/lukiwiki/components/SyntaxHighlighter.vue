@@ -1,10 +1,16 @@
 <script>
 // CodemirrorによるSyntaxHilighter
-// モードの読み込み先（ビルド時にnode_modules内のCodeMirrorのmodeからpublic/js内にコピーされる）
-CodeMirror.modeURL = "/js/codemirror/mode/%N/%N.js";
-
 import CodeMirror from "codemirror/lib/codemirror";
 require("codemirror/addon/runmode/runmode");
+
+// モードの読み込み先（ビルド時にnode_modules内のCodeMirrorのmodeからpublic/js内にコピーされる）
+const modeUrl = "/js/codemirror/mode/";
+const meta = document.createElement("script");
+meta.src = modeUrl + "meta.js";
+const others = document.getElementsByTagName("script")[0];
+others.parentNode.insertBefore(meta, others);
+
+CodeMirror.modeUrl = modeUrl + "%N/%N.js";
 
 //
 let loading = {};
@@ -22,25 +28,27 @@ function ensureDeps(mode, cont) {
     CodeMirror.requireMode(missing[i], split);
 }
 
-CodeMirror.requireMode = function(mode, cont) {
-  if (typeof mode !== "string") mode = mode.name;
-  if (CodeMirror.modes.hasOwnProperty(mode)) return ensureDeps(mode, cont);
-  if (loading.hasOwnProperty(mode)) return loading[mode].push(cont);
+CodeMirror.requireMode = function(name, cont) {
+  console.log(name);
+  if (CodeMirror.modes.hasOwnProperty(name)) return ensureDeps(name, cont);
+  if (loading.hasOwnProperty(name)) return loading[name].push(cont);
 
-  const file = CodeMirror.modeURL.replace(/%N/g, mode);
+  CodeMirror.on(meta, "load", function() {
+    const mode = CodeMirror.findModeByName(name).mode;
+    console.log(name, mode);
 
-  const script = document.createElement("script");
-  script.src = file;
-  const others = document.getElementsByTagName("script")[0];
-  const list = (loading[mode] = [cont]);
+    const script = document.createElement("script");
+    script.src = CodeMirror.modeUrl.replace(/%N/g, mode);
+    const list = (loading[mode] = [cont]);
 
-  CodeMirror.on(script, "load", function() {
-    ensureDeps(mode, function() {
-      for (let i = 0; i < list.length; ++i) list[i]();
+    CodeMirror.on(script, "load", function() {
+      ensureDeps(mode, function() {
+        for (let i = 0; i < list.length; ++i) list[i]();
+      });
     });
-  });
 
-  others.parentNode.insertBefore(script, others);
+    others.parentNode.insertBefore(script, others);
+  });
 };
 
 CodeMirror.autoLoadMode = function(instance, mode) {

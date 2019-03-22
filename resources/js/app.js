@@ -32,5 +32,6 @@ window.Vue = require('vue');
 require("./lukiwiki");
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    delimiters: [{ replace: () => { return '^(?!.).' } }, { replace: () => { return '' } }],
 });
