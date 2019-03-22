@@ -22,7 +22,7 @@ class InlineElement extends AbstractElement
     public function __construct($text, $page)
     {
         parent::__construct();
-        $text = trim($text);
+        $text = parent::processText($text);
         if (substr($text, 0, 1) === "\n") {
             $this->elements[] = $text;
         } else {

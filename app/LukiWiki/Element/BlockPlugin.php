@@ -23,12 +23,11 @@ class BlockPlugin extends AbstractElement
     public function __construct($out, $page)
     {
         parent::__construct();
-        //echo join(",", $out);
         $this->page = $page;
         $this->name = $out[0];
-        $params = explode(',', $out[1]);
-        $this->body = str_replace("\r", "\n", array_pop($params));
-        $this->params = $params;
+        $this->params = explode(',', $out[1]);
+        //if ($this->name === 'gimage')        dd($out[1]);
+        $this->body = $out[2];
     }
 
     public function __toString()
@@ -41,10 +40,10 @@ class BlockPlugin extends AbstractElement
         if (count($this->params) !== 0 && $this->body) {
             $ret[] = '<div class="card-body">';
             if (count($this->params) !== 0) {
-                $ret[] = '<h5 class="card-title">'.htmlspecialchars(implode(', ', $this->params)).'</h5>';
+                $ret[] = '<p class="card-title"><code>'.parent::processText(implode(' ,', $this->params)).'</code></p>';
             }
             if ($this->body) {
-                $ret[] = '<p class="card-text">'.nl2br(htmlspecialchars($this->body)).'</p>';
+                $ret[] = '<p class="card-text"><pre class="pre">'.parent::processText($this->body).'</pre></p>';
             }
             $ret[] = '</div>';
         }

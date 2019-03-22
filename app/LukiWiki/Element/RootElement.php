@@ -157,15 +157,23 @@ class RootElement extends AbstractElement
                         $matches = [];
 
                         if (preg_match('/^@([^\(\{]+)(?:\(([^\r]*)\))?(\{*)/', $line, $matches)) {
-                            // Plugin
-                            $len = strlen($matches[3]);
-                            $body = [];
-                            if (preg_match('/\{{'.$len.'}\s*\r(.*)\r\}{'.$len.'}/', $line, $body)) {
-                                // Seems multiline-enabled block plugin
-                                $matches[2] .= "\r".$body[1]."\r";
+                            // @プラグイン名(パラメータ1[,パラメータ2...]){ボディ}
+                            // プラグイン名
+                            $plugin = $matches[1];
+                            // パラメータ
+                            $params = trim($matches[2]);
+                            // 階層
+                            $level = strlen($matches[3]);
+
+                            $m2 = [];
+                            $body = '';
+                            if (preg_match('/\{{'.$level.'}\s*\r(.*)\r\}{'.$level.'}/', $line, $m2)) {
+                                $body = trim(str_replace("\r", "\n", $m2[1]));
                             }
-                            //dd($matches);
-                            $content = new BlockPlugin([$matches[1], trim($matches[2])], $this->page);
+
+                            // ※エスケープ処理はプラグイン内で行うこと
+
+                            $content = new BlockPlugin([$plugin, $params, $body], $this->page);
                         }
                         break;
                     case '~':

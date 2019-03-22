@@ -51,9 +51,9 @@ class PreformattedText extends AbstractElement
     {
         $content = self::processText(implode("\n", $this->elements));
         if (empty($this->meta['lang'])) {
-            return $this->wrap($content, 'pre', ['class' => 'CodeMirror'], false);
+            return $this->wrap($content, 'pre', ['class' => 'pre'], false);
         }
 
-        return $this->wrap($content, 'pre', ['v-lw-sh' => null, 'class' => 'CodeMirror', 'data-lang' => $this->meta['lang']], false);
+        return $this->wrap($content, 'pre', ['v-lw-sh' => null, 'class' => 'pre CodeMirror', 'data-lang' => $this->meta['lang']], false);
     }
 }

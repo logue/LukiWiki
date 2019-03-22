@@ -135,7 +135,7 @@ class InlineConverter
      */
     public function convert(string $string)
     {
-        $input = trim($string);
+        $input = htmlspecialchars($string, ENT_HTML5, 'UTF-8');
         if (empty($input)) {
             return;
         }

@@ -1,11 +1,11 @@
 @extends('layout.default')
 
-@section('title', $page )
+@section('title', $entry->title ?? $page )
 
 @section('content')
 {!! $content !!}
 
-<p class="text-right small">Total: {{ $counter->total ?? 0 }} / Today: {{ $counter->today ?? 0}} / Yesterday: {{$counter->yesterday ?? 0}}</p>
+<p class="text-right small">Total: {{ $entry->counter->total ?? 0 }} / Today: {{ $entry->counter->today ?? 0}} / Yesterday: {{$entry->counter->yesterday ?? 0}}</p>
 @if($notes)
 <hr />
 <aside>
@@ -24,7 +24,7 @@
 @endif
 <hr />
 <ul class="fa-ul">
-    @foreach ($attaches as $attach)
+    @foreach ($entry->attachments as $attach)
     <li>
         {!! $attach->name !!}
     </li>
