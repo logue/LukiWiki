@@ -31,7 +31,7 @@ class ProcessWikiData implements ShouldQueue
     public $tries = 1;
 
     private $file;
-    private $page;
+    public $page;
 
     /**
      * Create a new job instance.
@@ -65,6 +65,14 @@ class ProcessWikiData implements ShouldQueue
 
             return;
         }
+
+        // InterWikiName、AutoAliasName、Glossaryは別に処理
+        if ($this->page === 'InterWikiName' || $this->page === 'AutoAliasName' || $this->page === 'Glossary') {
+            Log::info('Skipped "'.$this->page.'".');
+
+            return;
+        }
+
         // :が含まれるページ名は_に変更する。
         $page = preg_replace('/\:/', '_', $this->page);
         $data = explode("\n", rtrim(Storage::get($this->file)));
@@ -221,7 +229,7 @@ class ProcessWikiData implements ShouldQueue
                     preg_match('/^#([^\(\{]+)(?:\(([^\r]*)\))?(?:\{\{*(.+?)\}\}*)?/', $line, $matches);
                     $plugin = trim($matches[1]);
                     $option = isset($matches[2]) ? explode(',', trim($matches[2])) : [];
-                    $body = isset($matches[3]) ? str_replace("\r", "\n", trim($matches[3])) : null;
+                    $body = isset($matches[3]) ? trim($matches[3]) : null;
                     //dd($line, $matches, $body);
 
                     if ($plugin === 'freeze') {
@@ -256,20 +264,36 @@ class ProcessWikiData implements ShouldQueue
                     }
                     break;
                 case '|':
-                    if (preg_match('/^\|(.+)\|([HFC]?)$/i', $line, $matches) !== 0) {
-                        if (isset($matches[2]) && strtolower($matches[2]) === 'c') {
-                            $cells = explode('|', $matches[0]);
+                    if (preg_match('/\|(.+)\|(\w+)$/i', $line, $matches) !== 0) {
+                        // テーブル定義行の処理
+                        if (isset($matches[1]) && strpos(strtolower($matches[2]), 'c') !== false) {
+                            $cells = explode('|', $matches[1]);
+                            $c = [];
                             foreach ($cells as $cell) {
-                                $c = trim($cell);
-                                if (is_numeric($c)) {
-                                    $l[] = self::px2rem($c);
+                                if (strpos($cell, ':') !== false) {
+                                    // セルにパラメータが含まれている場合
+                                    $params = explode(':', trim($cell));
+                                    $p = [];
+                                    foreach ($params as $param) {
+                                        if (is_numeric($param)) {
+                                            // 数値の場合remに変換
+                                            $p[] = self::px2rem($param);
+                                        } else {
+                                            $p[] = $param;
+                                        }
+                                    }
+                                    $c[] = implode(':', $p);
                                 } else {
-                                    $l[] = $c;
+                                    $c[] = trim($cell);
                                 }
                             }
-                            $ret[] = implode('|', $l);
+                            $ret[] = '|'.implode('|', $c).'|'.$matches[2];
+                        } else {
+                            // cが含まれていない場合、そのまま移行
+                            $ret[] = $line;
                         }
                     } else {
+                        // そのまま移行
                         $ret[] = $line;
                     }
                     break;
@@ -438,7 +462,10 @@ class ProcessWikiData implements ShouldQueue
         }
         if ($char == '@' && strpos($body, "\r") !== false) {
             // 複数行の場合
-            $body = '{'."\n".trim(str_replace("\r", "\n", $body))."\n".'}';
+            $body = trim(str_replace("\r", "\n", $body));
+            if (!empty($body)) {
+                $body = '{'."\n".$body."\n".'}';
+            }
         }
 
         return $char.$plugin.
