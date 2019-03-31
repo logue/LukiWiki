@@ -9,7 +9,7 @@ $finder = PhpCsFixer\Finder::create()
         '.idea',
         'bower_components',
         'node_modules',
-        'resources/lang',
+        'resources/lang/ja',
         'storage',
         'bootstrap',
         'vendor'

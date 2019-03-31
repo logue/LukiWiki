@@ -35,7 +35,7 @@ class RootElement extends AbstractElement
         $matches = [];
 
         $count = count($lines);
-        for ($i = 0; $i < $count; ++$i) {
+        for ($i = 0; $i < $count; $i++) {
             $line = rtrim(array_shift($lines), "\t\r\n\0\x0B");	// スペース以外の空白文字をトリム;
 
             // Empty
@@ -214,11 +214,11 @@ class RootElement extends AbstractElement
     {
         // Heading id (auto-generated)
         $autoid = 'content_'.$this->id.'_'.$this->count;
-        ++$this->count;
+        $this->count++;
 
         list($_text, $id, $level) = HeadingAnchor::get($text, false); // Cut fixed-anchor from $text
 
-        $this->meta['contents'][] = str_repeat('-', $level).'[['.$_text.'>#'.$autoid.']]';
+        $this->meta['contents'][] = str_repeat(' ', $level - 1).'- ['.$_text.'](#'.$autoid.')';
 
         // Add heding
         return [$_text, null, $autoid];

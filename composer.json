@@ -1,9 +1,10 @@
 {
-    "name": "laravel/laravel",
+    "name": "logue/lukiwiki",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "The next generation of wiki system.",
     "keywords": [
-        "framework",
+        "pukiwiki",
+        "lukiwiki",
         "laravel"
     ],
     "license": "MIT",
@@ -21,7 +22,8 @@
         "owen-oj/laravel-getid3": "^0.1.0@alpha",
         "sters/regexp-trie": "^0.0.4",
         "symfony/intl": "^4.2",
-        "symfony/polyfill-intl-idn": "^1.10"
+        "symfony/polyfill-intl-idn": "^1.10",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.1",

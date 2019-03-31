@@ -1,5 +1,7 @@
 # LukiWiki
 
+[![StyleCI](https://github.styleci.io/repos/122809801/shield?branch=master)](https://github.styleci.io/repos/122809801)
+
 LukiWikiとは[Laravel](https://laravel.com/)を用いたWikiシステムです。
 
 ## はじめに
@@ -23,8 +25,8 @@ php artisan migrate
 
 ※この機能は開発途上です。
 
-LukiWikiは、[PukiWiki](https://pukiwiki,osdn.jp)（UTF-8版のみ）、[PukiWiki Plus!](https://github.com/miko2u/pukiwiki-plus-i18n)、
-[PukiWiki Advance](https://pukiwiki.logue.be/)からデータ移行することができます。
+LukiWikiは、RDBMSにデーターを格納する仕様です。[PukiWiki](https://pukiwiki,osdn.jp)（UTF-8版のみ）、[PukiWiki Plus!](https://github.com/miko2u/pukiwiki-plus-i18n)、
+[PukiWiki Advance](https://pukiwiki.logue.be/)からデータ移行することができます。現在のところ、SQLiteとMySQL(MariaDB)5.7以降に対応しています。（※PostgreSQLおよびSQLServerへの対応予定はありますが、未チェックです）
 
 まず、PukiWikiのデータディレクトリ（attach、wiki、counterなどのあるディレクトリ）を以下のディレクトリ内に設置します。
 
@@ -38,11 +40,21 @@ LukiWikiは、[PukiWiki](https://pukiwiki,osdn.jp)（UTF-8版のみ）、[PukiWi
 php artisan queue:work
 ```
 
-次に、<http://localhost:8000/dashboard/convert>にアクセスし、「PukiWikiのデーターの置かれている場所へのパス」にアップロードした場所のパスを入れます。
+次に、<http://localhost:8000/:dashboard/convert>にアクセスし、「PukiWikiのデーターの置かれている場所へのパス」にアップロードした場所のパスを入れます。
 例えば、`/lukiwiki/storage/app/pukiwiki`にアップした場合、`pukiwiki`と入れます。
 
-ここでは必ず、Wikiデータの移行から行ってください。なお、バックアップデーターは文法変換されずにそのままDBに保存されます。
-元データを上書きする処理はありませんが、必ずバックアップを取ってから作業を行ってください。
+ここでは必ず、Wikiデータの移行から行ってください。なお、文法変換されるのは、現行のWikiデーターのみでバックアップはそのままDBに保存されます。
+元のPukiWikiのデータを上書きする処理はありませんが、念の為バックアップを取ってから作業を行ってください。
+
+なお、複数回実行すると、移行前の内容で上書きされます。
+
+## 仕様
+
+* 差分データー（diffディレクトリ）の移行はせず、バックアップと統合されます。
+* 添付ファイルは同一内容の（SHA-1ハッシュの値が等しい）場合、一つのファイルに統合されます。ページに対して添付ファイルが貼り付けられるという仕様は変わりませんが、管理テーブルから同一ファイルを参照するという処理になります。
+* 添付ファイルのバックアップの移行はしません。
+* InterWikiNameおよび、AutoAliasName、GlossaryはWikiで管理せずに専用のテーブルで管理します。これは管理人のみ編集可能にする予定です。
+* プラグインの仕様はまだ決まっていませんが、PukiWikiよりも厳格になります。Advと異なりAPI互換はありません。
 
 ## ライセンス
 
@@ -68,7 +80,7 @@ PHPのバージョンアップで動かなくなるリスクをフレームワ�
 ### ライセンス問題
 
 PukiWikiはGPL2 or laterで開発されており、これが他のライブラリを使用する上で、大きな障害になってしまってる。
-前述の通り、PukiWiki Adv.極力外部フレームワークの命令を使い、本体は抽象化を進めるという開発指針との相性が悪く、配布する上でもトラブルになっていた。
+前述の通り、PukiWiki Adv.極力外部フレームワークの関数を使い、本体の抽象化を進めるという開発指針との相性が悪く、配布する上でもトラブルになっていた。
 
 これは、PukiWiki Adv.の派生元となったPukiWiki Plus!にも言えている。
 
