@@ -61,12 +61,12 @@ class Table extends AbstractElement
     public function __toString()
     {
         // Set rowspan (from bottom, to top)
-        for ($ncol = 0; $ncol < $this->col; ++$ncol) {
+        for ($ncol = 0; $ncol < $this->col; $ncol++) {
             $rowspan = 1;
             foreach (array_reverse(array_keys($this->elements)) as $nrow) {
                 $row = $this->elements[$nrow];
                 if ($row[$ncol]->rowspan === 0) {
-                    ++$rowspan;
+                    $rowspan++;
                     continue;
                 }
                 $row[$ncol]->rowspan = $rowspan;
@@ -88,7 +88,7 @@ class Table extends AbstractElement
             $colspan = 1;
             foreach (array_keys($row) as $ncol) {
                 if ($row[$ncol]->colspan === 0) {
-                    ++$colspan;
+                    $colspan++;
                     continue;
                 }
                 $row[$ncol]->colspan = $colspan;

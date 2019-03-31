@@ -54,7 +54,7 @@ class Note extends AbstractInline
         $this->meta['note'] = trim($note);
         // A hyperlink, content-body to footnote
         $name = '<sup><a id="note-anchor-'.$id.'" href="#note-'.$id.'" class="note-anchor"><font-awesome-icon fas icon="thumbtack" size="xs">*</font-awesome-icon>'.$id.'</a></sup>';
-        ++self::$note_id;
+        self::$note_id++;
 
         parent::setParam(['page'=>$this->page, 'href' => $name, 'body'=>$body]);
     }

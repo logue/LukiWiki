@@ -38,7 +38,7 @@ class Heading extends AbstractElement
         $this->meta = $content->getMeta();
         $this->insert($content);
 
-        ++$this->level; // h2,h3,h4,h5,h6
+        $this->level++; // h2,h3,h4,h5,h6
     }
 
     public function insert($obj)

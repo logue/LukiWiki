@@ -38,7 +38,7 @@ class KeywordExploder
             $keyword = trim($keyword);
             // 整形の結果、空白しか残らなかった場合nullを返す（スペースしか入力されていないなど）
             if (empty($keyword) || $keyword === '') {
-                return null;
+                return;
             }
             // 半角カナを全角カナへ変換
             $keyword = mb_convert_kana($keyword, 'KV');

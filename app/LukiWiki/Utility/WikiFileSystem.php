@@ -145,7 +145,6 @@ class WikiFileSystem
             return Storage::delete(self::getFilePath($page));
         } catch (\Exception $e) {
             throw new FileNotFoundException($path.'('.$page.') is not found.', $e->getCode(), $e);
-
             return false;
         }
     }
