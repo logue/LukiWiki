@@ -47,6 +47,6 @@ class CreateCountersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('counts');
+        Schema::dropIfExists(self::TABLE_NAME);
     }
 }

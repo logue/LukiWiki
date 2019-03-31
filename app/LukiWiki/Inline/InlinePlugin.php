@@ -21,7 +21,7 @@ class InlinePlugin extends AbstractInline
     public function getPattern():string
     {
         return
-            '(?:&'.
+            '(?:\&amp;'.
                 '(?:'.
                     '(\w+)'.                        // [1] plugin name
                     '(?:'.

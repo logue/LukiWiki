@@ -20,6 +20,10 @@
       class="form-text text-muted">LukiWikiの<code>storage/app</code>内にPukiWikiのディレクトリを入れてください。</small>
   </div>
   <div class="custom-control custom-radio">
+    <input type="radio" id="typeTest" name="type" value="test" class="custom-control-input" checked="checked">
+    <label class="custom-control-label" for="typeTest">テスト</label>
+  </div>
+  <div class="custom-control custom-radio">
     <input type="radio" id="typeWiki" name="type" value="wiki" class="custom-control-input">
     <label class="custom-control-label" for="typeWiki">Wikiデーター（必ず最初に実行してください。）</label>
   </div>

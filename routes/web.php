@@ -15,11 +15,26 @@ Route::get(':dashboard', 'DashboardController');
 Route::get(':dashboard/convert', 'DashboardController@convert');
 Route::post(':dashboard/convert', 'DashboardController@convert');
 Route::get(':dashboard/clearCache', 'DashboardController@clearCache');
+Route::get(':dashboard/interwiki', 'DashboardController@interwiki');
+Route::post(':dashboard/interwiki', 'DashboardController@interwiki');
+Route::any(':dashboard/captchaTest', 'DashboardController@captchaTest');
+Route::get(':dashboard/job', 'DashboardController@job');
 
 // 認証系
 Route::get(':login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post(':login', 'Auth\LoginController@login');
 Route::post(':logout', 'Auth\LoginController@logout')->name('logout');
+//Twitter
+Route::get(':login/twitter', 'Auth\SocialController@getTwitterAuth');
+Route::get(':login/callback/twitter', 'Auth\SocialController@getTwitterAuthCallback');
+
+//Facebook
+Route::get(':login/facebook', 'Auth\SocialController@getFacebookAuth');
+Route::get(':login/callback/facebook', 'Auth\SocialController@getFacebookAuthCallback');
+
+//Google
+Route::get(':login/google', 'Auth\SocialController@getGoogleAuth');
+Route::get(':login/callback/google', 'Auth\SocialController@getGoogleAuthCallback');
 
 // 登録系
 Route::get(':register', 'Auth\RegisterController@showRegistrationForm')->name('register');

@@ -33,8 +33,8 @@ class ProcessAttachmentData implements ShouldQueue
 
     private $file;
     private $attach_dir;
-    private $page;
-    private $original_name;
+    public $page;
+    public $original_name;
 
     /**
      * Create a new job instance.

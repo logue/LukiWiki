@@ -42,6 +42,9 @@ class ProcessCounterData implements ShouldQueue
     public function __construct(string $file)
     {
         $this->file = $file;
+        if (pathinfo($this->file, PATHINFO_EXTENSION) !== 'count') {
+            return;
+        }
         $this->page = hex2bin(pathinfo($this->file, PATHINFO_FILENAME));
 
         if (empty($this->page)) {
@@ -57,18 +60,17 @@ class ProcessCounterData implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('Loading "'.$this->file.'"...');
-
         // :が含まれるページ名は_に変更
         $page = preg_replace('/\:/', '_', $this->page);
+        Log::info('Loading "'.$this->file.'"('.$page.')...');
+
         // ページが存在しない場合、移行はしない。（IDで管理するため）
-        $page_id = Page::where('name', $page)->pluck('id')->first();
+        $page_id = Page::getId($page);
         if (!$page_id) {
             Log::info('Skipped');
 
             return;
         }
-        Log::info('Page: '.$page);
 
         $data = explode("\n", Storage::get($this->file));
 

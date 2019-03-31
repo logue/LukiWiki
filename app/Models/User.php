@@ -39,6 +39,16 @@ class User extends Model
     }
 
     /**
+     * 作業履歴.
+     *
+     * @return Illuminate\Database\Eloquent\Relations\HasOneThrough
+     */
+    public function pageActivity():HasOneThrough
+    {
+        return $this->hasOneThrough(Backup::class, Page::class);
+    }
+
+    /**
      * このページの所有者.
      *
      * @return Illuminate\Database\Eloquent\Relations\HasOne

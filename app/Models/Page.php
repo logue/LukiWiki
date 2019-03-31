@@ -252,6 +252,17 @@ class Page extends Model
     {
         $counter = self::getCounter($page)->latest()->first();
 
+        if (!$counter) {
+            Counter::create([
+                'page_id'    => self::getId($page),
+                'ip_address' => \Request::ip(),
+                'today'      => 1,
+                'total'      => 1,
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ]);
+
+            return;
+        }
         $value = [
             'ip_address' => \Request::ip(),
             'today'      => $counter->today++,

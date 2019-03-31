@@ -98,7 +98,7 @@ class Media extends AbstractInline
             }
             */
 
-            return '<lw-media><a href="'.$this->href.'" title="'.$this->title.'">'.$this->alias.'</a></lw-media>';
+            return '<lw-media><a href="'.$this->href.'" title="'.$this->title.'" rel="attachment">'.$this->alias.'</a></lw-media>';
         }
 
         return parent::setLink($this->alias, $this->href, $this->name);

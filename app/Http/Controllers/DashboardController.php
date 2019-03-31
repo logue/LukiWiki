@@ -9,9 +9,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InterWiki;
+use App\Models\Page;
 use App\User;
 use Cache;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Storage;
 
 class DashboardController extends Controller
@@ -22,6 +25,8 @@ class DashboardController extends Controller
     {
         // 認証用ミドルウェア
         //$this->middleware('auth');
+        // ページモデルオブジェクト
+        $this->page = new Page();
     }
 
     /**
@@ -29,7 +34,7 @@ class DashboardController extends Controller
      *
      * @return Illuminate\View\View
      */
-    public function __invoke()
+    public function __invoke() :View
     {
         return view('dashboard/index', ['title'=>'Administrator']);
     }
@@ -57,6 +62,7 @@ class DashboardController extends Controller
             $path = $request->input('path');
 
             if (\Storage::exists($path)) {
+                $errors = [];
                 switch ($request->input('type')) {
                     case 'attach':
                         $request->session()->flash('message', '添付ファイルのインポートのキューを実行しました。');
@@ -64,7 +70,7 @@ class DashboardController extends Controller
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessAttachmentData($file));
                             } catch (\Exception $e) {
-                                Log::error('An error has occurred at '.$file);
+                                $errors[] = $file;
                             }
                         }
                         break;
@@ -74,7 +80,7 @@ class DashboardController extends Controller
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessBackupData($file));
                             } catch (\Exception $e) {
-                                Log::error('An error has occurred at '.$file);
+                                $errors[] = $file;
                             }
                         }
                         break;
@@ -84,7 +90,7 @@ class DashboardController extends Controller
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessCounterData($file));
                             } catch (\Exception $e) {
-                                Log::error('An error has occurred at '.$file);
+                                $errors[] = $file;
                             }
                         }
                         break;
@@ -94,16 +100,28 @@ class DashboardController extends Controller
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessWikiData($file));
                             } catch (\Exception $e) {
-                                Log::error('An error has occurred at '.$file);
+                                $errors[] = $file;
                             }
                         }
                         break;
                     default:
                         $request->session()->flash('message', 'キューの実行をキャンセルしました。');
-
+                }
+                if (count($errors) !== 0) {
+                    $request->session()->flash('message', '以下のファイルでエラーが発生しました。：'."\n".implode("\n", $errors));
                 }
             } else {
                 $request->session()->flash('message', 'ディレクトリが見つかりません。');
+            }
+
+            if ($request->input('type') === 'test') {
+                //$request->session()->flash('message', 'テスト実行');
+                //$testfile = 'main/wiki/E3839EE38393E3838EE382AE2F4D4D4C2F4C6F6E646F6E646572727920416972.txt';
+                //dd(Storage::exists($testfile), Storage::path($testfile));
+                //$f = str_replace('/', DIRECTORY_SEPARATOR, Storage::path($testfile));
+                //dd($f);
+                // http://localhost:8000/%E3%83%9E%E3%83%93%E3%83%8E%E3%82%AE/MML/Londonderry%20Air
+                //$this->dispatch(new \App\Jobs\ProcessWikiData($testfile));
             }
 
             return redirect(':dashboard/convert');
@@ -164,5 +182,34 @@ class DashboardController extends Controller
      */
     public function interwiki(Request $request) :View
     {
+        if ($request->isMethod('post')) {
+        }
+
+        return view('dashboard/interwiki', [
+            'title'  => 'InterWikiName.',
+            'entries'=> InterWiki::paginate(20),
+        ]);
+    }
+
+    public function captchaTest(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $rules = ['captcha' => 'required|captcha'];
+            $validator = \Validator::make(Input::all(), $rules);
+            if ($validator->fails()) {
+                echo '<p style="color: #ff0000;">Incorrect!</p>';
+            } else {
+                echo '<p style="color: #00ff30;">Matched :)</p>';
+            }
+        }
+
+        $form = '<form method="post" action="captcha-test">';
+        $form .= '<input type="hidden" name="_token" value="'.csrf_token().'">';
+        $form .= '<p>'.captcha_img().'</p>';
+        $form .= '<p><input type="text" name="captcha"></p>';
+        $form .= '<p><button type="submit" name="check">Check</button></p>';
+        $form .= '</form>';
+
+        return $form;
     }
 }

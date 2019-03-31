@@ -8,12 +8,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="generator" content="LukiWiki v{{ \App\LukiWiki\Parser::VERSION }}" />
     <title>@yield('title') - {{ Config::get('lukiwiki.sitename') }}</title>
-    @if(isset($page))
-    <link rel="canonical" href="{{ $page ? url($page) : url('/') }}" />
-    <link rel="amphtml" href="{{ $page ? url($page) : url('/') }}:amp" />
-    <link rel="print" href="{{ $page ? url($page) : url('/') }}:print" />
-    @endif
+@if(isset($page))
+    <link rel="canonical" href="{{ url('/'.str_replace('%2F', '/', rawurlencode($page)) ) }}" />
+    <link rel="amphtml" href="{{ url('/'.str_replace('%2F', '/', rawurlencode($page)) .':amp' )  }}" />
+    <link rel="archives" href="{{ url('/'.str_replace('%2F', '/', rawurlencode($page)) .':history' ) }}" />
+    <link rel="print" href="{{ url('/'.str_replace('%2F', '/', rawurlencode($page)) .':print' ) }}" />
+@endif
+    <link rel="home" href="{{ url('') }}" />
     <link rel="search" type="application/opensearchdescription+xml" href="{{ url(':api/opensearch') }}">
+    <link rel="sitemap" type="application/xml" href="{{ url(':api/sitemap') }}">
     <link rel="alternate" type="application/atom+xml" href="{{ url(':api/atom') }}" />
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
     @yield('styles')

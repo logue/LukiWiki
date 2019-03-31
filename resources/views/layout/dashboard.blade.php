@@ -16,7 +16,8 @@
 <body>
     <div id="app">
         <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ url('/') }}">{{ Config::get('lukiwiki.sitename') }}</a>
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0"
+                href="{{ url('/') }}">{{ Config::get('lukiwiki.sitename') }}</a>
         </nav>
 
         <div class="container-fluid">
@@ -31,21 +32,21 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" href="{{ url(':dashboard/interwiki') }}">
                                     <span data-feather="file"></span>
-                                    Orders
+                                    InterWiki設定
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" href="{{ url(':dashboard/convert') }}">
                                     <span data-feather="shopping-cart"></span>
-                                    Products
+                                    変換
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" href="{{ url(':dashboard/users') }}">
                                     <span data-feather="users"></span>
-                                    Customers
+                                    ユーザ一覧
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -62,7 +63,8 @@
                             </li>
                         </ul>
 
-                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <h6
+                            class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                             <span>Saved reports</span>
                             <a class="d-flex align-items-center text-muted" href="#">
                                 <span data-feather="plus-circle"></span>
@@ -106,9 +108,12 @@
                     @yield('content')
                 </main>
             </div>
-            <script src="{{ mix('js/app.js') }}"></script>
-            @yield('scripts')
         </div>
+    </div>
+    <script src="{{ mix('js/manifest.js') }}"></script>
+    <script src="{{ mix('js/vendor.js') }}"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
+    @yield('scripts')
 </body>
 
 </html>

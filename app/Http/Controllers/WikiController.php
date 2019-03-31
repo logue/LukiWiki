@@ -332,7 +332,7 @@ class WikiController extends Controller
             }
 
             // トランザクション開始
-            DB::beginTransaction();
+            \DB::beginTransaction();
 
             // 更新処理
             $this->page->where('name', $page)->update([
@@ -377,7 +377,7 @@ class WikiController extends Controller
                 ]);
             }
 
-            DB::commit();
+            \DB::commit();
         } else {
             // 新規作成
             Page::insert([

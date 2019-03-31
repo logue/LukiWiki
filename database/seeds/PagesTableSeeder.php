@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Page;
 use Illuminate\Database\Seeder;
 
 class PagesTableSeeder extends Seeder
@@ -11,7 +12,7 @@ class PagesTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('pages')->insert([
+        Page::insert([
             'name'    => 'MainPage',
             'source'  => '# Welcome to LukiWiki
 

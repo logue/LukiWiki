@@ -9,6 +9,8 @@
 
 namespace App\Jobs;
 
+use App\Enums\InterWikiType;
+use App\Models\InterWiki;
 use App\Models\Page;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -31,6 +33,8 @@ class ProcessWikiData implements ShouldQueue
     public $tries = 1;
 
     private $file;
+    private $created_at;
+    private $updated_at;
     public $page;
 
     /**
@@ -66,21 +70,38 @@ class ProcessWikiData implements ShouldQueue
             return;
         }
 
-        // InterWikiName、AutoAliasName、Glossaryは別に処理
-        if ($this->page === 'InterWikiName' || $this->page === 'AutoAliasName' || $this->page === 'Glossary') {
-            Log::info('Skipped "'.$this->page.'".');
-
-            return;
-        }
-
         // :が含まれるページ名は_に変更する。
         $page = preg_replace('/\:/', '_', $this->page);
         $data = explode("\n", rtrim(Storage::get($this->file)));
 
-        $ret = self::pukiwiki2lukiwiki($data);
-
         // Storageクラスに作成日を取得する関数がないためファイルの実体のパスを取得
         $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
+
+        // タイムスタンプを取得
+        $this->created_at = Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s');
+        $this->updated_at = Carbon::createFromTimestamp(Storage::lastModified($this->file))->format('Y-m-d H:i:s');
+
+        // InterWikiName、AutoAliasName、Glossaryは別に処理
+        switch ($this->page) {
+            case 'InterWikiName':
+                $this->interwiki($data);
+
+                return;
+                break;
+            case 'AutoAliasName':
+                $this->autoalias($data);
+
+                return;
+                break;
+            case 'Glossary':
+                $this->glossary($data);
+
+                return;
+                break;
+            default:
+                $ret = self::pukiwiki2lukiwiki($data);
+                break;
+        }
 
         Log::info('Save "'.$page.'" to DB.');
 
@@ -92,12 +113,12 @@ class ProcessWikiData implements ShouldQueue
                 // 更新対象
                 'name'        => $page,
             ], [
-                'source'      => implode("\n", $ret['source']),
+                'source'      => $ret['source'],
                 'title'       => $ret['title'],
                 'description' => $ret['description'],
                 'locked'      => $ret['locked'],
-                'created_at'  => Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s'),
-                'updated_at'  => Carbon::createFromTimestamp(Storage::lastModified($this->file))->format('Y-m-d H:i:s'),
+                'created_at'  => $this->created_at,
+                'updated_at'  => $this->updated_at,
             ]
         );
     }
@@ -122,7 +143,7 @@ class ProcessWikiData implements ShouldQueue
      *
      * @return array
      */
-    private static function pukiwiki2lukiwiki(array $lines)
+    private static function pukiwiki2lukiwiki(array $lines):array
     {
         $title = null;
         $freezed = false;
@@ -144,7 +165,7 @@ class ProcessWikiData implements ShouldQueue
                 $line .= "\r";
                 while (!empty($lines)) {
                     $next_line = preg_replace('/[\r\n]*$/', '', array_shift($lines));
-                    if (preg_match('/\}{'.$len.'}/', $next_line)) {
+                    if (preg_match('/^\}{'.$len.'}$/', $next_line)) {
                         $line .= $next_line;
                         break;
                     } else {
@@ -304,7 +325,7 @@ class ProcessWikiData implements ShouldQueue
             }
         }
 
-        return ['source' => $ret, 'locked' => $freezed, 'title' => $title, 'description' => $description];
+        return ['source' => implode("\n", $ret), 'locked' => $freezed, 'title' => $title, 'description' => $description];
     }
 
     /**
@@ -351,7 +372,15 @@ class ProcessWikiData implements ShouldQueue
             case 'sh':
             case 'code':
             case 'highlight':
-                return  '```'.$options[0]."\n".$body."\n".'```';
+                $lang = trim($options[0]);
+                // TODO:code.inc.phpの対応言語をcodemirrorにマッピング
+                if (strpos($lang, 'html') !== false) {
+                    $lang = 'htmlmixed';
+                } elseif ($lang === 'pukiwiki') {
+                    $lang = 'plain';
+                }
+
+                return  '```'.$lang."\n".$body."\n".'```';
                 break;
             case 'img':
             case 'attach':
@@ -433,7 +462,7 @@ class ProcessWikiData implements ShouldQueue
             case 'ruby':
                 // ルビはoptionとbodyを逆転させる　&ruby(ルビの内容){対象}; →　&ruby(対象){ルビの内容};
                 // tooltipの仕様と合わせる。LaTeX互換。
-                return 'ruby('.$body.'){'.$options[0].'}';
+                return $char.'ruby('.$body.'){'.$options[0].'}';
             case 'ls':
             case 'ls2':
             case 'ls3':
@@ -480,8 +509,106 @@ class ProcessWikiData implements ShouldQueue
      *
      * @return string
      */
-    private static function px2rem(int $px)
+    private static function px2rem(int $px):int
     {
         return round($px / 16, 5);
+    }
+
+    /**
+     * InterWikiNameをインポート.
+     *
+     * @param array $lines
+     *
+     * @return void
+     */
+    private function interwiki(array $lines)
+    {
+        Log::info('Process InterWikiName.');
+        foreach ($lines as $line) {
+            if (preg_match('/\[((?:(?:https?|ftp|news):\/\/|\.\.?\/)[!~*\'();\/?:\@&=+\$,%#\w.-]*)\s([^\]]+)\]\s?([^\s]*)/', $line, $matches) !== false) {
+                $name = isset($matches[2]) ? trim($matches[2]) : null;
+                $value = isset($matches[1]) ? trim($matches[1]) : null;
+                $encode = isset($matches[3]) ? trim($matches[3]) : null;
+                if (empty($name) || empty($value)) {
+                    continue;
+                }
+                InterWiki::updateOrCreate(
+                    [
+                        'name' => $name,
+                        'type' => InterWikiType::InterWikiName,
+                    ], [
+                        'value'       => $value,
+                        'encode'      => $encode,
+                        'created_at'  => $this->created_at,
+                        'updated_at'  => $this->updated_at,
+                    ]
+                );
+            }
+        }
+        Log::info('InterWikiName done.');
+    }
+
+    /**
+     * AutoAliasNameをインポート.
+     *
+     * @param array $lines
+     *
+     * @return void
+     */
+    private function autoalias(array $lines)
+    {
+        Log::info('Process AutoAliasName.');
+        foreach ($lines as $line) {
+            if (preg_match('/\[\[((?:(?!\]\]).)+)>((?:(?!\]\]).)+)\]\]/', $line, $matches, PREG_SET_ORDER) !== false) {
+                $name = isset($matches[1]) ? trim($matches[1]) : null;
+                $value = isset($matches[2]) ? trim($matches[2]) : null;
+                if (empty($name) || empty($value)) {
+                    continue;
+                }
+                InterWiki::updateOrCreate(
+                    [
+                        'name' => $name,
+                        'type' => InterWikiType::AutoAliasName,
+                    ], [
+                        'value'       => $value,
+                        'created_at'  => $this->created_at,
+                        'updated_at'  => $this->updated_at,
+                    ]
+                );
+            }
+        }
+        Log::info('AutoAliasName done.');
+    }
+
+    /**
+     * Glossaryをインポート.
+     *
+     * @param array $lines
+     *
+     * @return void
+     */
+    private function glossary(array $lines)
+    {
+        Log::info('Process Glossary.');
+        foreach ($lines as $line) {
+            if (preg_match('/^[:|]([^|]+)\|([^|]+)\|?$/', $line, $matches) !== false) {
+                $name = isset($matches[1]) ? trim($matches[1]) : null;
+                $value = isset($matches[2]) ? trim($matches[2]) : null;
+                if (empty($name) || empty($value)) {
+                    continue;
+                }
+                InterWiki::updateOrCreate(
+                    [
+                        'name' => $name,
+                        'type' => InterWikiType::Glossary,
+                    ], [
+                        'value'       => self::pukiwiki2lukiwiki([$value])['source'],
+                        'created_at'  => $this->created_at,
+                        'updated_at'  => $this->updated_at,
+                    ]
+                );
+            }
+        }
+        Log::info('Glossary done.');
     }
 }

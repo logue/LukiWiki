@@ -27,7 +27,11 @@ class ApiController extends Controller
     public function atom():Response
     {
         return response()
-            ->view('api.atom', ['entries' => Page::getLatest(20)->get()])
+            ->view('api.atom', [
+                'entries'    => Page::getLatest(20)->get(),
+                'updated_at' => Page::getLatest(1)->value('updated_at'),
+
+            ])
             ->header('Content-Type', 'application/atom+xml; charset=UTF-8');
     }
 
