@@ -312,7 +312,7 @@ class WikiController extends Controller
             $hash = hash(self::HASH_ALGORITHM, $remote->source);
 
             if ($hash === hash(self::HASH_ALGORITHM, $request->input('hash'))) {
-                // ハッシュが同じだった場合処理しない
+                // 編集前とハッシュが同じだった場合処理しない
                 return redirect($page);
             } elseif ($hash !== $request->input('hash')) {
                 // 編集前のデータのハッシュ値と比較し、違いがある場合、編集の競合が起きたと判断。
@@ -357,13 +357,14 @@ class WikiController extends Controller
             ) {
                 // バックアップを上書きする
                 // この実装のため、インターバル時間未満で更新があると、DBの作成日と更新日の値が異なることになる。
+                // PukiWiki Plus!およびAdv.と同じ仕様
                 $backup->update([
                     'source'     => $remote->source,
                     'updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
             } else {
-                if ($backup->count() >= 20) {
-                    // 20件以上あった場合は、一番古いエントリを削除する。
+                if ($backup->count() >= Config::get('lukiwiki.backup.entries')) {
+                    // 上限件以上あった場合は、一番古いエントリを削除する。
                     $backup->oldest()->first()->delete();
                 }
 
@@ -412,20 +413,21 @@ class WikiController extends Controller
                 // バリデーター
                 'file',
                 // アップロード可能なMIMEタイプを指定
-                'mimes:doc,docx,pdf|image|archive',
+                'mimes:doc,docx,pdf|image|text|archive|audio|video',
             ],
         ]);
 
         $page_id = $this->page->getId($page);
+        $replace = $request->input('replace') ?? false;
 
         if (is_array($request->file('file'))) {
             // 複数のファイルを一度にアップロードしたときは配列になるので一つづつ処理
             foreach ($request->file('file') as $entry) {
-                self::processUpload($entry, $page_id);
+                self::processUpload($entry, $page_id, $replace);
             }
         } else {
             // 一つのファイルのみをアップロードしたときはオブジェクトになる。
-            self::processUpload($request->file('file'), $page_id);
+            self::processUpload($request->file('file'), $page_id, $replace);
         }
 
         $request->session()->flash('message', __('Uploaded'));

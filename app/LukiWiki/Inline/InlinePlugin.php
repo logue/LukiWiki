@@ -40,11 +40,12 @@ class InlinePlugin extends AbstractInline
 
     public function getCount():int
     {
-        return 4;
+        return 3;
     }
 
     public function setPattern(array $arr):void
     {
+        //dd($this->getPattern(), $arr, $this->splice($arr));
         list($this->plugin, $this->param, $this->body) = $this->splice($arr);
     }
 

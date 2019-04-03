@@ -177,7 +177,7 @@ export default {
     this.page = encodeURI(this.$attrs.page).replace("%2F", "/");
     this.action = window.qs.action;
     this.isPageAction = this.action !== void 0 && this.page !== "";
-    console.log(this.$attrs);
+    //console.log(this.$attrs);
     this.baseUri = this.$attrs["base-uri"] + "/";
     this.pageUri = this.baseUri + this.page;
 

@@ -1,5 +1,15 @@
 @extends('layout.default')
 
+@section('title', __('Register'))
+
+{{--利用可能なSNSを取得。本来はコントローラーでやるべきだが・・・。--}}
+@php($availables = [])
+@foreach (\Config::get('services') as $key=>$value)
+@if (isset($value['client_id']) && !empty($value['client_id']))
+@php($availables[] = $key)
+@endif
+@endforeach
+
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-8">
@@ -9,6 +19,8 @@
             <div class="card-body">
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
+                    <lw-social type="auth" availables="[{{ implode(',', $availables) }}]">
+                    </lw-social>
 
                     <div class="form-group row">
                         <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>

@@ -218,7 +218,7 @@ class RootElement extends AbstractElement
 
         list($_text, $id, $level) = HeadingAnchor::get($text, false); // Cut fixed-anchor from $text
 
-        $this->meta['contents'][] = str_repeat(' ', $level - 1).'- ['.$_text.'](#'.$autoid.')';
+        $this->meta['contents'][] = str_repeat(' ', $level).'- ['.$_text.'](#'.$autoid.')';
 
         // Add heding
         return [$_text, null, $autoid];

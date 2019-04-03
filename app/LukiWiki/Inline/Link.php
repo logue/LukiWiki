@@ -57,6 +57,6 @@ class Link extends AbstractInline
             $url = $this->href;
         }
 
-        return parent::setLink($this->alias, $url, $this->name);
+        return '<a href="'.$url.'" rel="nofollow external" title="'.$this->title.'">'.$this->processText($this->alias).'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
     }
 }

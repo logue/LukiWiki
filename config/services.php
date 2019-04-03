@@ -44,21 +44,47 @@ return [
         ],
     ],
 
+    // SNS Authentication
+
+    // https://developer.twitter.com/apps
     'twitter' => [
         'client_id'     => env('TWITTER_ID'),
         'client_secret' => env('TWITTER_SECRET'),
         'redirect'      => env('APP_URL').'/:login/twitter/callback',
     ],
 
+    // https://developers.facebook.com/
     'facebook' => [
         'client_id'     => env('FACEBOOK_ID'),
         'client_secret' => env('FACEBOOK_SECRET'),
         'redirect'      => env('APP_URL').'/:login/facebook/callback',
     ],
 
+    // https://console.developers.google.com/
     'google' => [
         'client_id'     => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect'      => env('APP_URL').'/:login/google/callback',
+    ],
+
+    // https://docs.microsoft.com/en-us/azure/app-service/configure-authentication-provider-microsoft
+    'live' => [
+        'client_id'     => env('LIVE_KEY'),
+        'client_secret' => env('LIVE_SECRET'),
+        'redirect'      => env('APP_URL').'/:login/live/callback',
+    ],
+
+    // https://developers.line.biz/ja/
+    'line' => [
+        'client_id'     => env('LINE_CLIENT_ID'),
+        'client_secret' => env('LINE_CLIENT_SECRET'),
+        'redirect'      => env('APP_URL').'/:login/line/callback',
+    ],
+
+    // https://github.com/settings/applications/new
+    'github' => [
+        'client_id'     => env('GITHUB_CLIENT_ID'),
+        'client_secret' => env('GITHUB_CLIENT_SECRET'),
+        'redirect'      => env('APP_URL').'/:login/github/callback',
     ],
 ];

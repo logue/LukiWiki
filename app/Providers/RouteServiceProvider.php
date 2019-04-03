@@ -24,9 +24,23 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         // !, #, $, &, *, +, :, ;, @, [, ], ~, ?, ヌル文字は不許可
-        Route::pattern('page', '^[^\!\#\$\&\*\+\,:;=?\@\[\]\~\0].+$');
-        Route::pattern('file', '^[^\!\#\$\&\*\+\,:;=?\@\[\]\~\0].+$');  // ファイル名はページの規則以外に/も禁止する
+        Route::pattern('page', '^[^\!\#\$\&\*\+\,:;=?\@\[\]\~\0\\\].+$');
+        Route::pattern('file', '^[^\!\#\$\&\*\+\,:;=?\@\[\]\~\0\/\\\].+$');  // ファイル名はページの規則以外に/も禁止する
         Route::pattern('age', '^\d+$');
+
+        // 利用可能なSNSによってフィルタリング
+        $availables = [];
+        foreach (\Config::get('services') as $key=>$value) {
+            if (isset($value['client_id']) && !empty($value['client_id'])) {
+                $availables[] = $key;
+            }
+        }
+        if (count($availables) !== 0) {
+            Route::pattern('social', implode('|', $availables));
+        } else {
+            // オイオイ
+            Route::pattern('social', '^\w+$');
+        }
 
         parent::boot();
     }

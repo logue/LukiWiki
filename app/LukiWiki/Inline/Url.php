@@ -3,14 +3,14 @@
  * URL変換クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018-2019 Logue
  * @license   MIT
  */
 
 namespace App\LukiWiki\Inline;
 
 use App\LukiWiki\AbstractInline;
-use App\LukiWiki\Rules\InlineRules;
+use Symfony\Polyfill\Intl\Idn\Idn;
 
 // URLs
 class Url extends AbstractInline
@@ -20,36 +20,29 @@ class Url extends AbstractInline
         $s1 = $this->start + 1;
 
         return
-            '(\[\['.                // (1) open bracket
-             '((?:(?!\]\]).)+)'.    // (2) alias
-             '(?:>|:)'.
-            ')?'.
-            '('.                    // (3) scheme
-            '(?:(?:https?|ftp|ssh|git|ssh):\/\/|mailto:)'.
-            //'(?:'.InlineRules::getProtocolPattern().':\/\/|mailto:)'.
+            '('.
+              '(?:(?:https?|ftp|ssh|git|ssh):\/\/|mailto:)'.    // [1] scheme
             ')'.
-            '([\w.-]+@)?'.          // (4) mailto name
-            '([^\/"<>\s]+|\/)'.     // (5) host
-            '('.                    // (6) URI
-             '[\w\/\@\$()!?&%#:;.,~\'=*+-]*'.
-            ')'.
-            '(?('.$s1.')\]\])'; // close bracket
+            '([\w.-]+@)?'.                                      // [2] mailto name
+            '([^\/"<>\s]+|\/)'.                                 // [3] host
+            '('.
+              '[\w\/\@\$()!?&%#:;.,~\'=*+-]*'.                  // [4] URI
+            ')';
     }
 
     public function getCount()
     {
-        return 6;
+        return 4;
     }
 
     public function setPattern(array $arr, string $page = null)
     {
-        list(, $bracket, $alias, $scheme, $mail, $host, $uri) = $this->splice($arr);
-        $this->has_bracket = substr($bracket, 0, 2) === '[[';
+        list($scheme, $user, $host, $path) = $this->splice($arr);
         if (substr($host, 0, 4) === 'xn--') {
             $host = Idn::idn_to_ascii($host, IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46);
         }
 
-        $name = $scheme.$mail.$host.$uri;
+        $this->href = $scheme.$user.$host.$path;
 
         /*
         // https?:/// -> $this->cont['ROOT_URL']
@@ -65,11 +58,10 @@ class Url extends AbstractInline
             }
         }
         */
-        return parent::setParam($page, $name, $name);
     }
 
     public function __toString()
     {
-        return parent::setLink($this->alias, $this->name, $this->name, 'nofollow');
+        return '<a href="'.$this->href.'" rel="nofollow external">'.$this->processText($this->href).'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
     }
 }

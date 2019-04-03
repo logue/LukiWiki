@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
@@ -35,5 +38,37 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    /**
+     * Handle Social login request.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function socialLogin(string $social):RedirectResponse
+    {
+        return Socialite::driver($social)->redirect();
+    }
+
+    /**
+     * Obtain the user information from Social Logged in.
+     *
+     * @param string $social
+     *
+     * @return mixed
+     */
+    public function handleProviderCallback(string $social):mixed
+    {
+        $userSocial = Socialite::driver($social)->user();
+
+        $user = User::where(['email' => $userSocial->getEmail()])->first();
+
+        if ($user) {
+            Auth::login($user);
+
+            return redirect()->action('WikiController@index');
+        } else {
+            return view('auth.register', ['name' => $userSocial->getName(), 'email' => $userSocial->getEmail()]);
+        }
     }
 }

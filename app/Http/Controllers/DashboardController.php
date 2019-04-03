@@ -183,6 +183,7 @@ class DashboardController extends Controller
     public function interwiki(Request $request) :View
     {
         if ($request->isMethod('post')) {
+            // TODO:編集処理
         }
 
         return view('dashboard/interwiki', [
@@ -191,22 +192,29 @@ class DashboardController extends Controller
         ]);
     }
 
+    /**
+     * CAPTCHAの動作チェック.
+     *
+     * @param Illuminate\Http\Request $request
+     *
+     * @return Illuminate\View\View
+     */
     public function captchaTest(Request $request)
     {
         if ($request->isMethod('post')) {
             $rules = ['captcha' => 'required|captcha'];
-            $validator = \Validator::make(Input::all(), $rules);
+            $validator = \Validator::make($request->all(), $rules);
             if ($validator->fails()) {
-                echo '<p style="color: #ff0000;">Incorrect!</p>';
+                echo '<p style="color: #dc3545;">Incorrect!</p>';
             } else {
-                echo '<p style="color: #00ff30;">Matched :)</p>';
+                echo '<p style="color: #28a745;">Matched :)</p>';
             }
         }
 
         $form = '<form method="post" action="captcha-test">';
         $form .= '<input type="hidden" name="_token" value="'.csrf_token().'">';
         $form .= '<p>'.captcha_img().'</p>';
-        $form .= '<p><input type="text" name="captcha"></p>';
+        $form .= '<p><input type="text" name="captcha" class=""/></p>';
         $form .= '<p><button type="submit" name="check">Check</button></p>';
         $form .= '</form>';
 

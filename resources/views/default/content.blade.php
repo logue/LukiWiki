@@ -3,9 +3,14 @@
 @section('title', $entry->title ?? $page )
 
 @section('content')
+<p class="text-right"><lw-social type="share"></lw-social> <small>Total: {{ $entry->counter->total ?? 0 }} / Today: {{ $entry->counter->today ?? 0}} / Yesterday: {{$entry->counter->yesterday ?? 0}}</small></p>
+
 {!! $content !!}
 
-<p class="text-right small">Total: {{ $entry->counter->total ?? 0 }} / Today: {{ $entry->counter->today ?? 0}} / Yesterday: {{$entry->counter->yesterday ?? 0}}</p>
+<hr />
+<p class="text-right small">Last Modified: {{ $entry->updated_at }}</p>
+
+
 @if($notes)
 <hr />
 <aside>

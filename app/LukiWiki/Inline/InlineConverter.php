@@ -20,17 +20,20 @@ class InlineConverter
      * デフォルトの変換パターン.
      */
     private static $default_converters = [
+        'App\LukiWiki\Inline\Url',              // URL schemes
+
         'App\LukiWiki\Inline\Media',            // Media Link: ![alt](url file "title"){option}
+        'App\LukiWiki\Inline\Link',             // Link: [alt](media file "title"){option}
         'App\LukiWiki\Inline\BracketName',      // AutoLink
 
         'App\LukiWiki\Inline\Note',             // Footnotes
+        'App\LukiWiki\Inline\InlinePlugin',     // Inline plugins
         'App\LukiWiki\Inline\AutoLink',         // AutoLink
         'App\LukiWiki\Inline\InterWiki',        // AutoLink
+
         'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
-        //'App\LukiWiki\Inline\InterWikiName',    // InterWikiName
         'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
-        'App\LukiWiki\Inline\Link',             // Link: [alt](media file "title"){option}
-        'App\LukiWiki\Inline\InlinePlugin',     // Inline plugins
+
     ];
     /**
      * 変換クラス.
@@ -145,7 +148,9 @@ class InlineConverter
             $obj = $this->getConverter($arr);
 
             if ($obj !== null) {
-                $this->result[] = ($obj->setPattern($arr, $page) !== false) ? $obj->__toString() : $arr[0];
+                $obj->setPattern($arr, $page);
+
+                $this->result[] = $obj->__toString();
                 $this->meta = $obj->getMeta();
             } else {
                 $this->result[] = $arr[0];
@@ -155,7 +160,9 @@ class InlineConverter
         }, $string);
 
         $arr = explode("\x08", InlineRules::replace($string));
+
         $retval = [];
+
         while (!empty($arr)) {
             $retval[] = trim(array_shift($arr).array_shift($this->result));
         }

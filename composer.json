@@ -10,6 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
+        "ext-pdo": "*",
         "bensampo/laravel-enum": "^1.17",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",
@@ -20,10 +21,14 @@
         "laravel/tinker": "^1.0",
         "mews/captcha": "^2.2",
         "owen-oj/laravel-getid3": "^0.1.0@alpha",
+        "socialiteproviders/facebook": "dev-master",
+        "socialiteproviders/google": "^3.0",
+        "socialiteproviders/line": "^2.1",
+        "socialiteproviders/microsoft-live": "^3.0",
+        "socialiteproviders/twitter": "^3.0",
         "sters/regexp-trie": "^0.0.4",
         "symfony/intl": "^4.2",
-        "symfony/polyfill-intl-idn": "^1.10",
-        "ext-pdo": "*"
+        "symfony/polyfill-intl-idn": "^1.10"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.1",

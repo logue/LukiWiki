@@ -88,7 +88,7 @@ class Table extends AbstractElement
             $colspan = 1;
             foreach (array_keys($row) as $ncol) {
                 if ($row[$ncol]->colspan === 0) {
-                    ++$colspan;
+                    $colspan++;
                     continue;
                 }
                 $row[$ncol]->colspan = $colspan;
