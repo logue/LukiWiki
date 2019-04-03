@@ -88,7 +88,7 @@ class InlineConverter
             $this->converters[$start] = $converter;
             $start += $converter->getCount();
 
-            ++$start;
+            $start++;
         }
         $this->pattern = implode('|', $patterns);
     }

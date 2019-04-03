@@ -110,7 +110,7 @@ class ProcessBackupData implements ShouldQueue
         foreach (explode("\n", $data) as $line) {
             // バックアップデーターをパース
             if (preg_match('/^\>\>\>\>\>\>\>\>\>\>\s(\d+)(?:\s(\d+))?$/', $line, $match)) {
-                ++$age;
+                $age++;
 
                 // 実際ページを保存した時間が指定されている場合（タイムスタンプを更新しないをチェックして更新した場合）
                 // そちらのパラメータをバックアップの日時として使用する。（Plus!およびAdv.独自仕様）

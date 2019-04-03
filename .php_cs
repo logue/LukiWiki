@@ -69,6 +69,9 @@ $fixers = [
     'hash_to_slash_comment' => true,
     'heredoc_to_nowdoc'     => true,
     'include'               => true,
+    'increment_style'       => [
+        'style' => 'post'
+    ],
     'indentation_type'      => true,
     'line_ending'           => true,
     'list_syntax'           => [
