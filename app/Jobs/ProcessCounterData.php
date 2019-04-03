@@ -36,8 +36,6 @@ class ProcessCounterData implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
     public function __construct(string $file)
     {
@@ -55,8 +53,6 @@ class ProcessCounterData implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
@@ -92,8 +88,6 @@ class ProcessCounterData implements ShouldQueue
      * 失敗したジョブの処理.
      *
      * @param \Exception $exception
-     *
-     * @return void
      */
     public function failed(\Exception $exception)
     {

@@ -14,6 +14,11 @@ use App\LukiWiki\AbstractInline;
 // tel: URL schemes
 class Telephone extends AbstractInline
 {
+    public function __toString()
+    {
+        return '<a href="tel:'.$this->name.'" rel="nofollow"><font-awesome-icon fas icon="phone" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
+    }
+
     public function getPattern()
     {
         $s1 = $this->start + 1;
@@ -43,10 +48,5 @@ class Telephone extends AbstractInline
         $name = $orginalname = $tel;
 
         return parent :: setParam($page, $name, '', $alias === '' ? $orginalname : $alias);
-    }
-
-    public function __toString()
-    {
-        return '<a href="tel:'.$this->name.'" rel="nofollow"><font-awesome-icon fas icon="phone" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
     }
 }

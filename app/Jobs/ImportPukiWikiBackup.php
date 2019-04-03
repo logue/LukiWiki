@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ImportPukiWikiBackup implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     /**
      * 最大試行回数.
      *
@@ -26,14 +27,10 @@ class ImportPukiWikiBackup implements ShouldQueue
      */
     public $tries = 1;
 
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
     private $files = [];
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
     public function __construct(string $path)
     {
@@ -42,8 +39,6 @@ class ImportPukiWikiBackup implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
@@ -63,8 +58,6 @@ class ImportPukiWikiBackup implements ShouldQueue
      * 失敗したジョブの処理.
      *
      * @param Exception $exception
-     *
-     * @return void
      */
     public function failed(\Exception $exception)
     {

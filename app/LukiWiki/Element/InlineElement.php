@@ -37,6 +37,11 @@ class InlineElement extends AbstractElement
         $this->page = $page;
     }
 
+    public function __toString()
+    {
+        return implode('', $this->elements);
+    }
+
     public function insert($obj)
     {
         if (!empty($obj->elements[0])) {
@@ -49,11 +54,6 @@ class InlineElement extends AbstractElement
     public function canContain($obj)
     {
         return $obj instanceof self;
-    }
-
-    public function __toString()
-    {
-        return implode('', $this->elements);
     }
 
     public function toPara($class = '')

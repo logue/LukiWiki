@@ -32,8 +32,6 @@ class LoginController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -45,7 +43,7 @@ class LoginController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function socialLogin(string $social):RedirectResponse
+    public function socialLogin(string $social): RedirectResponse
     {
         return Socialite::driver($social)->redirect();
     }
@@ -57,7 +55,7 @@ class LoginController extends Controller
      *
      * @return mixed
      */
-    public function handleProviderCallback(string $social):mixed
+    public function handleProviderCallback(string $social): mixed
     {
         $userSocial = Socialite::driver($social)->user();
 
@@ -67,8 +65,8 @@ class LoginController extends Controller
             Auth::login($user);
 
             return redirect()->action('WikiController@index');
-        } else {
-            return view('auth.register', ['name' => $userSocial->getName(), 'email' => $userSocial->getEmail()]);
         }
+
+        return view('auth.register', ['name' => $userSocial->getName(), 'email' => $userSocial->getEmail()]);
     }
 }

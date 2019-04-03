@@ -23,6 +23,11 @@ class Note extends AbstractInline
      */
     private static $note_id = 0;
 
+    public function __toString()
+    {
+        return $this->name;
+    }
+
     /**
      * マッチパターン.
      */
@@ -45,7 +50,7 @@ class Note extends AbstractInline
     public function setPattern(array $arr)
     {
         list($body) = $this->splice($arr);
-        $converter = new InlineConverter([], [get_class()], $this->page);
+        $converter = new InlineConverter([], [__CLASS__], $this->page);
         $note = $converter->convert($body);
 
         $id = self::$note_id;
@@ -54,13 +59,8 @@ class Note extends AbstractInline
         $this->meta['note'] = trim($note);
         // A hyperlink, content-body to footnote
         $name = '<sup><a id="note-anchor-'.$id.'" href="#note-'.$id.'" class="note-anchor"><font-awesome-icon fas icon="thumbtack" size="xs">*</font-awesome-icon>'.$id.'</a></sup>';
-        self::$note_id++;
+        ++self::$note_id;
 
         parent::setParam(['page'=>$this->page, 'href' => $name, 'body'=>$body]);
-    }
-
-    public function __toString()
-    {
-        return $this->name;
     }
 }

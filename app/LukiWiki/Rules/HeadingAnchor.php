@@ -27,8 +27,9 @@ class HeadingAnchor
     /**
      * 見出しのIDを作る.
      *
-     * @param string $str 入力文字列
-     * @param string $id  見出しのID
+     * @param string $str  入力文字列
+     * @param string $id   見出しのID
+     * @param mixed  $line
      *
      * @return string
      */

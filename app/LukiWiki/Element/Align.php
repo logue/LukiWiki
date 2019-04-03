@@ -25,15 +25,6 @@ class Align extends AbstractElement
         $this->align = $align;
     }
 
-    public function canContain($obj)
-    {
-        if ($obj instanceof Table) {
-            $obj->align = $this->align;
-        }
-
-        return $obj instanceof InlineElement;
-    }
-
     public function __toString()
     {
         if (empty($this->align)) {
@@ -41,5 +32,14 @@ class Align extends AbstractElement
         }
 
         return $this->wrap(parent::__toString(), 'div', ['class' => Alignment::inline($this->align)], false);
+    }
+
+    public function canContain($obj)
+    {
+        if ($obj instanceof Table) {
+            $obj->align = $this->align;
+        }
+
+        return $obj instanceof InlineElement;
     }
 }

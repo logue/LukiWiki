@@ -24,7 +24,7 @@ class InterWiki extends Model
      *
      * @return string||null
      */
-    public static function getInterWikiName(string $anchor) : ?string
+    public static function getInterWikiName(string $anchor): ?string
     {
         list($name, $param) = explode(':', $anchor);
 
@@ -40,23 +40,19 @@ class InterWiki extends Model
 
         // Encoding
         switch ($interwiki->encode) {
-            case '':    /* FALLTHROUGH */
+            case '':    // FALLTHROUGH
             case 'std': // Simply URL-encode the string, whose base encoding is the internal-encoding
                 $param = rawurlencode($param);
                 break;
-
-            case 'asis': /* FALLTHROUGH */
+            case 'asis': // FALLTHROUGH
             case 'raw': // Truly as-is
                 break;
-
             case 'yw': // YukiWiki
                 $param = mb_convert_encoding($param, 'SJIS', 'UTF-8');
                 break;
-
             case 'moin': // MoinMoin
                 $param = str_replace('%', '_', rawurlencode($param));
                 break;
-
             default:
                 // Encoding conversion into specified encode, and URLencode
                 $param = rawurlencode(mb_convert_encoding($param, $interwiki->encode, 'UTF-8'));

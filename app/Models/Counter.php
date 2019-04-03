@@ -29,7 +29,7 @@ class Counter extends Model
      *
      * @return Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function page():BelongsTo
+    public function page(): BelongsTo
     {
         return $this->belongsTo(Page::class);
     }

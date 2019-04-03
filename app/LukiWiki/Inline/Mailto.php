@@ -15,6 +15,11 @@ use Symfony\Polyfill\Intl\Idn\Idn;
 // mailto: URL schemes
 class Mailto extends AbstractInline
 {
+    public function __toString()
+    {
+        return '<a href="mailto:'.$this->name.'" rel="nofollow"><font-awesome-icon fas icon="envelope" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
+    }
+
     public function getPattern()
     {
         $s1 = $this->start + 1;
@@ -49,10 +54,5 @@ class Mailto extends AbstractInline
         } else {
             $this->href = $toname.$host;
         }
-    }
-
-    public function __toString()
-    {
-        return '<a href="mailto:'.$this->name.'" rel="nofollow"><font-awesome-icon fas icon="envelope" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
     }
 }

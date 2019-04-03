@@ -38,14 +38,7 @@ class Heading extends AbstractElement
         $this->meta = $content->getMeta();
         $this->insert($content);
 
-        $this->level++; // h2,h3,h4,h5,h6
-    }
-
-    public function insert($obj)
-    {
-        parent::insert($obj);
-
-        return $this->last = $this;
+        ++$this->level; // h2,h3,h4,h5,h6
     }
 
     public function __toString()
@@ -56,5 +49,12 @@ class Heading extends AbstractElement
         $this->meta[$id] = $this->text;
 
         return $this->wrap(parent::__toString(), 'h'.$this->level, ['id' => $id], false);
+    }
+
+    public function insert($obj)
+    {
+        parent::insert($obj);
+
+        return $this->last = $this;
     }
 }

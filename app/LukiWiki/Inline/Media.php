@@ -16,51 +16,6 @@ use App\LukiWiki\AbstractInline;
  */
 class Media extends AbstractInline
 {
-    public function getPattern():string
-    {
-        // ![alt](URL or WikiName "title"){option}
-        return
-            '!'.                                            // Media link detector
-                '(?:\['.
-                    '(.[^\]\)]+)?'.                         // [1] alias
-                '\])'.
-                '(?:'.
-                    '\('.
-                       '(.[^\(\)\[\]]+?)'.                  // [2] URL or WikiName and Filename
-                       '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.   // [3] Title
-                    '\)'.
-                ')'.
-                '(?:\{'.
-                    '(.*[^\}])'.                            // [4] Body (option)
-                '\})?';
-    }
-
-    public function getCount():int
-    {
-        return 4;
-    }
-
-    public function setPattern(array $arr)
-    {
-        //dd($this->getPattern(), $this->splice($arr));
-        list($this->alias, $this->href, $this->title, $this->body) = $this->splice($arr);
-
-        if (empty($this->alias)) {
-            $this->alias = $this->href;
-        }
-        if (empty($this->title)) {
-            $this->title = $this->href;
-        }
-
-        if (strpos($this->href, 'http') === false) {
-            $this->title = $this->href;
-            $this->href = url($this->page.':attachments/'.$this->href);
-        }
-
-        // TODO:添付ファイルの処理
-        // TODO:ページに貼り付けられた添付ファイルの処理
-    }
-
     public function __toString()
     {
         // メディアファイル
@@ -102,5 +57,50 @@ class Media extends AbstractInline
         }
 
         return parent::setLink($this->alias, $this->href, $this->name);
+    }
+
+    public function getPattern(): string
+    {
+        // ![alt](URL or WikiName "title"){option}
+        return
+            '!'.                                            // Media link detector
+                '(?:\['.
+                    '(.[^\]\)]+)?'.                         // [1] alias
+                '\])'.
+                '(?:'.
+                    '\('.
+                       '(.[^\(\)\[\]]+?)'.                  // [2] URL or WikiName and Filename
+                       '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.   // [3] Title
+                    '\)'.
+                ')'.
+                '(?:\{'.
+                    '(.*[^\}])'.                            // [4] Body (option)
+                '\})?';
+    }
+
+    public function getCount(): int
+    {
+        return 4;
+    }
+
+    public function setPattern(array $arr)
+    {
+        //dd($this->getPattern(), $this->splice($arr));
+        list($this->alias, $this->href, $this->title, $this->body) = $this->splice($arr);
+
+        if (empty($this->alias)) {
+            $this->alias = $this->href;
+        }
+        if (empty($this->title)) {
+            $this->title = $this->href;
+        }
+
+        if (strpos($this->href, 'http') === false) {
+            $this->title = $this->href;
+            $this->href = url($this->page.':attachments/'.$this->href);
+        }
+
+        // TODO:添付ファイルの処理
+        // TODO:ページに貼り付けられた添付ファイルの処理
     }
 }

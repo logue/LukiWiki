@@ -17,9 +17,8 @@ use Debugbar;
  */
 class Parser
 {
-    private static $instance = 0;
-
     const VERSION = '0.0.0-alpha';
+    private static $instance = 0;
 
     /**
      * LukiWikiファクトリークラス.
@@ -31,9 +30,9 @@ class Parser
      */
     public static function factory($lines, $isAmp = false)
     {
-        if (!is_array($lines)) {
+        if (!\is_array($lines)) {
             // 改行を正規化
-            $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $lines));
+            $lines = explode("\n", str_replace([\chr(0x0d).\chr(0x0a), \chr(0x0d), \chr(0x0a)], "\n", $lines));
         }
 
         $body = new RootElement(null, null, ['id' => ++self::$instance, 'isAmp' => $isAmp]);

@@ -17,6 +17,20 @@ use Symfony\Polyfill\Intl\Idn\Idn;
  */
 class Link extends AbstractInline
 {
+    public function __toString()
+    {
+        $purl = parse_url($this->href);
+        if (isset($purl['host']) && substr($purl['host'], 0, 4) === 'xn--') {
+            // 国際化ドメインのときにアドレスをpunycode変換する。（https://日本語.jp → https://xn--wgv71a119e.jp）
+            $url = preg_replace('/'.$purl['host'].'/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $this->href);
+        } else {
+            // ページリンク
+            $url = $this->href;
+        }
+
+        return '<a href="'.$url.'" rel="nofollow external" title="'.$this->title.'">'.$this->processText($this->alias).'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
+    }
+
     public function getPattern()
     {
         return
@@ -44,19 +58,5 @@ class Link extends AbstractInline
     {
         //dd($this->getPattern(), $arr, $this->splice($arr));
         list($this->alias, $this->href, $this->anchor, $this->title, $this->body) = $this->splice($arr);
-    }
-
-    public function __toString()
-    {
-        $purl = parse_url($this->href);
-        if (isset($purl['host']) && substr($purl['host'], 0, 4) === 'xn--') {
-            // 国際化ドメインのときにアドレスをpunycode変換する。（https://日本語.jp → https://xn--wgv71a119e.jp）
-            $url = preg_replace('/'.$purl['host'].'/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $this->href);
-        } else {
-            // ページリンク
-            $url = $this->href;
-        }
-
-        return '<a href="'.$url.'" rel="nofollow external" title="'.$this->title.'">'.$this->processText($this->alias).'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
     }
 }

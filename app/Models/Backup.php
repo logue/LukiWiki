@@ -21,7 +21,7 @@ class Backup extends Model
      *
      * @return Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function page():BelongsTo
+    public function page(): BelongsTo
     {
         return $this->belongsTo(Page::class);
     }
@@ -31,7 +31,7 @@ class Backup extends Model
      *
      * @return Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->BelongsTo(User::class);
     }

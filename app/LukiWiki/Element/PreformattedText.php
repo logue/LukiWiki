@@ -35,6 +35,16 @@ class PreformattedText extends AbstractElement
         $this->elements[] = implode("\n", $body);
     }
 
+    public function __toString()
+    {
+        $content = self::processText(implode("\n", $this->elements));
+        if (empty($this->meta['lang'])) {
+            return $this->wrap($content, 'pre', ['class' => 'pre'], false);
+        }
+
+        return $this->wrap($content, 'pre', ['v-lw-sh' => null, 'class' => 'pre CodeMirror', 'data-lang' => $this->meta['lang']], false);
+    }
+
     public function canContain($obj)
     {
         return $obj instanceof self;
@@ -45,15 +55,5 @@ class PreformattedText extends AbstractElement
         $this->elements[] = $obj->elements[0];
 
         return $this;
-    }
-
-    public function __toString()
-    {
-        $content = self::processText(implode("\n", $this->elements));
-        if (empty($this->meta['lang'])) {
-            return $this->wrap($content, 'pre', ['class' => 'pre'], false);
-        }
-
-        return $this->wrap($content, 'pre', ['v-lw-sh' => null, 'class' => 'pre CodeMirror', 'data-lang' => $this->meta['lang']], false);
     }
 }

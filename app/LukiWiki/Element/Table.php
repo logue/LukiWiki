@@ -19,10 +19,10 @@ use App\LukiWiki\Rules\Alignment;
  */
 class Table extends AbstractElement
 {
+    public $align = 'CENTER';
     protected $type;
     protected $types;
     protected $col;   // number of column
-    public $align = 'CENTER';
     protected static $parts = [
         'h' => 'thead',
         'f' => 'tfoot',
@@ -34,7 +34,7 @@ class Table extends AbstractElement
         parent::__construct();
 
         $cells = explode('|', $out[1]);
-        $this->col = count($cells);
+        $this->col = \count($cells);
         $this->type = strtolower($out[2]);
         $this->types = [$this->type];
         $is_template = $this->type === 'c';
@@ -45,28 +45,15 @@ class Table extends AbstractElement
         $this->elements[] = $row;
     }
 
-    public function canContain($obj)
-    {
-        return $obj instanceof self && $obj->col === $this->col;
-    }
-
-    public function insert($obj)
-    {
-        $this->elements[] = $obj->elements[0];
-        $this->types[] = $obj->type;
-
-        return $this;
-    }
-
     public function __toString()
     {
         // Set rowspan (from bottom, to top)
-        for ($ncol = 0; $ncol < $this->col; $ncol++) {
+        for ($ncol = 0; $ncol < $this->col; ++$ncol) {
             $rowspan = 1;
             foreach (array_reverse(array_keys($this->elements)) as $nrow) {
                 $row = $this->elements[$nrow];
                 if ($row[$ncol]->rowspan === 0) {
-                    $rowspan++;
+                    ++$rowspan;
                     continue;
                 }
                 $row[$ncol]->rowspan = $rowspan;
@@ -88,11 +75,11 @@ class Table extends AbstractElement
             $colspan = 1;
             foreach (array_keys($row) as $ncol) {
                 if ($row[$ncol]->colspan === 0) {
-                    $colspan++;
+                    ++$colspan;
                     continue;
                 }
                 $row[$ncol]->colspan = $colspan;
-                if (!is_null($stylerow)) {
+                if (null !== $stylerow) {
                     $row[$ncol]->setStyle($stylerow[$ncol]->style);
                     // Inherits column style
                     while (--$colspan) {
@@ -123,5 +110,18 @@ class Table extends AbstractElement
         $align = Alignment::block($this->align);
 
         return $this->wrap($string, 'table', ['class' => 'table table-bordered '.$align], false);
+    }
+
+    public function canContain($obj)
+    {
+        return $obj instanceof self && $obj->col === $this->col;
+    }
+
+    public function insert($obj)
+    {
+        $this->elements[] = $obj->elements[0];
+        $this->types[] = $obj->type;
+
+        return $this;
     }
 }

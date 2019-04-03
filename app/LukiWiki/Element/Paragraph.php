@@ -33,13 +33,13 @@ class Paragraph extends AbstractElement
         $this->insert($obj);
     }
 
-    public function canContain($obj)
-    {
-        return $obj instanceof InlineElement;
-    }
-
     public function __toString()
     {
         return $this->wrap(parent::__toString(), 'p', [], false);
+    }
+
+    public function canContain($obj)
+    {
+        return $obj instanceof InlineElement;
     }
 }

@@ -16,6 +16,13 @@ use App\LukiWiki\AbstractInline;
  */
 class InterWiki extends AbstractInline
 {
+    public function __toString()
+    {
+        $target = empty($this->redirect) ? $this->name : $this->redirect.rawurlencode($this->name);
+
+        return parent::setLink($this->alias, $target, $this->name);
+    }
+
     public function getPattern()
     {
         // [alias](URL "title"){option}
@@ -47,12 +54,5 @@ class InterWiki extends AbstractInline
         list($this->alias, $this->href, $this->title, $this->body) = $this->splice($arr);
 
         //return parent::setParam(['alias'=>$alias, 'href' => $href, 'title' => $title, 'body'=>$body]);
-    }
-
-    public function __toString()
-    {
-        $target = empty($this->redirect) ? $this->name : $this->redirect.rawurlencode($this->name);
-
-        return parent::setLink($this->alias, $target, $this->name);
     }
 }

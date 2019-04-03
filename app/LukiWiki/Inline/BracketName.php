@@ -19,6 +19,32 @@ class BracketName extends AbstractInline
     protected $anchor;
     protected $refer;
 
+    public function __toString()
+    {
+        //dd($this->href);
+        if (strpos($this->href, 'http') !== false) {
+            // Anchor Link
+            return '<a href="'.$this->href.'" title="'.$this->title.'">'.$this->alias.'</a>';
+        }
+
+        if (strpos($this->href, ':') !== false) {
+            // InterWikiName
+            $interwiki = InterWiki::getInterWikiName($this->href);
+            if ($interwiki) {
+                return '<a href="'.$interwiki.'" title="'.$this->href.'" class="interwikiname" v-b-tooltip><font-awesome-icon fas icon="globe" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
+            }
+        }
+
+        if (!empty($this->page)) {
+            // 自動リンク
+            if (\in_array($this->page, array_keys(Page::getEntries()), true)) {
+                return '<a href="'.url($this->page).'" title="'.$this->title.'" v-b-tooltip>'.$this->alias.'</a>';
+            }
+            // ページが見つからない場合のリンク
+            return '<span class="bg-light text-dark">'.$this->alias.'<a href="'.url($this->page).':edit" rel="nofollow" title="Edit '.$this->page.'" v-b-tooltip>?</a></span>';
+        }
+    }
+
     public function getPattern()
     {
         $s2 = $this->start + 2;
@@ -78,31 +104,5 @@ class BracketName extends AbstractInline
         }
 
         //self::setParam(['page'=>$page, 'href'=>url(parent::getPageName($page)), 'alias' => $alias, 'title'=> $title, 'option' => $option]);
-    }
-
-    public function __toString()
-    {
-        //dd($this->href);
-        if (strpos($this->href, 'http') !== false) {
-            // Anchor Link
-            return '<a href="'.$this->href.'" title="'.$this->title.'">'.$this->alias.'</a>';
-        }
-
-        if (strpos($this->href, ':') !== false) {
-            // InterWikiName
-            $interwiki = InterWiki::getInterWikiName($this->href);
-            if ($interwiki) {
-                return '<a href="'.$interwiki.'" title="'.$this->href.'" class="interwikiname" v-b-tooltip><font-awesome-icon fas icon="globe" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
-            }
-        }
-
-        if (!empty($this->page)) {
-            // 自動リンク
-            if (in_array($this->page, array_keys(Page::getEntries()))) {
-                return '<a href="'.url($this->page).'" title="'.$this->title.'" v-b-tooltip>'.$this->alias.'</a>';
-            }
-            // ページが見つからない場合のリンク
-            return '<span class="bg-light text-dark">'.$this->alias.'<a href="'.url($this->page).':edit" rel="nofollow" title="Edit '.$this->page.'" v-b-tooltip>?</a></span>';
-        }
     }
 }

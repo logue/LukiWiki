@@ -22,24 +22,21 @@ use Illuminate\Support\Facades\Storage;
 
 class ProcessAttachmentData implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     /**
      * 最大試行回数.
      *
      * @var int
      */
     public $tries = 1;
-
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    private $file;
-    private $attach_dir;
     public $page;
     public $original_name;
 
+    private $file;
+    private $attach_dir;
+
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
     public function __construct(string $file)
     {
@@ -62,8 +59,6 @@ class ProcessAttachmentData implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
@@ -111,7 +106,7 @@ class ProcessAttachmentData implements ShouldQueue
         }
 
         // Storageクラスにハッシュなどの命令がないためファイルの実体のパスを取得
-        $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
+        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
 
         // サーバーに保存する実際のファイル名はハッシュ値＋拡張子
         $s = hash_file('sha1', $from);
@@ -146,8 +141,6 @@ class ProcessAttachmentData implements ShouldQueue
      * 失敗したジョブの処理.
      *
      * @param Exception $exception
-     *
-     * @return void
      */
     public function failed(\Exception $exception)
     {

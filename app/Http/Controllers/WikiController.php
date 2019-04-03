@@ -43,7 +43,7 @@ class WikiController extends Controller
      *
      * @return Illuminate\View\View
      */
-    public function __invoke(Request $request, ?string $query = null):View
+    public function __invoke(Request $request, ?string $query = null): View
     {
         $page = rawurldecode($query);
 
@@ -63,7 +63,7 @@ class WikiController extends Controller
 
         Debugbar::startMeasure('parse', 'Converting wiki data...');
         //dd($entry->source);
-        $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $entry->source));
+        $lines = explode("\n", str_replace([\chr(0x0d).\chr(0x0a), \chr(0x0d), \chr(0x0a)], "\n", $entry->source));
 
         $body = new RootElement($page, 0, ['id' => 0]);
         $body->parse($lines);
@@ -90,7 +90,7 @@ class WikiController extends Controller
      *
      * @return Illuminate\View\View
      */
-    public function source(Request $request, string $page):View
+    public function source(Request $request, string $page): View
     {
         // DBからページデータを取得
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
@@ -150,7 +150,7 @@ class WikiController extends Controller
      *
      * @return Illuminate\View\View
      */
-    public function history(Request $request, string $page, ?int $age = null):View
+    public function history(Request $request, string $page, ?int $age = null): View
     {
         Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
         $backups = $this->page->getBackups($page)->select('backups.*')->orderBy('updated_at', 'desc');
@@ -188,7 +188,7 @@ class WikiController extends Controller
      *
      * @return Illuminate\View\View
      */
-    public function diff(Request $request, string $page, int $age = 1):View
+    public function diff(Request $request, string $page, int $age = 1): View
     {
         Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
         $old = $this->page->getBackups($page)->orderBy('backups.updated_at', 'desc')->offset($age - 1)->value('backups.source');
@@ -212,7 +212,7 @@ class WikiController extends Controller
      *
      * @return Illuminate\View\View
      */
-    public function print(Request $request, string $page):View
+    public function print(Request $request, string $page): View
     {
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', $page)->first();
@@ -224,7 +224,7 @@ class WikiController extends Controller
 
         Debugbar::startMeasure('parse', 'Converting wiki data...');
         //dd($entry->source);
-        $lines = explode("\n", str_replace([chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)], "\n", $entry->source));
+        $lines = explode("\n", str_replace([\chr(0x0d).\chr(0x0a), \chr(0x0d), \chr(0x0a)], "\n", $entry->source));
 
         $body = new RootElement($page, 0, ['id' => 0]);
         $body->parse($lines);
@@ -249,7 +249,7 @@ class WikiController extends Controller
      *
      * @return Illuminate\View\View
      */
-    public function edit(Request $request, string $page = null):View
+    public function edit(Request $request, string $page = null): View
     {
         $p = $page ?? $request->input('page') ?? Config::get('lukiwiki.special_page.default');
 
@@ -287,7 +287,7 @@ class WikiController extends Controller
      *
      * @return Illuminate\Http\RedirectResponse
      */
-    public function save(Request $request, ?string $page = null):RedirectResponse
+    public function save(Request $request, ?string $page = null): RedirectResponse
     {
         if (!$request->isMethod('post')) {
             // Method not allowed
@@ -314,7 +314,8 @@ class WikiController extends Controller
             if ($hash === hash(self::HASH_ALGORITHM, $request->input('hash'))) {
                 // 編集前とハッシュが同じだった場合処理しない
                 return redirect($page);
-            } elseif ($hash !== $request->input('hash')) {
+            }
+            if ($hash !== $request->input('hash')) {
                 // 編集前のデータのハッシュ値と比較し、違いがある場合、編集の競合が起きたと判断。
                 // マージ画面を表示する。
 
@@ -403,7 +404,7 @@ class WikiController extends Controller
      *
      * @return Illuminate\Http\RedirectResponse
      */
-    public function upload(Request $request, string $page):RedirectResponse
+    public function upload(Request $request, string $page): RedirectResponse
     {
         // ファイルのバリデーション
         $this->validate($request, [
@@ -420,7 +421,7 @@ class WikiController extends Controller
         $page_id = $this->page->getId($page);
         $replace = $request->input('replace') ?? false;
 
-        if (is_array($request->file('file'))) {
+        if (\is_array($request->file('file'))) {
             // 複数のファイルを一度にアップロードしたときは配列になるので一つづつ処理
             foreach ($request->file('file') as $entry) {
                 self::processUpload($entry, $page_id, $replace);
@@ -436,6 +437,63 @@ class WikiController extends Controller
     }
 
     /**
+     * ページ一覧.
+     *
+     * @return Illuminate\View\View
+     */
+    public function list(): View
+    {
+        return view(
+            'default.list',
+            [
+                'entries' => $this->page->getEntries(),
+            ]
+        );
+    }
+
+    /**
+     * 更新履歴表示.
+     *
+     * @return Illuminate\View\View
+     */
+    public function recent(): View
+    {
+        return view(
+            'default.recent',
+            [
+                'entries' => $this->page->getLatest()->get(),
+            ]
+        );
+    }
+
+    /**
+     * 検索処理.
+     *
+     * @param Request $request
+     *
+     * @return Illuminate\View\View
+     */
+    public function search(Request $request): View
+    {
+        $entries = [];
+        $keywords = $request->input('keyword');
+        if (!empty($keywords)) {
+            Debugbar::startMeasure('search', 'Searching...');
+            $entries = $this->page->search($keywords)->get()->toArray();
+            Debugbar::stopMeasure('parse');
+        }
+        //dd($entries);
+
+        return view(
+            'default.search',
+            [
+                'keywords' => $keywords,
+                'entries'  => $entries,
+            ]
+        );
+    }
+
+    /**
      * アップロード内部処理.
      *
      * @param Illuminate\Http\UploadedFile $entry
@@ -443,7 +501,7 @@ class WikiController extends Controller
      *
      * @return bool
      */
-    private function processUpload(UploadedFile $entry, int $page_id, bool $replace = false) :bool
+    private function processUpload(UploadedFile $entry, int $page_id, bool $replace = false): bool
     {
         $attach = $this->page->find($page_id)->attachment();
 
@@ -498,62 +556,5 @@ class WikiController extends Controller
         DB::commit();
 
         return true;
-    }
-
-    /**
-     * ページ一覧.
-     *
-     * @return Illuminate\View\View
-     */
-    public function list():View
-    {
-        return view(
-            'default.list',
-            [
-                'entries' => $this->page->getEntries(),
-            ]
-        );
-    }
-
-    /**
-     * 更新履歴表示.
-     *
-     * @return Illuminate\View\View
-     */
-    public function recent():View
-    {
-        return view(
-            'default.recent',
-            [
-                'entries' => $this->page->getLatest()->get(),
-            ]
-        );
-    }
-
-    /**
-     * 検索処理.
-     *
-     * @param Request $request
-     *
-     * @return Illuminate\View\View
-     */
-    public function search(Request $request):View
-    {
-        $entries = [];
-        $keywords = $request->input('keyword');
-        if (!empty($keywords)) {
-            Debugbar::startMeasure('search', 'Searching...');
-            $entries = $this->page->search($keywords)->get()->toArray();
-            Debugbar::stopMeasure('parse');
-        }
-        //dd($entries);
-
-        return view(
-            'default.search',
-            [
-                'keywords' => $keywords,
-                'entries'  => $entries,
-            ]
-        );
     }
 }

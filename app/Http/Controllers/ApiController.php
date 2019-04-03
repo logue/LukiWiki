@@ -24,13 +24,12 @@ class ApiController extends Controller
      *
      * @retun Illuminate\Http\Response
      */
-    public function atom():Response
+    public function atom(): Response
     {
         return response()
             ->view('api.atom', [
                 'entries'    => Page::getLatest(20)->get(),
                 'updated_at' => Page::getLatest(1)->value('updated_at'),
-
             ])
             ->header('Content-Type', 'application/atom+xml; charset=UTF-8');
     }
@@ -40,7 +39,7 @@ class ApiController extends Controller
      *
      * @retun Illuminate\Http\Response
      */
-    public function sitemap():Response
+    public function sitemap(): Response
     {
         return response()
             ->view('api.sitemap', ['entries' => Page::all()])
@@ -52,7 +51,7 @@ class ApiController extends Controller
      *
      * @retun Illuminate\Http\Response
      */
-    public function opensearch():Response
+    public function opensearch(): Response
     {
         return response()
             ->view('api.opensearch')
@@ -64,7 +63,7 @@ class ApiController extends Controller
      *
      * @retun Illuminate\Http\Response
      */
-    public function attachment(Request $request, int $id):Response
+    public function attachment(Request $request, int $id): Response
     {
         $file = Attachment::select('stored_name')->where('attachments.id', $id)->first();
 
@@ -77,7 +76,7 @@ class ApiController extends Controller
     /**
      * 添付ファイル存在確認.
      */
-    public function checkExsists(Request $request, string $name):Response
+    public function checkExsists(Request $request, string $name): Response
     {
     }
 }

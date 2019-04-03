@@ -16,9 +16,9 @@ use App\LukiWiki\AbstractElement;
  */
 class ListContainer extends AbstractElement
 {
+    public $level = 0;
     protected $tag = 'ul';
     protected $tag2 = 'li';
-    public $level = 0;
 
     public function __construct($tag, $tag2, $head, $text)
     {
@@ -26,7 +26,7 @@ class ListContainer extends AbstractElement
         $this->tag = $tag;
         $this->tag2 = $tag2;
         // $this->level = min(3, strspn($text, $head));
-        $this->level = strlen(explode($head, $text)[0]) + 1;    // 識別子より前の空白の数がレベル
+        $this->level = \strlen(explode($head, $text)[0]) + 1;    // 識別子より前の空白の数がレベル
 
         $text = ltrim(substr($text, $this->level));
 
@@ -38,6 +38,11 @@ class ListContainer extends AbstractElement
             $this->meta = $content->getMeta();
             $this->last = $this->last->insert($content);
         }
+    }
+
+    public function __toString()
+    {
+        return $this->wrap(parent::__toString(), $this->tag, [], false);
     }
 
     public function canContain($obj)
@@ -63,7 +68,7 @@ class ListContainer extends AbstractElement
         }
 
         // Break if no elements found (BugTrack/524)
-        if (count($obj->elements) === 1 && empty($obj->elements[0]->elements)) {
+        if (\count($obj->elements) === 1 && empty($obj->elements[0]->elements)) {
             return $this->last->parent;
         } // up to ListElement
 
@@ -74,10 +79,5 @@ class ListContainer extends AbstractElement
         }
 
         return $this->last;
-    }
-
-    public function __toString()
-    {
-        return $this->wrap(parent::__toString(), $this->tag, [], false);
     }
 }

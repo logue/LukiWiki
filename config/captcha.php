@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'characters' => '2346789abcdefghjmnpqrtuxyzABCDEFGHJMNPQRTUXYZ',
 
     'default'   => [
@@ -42,5 +41,4 @@ return [
         'invert'    => true,
         'contrast'  => -5,
     ],
-
 ];

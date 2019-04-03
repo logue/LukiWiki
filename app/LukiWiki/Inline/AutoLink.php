@@ -15,6 +15,11 @@ use App\Models\Page;
 // AutoLinks
 class AutoLink extends AbstractInline
 {
+    public function __toString()
+    {
+        return '<a href="'.url($this->name).'" class="autolink">'.$this->name.'</a>';
+    }
+
     public function getPattern()
     {
         return Page::getTrie();
@@ -28,10 +33,5 @@ class AutoLink extends AbstractInline
     public function setPattern(array $arr, string $page = null)
     {
         $this->name = $arr[0];
-    }
-
-    public function __toString()
-    {
-        return '<a href="'.url($this->name).'" class="autolink">'.$this->name.'</a>';
     }
 }

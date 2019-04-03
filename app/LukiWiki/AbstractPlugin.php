@@ -22,7 +22,7 @@ abstract class AbstractPlugin
      */
     public function __construct(array $params)
     {
-        $this->name = get_class($this);
+        $this->name = \get_class($this);
         $this->params = $params;
     }
 

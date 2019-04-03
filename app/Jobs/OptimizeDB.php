@@ -24,8 +24,6 @@ class OptimizeDB implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -34,8 +32,6 @@ class OptimizeDB implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
@@ -54,8 +50,6 @@ class OptimizeDB implements ShouldQueue
      * 失敗したジョブの処理.
      *
      * @param Exception $exception
-     *
-     * @return void
      */
     public function failed(\Exception $exception)
     {

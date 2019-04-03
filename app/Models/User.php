@@ -43,7 +43,7 @@ class User extends Model
      *
      * @return Illuminate\Database\Eloquent\Relations\HasOneThrough
      */
-    public function pageActivity():HasOneThrough
+    public function pageActivity(): HasOneThrough
     {
         return $this->hasOneThrough(Backup::class, Page::class);
     }
@@ -53,7 +53,7 @@ class User extends Model
      *
      * @return Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function pages() : HasMany
+    public function pages(): HasMany
     {
         return $this->hasMany(Page::class);
     }

@@ -16,6 +16,7 @@ use App\LukiWiki\Rules\InlineRules;
  */
 class InlineConverter
 {
+    public $page;
     /**
      * デフォルトの変換パターン.
      */
@@ -33,7 +34,6 @@ class InlineConverter
 
         'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
         'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
-
     ];
     /**
      * 変換クラス.
@@ -47,8 +47,6 @@ class InlineConverter
     private static $clone_func;
 
     private $meta;
-
-    public $page;
 
     /**
      * コンストラクタ
@@ -90,7 +88,7 @@ class InlineConverter
             $this->converters[$start] = $converter;
             $start += $converter->getCount();
 
-            $start++;
+            ++$start;
         }
         $this->pattern = implode('|', $patterns);
     }
@@ -171,6 +169,16 @@ class InlineConverter
     }
 
     /**
+     * メタ情報を取得.
+     *
+     * @return array
+     */
+    public function getMeta()
+    {
+        return $this->meta;
+    }
+
+    /**
      * 変換クラスを取得.
      *
      * @param array $arr
@@ -184,15 +192,5 @@ class InlineConverter
                 return $this->converters[$start];
             }
         }
-    }
-
-    /**
-     * メタ情報を取得.
-     *
-     * @return array
-     */
-    public function getMeta()
-    {
-        return $this->meta;
     }
 }

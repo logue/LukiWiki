@@ -24,30 +24,15 @@ use Symfony\Component\Intl\Collator\Collator;
 class Page extends Model
 {
     use SoftDeletes;
+
+    const PAGELIST_TRIE_CACHE = 'page_trie';
+    const PAGELIST_CACHE = 'pages';
     protected $guarded = ['id'];
 
     protected $casts = [
         'locked' => 'bool',
         'status' => 'int',
     ];
-
-    const PAGELIST_TRIE_CACHE = 'page_trie';
-    const PAGELIST_CACHE = 'pages';
-
-    /**
-     * 保存時にキャッシュ削除.
-     *
-     * @param Illuminate\Database\Eloquent\Builder $query
-     *
-     * @return Illuminate\Database\Eloquent\Builder
-     */
-    protected function setKeysForSaveQuery(Builder $query):Builder
-    {
-        Cache::forget(self::PAGELIST_CACHE);
-        Cache::forget(self::PAGELIST_TRIE_CACHE);
-
-        return parent::setKeysForSaveQuery($query);
-    }
 
     /**
      * ページに貼り付けられた添付ファイル.
@@ -96,7 +81,7 @@ class Page extends Model
      *
      * @return Illuminate\Database\Eloquent\Builder
      */
-    public static function search(array $keywords):Builder
+    public static function search(array $keywords): Builder
     {
         $query = self::select('name');
         foreach ($keywords as $keyword) {
@@ -121,7 +106,7 @@ class Page extends Model
      *
      * @return int
      */
-    public static function getId(string $page):?int
+    public static function getId(string $page): ?int
     {
         return self::where('name', '=', $page)->value('id');
     }
@@ -133,7 +118,7 @@ class Page extends Model
      *
      * @return Illuminate\Database\Eloquent\Builder
      */
-    public static function getAttachments(string $page):Builder
+    public static function getAttachments(string $page): Builder
     {
         return self::where('pages.name', $page)
             ->join('attachments', 'pages.id', '=', 'attachments.page_id');
@@ -146,7 +131,7 @@ class Page extends Model
      *
      * @return Illuminate\Database\Eloquent\Builder
      */
-    public static function getBackups(string $page):Builder
+    public static function getBackups(string $page): Builder
     {
         return self::where('pages.name', $page)
             ->join('backups', 'pages.id', '=', 'backups.page_id');
@@ -159,7 +144,7 @@ class Page extends Model
      *
      * @@return Illuminate\Database\Eloquent\Builder
      */
-    public static function getCounter(string $page):Builder
+    public static function getCounter(string $page): Builder
     {
         return self::where('pages.name', $page)
             ->join('counters', 'pages.id', '=', 'counters.page_id');
@@ -172,7 +157,7 @@ class Page extends Model
      *
      * @return Illuminate\Database\Eloquent\Builder
      */
-    public static function getLatest(int $limit = 20):Builder
+    public static function getLatest(int $limit = 20): Builder
     {
         return self::select('id', 'name', 'description', 'updated_at')->orderBy('updated_at', 'desc')->limit($limit);
     }
@@ -221,7 +206,7 @@ class Page extends Model
      *
      * @return bool
      */
-    public static function exists(string $page):bool
+    public static function exists(string $page): bool
     {
         return self::where('name', $page)->exists();
     }
@@ -233,7 +218,7 @@ class Page extends Model
      *
      * @return Carbon\Carbon
      */
-    public static function lastModified(?string $name = null) : Carbon
+    public static function lastModified(?string $name = null): Carbon
     {
         return Carbon::parse(empty($name) ?
             self::select('updated_at')->max('updated_at') :
@@ -245,8 +230,6 @@ class Page extends Model
      * カウンター加算.
      *
      * @param string $page
-     *
-     * @return void
      */
     public static function countUp(string $page): void
     {
@@ -289,5 +272,20 @@ class Page extends Model
         }
 
         Counter::updateOrCreate(['page_id' => $counter->page_id], $value);
+    }
+
+    /**
+     * 保存時にキャッシュ削除.
+     *
+     * @param Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return Illuminate\Database\Eloquent\Builder
+     */
+    protected function setKeysForSaveQuery(Builder $query): Builder
+    {
+        Cache::forget(self::PAGELIST_CACHE);
+        Cache::forget(self::PAGELIST_TRIE_CACHE);
+
+        return parent::setKeysForSaveQuery($query);
     }
 }

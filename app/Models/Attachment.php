@@ -30,7 +30,7 @@ class Attachment extends Model
      *
      * @return Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function page() : belongsTo
+    public function page(): belongsTo
     {
         return $this->belongsTo(Page::class);
     }
@@ -40,7 +40,7 @@ class Attachment extends Model
      *
      * @return Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->BelongsTo(User::class);
     }
@@ -53,7 +53,7 @@ class Attachment extends Model
      *
      * @return bool
      */
-    public static function exsists(string $page, string $file):bool
+    public static function exsists(string $page, string $file): bool
     {
         // TODO:
     }

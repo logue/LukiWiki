@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProcessBackupData implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     /**
      * 最大試行回数.
      *
@@ -29,15 +30,11 @@ class ProcessBackupData implements ShouldQueue
      */
     public $tries = 1;
 
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
     private $file;
     private $page;
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
     public function __construct(string $file)
     {
@@ -52,8 +49,6 @@ class ProcessBackupData implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
@@ -72,7 +67,7 @@ class ProcessBackupData implements ShouldQueue
         $page = preg_replace('/\:/', '_', $this->page);
 
         // Storageクラスに作成日を取得する関数がないためファイルの実体のパスを取得
-        $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
+        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
 
         // 拡張子を取得
         $ext = substr($this->file, strrpos($this->file, '.') + 1);
@@ -115,7 +110,7 @@ class ProcessBackupData implements ShouldQueue
         foreach (explode("\n", $data) as $line) {
             // バックアップデーターをパース
             if (preg_match('/^\>\>\>\>\>\>\>\>\>\>\s(\d+)(?:\s(\d+))?$/', $line, $match)) {
-                $age++;
+                ++$age;
 
                 // 実際ページを保存した時間が指定されている場合（タイムスタンプを更新しないをチェックして更新した場合）
                 // そちらのパラメータをバックアップの日時として使用する。（Plus!およびAdv.独自仕様）
@@ -152,8 +147,6 @@ class ProcessBackupData implements ShouldQueue
      * 失敗したジョブの処理.
      *
      * @param Exception $exception
-     *
-     * @return void
      */
     public function failed(\Exception $exception)
     {

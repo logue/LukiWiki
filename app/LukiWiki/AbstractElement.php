@@ -16,7 +16,7 @@ abstract class AbstractElement
 {
     protected $parent;
     protected $last;        // Insert new one at the back of the $last
-    protected $meta = null;
+    protected $meta;
     protected static $converter;
     protected $elements = [];    // References of childs
     protected $isAmp = false;
@@ -36,9 +36,18 @@ abstract class AbstractElement
      */
     public function __destruct()
     {
-        unset($this->elements);
-        unset($this->last);
-        unset($this->meta);
+        unset($this->elements, $this->last, $this->meta);
+    }
+
+    // 変換結果を出力
+    public function __toString()
+    {
+        $ret = [];
+        foreach ($this->elements as $obj) {
+            $ret[] = $obj->__toString();
+        }
+
+        return implode("\n", $ret);
     }
 
     /**
@@ -61,7 +70,7 @@ abstract class AbstractElement
         if ($this->canContain($obj)) {
             return $this->insert($obj);
         }
-        if (is_object($this->parent)) {
+        if (\is_object($this->parent)) {
             return $this->parent->add($obj);
         }
     }
@@ -73,7 +82,7 @@ abstract class AbstractElement
      */
     public function insert(object $obj)
     {
-        if (is_object($obj)) {
+        if (\is_object($obj)) {
             $obj->setParent($this);
             $this->elements[] = $obj;
 
@@ -117,20 +126,7 @@ abstract class AbstractElement
         }
 
         return ($canomit && empty($string)) ? '' :
-            '<'.$tag.(count($attributes) !== 0 ? ' '.implode(' ', $attributes) : '').'>'.trim($innerHtml).'</'.$tag.'>';
-    }
-
-    /***
-     * 変換結果を出力
-     */
-    public function __toString()
-    {
-        $ret = [];
-        foreach ($this->elements as $obj) {
-            $ret[] = $obj->__toString();
-        }
-
-        return implode("\n", $ret);
+            '<'.$tag.(\count($attributes) !== 0 ? ' '.implode(' ', $attributes) : '').'>'.trim($innerHtml).'</'.$tag.'>';
     }
 
     /**
@@ -150,7 +146,7 @@ abstract class AbstractElement
      *
      * @return string
      */
-    protected static function processText(string $str):string
+    protected static function processText(string $str): string
     {
         return htmlspecialchars(
             trim(str_replace("\r", "\n", $str)), ENT_HTML5, 'UTF-8');

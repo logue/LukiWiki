@@ -18,37 +18,6 @@ class InlinePlugin extends AbstractInline
     protected $plugin;
     protected $param;
 
-    public function getPattern():string
-    {
-        return
-            '(?:\&amp;'.
-                '(?:'.
-                    '(\w+)'.                        // [1] plugin name
-                    '(?:'.
-                        '\('.
-                            '((?:(?!\)[;{]).)*)'.   // [2] parameter
-                        '\)'.
-                    ')?'.
-                ')'.
-                '(?:'.
-                    '\{'.
-                        '((?:(?R)|(?!};).)*)'.      // [3] body
-                    '\}'.
-                ')?'.
-            ';)';
-    }
-
-    public function getCount():int
-    {
-        return 3;
-    }
-
-    public function setPattern(array $arr):void
-    {
-        //dd($this->getPattern(), $arr, $this->splice($arr));
-        list($this->plugin, $this->param, $this->body) = $this->splice($arr);
-    }
-
     public function __toString()
     {
         //$body = (empty($this->body)) ? null : InlineFactory::factory($this->body);
@@ -70,5 +39,36 @@ class InlinePlugin extends AbstractInline
         */
         //return InlineRules::replace('&'.$this->plain.$body);
         return '<span class="badge badge-pill badge-primary" title="Plugin">&amp;'.$this->plugin.'(<var>'.$this->param.'</var>)'.'</span>';
+    }
+
+    public function getPattern(): string
+    {
+        return
+            '(?:\&amp;'.
+                '(?:'.
+                    '(\w+)'.                        // [1] plugin name
+                    '(?:'.
+                        '\('.
+                            '((?:(?!\)[;{]).)*)'.   // [2] parameter
+                        '\)'.
+                    ')?'.
+                ')'.
+                '(?:'.
+                    '\{'.
+                        '((?:(?R)|(?!};).)*)'.      // [3] body
+                    '\}'.
+                ')?'.
+            ';)';
+    }
+
+    public function getCount(): int
+    {
+        return 3;
+    }
+
+    public function setPattern(array $arr): void
+    {
+        //dd($this->getPattern(), $arr, $this->splice($arr));
+        list($this->plugin, $this->param, $this->body) = $this->splice($arr);
     }
 }

@@ -13,14 +13,13 @@ use App\LukiWiki\AbstractElement;
 
 class TableCell extends AbstractElement
 {
-    protected $tag = 'td';    // {td|th}
+    const CELL_OPTION_MATCH_PATTERN = '/^(?:(LEFT|CENTER|RIGHT|JUSTIFY)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\w+)\)|LANG\((\w+2)\)|(BASELINE|TOP|MIDDLE|BOTTOM|TEXT-TOP|TEXT-BOTTOM)|(NOWRAP)(TRUNCATE)):(.*)$/';
     public $colspan = 1;
     public $rowspan = 1;
     public $style = [];         // is array('width'=>, 'align'=>...);
     public $is_blank = false;
     public $class = [];
-
-    const CELL_OPTION_MATCH_PATTERN = '/^(?:(LEFT|CENTER|RIGHT|JUSTIFY)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\w+)\)|LANG\((\w+2)\)|(BASELINE|TOP|MIDDLE|BOTTOM|TEXT-TOP|TEXT-BOTTOM)|(NOWRAP)(TRUNCATE)):(.*)$/';
+    protected $tag = 'td';    // {td|th}
 
     public function __construct($text, $is_template, $isAmp)
     {
@@ -74,7 +73,7 @@ class TableCell extends AbstractElement
             }
         }
 
-        if (preg_match("/\S+/", $text) === false) {
+        if (preg_match('/\\S+/', $text) === false) {
             // セルが空だったり、空白文字しか残らない場合は、空欄のセルとする。（HTMLではタブやスペースも削除）
             $text = '';
             $this->is_blank = true;
@@ -99,15 +98,6 @@ class TableCell extends AbstractElement
 
         $this->meta = $obj->getMeta();
         $this->insert($obj);
-    }
-
-    public function setStyle(&$style)
-    {
-        foreach ($style as $key=>$value) {
-            if (!isset($this->style[$key])) {
-                $this->style[$key] = $value;
-            }
-        }
     }
 
     public function __toString()
@@ -137,5 +127,14 @@ class TableCell extends AbstractElement
         }
 
         return $this->wrap(parent::__toString(), $this->tag, $param, false);
+    }
+
+    public function setStyle(&$style)
+    {
+        foreach ($style as $key=>$value) {
+            if (!isset($this->style[$key])) {
+                $this->style[$key] = $value;
+            }
+        }
     }
 }

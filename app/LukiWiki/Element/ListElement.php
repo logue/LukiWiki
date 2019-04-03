@@ -20,13 +20,13 @@ class ListElement extends AbstractElement
         $this->head = $head;
     }
 
-    public function canContain($obj)
-    {
-        return !$obj instanceof ListContainer || $obj->level > $this->level;
-    }
-
     public function __toString()
     {
         return $this->wrap(parent::__toString(), $this->head, [], false);
+    }
+
+    public function canContain($obj)
+    {
+        return !$obj instanceof ListContainer || $obj->level > $this->level;
     }
 }

@@ -42,6 +42,11 @@ class Blockquote extends AbstractElement
         }
     }
 
+    public function __toString()
+    {
+        return $this->wrap(parent::__toString(), 'blockquote', ['class' => 'blockquote'], false);
+    }
+
     public function canContain($obj)
     {
         return !($obj instanceof self) || $obj->level >= $this->level;
@@ -49,7 +54,7 @@ class Blockquote extends AbstractElement
 
     public function insert($obj)
     {
-        if (!is_object($obj)) {
+        if (!\is_object($obj)) {
             return;
         }
 
@@ -57,9 +62,9 @@ class Blockquote extends AbstractElement
             return parent::insert($obj);
         }
 
-        if ($obj instanceof self && $obj->level == $this->level && count($obj->elements)) {
+        if ($obj instanceof self && $obj->level === $this->level && \count($obj->elements)) {
             $obj = $obj->elements[0];
-            if ($this->last instanceof Paragraph && count($obj->elements)) {
+            if ($this->last instanceof Paragraph && \count($obj->elements)) {
                 $obj = $obj->elements[0];
             }
         }
@@ -67,16 +72,11 @@ class Blockquote extends AbstractElement
         return parent::insert($obj);
     }
 
-    public function __toString()
-    {
-        return $this->wrap(parent::__toString(), 'blockquote', ['class' => 'blockquote'], false);
-    }
-
     private function end($root, $level)
     {
         $parent = $root->last;
 
-        while (is_object($parent)) {
+        while (\is_object($parent)) {
             if ($parent instanceof self && $parent->level === $level) {
                 return $parent->parent;
             }

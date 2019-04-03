@@ -34,7 +34,7 @@ class DashboardController extends Controller
      *
      * @return Illuminate\View\View
      */
-    public function __invoke() :View
+    public function __invoke(): View
     {
         return view('dashboard/index', ['title'=>'Administrator']);
     }
@@ -107,7 +107,7 @@ class DashboardController extends Controller
                     default:
                         $request->session()->flash('message', 'キューの実行をキャンセルしました。');
                 }
-                if (count($errors) !== 0) {
+                if (\count($errors) !== 0) {
                     $request->session()->flash('message', '以下のファイルでエラーが発生しました。：'."\n".implode("\n", $errors));
                 }
             } else {
@@ -142,7 +142,7 @@ class DashboardController extends Controller
         $args = $request->input('cache');
         $msg = [];
 
-        if (count($args) === 0) {
+        if (\count($args) === 0) {
             $request->session()->flash('message', '何も選択されていないため処理を中断しました。');
 
             return redirect(self::DEFAULT_PATH);
@@ -180,7 +180,7 @@ class DashboardController extends Controller
      *
      * @return Illuminate\View\View
      */
-    public function interwiki(Request $request) :View
+    public function interwiki(Request $request): View
     {
         if ($request->isMethod('post')) {
             // TODO:編集処理

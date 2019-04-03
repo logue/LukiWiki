@@ -15,6 +15,16 @@ use App\LukiWiki\Rules\InlineRules;
 // WikiNames
 class WikiName extends AbstractInline
 {
+    public function __toString()
+    {
+        return parent::setAutoLink(
+            $this->name,
+            $this->alias,
+            null,
+            $this->page
+        );
+    }
+
     public function getPattern()
     {
         return InlineRules::WIKINAME_PATTERN;
@@ -30,15 +40,5 @@ class WikiName extends AbstractInline
         $name = $this->splice($arr)[0];
 
         return parent::setParam($page, $name, null, $name);
-    }
-
-    public function __toString()
-    {
-        return parent::setAutoLink(
-            $this->name,
-            $this->alias,
-            null,
-            $this->page
-        );
     }
 }

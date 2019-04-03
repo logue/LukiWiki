@@ -37,9 +37,9 @@ class BlockPlugin extends AbstractElement
             '<div class="card">',
             '<div class="card-header">@'.$this->name.'</div>',
         ];
-        if (count($this->params) !== 0 && $this->body) {
+        if (\count($this->params) !== 0 && $this->body) {
             $ret[] = '<div class="card-body">';
-            if (count($this->params) !== 0) {
+            if (\count($this->params) !== 0) {
                 $ret[] = '<p class="card-title"><code>'.parent::processText(implode(' ,', $this->params)).'</code></p>';
             }
             if ($this->body) {

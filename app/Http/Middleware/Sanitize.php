@@ -31,10 +31,10 @@ class Sanitize
             // 最初に文字列の前後の空白をpreg_replaceで削除する。
             // 次に改行コードをLFに統一する。
             // 最後にtrimで前後の改行文字を削除する。
-            if (is_string($val)) {
+            if (\is_string($val)) {
                 $processed = trim(
                     str_replace(
-                        [chr(0x0d).chr(0x0a), chr(0x0d), chr(0x0a)],
+                        [\chr(0x0d).\chr(0x0a), \chr(0x0d), \chr(0x0a)],
                         "\n",
                         preg_replace('/\A[\p{C}\p{Z}]++|[\p{C}\p{Z}]++\z/u', '', $val)
                     )

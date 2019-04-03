@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
      * All models in these directories will be scanned for ER diagram generation.
      * By default, the `app` directory will be scanned recursively for models.
@@ -113,5 +112,4 @@ return [
             'arrowtail' => 'none',
         ],
     ],
-
 ];

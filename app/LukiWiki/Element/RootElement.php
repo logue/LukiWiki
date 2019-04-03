@@ -34,8 +34,8 @@ class RootElement extends AbstractElement
         $this->last = $this;
         $matches = [];
 
-        $count = count($lines);
-        for ($i = 0; $i < $count; $i++) {
+        $count = \count($lines);
+        for ($i = 0; $i < $count; ++$i) {
             $line = rtrim(array_shift($lines), "\t\r\n\0\x0B");	// スペース以外の空白文字をトリム;
 
             // Empty
@@ -48,7 +48,7 @@ class RootElement extends AbstractElement
                 $cmd = strtolower($matches[1]);
 
                 if (!empty($cmd)) {
-                    if (is_object($this->last)) {
+                    if (\is_object($this->last)) {
                         $this->last = $this->last->add(new Align($cmd));
                     }
                 }
@@ -60,16 +60,15 @@ class RootElement extends AbstractElement
 
             // Multiline-enabled block plugin #plugin{{ ... }}
             if (preg_match('/^@[^{]+(\{\{+)\s*$/', $line, $matches)) {
-                $len = strlen($matches[1]);
+                $len = \strlen($matches[1]);
                 $line .= "\r";
                 while (!empty($lines)) {
                     $next_line = preg_replace('/[\r\n]*$/', '', array_shift($lines));
                     if (preg_match('/\}{'.$len.'}/', $next_line)) {
                         $line .= $next_line;
                         break;
-                    } else {
-                        $line .= $next_line .= "\r";
                     }
+                    $line .= $next_line .= "\r";
                 }
             }
 
@@ -82,9 +81,8 @@ class RootElement extends AbstractElement
                     if (preg_match('/^```$/', $next_line)) {
                         $line .= $next_line;
                         break;
-                    } else {
-                        $line .= $next_line .= "\r";
                     }
+                    $line .= $next_line .= "\r";
                 }
             }
 
@@ -97,7 +95,7 @@ class RootElement extends AbstractElement
             }
 
             // Other Character
-            if (is_object($this->last)) {
+            if (\is_object($this->last)) {
                 $content = null;
                 switch ($head) {
                     case '#':
@@ -144,7 +142,7 @@ class RootElement extends AbstractElement
                         break;
                     case ':':
                         $out = explode('|', ltrim($line), 2);
-                        if (!count($out) < 2) {
+                        if (!\count($out) < 2) {
                             $content = new DefinitionList($out, $this->page);
                         }
                         break;
@@ -163,7 +161,7 @@ class RootElement extends AbstractElement
                             // パラメータ
                             $params = trim($matches[2]);
                             // 階層
-                            $level = strlen($matches[3]);
+                            $level = \strlen($matches[3]);
 
                             $m2 = [];
                             $body = '';
@@ -190,7 +188,7 @@ class RootElement extends AbstractElement
                         break;
                 }
 
-                if (is_object($content)) {
+                if (\is_object($content)) {
                     $meta = $content->getMeta();
 
                     if (!empty($meta)) {
@@ -214,7 +212,7 @@ class RootElement extends AbstractElement
     {
         // Heading id (auto-generated)
         $autoid = 'content_'.$this->id.'_'.$this->count;
-        $this->count++;
+        ++$this->count;
 
         list($_text, $id, $level) = HeadingAnchor::get($text, false); // Cut fixed-anchor from $text
 

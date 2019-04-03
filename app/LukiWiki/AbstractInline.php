@@ -49,6 +49,14 @@ abstract class AbstractInline
     }
 
     /**
+     * 文字列化（インライン要素として帰ってくる.
+     */
+    public function __toString()
+    {
+        return trim($this->name);
+    }
+
+    /**
      * Wikiのパース用正規表現を取得.
      *
      * @return string
@@ -81,78 +89,11 @@ abstract class AbstractInline
     }
 
     /**
-     * 文字列化（インライン要素として帰ってくる.
-     */
-    public function __toString()
-    {
-        return trim($this->name);
-    }
-
-    /**
-     * 正規表現の結果をパースする.
-     *
-     * @param array $arr
-     */
-    protected function splice(array $arr):array
-    {
-        $count = $this->getCount() + 1;
-        $arr = array_pad(array_splice($arr, $this->start, $count), $count, '');
-        $this->text = array_shift($arr);
-
-        return $arr;
-    }
-
-    /**
-     * リンクを貼る場合の処理.
-     *
-     * @param array $params パラメータ
-     *
-     * @return void
-     */
-    protected function setParam(array $params) :void
-    {
-        //$converter = new InlineConverter(['InlinePlugin'], []);
-
-        //$meta = $converter->getMeta();
-        if (!empty($meta)) {
-            $this->meta = array_merge($this->meta, $meta);
-        }
-
-        if (preg_match('/^[https?|ftps?|git|ssh]/', $params['href'])) {
-            $purl = parse_url($params['href']);
-            if (isset($purl['host']) && substr($purl['host'], 0, 4) === 'xn--') {
-                // 国際化ドメインのときにアドレスをpunycode変換する。（https://日本語.jp → https://xn--wgv71a119e.jp）
-                $this->name = preg_replace('/'.$purl['host'].'/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $params['href']);
-            }
-        } else {
-            $this->href = url(self::getPageName($params['href']));
-        }
-
-        $this->page = self::processText($params['page'] ?? $this->page);
-        $this->title = self::processText($params['title'] ?? $this->page);
-        $this->anchor = self::processText($params['anchor'] ?? null);
-        $this->option = self::processText($params['option'] ?? null);
-        $this->alias = self::processText($params['alias'] ?? null);
-
-        //dd($this);
-
-/*
-        if (!empty($this->alias)) {
-            $alias = $converter->convert($params['alias'], $params['page']);
-            // aタグのみ削除
-            $alias = preg_replace('#</?a[^>]*>#i', '', $alias);
-            $this->alias = InlineRules::replace($alias);
-
-        }
-        */
-    }
-
-    /**
      * ページの自動リンクを作成.
      *
      * @return string
      */
-    public function setAutoLink():?string
+    public function setAutoLink(): ?string
     {
         if (empty($this->page) && !empty($this->anchor)) {
             // ページ内リンク
@@ -163,9 +104,10 @@ abstract class AbstractInline
 
         $title = !empty($this->title) ? $this->title : $this->page;
 
-        if (in_array($this->page, array_keys(Page::getEntries()), true)) {
+        if (\in_array($this->page, array_keys(Page::getEntries()), true)) {
             return '<a href="'.url($this->page).$anchor.'" title="'.$this->title.'" v-b-tooltip>'.$anchor_name.'</a>';
-        } elseif (!empty($this->page)) {
+        }
+        if (!empty($this->page)) {
             $retval = $anchor_name.'<a href="'.url($this->page).':edit" rel="nofollow" title="Edit '.$this->page.'" v-b-tooltip>?</a>';
 
             return '<span class="bg-light text-dark">'.$retval.'</span>';
@@ -184,7 +126,7 @@ abstract class AbstractInline
      *
      * @return string
      */
-    public function setLink(?string $term = '', ?string $url = '', ?string $rel = '', bool $is_redirect = false):string
+    public function setLink(?string $term = '', ?string $url = '', ?string $rel = '', bool $is_redirect = false): string
     {
         $parsed_url = parse_url($url, PHP_URL_PATH);
         $_tooltip = !empty($this->title) ? ' title="'.$this->title.'"  v-b-tooltip' : '';
@@ -215,7 +157,7 @@ abstract class AbstractInline
      *
      * @return string ページのフルパス
      */
-    public function getPageName(string $name = './'):string
+    public function getPageName(string $name = './'): string
     {
         $defaultpage = Config::get('lukiwiki.special_page.default');
 
@@ -274,22 +216,79 @@ abstract class AbstractInline
     }
 
     /**
+     * メタ情報を取得.
+     */
+    public function getMeta()
+    {
+        return $this->meta;
+    }
+
+    /**
+     * 正規表現の結果をパースする.
+     *
+     * @param array $arr
+     */
+    protected function splice(array $arr): array
+    {
+        $count = $this->getCount() + 1;
+        $arr = array_pad(array_splice($arr, $this->start, $count), $count, '');
+        $this->text = array_shift($arr);
+
+        return $arr;
+    }
+
+    /**
+     * リンクを貼る場合の処理.
+     *
+     * @param array $params パラメータ
+     */
+    protected function setParam(array $params): void
+    {
+        //$converter = new InlineConverter(['InlinePlugin'], []);
+
+        //$meta = $converter->getMeta();
+        if (!empty($meta)) {
+            $this->meta = array_merge($this->meta, $meta);
+        }
+
+        if (preg_match('/^[https?|ftps?|git|ssh]/', $params['href'])) {
+            $purl = parse_url($params['href']);
+            if (isset($purl['host']) && substr($purl['host'], 0, 4) === 'xn--') {
+                // 国際化ドメインのときにアドレスをpunycode変換する。（https://日本語.jp → https://xn--wgv71a119e.jp）
+                $this->name = preg_replace('/'.$purl['host'].'/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $params['href']);
+            }
+        } else {
+            $this->href = url(self::getPageName($params['href']));
+        }
+
+        $this->page = self::processText($params['page'] ?? $this->page);
+        $this->title = self::processText($params['title'] ?? $this->page);
+        $this->anchor = self::processText($params['anchor'] ?? null);
+        $this->option = self::processText($params['option'] ?? null);
+        $this->alias = self::processText($params['alias'] ?? null);
+
+        //dd($this);
+
+/*
+        if (!empty($this->alias)) {
+            $alias = $converter->convert($params['alias'], $params['page']);
+            // aタグのみ削除
+            $alias = preg_replace('#</?a[^>]*>#i', '', $alias);
+            $this->alias = InlineRules::replace($alias);
+
+        }
+        */
+    }
+
+    /**
      * 文字列をエスケープ.
      *
      * @param string $str
      *
      * @return string
      */
-    protected static function processText(?string $str):?string
+    protected static function processText(?string $str): ?string
     {
         return $str ? htmlspecialchars(trim($str), ENT_HTML5, 'UTF-8') : null;
-    }
-
-    /**
-     * メタ情報を取得.
-     */
-    public function getMeta()
-    {
-        return $this->meta;
     }
 }

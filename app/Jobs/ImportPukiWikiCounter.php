@@ -31,8 +31,6 @@ class ImportPukiWikiCounter implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
     public function __construct(string $path)
     {
@@ -41,8 +39,6 @@ class ImportPukiWikiCounter implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
