@@ -56,7 +56,7 @@ class WikiController extends Controller
         $entry = $this->page->where('name', $page)->first();
 
         if (!$entry) {
-            return abort(404, 'Page '.$page.' is not found.');
+            return abort(404, sprintf(_('Page %s is not found.'), $page));
         }
         $this->page->countUp($page);
         Debugbar::stopMeasure('db');
@@ -96,7 +96,7 @@ class WikiController extends Controller
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', $page)->first();
         if (!$entry) {
-            return abort(404, 'Page '.$page.' is not found.');
+            return abort(404, sprintf(_('Page %s is not found.'), $page));
         }
         Debugbar::stopMeasure('db');
 
@@ -161,12 +161,16 @@ class WikiController extends Controller
         }
         Debugbar::stopMeasure('db');
 
+        if (!$backup) {
+            return abort(404, sprintf(__('Backup is not found.'), $page));
+        }
+
         if (!empty($age)) {
             return view(
                'default.source', [
                     'page'    => $page,
                     'source'  => $backup->source,
-                    'title'   => 'Backup of '.$page.'('.$age.')',
+                    'title'   => sprintf(__('Backup of %s (%d)'), $page, $age),
                 ]
             );
         }
@@ -191,13 +195,15 @@ class WikiController extends Controller
     public function diff(Request $request, string $page, int $age = 1): View
     {
         Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
-        $old = $this->page->getBackups($page)->orderBy('backups.updated_at', 'desc')->offset($age - 1)->value('backups.source');
-        $new = $entry = $this->page->select('source')->where('name', $page)->value('source');
+        $backups = $this->page->getBackups($page);
+        $old = !empty($age) ? $backups->offset($age - 1)->limit(1)->first()->source : $backups->get()->source;
+        $new = $this->page->where('name', $page)->value('source');
         $differ = new Differ();
         Debugbar::stopMeasure('db');
 
         return view(
-           'default.diff', [
+            'default.diff', [
+                'title' => sprintf(__('Diff of %s'), $page),
                 'page'  => $page,
                 'diff'  => $differ->diff($old, $new),
             ]
@@ -217,7 +223,7 @@ class WikiController extends Controller
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', $page)->first();
         if (!$entry) {
-            return abort(404, 'Page '.$page.' is not found.');
+            return abort(404, sprintf(__('Page %s is not found.'), $page));
         }
         $attachments = $this->page->attachments()->get();
         Debugbar::stopMeasure('db');
@@ -285,17 +291,17 @@ class WikiController extends Controller
      * @param string                  $page
      * @param string                  $file
      *
-     * @return Illuminate\Http\RedirectResponse
+     * @return Illuminate\Http\RedirectResponse | Illuminate\View\View
      */
-    public function save(Request $request, ?string $page = null): RedirectResponse
+    public function save(Request $request, ?string $page = null)
     {
         if (!$request->isMethod('post')) {
             // Method not allowed
-            abort(405, 'Method not allowd.');
+            return abort(405, __('Method not allowd.'));
         }
 
         if (empty($page)) {
-            abort(400, 'Page name is undefined.');
+            return abort(400, __('Page name is undefined.'));
         }
 
         if ($request->input('action') !== 'save') {
@@ -313,6 +319,8 @@ class WikiController extends Controller
 
             if ($hash === hash(self::HASH_ALGORITHM, $request->input('hash'))) {
                 // 編集前とハッシュが同じだった場合処理しない
+                $request->session()->flash('message', __('Cancelled'));
+
                 return redirect($page);
             }
             if ($hash !== $request->input('hash')) {
@@ -358,13 +366,15 @@ class WikiController extends Controller
             ) {
                 // バックアップを上書きする
                 // この実装のため、インターバル時間未満で更新があると、DBの作成日と更新日の値が異なることになる。
-                // PukiWiki Plus!およびAdv.と同じ仕様
+                // 同一人物による連続更新かそうでないかはここで判断
+                // ※PukiWiki Plus!およびAdv.と同じ仕様
+                // TODO: 更新の競合が多発する状態（更新合戦）の対策
                 $backup->update([
                     'source'     => $remote->source,
                     'updated_at' => Carbon::now()->toDateTimeString(),
                 ]);
             } else {
-                if ($backup->count() >= Config::get('lukiwiki.backup.entries')) {
+                if ($backup->count() >= Config::get('lukiwiki.backup.max_entries')) {
                     // 上限件以上あった場合は、一番古いエントリを削除する。
                     $backup->oldest()->first()->delete();
                 }

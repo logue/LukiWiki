@@ -49,7 +49,7 @@ Route::post(':password/reset', 'Auth\ResetPasswordController@reset');
 //Route::get(':{action}', 'ActionController');
 
 // Wikiページ
-Route::get(':create', 'WikiController@create');
+Route::get(':new', 'WikiController@edit');
 Route::get(':list', 'WikiController@list');
 Route::get(':recent', 'WikiController@recent');
 Route::any(':search', 'WikiController@search')->middleware('sanitize', 'keyword');
