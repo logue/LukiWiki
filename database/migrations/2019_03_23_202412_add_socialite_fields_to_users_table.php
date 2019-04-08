@@ -24,11 +24,26 @@ class AddSocialiteFieldsToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('provider_name');
-            $table->dropColumn('provider_id');
-            $table->type('password')->nullable(false)->change();
-            $table->dropColumn('avatar');
-        });
+        if (\Config::get('database.default') === 'sqlite') {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('provider_name');
+            });
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('provider_id');
+            });
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('password')->nullable(false)->change();
+            });
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('avatar');
+            });
+        } else {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('provider_name');
+                $table->dropColumn('provider_id');
+                $table->string('password')->nullable(false)->change();
+                $table->dropColumn('avatar');
+            });
+        }
     }
 }

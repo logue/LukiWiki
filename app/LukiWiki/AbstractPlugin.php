@@ -59,7 +59,7 @@ abstract class AbstractPlugin
         if ($this->type === PluginType::Block) {
             return $this->block();
         }
-         if ($this->type === PluginType::Inline) {
+        if ($this->type === PluginType::Inline) {
             return $this->inline();
         }
 

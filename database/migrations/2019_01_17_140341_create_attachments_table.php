@@ -56,12 +56,17 @@ class CreateAttachmentsTable extends Migration
         $dirs = [\Config::get('lukiwiki.directory.attach'), \Config::get('lukiwiki.directory.thumb')];
 
         foreach ($dirs as $dir) {
+            $gitignore = storage_path('app'.DIRECTORY_SEPARATOR.$dir.DIRECTORY_SEPARATOR.'.gitignore');
             // .gitignoreは退避
-            \File::move(storage_path('app'.DIRECTORY_SEPARATOR.$dir.DIRECTORY_SEPARATOR.'.gitignore'), storage_path('.gitignore'));
-            // 初期化
-            \File::cleanDirectory(storage_path('app'.DIRECTORY_SEPARATOR.$dir));
-            // 戻す
-            \File::move(storage_path('.gitignore'), storage_path('app'.DIRECTORY_SEPARATOR.$dir.DIRECTORY_SEPARATOR.'.gitignore'));
+            if (\File::exists($gitignore)) {
+                \File::move($gitignore, storage_path('.gitignore'));
+                // 初期化
+                \File::cleanDirectory(storage_path('app'.DIRECTORY_SEPARATOR.$dir));
+                // 戻す
+                \File::move(storage_path('.gitignore'), $gitignore);
+            } else {
+                \File::cleanDirectory(storage_path('app'.DIRECTORY_SEPARATOR.$dir));
+            }
         }
     }
 }
