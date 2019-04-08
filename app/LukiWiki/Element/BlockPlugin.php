@@ -9,7 +9,9 @@
 
 namespace App\LukiWiki\Element;
 
+use App\Enums\PluginType;
 use App\LukiWiki\AbstractElement;
+use Config;
 
 /**
  *  Block plugin: @something (started with '@').
@@ -26,12 +28,18 @@ class BlockPlugin extends AbstractElement
         $this->page = $page;
         $this->name = $out[0];
         $this->params = explode(',', $out[1]);
-        //if ($this->name === 'gimage')        dd($out[1]);
         $this->body = $out[2];
     }
 
     public function __toString()
     {
+        if (Config::has('lukiwiki.plugin.'.$this->name)) {
+            $class = Config::get('lukiwiki.plugin.'.$this->name);
+            $plugin = new $class(PluginType::Block, $this->params, $this->body, $this->page);
+
+            return $plugin;
+        }
+
         // TODO:Call @plugin
         $ret = [
             '<div class="card">',

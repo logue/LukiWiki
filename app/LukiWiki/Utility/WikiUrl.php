@@ -61,4 +61,16 @@ class WikiUrl
 
         return $name;
     }
+
+    /**
+     * 値からパス制御文字を取り除いて基準名を取得.
+     *
+     * @param string $str
+     *
+     * @return string;
+     */
+    public static function stripRelativePath(string $str)
+    {
+        return preg_replace('/^.*\//', '', $str);
+    }
 }

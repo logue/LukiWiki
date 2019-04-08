@@ -341,7 +341,7 @@ class ProcessWikiData implements ShouldQueue
                     return  '['.$body.'](#'.$options[0].')';
                 }
 
-                    return  '[#'.$options[0].']';
+                return  '[#'.$options[0].']';
             case 'new':
                 // 新着
                 $t = preg_replace('/\((.+)\)/u', '', $body);
@@ -356,6 +356,12 @@ class ProcessWikiData implements ShouldQueue
             case 'epoch':
                 // 時差を考慮した新着（Adv.）
                 return $char.'timestamp('.$options[0].');';
+                break;
+            case 'tooltip':
+                // ツールチップはabbrに
+                if (!empty($body)) {
+                    return $char.'abbr('.$options[0].'){'.$body.'};';
+                }
                 break;
             case 'hr':
                 return  '----';

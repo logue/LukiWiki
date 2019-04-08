@@ -13,7 +13,7 @@ class InlineFactory
 {
     private static $converter;
 
-    public static function factory($string, $page = '')
+    public static function factory(string $string, string $page)
     {
         if (!isset(self::$converter)) {
             self::$converter = new InlineConverter();

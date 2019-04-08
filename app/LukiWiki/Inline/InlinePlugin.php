@@ -9,36 +9,27 @@
 
 namespace App\LukiWiki\Inline;
 
+use App\Enums\PluginType;
 use App\LukiWiki\AbstractInline;
-use App\LukiWiki\Rules\InlineRules;
+use Config;
 
 // Inline plugins
 class InlinePlugin extends AbstractInline
 {
-    protected $plugin;
-    protected $param;
+    protected $name;
+    protected $params;
 
     public function __toString()
     {
-        //$body = (empty($this->body)) ? null : InlineFactory::factory($this->body);
-        //$str = false;
+        if (Config::has('lukiwiki.plugin.'.$this->name)) {
+            $class = Config::get('lukiwiki.plugin.'.$this->name);
+            $plugin = new $class(PluginType::Inline, $this->params, $this->body, $this->page);
 
-        // Try to call the plugin
-        // TODO
-        /*
-        $str = PluginRenderer::executePluginInline($this->name, $this->param, $body);
-
-        if ($str !== false) {
-            return $str; // Succeed
-        } else {
-            // No such plugin, or Failed
-            $body = (empty($body) ? '' : '{'.$body.'}').';';
-
-
+            return $plugin;
         }
-        */
-        //return InlineRules::replace('&'.$this->plain.$body);
-        return '<span class="badge badge-pill badge-primary" title="Plugin">&amp;'.$this->plugin.'(<var>'.$this->param.'</var>)'.'</span>';
+        $body = (empty($this->body)) ? null : InlineFactory::factory($this->body, $this->page);
+
+        return '<span class="badge badge-pill badge-primary" title="Plugin">&amp;'.$this->name.'(<var>'.implode(',', $this->params).'</var>){'.$body.'}</span>';
     }
 
     public function getPattern(): string
@@ -69,6 +60,8 @@ class InlinePlugin extends AbstractInline
     public function setPattern(array $arr): void
     {
         //dd($this->getPattern(), $arr, $this->splice($arr));
-        list($this->plugin, $this->param, $this->body) = $this->splice($arr);
+        list($name, $param, $this->body) = $this->splice($arr);
+        $this->name = strtolower($name);
+        $this->params = explode(',', $param);
     }
 }

@@ -55,7 +55,7 @@ class InlineConverter
      * @param array  $excludes   除外する変換クラス名
      * @param string $page       ページ名
      */
-    public function __construct(array $converter = [], array $excludes = [], ?string $page = null)
+    public function __construct(array $converter = [], array $excludes = [], string $page = null)
     {
         static $converters;
         if (!isset($converters)) {

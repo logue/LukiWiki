@@ -40,4 +40,11 @@ return [
         // Maximum number of backups
         'max_entries' => 20,
     ],
+    'plugin' => [
+        'abbr'      => App\LukiWiki\Plugins\Abbr::class,
+        'color'     => App\LukiWiki\Plugins\Color::class,
+        'navi'      => App\LukiWiki\Plugins\Navi::class,
+        'ruby'      => App\LukiWiki\Plugins\Ruby::class,
+        'timestamp' => App\LukiWiki\Plugins\Timestamp::class,
+    ],
 ];

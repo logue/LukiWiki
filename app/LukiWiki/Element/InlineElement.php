@@ -19,7 +19,7 @@ class InlineElement extends AbstractElement
 {
     protected $page;
 
-    public function __construct($text, $page)
+    public function __construct(string $text, string $page)
     {
         parent::__construct();
         $text = parent::processText($text);
