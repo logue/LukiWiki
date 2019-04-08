@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="generator" content="LukiWiki v{{ \App\LukiWiki\Parser::VERSION }}" />
-    <title>@yield('title') - {{ Config::get('lukiwiki.sitename') }}</title>
+    <title>@yield('title') - {{ Config::get('app.name') }}</title>
 @if(isset($page))
     <link rel="canonical" href="{{ url('/'.str_replace('%2F', '/', rawurlencode($page)) ) }}" />
     <link rel="amphtml" href="{{ url('/'.str_replace('%2F', '/', rawurlencode($page)) .':amp' )  }}" />
@@ -18,14 +18,14 @@
     <link rel="search" type="application/opensearchdescription+xml" href="{{ url(':api/opensearch') }}">
     <link rel="sitemap" type="application/xml" href="{{ url(':api/sitemap') }}">
     <link rel="alternate" type="application/atom+xml" href="{{ url(':api/atom') }}" />
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{{ mix('css/'.Config::get('lukiwiki.theme').'.css') }}" />
     @yield('styles')
 </head>
 
 <body class="h-100">
     <div id="app" class="d-flex flex-column h-100">
         <header>
-            <lw-navbar brand="{{ Config::get('lukiwiki.sitename') }}" base-uri="{{ url('/') }}"
+            <lw-navbar brand="{{ Config::get('app.name') }}" base-uri="{{ url('/') }}"
                 page="{{ $page ?? '' }}">
                 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
                     <a class="navbar-brand" href="{{ url('/') }}">{{ Config::get('lukiwiki.sitename') }}</a>

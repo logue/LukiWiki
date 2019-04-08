@@ -1,7 +1,7 @@
 <template>
   <div v-bind:class="{ 'form-group row': type === 'auth', 'd-inline': type==='share' }">
     <label v-if="type === 'auth'" class="col-md-4 col-form-label text-md-right">Login With</label>
-    <div  v-bind:class="{ 'col-md-8': type === 'auth', 'd-inline': type==='share'}">
+    <div v-bind:class="{ 'col-md-8': type === 'auth', 'd-inline': type==='share'}">
       <b-button
         v-on:click="jump('facebook', type)"
         title="Facebook"
@@ -9,7 +9,7 @@
         v-bind:class="{ 'btn-sm': type === 'share' }"
         v-b-tooltip
       >
-        <font-awesome-icon fixed-width :icon="{ prefix: 'fab', iconName: 'facebook' }" />
+        <font-awesome-icon fixed-width :icon="{ prefix: 'fab', iconName: 'facebook' }"/>
       </b-button>
       <b-button
         v-on:click="jump('twitter', type)"
@@ -18,7 +18,7 @@
         v-bind:class="{ 'btn-sm': type === 'share' }"
         v-b-tooltip
       >
-        <font-awesome-icon fixed-width :icon="{ prefix: 'fab', iconName: 'twitter' }" />
+        <font-awesome-icon fixed-width :icon="{ prefix: 'fab', iconName: 'twitter' }"/>
       </b-button>
       <b-button
         v-on:click="jump('google', type)"
@@ -87,7 +87,7 @@ library.add(
 );
 export default {
   data() {
-    console.log(this.$attrs);
+    //console.log(this.$attrs);
     return {
       type: this.$attrs.type
     };
@@ -111,7 +111,7 @@ export default {
               url = "https://social-plugins.line.me/lineit/share?url=";
               break;
           }
-          window.open(url + canonical, 'share', 'width=400,height=400');
+          window.open(url + canonical, "share", "width=512,height=512");
           break;
         case "auth":
           location.href = location.origin + "/:login/" + sns;
@@ -134,18 +134,16 @@ export default {
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
 
-
 .btn-social {
   padding: $btn-padding-y;
-  
+
   > :first-child {
-    
   }
 
-   > :nth-child(2){
-        border-left: 1px solid rgba(0, 0, 0, 0.2);
-        padding-left:0.25rem;
-   }
+  > :nth-child(2) {
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    padding-left: 0.25rem;
+  }
 
   &.btn-lg {
     padding: $btn-padding-y-lg;
@@ -177,6 +175,7 @@ export default {
   @if $color {
     color: $color;
   }
+  background-image: none;
 
   @include button-variant($color-bg, $color-bg);
 }

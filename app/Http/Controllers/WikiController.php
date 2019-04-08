@@ -261,12 +261,12 @@ class WikiController extends Controller
 
         $entry = $this->page->where('name', $p)->first();
 
-        if (!$page) {
+        if (!$entry) {
             // 新規ページ
             return view(
                 'default.edit',
                 [
-                    'page'   => '',
+                    'page'   => $page,
                     'source' => '',
                     'hash'   => 0,
                 ]

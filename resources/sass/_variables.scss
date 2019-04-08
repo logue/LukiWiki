@@ -1,4 +1,13 @@
-@charset "utf-8";
+@font-face {
+    font-family: "Yu Gothic M";
+    src: local("Yu Gothic Medium");
+}
+// font-weight: bold の時は通常どおり Bold 書体を使わせる
+@font-face {
+    font-family: "Yu Gothic M";
+    src: local("Yu Gothic Bold");
+    font-weight: bold;
+}
 // 標準フォント
 $font-family-sans-serif: -apple-system,
 // 英文
@@ -22,6 +31,7 @@ HiraKakuProN-W3,
 "Hiragino Kaku Gothic ProN",
 "ヒラギノ角ゴ Pro",
 "Hiragino Kaku Gothic Pro",
+"Noto Sans JP",
 // 旧環境向け設定
 "メイリオ",
 Meiryo,
@@ -50,6 +60,7 @@ Monaco,
 Consolas,
 "Liberation Mono",
 "Courier New",
+"Noto Sans Mono",
 "Osaka－等幅",
 "Osaka-等幅",
 Osaka-mono,

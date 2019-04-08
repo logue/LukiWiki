@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="generator" content="LukiWiki v{{ \App\LukiWiki\Parser::VERSION }}" />
+    <meta name="robots" content="noindex, nofollow"/>
     <title>{{ $title }} - {{ Config::get('lukiwiki.sitename') }}</title>
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{{ mix('css/'.Config::get('lukiwiki.theme').'.css') }}" />
     <link rel="stylesheet" href="{{ mix('css/dashboard.css') }}" type="text/css" />
     @yield('styles')
 </head>

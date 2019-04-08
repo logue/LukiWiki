@@ -3,7 +3,7 @@
 @section('title', 'index')
 
 @section('content')
-<sectioon>
+<section>
     <div class="row">
         <div class="col-md-4 col-lg">
             <div class="card bg-primary text-white p-3">
@@ -27,7 +27,5 @@
             </div>
         </div>
     </div>
-</sectioon>
-
-
+</section>
 @endsection

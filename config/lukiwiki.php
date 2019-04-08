@@ -1,14 +1,12 @@
 <?php
 
 return [
-    // Name of Site
-    'sitename' => 'LukiWiki',
-    // Site Description
-    'description' => 'LukiWiki based site.',
     // Author
     'author' => 'Owner',
     // Password (This feature will be removed in 1.0)
     'password' => 'adminpass',
+    // Theme (bootswatch only)
+    'theme' => env('LUKIWIKI_THEME', 'default'),
     // Directory Configure
     'directory' => [
         // Attachments file directory
@@ -29,6 +27,8 @@ return [
         'title' => 'LukiWiki Recent Feeds',
         // Description
         'description' => '',
+        // Feeds
+        'entries' => 20
     ],
     'render' => [
         // Expand media tag (img, video, audio tag) external media (such as picture, audio, movie) file

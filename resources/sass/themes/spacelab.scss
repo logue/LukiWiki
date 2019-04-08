@@ -1,0 +1,19 @@
+/*!
+ * LukiWiki スタイルシート (Spacelab)
+ *
+ * @author    Logue <logue@hotmail.co.jp>
+ * @copyright 2019 Logue
+ * @license   MIT
+ */
+@charset "utf-8";
+// Variables
+@import "~bootswatch/dist/spacelab/variables";
+@import "../variables";
+// Bootstrap: 4;
+@import "~bootstrap/scss/bootstrap";
+// Bootswatch
+@import "~bootswatch/dist/spacelab/bootswatch";
+// Bootstrap Vue
+@import "~bootstrap-vue/src/index.scss";
+// overrides
+@import "../overrides";
