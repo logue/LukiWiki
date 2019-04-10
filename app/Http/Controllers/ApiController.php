@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attachment;
 use App\Models\Page;
+use Config;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -71,6 +72,23 @@ class ApiController extends Controller
             ->header('Content-Type', $file->mime)
             ->header('Content-length', $file->size)
             ->header('Last-Modified', $file->updated_at);
+    }
+
+    /**
+     * プラグインのAPI出力.
+     *
+     * @retun Illuminate\Http\Response
+     */
+    public function plugin(Request $request, ?string $page, string $name): Response
+    {
+        if (Config::has('lukiwiki.plugin.'.$name)) {
+            $class = Config::get('lukiwiki.plugin.'.$name);
+            $plugin = new $class(PluginType::Api, $params, '', $page);
+
+            return $plugin;
+        }
+
+        return abort(501, __('Not implemented.'));
     }
 
     /**

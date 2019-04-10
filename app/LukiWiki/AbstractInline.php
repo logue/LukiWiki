@@ -117,39 +117,6 @@ abstract class AbstractInline
     }
 
     /**
-     * リンクを作成（厳密にはimgタグ、audioタグ、videoタグにも使用するが）.
-     *
-     * @param string $term    リンクの名前
-     * @param string $url     リンク先
-     * @param string $tooltip title属性の内容
-     * @param string $rel     リンクのタイプ
-     *
-     * @return string
-     */
-    public function setLink(?string $term = '', ?string $url = '', ?string $rel = '', bool $is_redirect = false): string
-    {
-        $parsed_url = parse_url($url, PHP_URL_PATH);
-        $_tooltip = !empty($this->title) ? ' title="'.$this->title.'"  v-b-tooltip' : '';
-        if (!$parsed_url) {
-            // パースできないURLだった場合リンクを貼らない。
-            return self::processText($term);
-        }
-
-        // rel = "*"を生成
-        $rels[] = 'external';
-        if (!empty($rel)) {
-            $rels[] = $rel;
-        }
-        if ($is_redirect) {
-            $rels[] = 'nofollow';
-        }
-        $ext_rel = implode(' ', $rels);
-
-        // リンクを出力
-        return '<a href="'.$url.'" rel="'.$rel.'"'.$_tooltip.'>'.preg_replace('#</?a[^>]*>#i', '', $term).'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
-    }
-
-    /**
      * 相対指定のページ名から全ページ名を取得.
      *
      * @param string $name      名前の入力値

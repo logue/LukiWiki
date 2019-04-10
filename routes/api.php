@@ -21,3 +21,5 @@ Route::get('atom', 'ApiController@atom');
 Route::get('sitemap', 'ApiController@sitemap');
 Route::get('opensearch', 'ApiController@opensearch');
 Route::get('attachment/{id}', 'ApiController@attachment');
+// プラグインのAPI
+Route::any('{page}:{name}', 'ApiController@plugin')->middleware('sanitize');

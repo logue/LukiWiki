@@ -28,7 +28,7 @@ return [
         // Description
         'description' => '',
         // Feeds
-        'entries' => 20
+        'entries' => 20,
     ],
     'render' => [
         // Expand media tag (img, video, audio tag) external media (such as picture, audio, movie) file

@@ -32,6 +32,9 @@ abstract class AbstractPlugin
     /** @var array メタ情報 */
     protected $meta = [];
 
+    /** @var bool APIを外部に公開するか */
+    protected $external = false;
+
     /**
      * コンストラクタ
      */
@@ -62,10 +65,22 @@ abstract class AbstractPlugin
         if ($this->type === PluginType::Inline) {
             return $this->inline();
         }
+        if ($this->type === PluginType::Api) {
+            // TODO:リファラー制限
+            return $this->api();
+        }
 
         // AMPの処理とか
 
         return $this->message(__('Not implimented.'), 'secondary');
+    }
+
+    /**
+     * APIによるアクセス.
+     */
+    public function api(): Response
+    {
+        return __('Not implimented.');
     }
 
     /**

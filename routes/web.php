@@ -38,33 +38,46 @@ Route::get(':password/reset/{token}', 'Auth\ResetPasswordController@showResetFor
 Route::post(':password/reset', 'Auth\ResetPasswordController@reset');
 
 // ユーザ管理
-//Route::get(':user', 'UserController@list');
-//Route::post(':user', 'UserController@store');
-//Route::get(':user/new', 'UserController@edit');
-//Route::get(':user/show/{id}', 'UserController@read');
-//Route::get(':user/edit/{id}', 'UserController@edit');
-//Route::get(':user/delete/{id}', 'UserController@destroy');
+//Route::get(':dashboard/user', 'UserController@list');
+//Route::post(':dashboard/user', 'UserController@store');
+//Route::get(':dashboard/user/new', 'UserController@edit');
+//Route::get(':dashboard/user/show/{id}', 'UserController@read');
+//Route::get(':dashboard/user/edit/{id}', 'UserController@edit');
+//Route::get(':dashboard/user/delete/{id}', 'UserController@destroy');
 
-// 動的ページ
-//Route::get(':{action}', 'ActionController');
-
-// Wikiページ
-Route::get(':new', 'WikiController@edit');
-Route::get(':list', 'WikiController@list');
-Route::get(':recent', 'WikiController@recent');
+// 検索処理
 Route::any(':search', 'WikiController@search')->middleware('sanitize', 'keyword');
-
-Route::get('{page}:edit', 'WikiController@edit');
-Route::post('{page?}', 'WikiController@save')->middleware('sanitize');
+// 記事一覧
+Route::get(':list', 'WikiController@list');
+// 記事作成
+Route::get(':new', 'WikiController@edit');
+// 最新記事
+Route::get(':recent', 'WikiController@recent');
+// 添付一覧
 Route::get('{page}:attachments', 'WikiController@attachments');
+// 添付ファイル
 Route::get('{page}:attachments/{file}', 'WikiController@attachments');
-Route::post('{page}:upload', 'WikiController@upload');
-Route::post('{page}:delete', 'WikiController@destroy')->middleware('sanitize');
-
-Route::get('{page}:history', 'WikiController@history');
-Route::get('{page}:history/{age}', 'WikiController@history');
+// 差分
 Route::get('{page}:diff', 'WikiController@diff');
-Route::get('{page}:source', 'WikiController@source');
+// 編集
+Route::get('{page}:edit', 'WikiController@edit');
+// バックアップ一覧
+Route::get('{page}:history', 'WikiController@history');
+// バックアップの世代表示
+Route::get('{page}:history/{age}', 'WikiController@history');
+// バックアップの世代の今との差分
+Route::get('{page}:history/{age}:diff', 'WikiController@history');
+// バックアップのロールバック
+Route::get('{page}:history/{age}:rollback', 'WikiController@history');
+// 印刷
 Route::get('{page}:print', 'WikiController@print');
-
+// ソース
+Route::get('{page}:source', 'WikiController@source');
+// ページ表示
 Route::get('{page?}{file?}', 'WikiController');
+// ページ保存処理
+Route::post('{page?}', 'WikiController@save')->middleware('sanitize');
+// ページ削除処理
+Route::post('{page}:delete', 'WikiController@destroy')->middleware('sanitize');
+// ファイル添付処理
+Route::post('{page}:upload', 'WikiController@upload');
