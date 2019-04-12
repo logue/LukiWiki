@@ -22,7 +22,7 @@ class InterWiki extends Model
      *
      * @param string $anchor
      *
-     * @return string||null
+     * @return string|null
      */
     public static function getInterWikiName(string $anchor): ?string
     {

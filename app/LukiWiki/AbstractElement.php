@@ -29,6 +29,7 @@ abstract class AbstractElement
     {
         $this->elements = [];
         $this->last = $this;
+        $this->init();
     }
 
     /**
@@ -36,10 +37,19 @@ abstract class AbstractElement
      */
     public function __destruct()
     {
+        $this->finalize();
         unset($this->elements, $this->last, $this->meta);
     }
 
-    // 変換結果を出力
+    public function init(){
+    }
+
+    public function finalize(){
+    }
+
+    /**
+     * 変換結果を出力
+     */
     public function __toString()
     {
         $ret = [];
@@ -101,7 +111,7 @@ abstract class AbstractElement
      */
     public function canContain(object $obj)
     {
-        return false;
+        return $obj instanceof self;
     }
 
     /**

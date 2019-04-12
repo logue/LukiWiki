@@ -37,8 +37,13 @@ abstract class AbstractPlugin
 
     /**
      * コンストラクタ
+     *
+     * @param App\Enums\PluginType $type   呼び出しタイプ
+     * @param array                $params パラメータ
+     * @param string||null         $body   本文
+     * @param string               $page   ページ名
      */
-    public function __construct(int $type, array $params, ?string $body, string $page)
+    final public function __construct(int $type, array $params, ?string $body, string $page)
     {
         $this->name = \get_class($this);
         $this->type = $type;
@@ -49,8 +54,12 @@ abstract class AbstractPlugin
         $this->init();
     }
 
-    public function __destruct()
+    /**
+     * デストラクタ
+     */
+    final public function __destruct()
     {
+        $this->finalize();
         Debugbar::stopMeasure('plugin');
     }
 
@@ -66,7 +75,7 @@ abstract class AbstractPlugin
             return $this->inline();
         }
         if ($this->type === PluginType::Api) {
-            // TODO:リファラー制限
+            // デバッグ用？
             return $this->api();
         }
 
@@ -77,18 +86,26 @@ abstract class AbstractPlugin
 
     /**
      * APIによるアクセス.
+     *
+     * @return mixed
      */
-    public function api(): Response
+    public function api()
     {
         return __('Not implimented.');
     }
 
     /**
-     * 共通処理.
+     * 共通開始処理.
      */
     public function init(): void
     {
-        // parrent::construct();を各プラグイン内に入れるのもいいが、第三者が作るときに紛らわしくなるので
+    }
+
+    /**
+     * 共通終了処理.
+     */
+    public function finalize(): void
+    {
     }
 
     /**
@@ -112,12 +129,9 @@ abstract class AbstractPlugin
     /**
      * プラグインの使用方法（codemirrorの入力補完機能で使用します。）.
      */
-    public function syntax(): array
+    public function syntax(): string
     {
-        return [
-            '@'.$this->name.'(param1[,param2, param3 ...]){body};',
-            '&amp;'.$this->name.'(param1[,param2, param3 ...]){body};',
-        ];
+        return '(param1[,param2, param3 ...]){body};';
     }
 
     /**

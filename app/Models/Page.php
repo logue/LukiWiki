@@ -37,7 +37,7 @@ class Page extends Model
     /**
      * ページに貼り付けられた添付ファイル.
      *
-     * @return Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function attachments(): HasMany
     {
@@ -47,7 +47,7 @@ class Page extends Model
     /**
      * ページのバックアップ.
      *
-     * @return Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function backups(): HasMany
     {
@@ -57,7 +57,7 @@ class Page extends Model
     /**
      * このページの所有者.
      *
-     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -67,7 +67,7 @@ class Page extends Model
     /**
      * ページのカウンター
      *
-     * @return Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function counter(): HasOne
     {
@@ -79,7 +79,7 @@ class Page extends Model
      *
      * @param array $keywords
      *
-     * @return Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function search(array $keywords): Builder
     {
@@ -116,7 +116,7 @@ class Page extends Model
      *
      * @param string $page
      *
-     * @return Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function getAttachments(string $page): Builder
     {
@@ -127,9 +127,9 @@ class Page extends Model
     /**
      * ページのバックアップ一覧.
      *
-     * @param string $page
+     * @param string $page ページ名
      *
-     * @return Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function getBackups(string $page): Builder
     {
@@ -140,9 +140,9 @@ class Page extends Model
     /**
      * ページのカウンターを取得.
      *
-     * @param string $page
+     * @param string $page ページ名
      *
-     * @@return Illuminate\Database\Eloquent\Builder
+     * @@return \Illuminate\Database\Eloquent\Builder
      */
     public static function getCounter(string $page): Builder
     {
@@ -153,9 +153,9 @@ class Page extends Model
     /**
      * 新着記事を取得.
      *
-     * @param int $limit
+     * @param int $limit 制限数
      *
-     * @return Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function getLatest(int $limit = 20): Builder
     {
@@ -202,7 +202,7 @@ class Page extends Model
     /**
      * ページの存在チェック.
      *
-     * @param string $page
+     * @param string $page ページ名
      *
      * @return bool
      */
@@ -229,13 +229,14 @@ class Page extends Model
     /**
      * カウンター加算.
      *
-     * @param string $page
+     * @param string $page ページ名
      */
     public static function countUp(string $page): void
     {
         $counter = self::getCounter($page)->latest()->first();
 
         if (!$counter) {
+            // カウンタが存在しない場合作成
             Counter::create([
                 'page_id'    => self::getId($page),
                 'ip_address' => \Request::ip(),
@@ -246,6 +247,8 @@ class Page extends Model
 
             return;
         }
+
+        // 書き込むデータ
         $value = [
             'ip_address' => \Request::ip(),
             'today'      => $counter->today++,
@@ -260,7 +263,7 @@ class Page extends Model
             return;
         }
 
-        if (($counter->updated_at->day - Carbon::now()->day) === 1) {
+        if (($counter->updated_at->day - Carbon::now()->day) !== 0) {
             // 日付変更があった場合、本日のカウントを昨日のカウントに上書きして1を代入
             $value = [
                 'yesterday' => $counter->today,
@@ -277,9 +280,9 @@ class Page extends Model
     /**
      * 保存時にキャッシュ削除.
      *
-     * @param Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
      *
-     * @return Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     protected function setKeysForSaveQuery(Builder $query): Builder
     {

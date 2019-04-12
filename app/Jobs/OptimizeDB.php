@@ -49,7 +49,7 @@ class OptimizeDB implements ShouldQueue
     /**
      * 失敗したジョブの処理.
      *
-     * @param Exception $exception
+     * @param \Exception $exception
      */
     public function failed(\Exception $exception)
     {

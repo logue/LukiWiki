@@ -15,5 +15,5 @@ final class PluginType extends Enum
 {
     const Inline = 0;
     const Block = 1;
-    const Both = 2;
+    const Api = 2;
 }

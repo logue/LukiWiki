@@ -32,7 +32,7 @@ class DashboardController extends Controller
     /**
      * 管理トップページ.
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function __invoke(): View
     {
@@ -42,7 +42,7 @@ class DashboardController extends Controller
     /**
      * ユーザ一覧.
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function user(Request $request)
     {
@@ -54,7 +54,9 @@ class DashboardController extends Controller
     /**
      * WikiデータをLukiWiki形式に変換.
      *
-     * @return Illuminate\View\View
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\View\View
      */
     public function convert(Request $request)
     {
@@ -133,9 +135,9 @@ class DashboardController extends Controller
     /**
      * キャッシュクリア.
      *
-     * @param Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function clearCache(Request $request)
     {
@@ -176,9 +178,9 @@ class DashboardController extends Controller
     /**
      * InterWiki登録.
      *
-     * @param Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function interwiki(Request $request): View
     {
@@ -195,9 +197,9 @@ class DashboardController extends Controller
     /**
      * CAPTCHAの動作チェック.
      *
-     * @param Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function captchaTest(Request $request)
     {

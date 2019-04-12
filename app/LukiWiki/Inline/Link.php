@@ -17,6 +17,8 @@ use Symfony\Polyfill\Intl\Idn\Idn;
  */
 class Link extends AbstractInline
 {
+    protected $count = 5;
+
     public function __toString()
     {
         $purl = parse_url($this->href);
@@ -31,7 +33,7 @@ class Link extends AbstractInline
         return '<a href="'.$url.'" rel="nofollow external" title="'.$this->title.'">'.$this->processText($this->alias).'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
     }
 
-    public function getPattern()
+    public function getPattern(): string
     {
         return
             '(?:(?:\['.
@@ -49,12 +51,7 @@ class Link extends AbstractInline
             '\})?)';
     }
 
-    public function getCount()
-    {
-        return 5;
-    }
-
-    public function setPattern(array $arr, string $page = null)
+    public function setPattern(array $arr, string $page = null): void
     {
         //dd($this->getPattern(), $arr, $this->splice($arr));
         list($this->alias, $this->href, $this->anchor, $this->title, $this->body) = $this->splice($arr);

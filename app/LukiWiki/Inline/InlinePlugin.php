@@ -18,6 +18,7 @@ class InlinePlugin extends AbstractInline
 {
     protected $name;
     protected $params;
+    protected $count = 3;
 
     public function __toString()
     {
@@ -50,11 +51,6 @@ class InlinePlugin extends AbstractInline
                     '\}'.
                 ')?'.
             ';)';
-    }
-
-    public function getCount(): int
-    {
-        return 3;
     }
 
     public function setPattern(array $arr): void

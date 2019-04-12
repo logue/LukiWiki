@@ -16,6 +16,8 @@ use App\LukiWiki\AbstractInline;
  */
 class Media extends AbstractInline
 {
+    protected $count = 4;
+
     public function __toString()
     {
         // メディアファイル
@@ -78,12 +80,7 @@ class Media extends AbstractInline
                 '\})?';
     }
 
-    public function getCount(): int
-    {
-        return 4;
-    }
-
-    public function setPattern(array $arr)
+    public function setPattern(array $arr): void
     {
         //dd($this->getPattern(), $this->splice($arr));
         list($this->alias, $this->href, $this->title, $this->body) = $this->splice($arr);

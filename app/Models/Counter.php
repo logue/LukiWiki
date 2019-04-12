@@ -27,7 +27,7 @@ class Counter extends Model
     /**
      * このカウンターの元ページ.
      *
-     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function page(): BelongsTo
     {

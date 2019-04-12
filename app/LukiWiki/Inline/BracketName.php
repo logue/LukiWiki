@@ -18,6 +18,7 @@ class BracketName extends AbstractInline
 {
     protected $anchor;
     protected $refer;
+    protected $count = 5;
 
     public function __toString()
     {
@@ -45,7 +46,7 @@ class BracketName extends AbstractInline
         }
     }
 
-    public function getPattern()
+    public function getPattern(): string
     {
         $s2 = $this->start + 2;
         // [alt](WikiName "title"){option}
@@ -70,12 +71,7 @@ class BracketName extends AbstractInline
             '\})?';
     }
 
-    public function getCount()
-    {
-        return 5;
-    }
-
-    public function setPattern(array $arr)
+    public function setPattern(array $arr): void
     {
         list($this->alias, $this->href, $this->anchor, $this->title, $this->body) = $this->splice($arr);
 
@@ -102,7 +98,5 @@ class BracketName extends AbstractInline
                 $this->alias = $this->href.$this->anchor;
             }
         }
-
-        //self::setParam(['page'=>$page, 'href'=>url(parent::getPageName($page)), 'alias' => $alias, 'title'=> $title, 'option' => $option]);
     }
 }

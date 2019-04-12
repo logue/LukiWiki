@@ -29,19 +29,24 @@ class WikiController extends Controller
     // あくまでも新旧のデーターに変化があったかのチェック用途であるため、衝突性能は考慮しない。高速なcrc32で十分だと思う。
     const HASH_ALGORITHM = 'crc32';
 
+    /** @var \Illuminate\Database\Eloquent\Model $page ページモデル */
+    protected $page;
+
+    /**
+     * コンストラクタ
+     */
     public function __construct()
     {
-        // ページモデルオブジェクト
         $this->page = new Page();
     }
 
     /**
      * ページを読み込む
      *
-     * @param Illuminate\Http\Request $request
-     * @param string                  $query
+     * @param \Illuminate\Http\Request $request
+     * @param string                   $query
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function __invoke(Request $request, ?string $query = null): View
     {
@@ -86,9 +91,10 @@ class WikiController extends Controller
     /**
      * ソース.
      *
-     * @param Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
+     * @param string                   $page    ページ名
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function source(Request $request, string $page): View
     {
@@ -112,11 +118,11 @@ class WikiController extends Controller
     /**
      * 添付ファイル一覧.
      *
-     * @param Illuminate\Http\Request $request
-     * @param string                  $page
-     * @param string                  $file
+     * @param \Illuminate\Http\Request $request
+     * @param string                   $page
+     * @param null|string              $file
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function attachments(Request $request, string $page, ?string $file = null)
     {
@@ -144,9 +150,9 @@ class WikiController extends Controller
     /**
      * バックアップ.
      *
-     * @param Illuminate\Http\Request $request
-     * @param string                  $page
-     * @param int                     $age
+     * @param \Illuminate\Http\Request $request
+     * @param string                   $page
+     * @param null|int                 $age
      *
      * @return Illuminate\View\View
      */
@@ -186,9 +192,9 @@ class WikiController extends Controller
     /**
      * 差分.
      *
-     * @param Illuminate\Http\Request $request
-     * @param string                  $page
-     * @param int                     $age
+     * @param \Illuminate\Http\Request $request
+     * @param string                   $page    ページ名
+     * @param int                      $age     世代
      *
      * @return Illuminate\View\View
      */
@@ -214,7 +220,7 @@ class WikiController extends Controller
      * 印刷.
      *
      * @param Illuminate\Http\Request $request
-     * @param string                  $page
+     * @param string                  $page    ページ名
      *
      * @return Illuminate\View\View
      */
@@ -250,10 +256,10 @@ class WikiController extends Controller
     /**
      * 編集画面表示.
      *
-     * @param Illuminate\Http\Request $request
-     * @param string                  $page
+     * @param \Illuminate\Http\Request $request
+     * @param null|string              $page
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function edit(Request $request, string $page = null): View
     {
@@ -287,13 +293,13 @@ class WikiController extends Controller
     /**
      * 保存処理.
      *
-     * @param Illuminate\Http\Request $request
-     * @param string                  $page
-     * @param string                  $file
+     * @param \Illuminate\Http\Request $request
+     * @param string                   $page
+     * @param string                   $file
      *
-     * @return Illuminate\Http\RedirectResponse | Illuminate\View\View
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function save(Request $request, ?string $page = null)
+    public function save(Request $request, string $page)
     {
         if (!$request->isMethod('post')) {
             // Method not allowed
@@ -409,10 +415,10 @@ class WikiController extends Controller
     /**
      * アップロード.
      *
-     * @param Illuminate\Http\Request $request
-     * @param string                  $page
+     * @param \Illuminate\Http\Request $request
+     * @param string                   $page    ページ名
      *
-     * @return Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function upload(Request $request, string $page): RedirectResponse
     {
@@ -449,7 +455,7 @@ class WikiController extends Controller
     /**
      * ページ一覧.
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function list(): View
     {
@@ -464,7 +470,7 @@ class WikiController extends Controller
     /**
      * 更新履歴表示.
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function recent(): View
     {
@@ -479,9 +485,9 @@ class WikiController extends Controller
     /**
      * 検索処理.
      *
-     * @param Request $request
+     * @param \Illuminate\Http\Request $request
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     public function search(Request $request): View
     {
@@ -506,8 +512,8 @@ class WikiController extends Controller
     /**
      * アップロード内部処理.
      *
-     * @param Illuminate\Http\UploadedFile $entry
-     * @param string                       $page
+     * @param \Illuminate\Http\UploadedFile $entry
+     * @param string                        $page
      *
      * @return bool
      */

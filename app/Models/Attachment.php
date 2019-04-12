@@ -28,7 +28,7 @@ class Attachment extends Model
     /**
      * この添付ファイルの貼り付けられたページ.
      *
-     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function page(): belongsTo
     {
@@ -38,7 +38,7 @@ class Attachment extends Model
     /**
      * この添付ファイルの投稿者.
      *
-     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {

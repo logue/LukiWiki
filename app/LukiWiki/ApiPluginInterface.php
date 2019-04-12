@@ -4,5 +4,5 @@ namespace App\LukiWiki;
 
 interface ApiPluginInterface
 {
-    public function api(): string;
+    public function api();
 }

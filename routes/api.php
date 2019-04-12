@@ -17,9 +17,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// 最新記事
 Route::get('atom', 'ApiController@atom');
+// サイトマップ
 Route::get('sitemap', 'ApiController@sitemap');
+// OpenSearch
 Route::get('opensearch', 'ApiController@opensearch');
+// 添付ファイル
 Route::get('attachment/{id}', 'ApiController@attachment');
+// 指定ページ階層以下の一覧
+Route::get('list:{page}', 'ApiController@list');
 // プラグインのAPI
-Route::any('{page}:{name}', 'ApiController@plugin')->middleware('sanitize');
+Route::any('{name}:{page}', 'ApiController@plugin')->middleware('sanitize');

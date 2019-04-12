@@ -9,7 +9,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\InterWikiType;
+use App\Enums\PluginType;
 use App\Models\Attachment;
+use App\Models\InterWiki;
 use App\Models\Page;
 use Config;
 use Illuminate\Http\Request;
@@ -18,12 +21,10 @@ use Illuminate\Support\Facades\Storage;
 
 class ApiController extends Controller
 {
-    const DEFAULT_PATH = ':api';
-
     /**
      * Atomを出力.
      *
-     * @retun Illuminate\Http\Response
+     * @retun \Illuminate\Http\Response
      */
     public function atom(): Response
     {
@@ -38,7 +39,7 @@ class ApiController extends Controller
     /**
      * Sitemap.xmlを出力.
      *
-     * @retun Illuminate\Http\Response
+     * @retun \Illuminate\Http\Response
      */
     public function sitemap(): Response
     {
@@ -50,7 +51,7 @@ class ApiController extends Controller
     /**
      * opensearch.xmlを出力.
      *
-     * @retun Illuminate\Http\Response
+     * @retun \Illuminate\Http\Response
      */
     public function opensearch(): Response
     {
@@ -62,7 +63,10 @@ class ApiController extends Controller
     /**
      * 添付ファイルを出力.
      *
-     * @retun Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $int
+     *
+     * @retun \Illuminate\Http\Response
      */
     public function attachment(Request $request, int $id): Response
     {
@@ -75,26 +79,52 @@ class ApiController extends Controller
     }
 
     /**
-     * プラグインのAPI出力.
+     * ページ一覧を出力.
      *
-     * @retun Illuminate\Http\Response
+     * @param string $prefix ページ名の前方一致条件
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function plugin(Request $request, ?string $page, string $name): Response
+    public function list(string $prefix): Response
     {
-        if (Config::has('lukiwiki.plugin.'.$name)) {
-            $class = Config::get('lukiwiki.plugin.'.$name);
-            $plugin = new $class(PluginType::Api, $params, '', $page);
-
-            return $plugin;
-        }
-
-        return abort(501, __('Not implemented.'));
+        return response(Page::where('name', 'like', $prefix.'%')->pluck('updated_at', 'name'));
     }
 
     /**
-     * 添付ファイル存在確認.
+     * グロッサリーの内容を出力.
+     *
+     * @param string $term グロッサリー名
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function checkExsists(Request $request, string $name): Response
+    public function glossary(string $term): Response
     {
+        $ret = InterWiki::where('name', $term)->where('type', InterWikiType::Glossary)->first();
+        if (!$ret) {
+            return abort(404);
+        }
+
+        return response($ret);
+    }
+
+    /**
+     * プラグインのAPI出力.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param string                   $name    プラグイン名
+     * @param null|string              $page    ページ名
+     *
+     * @retun \Illuminate\Http\Response
+     */
+    public function plugin(Request $request, string $name, ?string $page): Response
+    {
+        if (Config::has('lukiwiki.plugin.'.$name)) {
+            $class = Config::get('lukiwiki.plugin.'.$name);
+            $plugin = new $class(PluginType::Api, $request->input('params') ?? [], '', $page);
+
+            return response($plugin->api());
+        }
+
+        return abort(501, __('Not implemented.'));
     }
 }

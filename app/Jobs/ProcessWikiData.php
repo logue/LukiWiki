@@ -68,7 +68,7 @@ class ProcessWikiData implements ShouldQueue
 
         // :が含まれるページ名は_に変更する。
         $page = preg_replace('/\:/', '_', $this->page);
-        $data = explode("\n", rtrim(Storage::get($this->file)));
+        $data = explode("\n", Storage::get($this->file));
 
         // Storageクラスに作成日を取得する関数がないためファイルの実体のパスを取得
         $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
@@ -83,17 +83,14 @@ class ProcessWikiData implements ShouldQueue
                 $this->interwiki($data);
 
                 return;
-                break;
             case 'AutoAliasName':
                 $this->autoalias($data);
 
                 return;
-                break;
             case 'Glossary':
                 $this->glossary($data);
 
                 return;
-                break;
             default:
                 $ret = self::pukiwiki2lukiwiki($data);
                 break;
@@ -348,24 +345,20 @@ class ProcessWikiData implements ShouldQueue
                 $dt = Carbon::parse($t);
 
                 return $char.'timestamp('.$dt->timestamp.')';
-                break;
             case 'size':
                 // サイズはrem単位に変換する。
                 return $char.'size('.self::px2rem($options[0]).'){'.$body.'}';
-                break;
             case 'epoch':
                 // 時差を考慮した新着（Adv.）
                 return $char.'timestamp('.$options[0].');';
-                break;
             case 'tooltip':
                 // ツールチップはabbrに
                 if (!empty($body)) {
                     return $char.'abbr('.$options[0].'){'.$body.'};';
                 }
-                break;
+                // no break
             case 'hr':
                 return  '----';
-                break;
             case 'pre':
             case 'sh':
             case 'code':
@@ -379,7 +372,6 @@ class ProcessWikiData implements ShouldQueue
                 }
 
                 return  '```'.$lang."\n".$body."\n".'```';
-                break;
             case 'img':
             case 'attach':
             case 'attachref':
@@ -465,7 +457,6 @@ class ProcessWikiData implements ShouldQueue
             case 'ls2':
             case 'ls3':
                 return $char.'ls'.isset($options) ? '('.implode(',', $options).')' : '';
-                break;
             case 'edit':
             case 'counter':
             case 'norelated':
@@ -485,7 +476,6 @@ class ProcessWikiData implements ShouldQueue
             case 'versionlist':
                 // 無視するプラグイン
                 return '/*'.'deprecated plugin:"'.$plugin.'" param:'.implode(',', $options).' body:'.$body.'*/';
-                break;
         }
         if ($char === '@' && strpos($body, "\r") !== false) {
             // 複数行の場合
@@ -505,9 +495,9 @@ class ProcessWikiData implements ShouldQueue
      *
      * @param int $px ピクセル
      *
-     * @return string
+     * @return float
      */
-    private static function px2rem(int $px): int
+    private static function px2rem(int $px): double
     {
         return round($px / 16, 5);
     }

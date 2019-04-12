@@ -15,12 +15,14 @@ use Symfony\Polyfill\Intl\Idn\Idn;
 // URLs
 class Url extends AbstractInline
 {
+    protected $count = 4;
+
     public function __toString()
     {
         return '<a href="'.$this->href.'" rel="nofollow external">'.$this->processText($this->href).'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
     }
 
-    public function getPattern()
+    public function getPattern(): string
     {
         $s1 = $this->start + 1;
 
@@ -35,12 +37,7 @@ class Url extends AbstractInline
             ')';
     }
 
-    public function getCount()
-    {
-        return 4;
-    }
-
-    public function setPattern(array $arr, string $page = null)
+    public function setPattern(array $arr, string $page = null): void
     {
         list($scheme, $user, $host, $path) = $this->splice($arr);
         if (substr($host, 0, 4) === 'xn--') {

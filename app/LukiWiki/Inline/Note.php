@@ -14,10 +14,7 @@ use App\LukiWiki\AbstractInline;
 // Footnotes
 class Note extends AbstractInline
 {
-    /**
-     * title属性に入れる説明文の文字数.
-     */
-    const FOOTNOTE_TITLE_MAX = 16;
+    protected $count = 1;
     /**
      * 説明文のID.
      */
@@ -25,13 +22,18 @@ class Note extends AbstractInline
 
     public function __toString()
     {
-        return $this->name;
+        $id = self::$note_id;
+        self::$note_id++;
+        $converter = new InlineConverter([], [__CLASS__], $this->page);
+        $this->meta['note'] = trim($converter->convert($this->body));
+
+        return '<sup><a id="note-anchor-'.$id.'" href="#note-'.$id.'" class="note-anchor"><font-awesome-icon fas icon="thumbtack" size="xs">*</font-awesome-icon>'.$id.'</a></sup>';
     }
 
     /**
      * マッチパターン.
      */
-    public function getPattern()
+    public function getPattern(): string
     {
         return
             '\(\('.
@@ -39,28 +41,8 @@ class Note extends AbstractInline
             '\)\)';
     }
 
-    /**
-     * 要素の数.
-     */
-    public function getCount()
+    public function setPattern(array $arr): void
     {
-        return 1;
-    }
-
-    public function setPattern(array $arr)
-    {
-        list($body) = $this->splice($arr);
-        $converter = new InlineConverter([], [__CLASS__], $this->page);
-        $note = $converter->convert($body);
-
-        $id = self::$note_id;
-
-        // Footnote
-        $this->meta['note'] = trim($note);
-        // A hyperlink, content-body to footnote
-        $name = '<sup><a id="note-anchor-'.$id.'" href="#note-'.$id.'" class="note-anchor"><font-awesome-icon fas icon="thumbtack" size="xs">*</font-awesome-icon>'.$id.'</a></sup>';
-        self::$note_id++;
-
-        parent::setParam(['page'=>$this->page, 'href' => $name, 'body'=>$body]);
+        list($this->body) = $this->splice($arr);
     }
 }
