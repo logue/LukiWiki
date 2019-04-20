@@ -66,6 +66,7 @@ class WikiController extends Controller
         $this->page->countUp($page);
         Debugbar::stopMeasure('db');
 
+        // 変換処理
         Debugbar::startMeasure('parse', 'Converting wiki data...');
         //dd($entry->source);
         $lines = explode("\n", str_replace([\chr(0x0d).\chr(0x0a), \chr(0x0d), \chr(0x0a)], "\n", $entry->source));
@@ -75,6 +76,7 @@ class WikiController extends Controller
 
         $meta = $body->getMeta();
         $content = $body->__toString();
+        //dd($body);
         Debugbar::stopMeasure('parse');
 
         return view(

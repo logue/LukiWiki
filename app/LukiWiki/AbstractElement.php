@@ -41,14 +41,8 @@ abstract class AbstractElement
         unset($this->elements, $this->last, $this->meta);
     }
 
-    public function init(){
-    }
-
-    public function finalize(){
-    }
-
     /**
-     * 変換結果を出力
+     * 変換結果を出力.
      */
     public function __toString()
     {
@@ -58,6 +52,14 @@ abstract class AbstractElement
         }
 
         return implode("\n", $ret);
+    }
+
+    public function init()
+    {
+    }
+
+    public function finalize()
+    {
     }
 
     /**

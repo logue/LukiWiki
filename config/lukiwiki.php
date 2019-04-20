@@ -42,6 +42,7 @@ return [
     ],
     'plugin' => [
         'abbr'      => App\LukiWiki\Plugins\Abbr::class,
+        'calendar'  => App\LukiWiki\Plugins\Calendar::class,
         'color'     => App\LukiWiki\Plugins\Color::class,
         'navi'      => App\LukiWiki\Plugins\Navi::class,
         'ruby'      => App\LukiWiki\Plugins\Ruby::class,

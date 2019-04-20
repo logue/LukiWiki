@@ -18,7 +18,7 @@
         "lodash": "^4.17.5",
         "popper.js": "^1.15.0",
         "resolve-url-loader": "^2.3.2",
-        "sass": "^1.18.0",
+        "sass": "^1.19.0",
         "sass-loader": "^7.1.0",
         "vue": "^2.6.10",
         "vue-template-compiler": "^2.6.10"
@@ -34,6 +34,8 @@
         "codemirror": "^5.45.0",
         "moment": "^2.24.0",
         "query-string": "^6.4.2",
-        "vue-codemirror": "^4.0.6"
+        "vue-codemirror": "^4.0.6",
+        "vue-runtime-helpers": "^1.0.0",
+        "wavesurfer-player-vue": "^0.1.2"
     }
 }

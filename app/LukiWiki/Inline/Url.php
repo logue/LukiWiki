@@ -37,7 +37,7 @@ class Url extends AbstractInline
             ')';
     }
 
-    public function setPattern(array $arr, string $page = null): void
+    public function setPattern(array $arr): void
     {
         list($scheme, $user, $host, $path) = $this->splice($arr);
         if (substr($host, 0, 4) === 'xn--') {

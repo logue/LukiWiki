@@ -96,7 +96,7 @@ use App\LukiWiki\AbstractPlugin;
 use App\LukiWiki\BlockPluginInterface;
 use App\LukiWiki\InlinePluginInterface;
 
-class DummyPlugin extends AbstractPlugin implements BlockPluginInterface, InlinePluginInterface, ApiPluginInterface
+class Dummy extends AbstractPlugin implements BlockPluginInterface, InlinePluginInterface, ApiPluginInterface
 {
     /**
      * インライン型
@@ -149,7 +149,7 @@ Facadeパターンを採用しており、config/lukiwiki.phpのプラグイン�
 
 ```
     'plugin' => [
-        'dummy'      => App\LukiWiki\Plugins\DummyPlugin::class,
+        'dummy'      => App\LukiWiki\Plugins\Dummy::class,
     ],
 ```
 

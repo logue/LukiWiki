@@ -9,8 +9,11 @@
 
 namespace App\LukiWiki;
 
+use App\LukiWiki\Inline\InlineConverter;
+use App\LukiWiki\Rules\InlineRules;
 use App\Models\Page;
 use Config;
+use Symfony\Polyfill\Intl\Idn\Idn;
 
 /**
  * インライン要素パースクラス.
@@ -78,8 +81,6 @@ abstract class AbstractInline
      * マッチするパターンを設定.
      *
      * @param array $arr
-     *
-     * @return string
      */
     public function setPattern(array $arr): void
     {
@@ -199,6 +200,49 @@ abstract class AbstractInline
         $this->text = array_shift($arr);
 
         return $arr;
+    }
+
+    /**
+     * リンクを貼る場合の処理.
+     *
+     * @param array $params パラメータ
+     */
+    protected function setParam(array $params): void
+    {
+        //$converter = new InlineConverter(['InlinePlugin'], []);
+
+        //$meta = $converter->getMeta();
+        if (!empty($meta)) {
+            $this->meta = array_merge($this->meta, $meta);
+        }
+
+        if (preg_match('/^[https?|ftps?|git|ssh]/', $params['href'])) {
+            $purl = parse_url($params['href']);
+            if (isset($purl['host']) && substr($purl['host'], 0, 4) === 'xn--') {
+                // 国際化ドメインのときにアドレスをpunycode変換する。（https://日本語.jp → https://xn--wgv71a119e.jp）
+                $this->name = preg_replace('/'.$purl['host'].'/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $params['href']);
+            }
+        } else {
+            $this->href = url(self::getPageName($params['href']));
+        }
+
+        $this->page = self::processText($params['page'] ?? $this->page);
+        $this->title = self::processText($params['title'] ?? $this->page);
+        $this->anchor = self::processText($params['anchor'] ?? null);
+        $this->option = self::processText($params['option'] ?? null);
+        $this->alias = self::processText($params['alias'] ?? null);
+
+        //dd($this);
+
+/*
+        if (!empty($this->alias)) {
+            $alias = $converter->convert($params['alias'], $params['page']);
+            // aタグのみ削除
+            $alias = preg_replace('#</?a[^>]*>#i', '', $alias);
+            $this->alias = InlineRules::replace($alias);
+
+        }
+        */
     }
 
     /**
