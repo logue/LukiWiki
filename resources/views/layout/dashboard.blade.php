@@ -8,7 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="generator" content="LukiWiki v{{ \App\LukiWiki\Parser::VERSION }}" />
     <meta name="robots" content="noindex, nofollow"/>
-    <title>{{ $title }} - {{ Config::get('lukiwiki.sitename') }}</title>
+    <title>@yield('title') - {{ Config::get('app.name') }}</title>
     <link rel="stylesheet" type="text/css" href="{{ mix('css/'.Config::get('lukiwiki.theme').'.css') }}" />
     <link rel="stylesheet" href="{{ mix('css/dashboard.css') }}" type="text/css" />
     @yield('styles')
@@ -18,7 +18,7 @@
     <div id="app">
         <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
             <a class="navbar-brand col-sm-3 col-md-2 mr-0"
-                href="{{ url('/') }}">{{ Config::get('lukiwiki.sitename') }}</a>
+                href="{{ url('/') }}">{{ Config::get('app.name') }}</a>
         </nav>
 
         <div class="container-fluid">

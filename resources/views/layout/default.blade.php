@@ -28,7 +28,7 @@
             <lw-navbar brand="{{ Config::get('app.name') }}" base-uri="{{ url('/') }}"
                 page="{{ $page ?? '' }}">
                 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-                    <a class="navbar-brand" href="{{ url('/') }}">{{ Config::get('lukiwiki.sitename') }}</a>
+                    <a class="navbar-brand" href="{{ url('/') }}">{{ Config::get('app.name') }}</a>
                 </nav>
             </lw-navbar>
         </header>
