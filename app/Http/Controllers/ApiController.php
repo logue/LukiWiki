@@ -101,7 +101,7 @@ class ApiController extends Controller
     {
         $ret = InterWiki::where('name', $term)->where('type', InterWikiType::Glossary)->first();
         if (!$ret) {
-            return abort(404);
+            abort(404);
         }
 
         return response($ret);
@@ -125,6 +125,6 @@ class ApiController extends Controller
             return response($plugin->api());
         }
 
-        return abort(501, __('Not implemented.'));
+        abort(501, __('Not implemented.'));
     }
 }

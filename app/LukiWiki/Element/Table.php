@@ -29,7 +29,7 @@ class Table extends AbstractElement
         ''  => 'tbody',
     ];
 
-    public function __construct($out, $isAmp)
+    public function __construct($out, $page)
     {
         parent::__construct();
 
@@ -40,7 +40,7 @@ class Table extends AbstractElement
         $is_template = $this->type === 'c';
         $row = [];
         foreach ($cells as $cell) {
-            $row[] = new TableCell($cell, $is_template, $isAmp);
+            $row[] = new TableCell($cell, $is_template, $page);
         }
         $this->elements[] = $row;
     }

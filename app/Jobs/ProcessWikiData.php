@@ -68,7 +68,7 @@ class ProcessWikiData implements ShouldQueue
 
         // :が含まれるページ名は_に変更する。
         $page = preg_replace('/\:/', '_', $this->page);
-        $data = explode("\n", Storage::get($this->file));
+        $data = explode("\n", /* @scrutinizer ignore-type */ Storage::get($this->file));
 
         // Storageクラスに作成日を取得する関数がないためファイルの実体のパスを取得
         $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
@@ -191,7 +191,7 @@ class ProcessWikiData implements ShouldQueue
 
             $line = preg_replace_callback('/(?:SIZE\((\d+)\))/u', function ($matches) {
                 // サイズはrem指定に変更
-                return 'SIZE('.self::px2rem($matches[1]).')';
+                return 'SIZE('.self::px2rem((int) $matches[1]).')';
             }, $line);
 
             // リンクの形式変更（LukiWikiでは[...](...)という形式。添付ファイルとの区別は!でする）
@@ -288,7 +288,7 @@ class ProcessWikiData implements ShouldQueue
                                     foreach ($params as $param) {
                                         if (is_numeric($param)) {
                                             // 数値の場合remに変換
-                                            $p[] = self::px2rem($param);
+                                            $p[] = self::px2rem((int) $param);
                                         } else {
                                             $p[] = $param;
                                         }
@@ -347,7 +347,7 @@ class ProcessWikiData implements ShouldQueue
                 return $char.'timestamp('.$dt->timestamp.')';
             case 'size':
                 // サイズはrem単位に変換する。
-                return $char.'size('.self::px2rem($options[0]).'){'.$body.'}';
+                return $char.'size('.self::px2rem((int) $options[0]).'){'.$body.'}';
             case 'epoch':
                 // 時差を考慮した新着（Adv.）
                 return $char.'timestamp('.$options[0].');';
@@ -447,8 +447,7 @@ class ProcessWikiData implements ShouldQueue
                     return  $align.'!['.$title.']('.$file.'){'.implode(' ', $params).'}';
                 }
 
-                    return  $align.'!['.$title.']('.$file.')';
-                break;
+                return  $align.'!['.$title.']('.$file.')';
             case 'ruby':
                 // ルビはoptionとbodyを逆転させる　&ruby(ルビの内容){対象}; →　&ruby(対象){ルビの内容};
                 // tooltipの仕様と合わせる。LaTeX互換。
@@ -497,7 +496,7 @@ class ProcessWikiData implements ShouldQueue
      *
      * @return float
      */
-    private static function px2rem(int $px): double
+    private static function px2rem(int $px): float
     {
         return round($px / 16, 5);
     }

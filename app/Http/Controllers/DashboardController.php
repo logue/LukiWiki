@@ -19,8 +19,12 @@ use Storage;
 
 class DashboardController extends Controller
 {
-    const DEFAULT_PATH = ':dashboard';
+    /** @var \Illuminate\Database\Eloquent\Model $page ページモデル */
+    protected $page;
 
+    /**
+     * コンストラクタ
+     */
     public function __construct()
     {
         // 認証用ミドルウェア

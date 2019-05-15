@@ -13,15 +13,24 @@ use App\LukiWiki\AbstractElement;
 
 class TableCell extends AbstractElement
 {
+    /** @var string セルのパラメータの正規表現 */
     const CELL_OPTION_MATCH_PATTERN = '/^(?:(LEFT|CENTER|RIGHT|JUSTIFY)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\w+)\)|LANG\((\w+2)\)|(BASELINE|TOP|MIDDLE|BOTTOM|TEXT-TOP|TEXT-BOTTOM)|(NOWRAP)(TRUNCATE)):(.*)$/';
-    public $colspan = 1;
-    public $rowspan = 1;
-    public $style = [];         // is array('width'=>, 'align'=>...);
-    public $is_blank = false;
-    public $class = [];
+    /** @var int 縦連結 */
+    protected $colspan = 1;
+    /** @var int 横連結 */
+    protected $rowspan = 1;
+    /** @var array スタイル属性 */
+    protected $style = [];         // is array('width'=>, 'align'=>...);
+    /** @var bool 空っぽのセルか */
+    protected $is_blank = false;
+    /** @var array セルのクラス */
+    protected $class = [];
+    /** @var string セルのタグ名 */
     protected $tag = 'td';    // {td|th}
+    /** @var string 言語 */
+    protected $lang = '';
 
-    public function __construct($text, $is_template, $isAmp)
+    public function __construct($text, $is_template, $page)
     {
         parent::__construct();
         $matches = [];
@@ -86,16 +95,7 @@ class TableCell extends AbstractElement
             $text = substr($text, 1);
         }
 
-        if (!empty($text) && $text[0] === '#') {
-            // Try using Div class for this $text
-            $obj = ElementFactory::factory('Div', $this, $text);
-            if ($obj instanceof Paragraph) {
-                $obj = $obj->elements[0];
-            }
-        } else {
-            $obj = new InlineElement($text, $isAmp);
-        }
-
+        $obj = new InlineElement($text, $page);
         $this->meta = $obj->getMeta();
         $this->insert($obj);
     }

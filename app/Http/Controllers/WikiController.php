@@ -58,10 +58,10 @@ class WikiController extends Controller
         }
 
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
-        $entry = $this->page->where('name', $page)->first();
+        $entry = $this->page->getEntry($page)->first();
 
         if (!$entry) {
-            return abort(404, sprintf(_('Page %s is not found.'), $page));
+            abort(404, sprintf(_('Page %s is not found.'), $page));
         }
         $this->page->countUp($page);
         Debugbar::stopMeasure('db');
@@ -102,9 +102,9 @@ class WikiController extends Controller
     {
         // DBからページデータを取得
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
-        $entry = $this->page->where('name', $page)->first();
+        $entry = $this->page->getEntry($page);
         if (!$entry) {
-            return abort(404, sprintf(_('Page %s is not found.'), $page));
+            abort(404, sprintf(_('Page %s is not found.'), $page));
         }
         Debugbar::stopMeasure('db');
 
@@ -138,7 +138,7 @@ class WikiController extends Controller
 
         if (!empty($attach_id)) {
             // TODO: 効率が悪い
-            return redirect(':api/attachment/'.$attach_id);
+            redirect(':api/attachment/'.$attach_id);
         }
 
         return view(
@@ -170,7 +170,7 @@ class WikiController extends Controller
         Debugbar::stopMeasure('db');
 
         if (!$backup) {
-            return abort(404, sprintf(__('Backup is not found.'), $page));
+            abort(404, sprintf(__('Backup is not found.'), $page));
         }
 
         if (!empty($age)) {
@@ -231,7 +231,7 @@ class WikiController extends Controller
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', $page)->first();
         if (!$entry) {
-            return abort(404, sprintf(__('Page %s is not found.'), $page));
+            abort(404, sprintf(__('Page %s is not found.'), $page));
         }
         $attachments = $this->page->attachments()->get();
         Debugbar::stopMeasure('db');
@@ -305,11 +305,11 @@ class WikiController extends Controller
     {
         if (!$request->isMethod('post')) {
             // Method not allowed
-            return abort(405, __('Method not allowd.'));
+            abort(405, __('Method not allowd.'));
         }
 
         if (empty($page)) {
-            return abort(400, __('Page name is undefined.'));
+            abort(400, __('Page name is undefined.'));
         }
 
         if ($request->input('action') !== 'save') {

@@ -108,7 +108,19 @@ class Page extends Model
      */
     public static function getId(string $page): ?int
     {
-        return self::where('name', '=', $page)->value('id');
+        return self::getEntry($page)->value('id');
+    }
+
+    /**
+     * ページのデータを取得.
+     *
+     * @param string $page
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function getEntry(string $page): Builder
+    {
+        return self::where('pages.name', '=', $page);
     }
 
     /**
@@ -120,7 +132,7 @@ class Page extends Model
      */
     public static function getAttachments(string $page): Builder
     {
-        return self::where('pages.name', $page)
+        return self::getEntry($page)
             ->join('attachments', 'pages.id', '=', 'attachments.page_id');
     }
 
@@ -133,7 +145,7 @@ class Page extends Model
      */
     public static function getBackups(string $page): Builder
     {
-        return self::where('pages.name', $page)
+        return self::getEntry($page)
             ->join('backups', 'pages.id', '=', 'backups.page_id');
     }
 
@@ -146,7 +158,7 @@ class Page extends Model
      */
     public static function getCounter(string $page): Builder
     {
-        return self::where('pages.name', $page)
+        return self::getEntry($page)
             ->join('counters', 'pages.id', '=', 'counters.page_id');
     }
 
@@ -208,7 +220,7 @@ class Page extends Model
      */
     public static function exists(string $page): bool
     {
-        return self::where('name', $page)->exists();
+        return self::getEntry($page)->exists();
     }
 
     /**
@@ -263,15 +275,18 @@ class Page extends Model
             return;
         }
 
-        if (($counter->updated_at->day - Carbon::now()->day) !== 0) {
-            // 日付変更があった場合、本日のカウントを昨日のカウントに上書きして1を代入
+        // 最後のカウントからの経過日数
+        $interval_day = $counter->updated_at->day - Carbon::now()->day;
+
+        if ($interval_day >== 2) {
+            // 前日にアクセスが無かった場合、前日のカウントを0にする。
+            $value['yesterday'] = 0;
+        }else if ($interval_day === 1) {
+            // それまでの本日のカウントを昨日のカウントに代入して、本日のカウントに1を代入
             $value = [
                 'yesterday' => $counter->today,
                 'today'     => 1,
             ];
-        } elseif (($counter->updated_at->day - Carbon::now()->day) >= 2) {
-            // 日付の差分が２日以上（前日にアクセスが無かった）の場合
-            $value['yesterday'] = 0;
         }
 
         Counter::updateOrCreate(['page_id' => $counter->page_id], $value);
