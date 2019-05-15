@@ -66,7 +66,7 @@ abstract class AbstractPlugin
     /**
      * プラグインを出力.
      */
-    public function __toString()
+    final public function __toString()
     {
         if ($this->type === PluginType::Block) {
             return $this->block();

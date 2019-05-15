@@ -37,7 +37,7 @@ class BlockPlugin extends AbstractElement
             $class = Config::get('lukiwiki.plugin.'.$this->name);
             $plugin = new $class(PluginType::Block, $this->params, $this->body, $this->page);
 
-            return $plugin;
+            return $plugin->__toString();
         }
 
         // TODO:Call @plugin

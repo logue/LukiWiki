@@ -278,10 +278,10 @@ class Page extends Model
         // 最後のカウントからの経過日数
         $interval_day = $counter->updated_at->day - Carbon::now()->day;
 
-        if ($interval_day >== 2) {
+        if ($interval_day >= 2) {
             // 前日にアクセスが無かった場合、前日のカウントを0にする。
             $value['yesterday'] = 0;
-        }else if ($interval_day === 1) {
+        } elseif ($interval_day === 1) {
             // それまでの本日のカウントを昨日のカウントに代入して、本日のカウントに1を代入
             $value = [
                 'yesterday' => $counter->today,

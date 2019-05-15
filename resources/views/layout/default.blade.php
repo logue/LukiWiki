@@ -37,7 +37,12 @@
                 @if(Session::has('message'))
                 <b-alert show dismissible>{{ session('message') }}</b-alert>
                 @endif
-                <h1>@yield('title')</h1>
+                <h1>
+                    @yield('title')
+                    @if(!empty($page) && strpos(\Request::path(), ':') !== false)
+                    <a class="btn btn-outline-secondary btn-sm" href="{{ url($page) }}">Back</a>
+                    @endif
+                </h1>
                 <!--nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ url('/')}}">Home</a></li>

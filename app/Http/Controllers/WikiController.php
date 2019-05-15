@@ -61,7 +61,7 @@ class WikiController extends Controller
         $entry = $this->page->getEntry($page)->first();
 
         if (!$entry) {
-            abort(404, sprintf(_('Page %s is not found.'), $page));
+            abort(404, sprintf(__('Page %s is not found.'), $page));
         }
         $this->page->countUp($page);
         Debugbar::stopMeasure('db');
@@ -102,9 +102,9 @@ class WikiController extends Controller
     {
         // DBからページデータを取得
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
-        $entry = $this->page->getEntry($page);
+        $entry = $this->page->getEntry($page)->first();
         if (!$entry) {
-            abort(404, sprintf(_('Page %s is not found.'), $page));
+            abort(404, sprintf(__('Page %s is not found.'), $page));
         }
         Debugbar::stopMeasure('db');
 
@@ -112,7 +112,6 @@ class WikiController extends Controller
            'default.source', [
                 'page'    => $entry->name,
                 'source'  => $entry->source,
-                'title'   => 'Source of '.$entry->name,
             ]
         );
     }
@@ -138,7 +137,7 @@ class WikiController extends Controller
 
         if (!empty($attach_id)) {
             // TODO: 効率が悪い
-            redirect(':api/attachment/'.$attach_id);
+            return redirect(':api/attachment/'.$attach_id);
         }
 
         return view(
@@ -163,7 +162,7 @@ class WikiController extends Controller
         Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
         $backups = $this->page->getBackups($page)->select('backups.*')->orderBy('updated_at', 'desc');
         if (!empty($age)) {
-            $backup = $backups->offset($age - 1)->limit(1)->first();
+            $backup = $backups->offset($age - 1)->first();
         } else {
             $backup = $backups->get();
         }
@@ -177,8 +176,8 @@ class WikiController extends Controller
             return view(
                'default.source', [
                     'page'    => $page,
+                    'age'     => $age,
                     'source'  => $backup->source,
-                    'title'   => sprintf(__('Backup of %s (%d)'), $page, $age),
                 ]
             );
         }
@@ -211,7 +210,6 @@ class WikiController extends Controller
 
         return view(
             'default.diff', [
-                'title' => sprintf(__('Diff of %s'), $page),
                 'page'  => $page,
                 'diff'  => $differ->diff($old, $new),
             ]

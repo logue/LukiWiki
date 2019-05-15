@@ -16,11 +16,11 @@ class TableCell extends AbstractElement
     /** @var string セルのパラメータの正規表現 */
     const CELL_OPTION_MATCH_PATTERN = '/^(?:(LEFT|CENTER|RIGHT|JUSTIFY)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\w+)\)|LANG\((\w+2)\)|(BASELINE|TOP|MIDDLE|BOTTOM|TEXT-TOP|TEXT-BOTTOM)|(NOWRAP)(TRUNCATE)):(.*)$/';
     /** @var int 縦連結 */
-    protected $colspan = 1;
+    public $colspan = 1;
     /** @var int 横連結 */
-    protected $rowspan = 1;
+    public $rowspan = 1;
     /** @var array スタイル属性 */
-    protected $style = [];         // is array('width'=>, 'align'=>...);
+    public $style = [];         // is array('width'=>, 'align'=>...);
     /** @var bool 空っぽのセルか */
     protected $is_blank = false;
     /** @var array セルのクラス */

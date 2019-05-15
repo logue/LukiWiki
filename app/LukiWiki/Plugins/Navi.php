@@ -25,10 +25,10 @@ class Navi extends AbstractPlugin implements BlockPluginInterface
             $home = WikiUrl::getFullname($home, $this->page);
             $is_home = $home === $this->page;
             if (!Page::exists($home)) {
-                return error('No such page: '.e($home));
+                return $this->error('No such page: '.e($home));
             }
             if (!$is_home && preg_match('/^'.preg_quote($home, '/').'/', $this->page) === false) {
-                return error('Not a child page like: '.e($home.'/'.WikiUrl::stripRelativePath($this->page)));
+                return $this->error('Not a child page like: '.e($home.'/'.WikiUrl::stripRelativePath($this->page)));
             }
             $reverse = strtolower($reverse) === 'reverse';
             $ret['home'] = $home;

@@ -72,7 +72,7 @@ class RootElement extends AbstractElement
                 }
             }
 
-            // Github Markdown互換シンタックスハイライト記法
+            // 整形済みテキスト
             $lang = null;
             if (preg_match('/^```/', $line, $matches)) {
                 $line .= "\r";
@@ -175,7 +175,7 @@ class RootElement extends AbstractElement
                         }
                         break;
                     case '~':
-                        $content = new Paragraph(' '.substr($line, 1), $this->page);
+                        $content = new Paragraph($line, $this->page);
                         break;
                     case '/':
                         // Escape comments
@@ -187,24 +187,20 @@ class RootElement extends AbstractElement
                         $content = new InlineElement($line, $this->page);
                         break;
                 }
+            }
 
-                if (\is_object($content)) {
-                    $meta = $content->getMeta();
+            // Default
+            if (\is_object($content)) {
+                $meta = $content->getMeta();
 
-                    if (!empty($meta)) {
-                        foreach ($meta as $key => $value) {
-                            $this->meta[$key][] = $value;
-                        }
+                if (!empty($meta)) {
+                    foreach ($meta as $key => $value) {
+                        $this->meta[$key][] = $value;
                     }
                 }
-
-                // Default
-                if (!empty($content)) {
-                    $this->last = $this->last->add($content);
-                }
-                unset($content);
-                continue;
+                $this->last = $this->last->add($content);
             }
+            unset($content);
         }
     }
 
