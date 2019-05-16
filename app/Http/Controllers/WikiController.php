@@ -9,7 +9,7 @@
 
 namespace App\Http\Controllers;
 
-use App\LukiWiki\Element\RootElement;
+use App\LukiWiki\Parser;
 use App\Models\Attachment;
 use App\Models\Backup;
 use App\Models\Page;
@@ -59,7 +59,6 @@ class WikiController extends Controller
 
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->getEntry($page)->first();
-
         if (!$entry) {
             abort(404, sprintf(__('Page %s is not found.'), $page));
         }
@@ -67,17 +66,9 @@ class WikiController extends Controller
         Debugbar::stopMeasure('db');
 
         // 変換処理
-        Debugbar::startMeasure('parse', 'Converting wiki data...');
-        //dd($entry->source);
-        $lines = explode("\n", str_replace([\chr(0x0d).\chr(0x0a), \chr(0x0d), \chr(0x0a)], "\n", $entry->source));
-
-        $body = new RootElement($page, 0, ['id' => 0]);
-        $body->parse($lines);
-
+        $body = Parser::factory($entry->source, $page);
         $meta = $body->getMeta();
         $content = $body->__toString();
-        //dd($body);
-        Debugbar::stopMeasure('parse');
 
         return view(
            'default.content',

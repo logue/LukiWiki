@@ -18,11 +18,11 @@ class SocialiteController extends Controller
     /**
      * Redirect the user to the Provider authentication page.
      *
-     * @param $provider String
+     * @param string $provider
      *
      * @return mixed
      */
-    public function redirectToProvider($provider)
+    public function redirectToProvider(string $provider)
     {
         return Socialite::driver($provider)->redirect();
     }
@@ -30,14 +30,14 @@ class SocialiteController extends Controller
     /**
      * Obtain the user information from Provider.
      *
-     * @param $provider string
+     * @param string $provider
      *
      * @throws \Exception
      * @throws \Throwable
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function handleProviderCallback($provider): RedirectResponse
+    public function handleProviderCallback(string $provider): RedirectResponse
     {
         try {
             $providerUser = Socialite::driver($provider)->user();
@@ -70,8 +70,8 @@ class SocialiteController extends Controller
     /**
      * Create a user if does not exist.
      *
-     * @param $providerName string
-     * @param $providerUser
+     * @param string $providerName
+     * @param object $providerUser
      *
      * @return mixed
      */

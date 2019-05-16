@@ -22,7 +22,7 @@ class RootElement extends AbstractElement
     protected $id;
     protected $count = 0;
 
-    public function __construct(string $page, int $level, array $option)
+    public function __construct(string $page, array $option)
     {
         $this->id = $option['id'] ?? 0;
         $this->page = $page;

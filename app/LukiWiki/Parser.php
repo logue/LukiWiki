@@ -17,29 +17,29 @@ use Debugbar;
  */
 class Parser
 {
+    /** @var string */
     const VERSION = '0.0.0-alpha';
+    /** @var int インスタンス */
     private static $instance = 0;
 
     /**
      * LukiWikiファクトリークラス.
      *
-     * @param mixed $lines Wikiのソース
-     * @param bool  $isAmp AMP対応フラグ
+     * @param string $source Wikiのソース
+     * @param string $page   呼び出し元ページ名
      *
-     * @return string
+     * @return object
      */
-    public static function factory($lines, $isAmp = false)
+    public static function factory(string $source, string $page)
     {
-        if (!\is_array($lines)) {
-            // 改行を正規化
-            $lines = explode("\n", str_replace([\chr(0x0d).\chr(0x0a), \chr(0x0d), \chr(0x0a)], "\n", $lines));
-        }
+        $instance = ++self::$instance;
 
-        $body = new RootElement(null, null, ['id' => ++self::$instance, 'isAmp' => $isAmp]);
+        Debugbar::startMeasure('parse', 'Converting wiki data... ['.$instance.']');
+        $lines = explode("\n", str_replace([\chr(0x0d).\chr(0x0a), \chr(0x0d), \chr(0x0a)], "\n", $source));
+        $body = new RootElement($page, ['id' => $instance]);
         $body->parse($lines);
-        $ret = $body->toString();
-        Debugbar::stopMeasure('LukiWiki');
+        Debugbar::stopMeasure('parse');
 
-        return $ret;
+        return $body;
     }
 }
