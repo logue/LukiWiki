@@ -1,0 +1,36 @@
+build:
+    environment:
+        php: '7.3'
+        mysql: '8.0'
+        node: '12.2'
+        hosts:
+            lukiwiki.dev: '127.0.0.1'
+        variables:
+            APP_KEY: 'base64:OYl4Bk9ekouOUIRXyeTD0FVi+cJ9D+HMyDJBgSBSUuI='
+            APP_ENV: 'testing'
+            APP_URL: 'http://lukiwiki.dev'
+            API_HOST: 'lukiwiki.dev'
+            DB_HOST: '127.0.0.1'
+            DB_DATABASE: 'scrutinizer'
+            DB_USERNAME: 'root'
+            DB_PASSWORD: ''
+            MAIL_DRIVER: 'log'
+    cache:
+        directories:
+            - node_modules
+            - vendor/
+            - ~/.composer/cache/
+    dependencies:
+        before:
+            - mysql -uroot -e 'CREATE DATABASE scrutinizer'
+    tests:
+        before:
+            - chmod -R 777 storage
+            - chmod -R 777 bootstrap/cache
+            - npm run production
+        override:
+            -
+                command: vendor/bin/phpunit --coverage-clover=lukiwiki-coverage.xml
+                coverage:
+                    file: lukiwiki-coverage.xml
+                    format: clover

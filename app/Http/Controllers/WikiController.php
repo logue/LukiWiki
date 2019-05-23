@@ -229,9 +229,8 @@ class WikiController extends Controller
         //dd($entry->source);
         $lines = explode("\n", str_replace([\chr(0x0d).\chr(0x0a), \chr(0x0d), \chr(0x0a)], "\n", $entry->source));
 
-        $body = new RootElement($page, 0, ['id' => 0]);
-        $body->parse($lines);
-
+        // 変換処理
+        $body = Parser::factory($entry->source, $page);
         $meta = $body->getMeta();
         $content = $body->__toString();
         Debugbar::stopMeasure('parse');
