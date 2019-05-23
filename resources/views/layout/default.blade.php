@@ -55,8 +55,12 @@
         </main>
         <footer class="bg-light mt-auto py-3">
             <div class="container">
-                <p><strong>LukiWiki</strong> v{{ \App\LukiWiki\Parser::VERSION }} / <small>Process Time: <var>{{
-                            sprintf('%0.3f', microtime(true) - LARAVEL_START) }}</var> sec.</small></p>
+                <p>
+                    <strong>LukiWiki</strong> v{{ \App\LukiWiki\Parser::VERSION }}
+@if(defined('LARAVEL_START'))
+                    / <small>Process Time: <var>{{ sprintf('%0.3f', microtime(true) - LARAVEL_START) }}</var> sec.</small>
+@endif
+                </p>
             </div>
         </footer>
     </div>

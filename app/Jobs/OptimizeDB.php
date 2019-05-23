@@ -18,8 +18,10 @@ use Illuminate\Support\Facades\Log;
 
 class OptimizeDB implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     private $db;
 
     /**

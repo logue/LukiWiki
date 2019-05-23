@@ -11,39 +11,57 @@
 |
 */
 // 管理
-Route::get(':dashboard', 'DashboardController');
-Route::get(':dashboard/convert', 'DashboardController@convert');
-Route::post(':dashboard/convert', 'DashboardController@convert');
-Route::get(':dashboard/clear-cache', 'DashboardController@clearCache');
-Route::get(':dashboard/interwiki', 'DashboardController@interwiki');
-Route::post(':dashboard/interwiki', 'DashboardController@interwiki');
-Route::any(':dashboard/captcha-test', 'DashboardController@captchaTest');
-Route::get(':dashboard/job', 'JobController@index');
+Route::prefix(':dashboard')->group(function () {
+    // 管理用トップページ
+    Route::get('/', 'DashboardController');
+    // データー変換処理
+    Route::get('/convert', 'DashboardController@convert');
+    Route::post('/convert', 'DashboardController@convert');
+    // キャッシュ処理
+    Route::get('/clear-cache', 'DashboardController@clearCache');
+    // InterWikiNameの管理
+    Route::get('/interwiki', 'DashboardController@interwiki');
+    Route::post('/interwiki', 'DashboardController@interwiki');
+    // CAPTCHA認証テスト
+    Route::any('/captcha-test', 'DashboardController@captchaTest');
+    // ジョブ管理
+    Route::get('/job', 'JobController@index');
+    // ユーザ個人管理
+});
 
-// 認証系
-Route::get(':login', 'Auth\LoginController@showLoginForm')->name('login');
-Route::post(':login', 'Auth\LoginController@login');
-Route::post(':logout', 'Auth\LoginController@logout')->name('logout');
-Route::get(':login/{social}', 'Auth\LoginController@socialLogin');
-Route::get(':login/{social}/callback', 'Auth\LoginController@handleProviderCallback');
-
+// 認証系のルーティング
+//Auth::routes();
 // 登録系
-Route::get(':register', 'Auth\RegisterController@showRegistrationForm')->name('register');
-Route::post(':register', 'Auth\RegisterController@register');
-
-// パスワード初期化系
-Route::get(':password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
-Route::post(':password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
-Route::get(':password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
-Route::post(':password/reset', 'Auth\ResetPasswordController@reset');
+Route::prefix(':auth')->group(function () {
+    // ログイン
+    Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
+    Route::post('/login', 'Auth\LoginController@login');
+    // ログアウト
+    Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
+    // 登録
+    Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+    Route::post('/register', 'Auth\RegisterController@register');
+    // パスワード初期化
+    Route::get('/password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+    Route::post('/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+    Route::get('/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+    Route::post('/password/reset', 'Auth\ResetPasswordController@reset');
+    // SNS認証
+    Route::group(
+        ['as' => 'oauth.', 'middleware' => ['guest', 'throttle']], function () {
+            Route::get('/{provider}', 'Auth\SocialiteController@redirectToProvider')->name('login')->where('provider', 'google|github');
+            Route::get('/{provider}/callback', 'Auth\SocialiteController@handleProviderCallback')->where('provider', 'google|github');
+        });
+});
 
 // ユーザ管理
-//Route::get(':dashboard/user', 'UserController@list');
-//Route::post(':dashboard/user', 'UserController@store');
-//Route::get(':dashboard/user/new', 'UserController@edit');
-//Route::get(':dashboard/user/show/{id}', 'UserController@read');
-//Route::get(':dashboard/user/edit/{id}', 'UserController@edit');
-//Route::get(':dashboard/user/delete/{id}', 'UserController@destroy');
+Route::prefix(':user')->group(function () {
+    Route::get('/', 'UserController@list');
+    Route::post('/', 'UserController@store');
+    Route::get('/{id}', 'UserController@read');
+    Route::get('/edit/{id}', 'UserController@edit');
+    Route::get('/delete/{id}', 'UserController@destroy');
+});
 
 // 検索処理
 Route::any(':search', 'WikiController@search')->middleware('sanitize', 'keyword');

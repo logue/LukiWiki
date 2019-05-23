@@ -22,7 +22,10 @@ use Illuminate\Support\Facades\Storage;
 
 class ProcessAttachmentData implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     /**
      * 最大試行回数.
      *
