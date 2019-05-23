@@ -1,8 +1,8 @@
 build:
     environment:
         php: '7.3'
-        mysql: '8.0'
-        node: '12.2'
+        mysql: '5.7'
+        node: '10.14'
         hosts:
             lukiwiki.dev: '127.0.0.1'
         variables:
@@ -34,3 +34,8 @@ build:
                 coverage:
                     file: lukiwiki-coverage.xml
                     format: clover
+            - php-scrutinizer-run
+            -
+                command: phpcs-run
+                use_website_config: true
+            - js-scrutinizer-run
