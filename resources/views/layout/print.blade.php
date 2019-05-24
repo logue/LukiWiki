@@ -8,7 +8,7 @@
     @if(isset($page))
     <link rel="canonical" href="{{ $page ? url($page) : url('/') }}" />
     @endif
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ mix('css/default.css') }}" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css" integrity="sha256-hktQKhVc7KEsNf1bx+RYdzCMHyDyUjsA4N10rS1h8WA=" crossorigin="anonymous" />
     <style>
         @page {
@@ -23,6 +23,36 @@
             <h1>{{ $page }}</h1>
             <hr />
             {!! $body !!}
+            <hr />
+            @if($notes)
+            <hr />
+            <aside>
+                <ul class="fa-ul">
+                    @foreach ($notes as $no=>$note)
+                    <li id="note-{{ $no }}">
+                        <a href="#note-anchor-{{ $no }}" id="note-{{ $no }}" class="fa-li">
+                            <font-awesome-icon fas icon="thumbtack">*</font-awesome-icon>
+                            <sup>{{ $no }}</sup>
+                        </a>
+                        {!! $note !!}
+                    </li>
+                    @endforeach
+                </ul>
+            </aside>
+            @endif
+            @if($entry->attachments)
+            <hr />
+            <aside>
+                <ul class="fa-ul">
+                    @foreach ($entry->attachments as $attach)
+                    <li>
+                        <font-awesome-icon fas icon="clip">*</font-awesome-icon>
+                        {!! $attach->name !!}
+                    </li>
+                    @endforeach
+                </ul>
+            </aside>
+            @endif
         </article>
     </main>
     <script src="{{ mix('js/app.js') }}"></script>
