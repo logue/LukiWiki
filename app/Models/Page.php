@@ -11,12 +11,11 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Config;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use RegexpTrie\RegexpTrie;
 use Symfony\Component\Intl\Collator\Collator;
@@ -55,11 +54,11 @@ class Page extends Model
     }
 
     /**
-     * このページの所有者.
+     * このページの所有者（未使用）.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\hasOne
      */
-    public function user(): BelongsTo
+    public function user(): hasOne
     {
         return $this->hasOne(User::class);
     }
@@ -104,7 +103,7 @@ class Page extends Model
      *
      * @param string $page
      *
-     * @return int
+     * @return null|int
      */
     public static function getId(string $page): ?int
     {
@@ -128,7 +127,7 @@ class Page extends Model
      *
      * @param string $page
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Query\Builder
      */
     public static function getAttachments(string $page): Builder
     {
@@ -141,7 +140,7 @@ class Page extends Model
      *
      * @param string $page ページ名
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Query\Builder
      */
     public static function getBackups(string $page): Builder
     {
@@ -150,24 +149,11 @@ class Page extends Model
     }
 
     /**
-     * ページのカウンターを取得.
-     *
-     * @param string $page ページ名
-     *
-     * @@return \Illuminate\Database\Eloquent\Builder
-     */
-    public static function getCounter(string $page): Builder
-    {
-        return self::getEntry($page)
-            ->join('counters', 'pages.id', '=', 'counters.page_id');
-    }
-
-    /**
      * 新着記事を取得.
      *
      * @param int $limit 制限数
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Query\Builder
      */
     public static function getLatest(int $limit = 20): Builder
     {
@@ -182,6 +168,8 @@ class Page extends Model
     public static function getEntries(): array
     {
         return Cache::rememberForever(self::PAGELIST_CACHE, function () {
+            $pages = [];
+
             // ページ名と更新日時を取得
             $data = self::pluck('updated_at', 'name')->all();
             $entries = array_keys($data);
@@ -228,7 +216,7 @@ class Page extends Model
      *
      * @param string $name ページ名
      *
-     * @return Carbon\Carbon
+     * @return \Carbon\Carbon
      */
     public static function lastModified(?string $name = null): Carbon
     {
@@ -236,60 +224,6 @@ class Page extends Model
             self::select('updated_at')->max('updated_at') :
             self::select('updated_at')->where('name', $name)
         );
-    }
-
-    /**
-     * カウンター加算.
-     *
-     * @param string $page ページ名
-     */
-    public static function countUp(string $page): void
-    {
-        $counter = self::getCounter($page)->latest()->first();
-
-        if (!$counter) {
-            // カウンタが存在しない場合作成
-            Counter::create([
-                'page_id'    => self::getId($page),
-                'ip_address' => \Request::ip(),
-                'today'      => 1,
-                'total'      => 1,
-                'updated_at' => Carbon::now()->toDateTimeString(),
-            ]);
-
-            return;
-        }
-
-        // 書き込むデータ
-        $value = [
-            'ip_address' => \Request::ip(),
-            'today'      => $counter->today++,
-            'total'      => $counter->total++,
-            'updated_at' => Carbon::now()->toDateTimeString(),
-            'yesterday'  => $counter->yesterday,
-        ];
-
-        // 通常のカウントアップ
-        if ($counter->ip_address === $value['ip_address']) {
-            // 最後にアクセスしたひとのIPと同じ場合加算しない
-            return;
-        }
-
-        // 最後のカウントからの経過日数
-        $interval_day = $counter->updated_at->day - Carbon::now()->day;
-
-        if ($interval_day >= 2) {
-            // 前日にアクセスが無かった場合、前日のカウントを0にする。
-            $value['yesterday'] = 0;
-        } elseif ($interval_day === 1) {
-            // それまでの本日のカウントを昨日のカウントに代入して、本日のカウントに1を代入
-            $value = [
-                'yesterday' => $counter->today,
-                'today'     => 1,
-            ];
-        }
-
-        Counter::updateOrCreate(['page_id' => $counter->page_id], $value);
     }
 
     /**

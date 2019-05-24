@@ -17,7 +17,7 @@ abstract class AbstractPlugin
     /** @var string プラグイン名 */
     protected $name;
 
-    /** @var PluginType タイプ */
+    /** @var int タイプ */
     protected $type;
 
     /** @var array パラメータ */
@@ -40,7 +40,7 @@ abstract class AbstractPlugin
      *
      * @param App\Enums\PluginType $type   呼び出しタイプ
      * @param array                $params パラメータ
-     * @param string||null         $body   本文
+     * @param null|string          $body   本文
      * @param string               $page   ページ名
      */
     final public function __construct(int $type, array $params, ?string $body, string $page)

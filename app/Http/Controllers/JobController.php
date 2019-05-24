@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Job;
 use Illuminate\Http\Request;
+use Illuminate\Queue\Worker;
+use Illuminate\View\View;
 
 class JobController extends Controller
 {
@@ -17,9 +19,9 @@ class JobController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
-    public function index(Request $request): Response
+    public function index(Request $request): View
     {
         return view('dashboard/job', [
             'title'=> 'List of queues.',

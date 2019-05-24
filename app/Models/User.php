@@ -11,6 +11,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Model
@@ -21,7 +22,7 @@ class User extends Model
     /**
      * ページに貼り付けられた添付ファイル.
      *
-     * @return Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function attachments(): HasMany
     {
@@ -31,7 +32,7 @@ class User extends Model
     /**
      * ページのバックアップ.
      *
-     * @return Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function backups(): HasMany
     {
@@ -41,7 +42,7 @@ class User extends Model
     /**
      * 作業履歴.
      *
-     * @return Illuminate\Database\Eloquent\Relations\HasOneThrough
+     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough
      */
     public function pageActivity(): HasOneThrough
     {
@@ -51,7 +52,7 @@ class User extends Model
     /**
      * このページの所有者.
      *
-     * @return Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function pages(): HasMany
     {
