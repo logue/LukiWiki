@@ -8,6 +8,14 @@
         "laravel"
     ],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Logue",
+            "email": "logue@hotmail.co.jp",
+            "homepage": "https://logue.dev/",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "php": "^7.2",
         "ext-pdo": "*",
@@ -74,6 +82,11 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
+        "test": "phpunit",
+        "coverage": "phpunit --coverage-html coverage",
+        "init-db": "@php artisan migrate:refresh --seed",
+        "phpmd" : "phpmd . html ruleset.xml --suffixes php --exclude node_modules,resources,storage,vendor --reportfile phpmd.html",
+        "fix": "php-cs-fixer fix .",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

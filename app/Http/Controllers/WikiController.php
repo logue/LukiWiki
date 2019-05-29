@@ -12,7 +12,6 @@ namespace App\Http\Controllers;
 use App\LukiWiki\Parser;
 use App\Models\Attachment;
 use App\Models\Backup;
-use App\Models\Counter;
 use App\Models\Page;
 use Carbon\Carbon;
 use Config;
@@ -66,8 +65,47 @@ class WikiController extends Controller
             // ページが見つからない
             abort(404, __('Page %s is not found.', $page));
         } else {
+            Debugbar::startMeasure('counter', 'Update counter.');
             // カウンターを更新
-            $counter = Counter::countUp($entry->id);
+            $counter = [
+                'ip_address' => \Request::ip(),
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ];
+            if ($entry->counter) {
+                // 全カウントを代入
+                $counter['total'] = $entry->counter->total;
+                // 最後のカウントからの経過日数
+                $interval_day = $entry->counter->updated_at->day - Carbon::now()->day;
+
+                if ($interval_day !== 0) {
+                    // 1日以上ブランクがある場合、本日のカウントをリセット
+                    $counter['today'] = 0;
+                    // 前日にアクセスが無かった場合、前日のカウントを0にする。
+                    // それまでの本日のカウントを昨日のカウントに代入して、本日のカウントに1を代入
+                    $counter['yesterday'] = ($interval_day >= 2) ? 0 : $entry->counter->today;
+                }
+                if ($interval_day === 0 && $entry->counter->ip_address === \Request::ip()) {
+                    // 同一の日のアクセスかつ、同一IPだった場合、カウンタの更新日のみアップデート
+                    $entry->counter->update(['updated_at'=>Carbon::now()->toDateTimeString()]);
+
+                    // viewでパラメータを$counter変数の値を流用するため既存の値を代入
+                    $counter['today'] = $entry->counter->today;
+                    $counter['yesterday'] = $entry->counter->yesterday;
+                    $counter['total'] = $entry->counter->total;
+                } else {
+                    // カウンタを加算
+                    $counter['today']++;
+                    $counter['total']++;
+                    $entry->counter->update($counter);
+                }
+            } else {
+                // カウンタレコード作成
+                $counter['page_id'] = $entry->id;
+                $counter['today'] = 1;
+                $counter['total'] = 1;
+                $entry->counter()->insert($counter);
+            }
+            Debugbar::stopMeasure('counter');
         }
         Debugbar::stopMeasure('db');
 
@@ -271,10 +309,10 @@ class WikiController extends Controller
             return view(
                 'default.edit',
                 [
-                    'page'   => $p,
-                    'source' => '',
+                    'page'        => $p,
+                    'source'      => '',
                     'description' => '',
-                    'hash'   => 0,
+                    'hash'        => 0,
                 ]
              );
         }
