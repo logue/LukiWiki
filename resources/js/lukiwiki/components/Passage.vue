@@ -17,7 +17,7 @@ export default {
         passage /= UNITS[unit];
       }
 
-      el.title += " (" + Math.floor(passage) + unit + ")";
+      el.title += ' (' + Math.floor(passage) + unit + ')';
     }
   }
   /*

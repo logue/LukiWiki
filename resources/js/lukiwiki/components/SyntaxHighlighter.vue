@@ -1,19 +1,28 @@
 <script>
 // CodemirrorによるSyntaxHilighter
-import CodeMirror from "codemirror/lib/codemirror";
-require("codemirror/addon/runmode/runmode");
+import CodeMirror from 'codemirror/lib/codemirror';
+require('codemirror/addon/runmode/runmode');
+
+window.CodeMirror = CodeMirror;
 
 // モードの読み込み先（ビルド時にnode_modules内のCodeMirrorのmodeからpublic/js内にコピーされる）
-const modeUrl = "/js/codemirror/mode/";
-const meta = document.createElement("script");
-meta.src = modeUrl + "meta.js";
-const others = document.getElementsByTagName("script")[0];
+const modeUrl = '/js/codemirror/mode/';
+const meta = document.createElement('script');
+meta.src = modeUrl + 'meta.js';
+const others = document.getElementsByTagName('script')[0];
 others.parentNode.insertBefore(meta, others);
 
-CodeMirror.modeUrl = modeUrl + "%N/%N.js";
+CodeMirror.modeUrl = modeUrl + '%N/%N.js';
 
 //
 let loading = {};
+
+function splitCallback (cont, n) {
+  let countDown = n;
+  return function () {
+    if (--countDown === 0) cont();
+  };
+}
 
 function ensureDeps(mode, cont) {
   const deps = CodeMirror.modes[mode].dependencies;
@@ -33,15 +42,15 @@ CodeMirror.requireMode = function(name, cont) {
   if (CodeMirror.modes.hasOwnProperty(name)) return ensureDeps(name, cont);
   if (loading.hasOwnProperty(name)) return loading[name].push(cont);
 
-  CodeMirror.on(meta, "load", function() {
+  CodeMirror.on(meta, 'load', function() {
     const mode = CodeMirror.findModeByName(name).mode;
     console.log(name, mode);
 
-    const script = document.createElement("script");
+    const script = document.createElement('script');
     script.src = CodeMirror.modeUrl.replace(/%N/g, mode);
     const list = (loading[mode] = [cont]);
 
-    CodeMirror.on(script, "load", function() {
+    CodeMirror.on(script, 'load', function() {
       ensureDeps(mode, function() {
         for (let i = 0; i < list.length; ++i) list[i]();
       });
@@ -55,7 +64,7 @@ CodeMirror.autoLoadMode = function(instance, mode) {
   if (CodeMirror.modes.hasOwnProperty(mode)) return;
 
   CodeMirror.requireMode(mode, function() {
-    instance.setOption("mode", instance.getOption("mode"));
+    instance.setOption('mode', instance.getOption('mode'));
   });
 };
 function textContent(node, out) {
@@ -63,7 +72,7 @@ function textContent(node, out) {
   if (node.nodeType === 3) return out.push(node.nodeValue);
   for (let ch = node.firstChild; ch; ch = ch.nextSibling) {
     textContent(ch, out);
-    if (isBlock.test(node.nodeType)) out.push("\n");
+    if (isBlock.test(node.nodeType)) out.push('\n');
   }
 }
 
@@ -102,10 +111,10 @@ export default {
     options.state = data.state || null;
     options.lineNumbers = data.lineNumbers || true;
 
-    if (element.tagName === "TEXTAREA") {
+    if (element.tagName === 'TEXTAREA') {
       options.mode = mode;
       console.warn(
-        "lw-sh:SyntaxHighlighting textarea tag does not supported. please use vue-codemirror directly."
+        'lw-sh:SyntaxHighlighting textarea tag does not supported. please use vue-codemirror directly.'
       );
       /*
       CodeMirror.requireMode(mode, function() {
@@ -120,12 +129,14 @@ export default {
 
     textContent(element, text);
 
-    element.innerHTML = "";
-    element.className += " cm-s-default";
-    element.style.height = data.height || "auto";
+    if (text.length !== 0){
+      element.innerHTML = '';
+    }
+    element.className += ' cm-s-default';
+    element.style.height = data.height || 'auto';
 
     CodeMirror.requireMode(mode, function() {
-      CodeMirror.runMode(text.join(""), mode, element, options);
+      CodeMirror.runMode(text.join(''), mode, element, options);
     });
   }
 };

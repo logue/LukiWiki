@@ -1,5 +1,7 @@
 const mix = require('laravel-mix');
 
+require('laravel-mix-eslint');
+
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -12,6 +14,10 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/app.js', 'public/js')
+  .eslint({
+    fix: false,
+    cache: false
+  })
   .sass('resources/sass/default.scss', 'public/css')
   .sass('resources/sass/dashboard.scss', 'public/css')
   .copy('node_modules/codemirror/LICENSE', 'public/js/codemirror/LICENSE')

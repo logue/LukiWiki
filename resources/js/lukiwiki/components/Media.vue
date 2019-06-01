@@ -2,40 +2,54 @@
   <div>
     <span v-if="src.match(/\.(jpe?g|gif|png|webp)$/)">
       <b-img-lazy
-        v-bind:src="src"
-        v-bind:alt="alt"
-        blank-color="#f8f9fa"
-        v-bind:title="title"
         v-b-tooltip
+        :src="src"
+        :alt="alt"
+        blank-color="#f8f9fa"
+        :title="title"
       />
     </span>
     <span v-else-if="src.match(/\.(mp3|m4a|wave?|aif?f|flac)$/)">
       <figure class="p-3 mb-2 bg-light rounded">
-        <figcaption>{{title}}</figcaption>
-        <div v-bind:id="name"></div>
+        <figcaption>{{ title }}</figcaption>
+        <div :id="name" />
         <div class="d-flex justify-content-around">
           <!-- controls -->
           <div>
-            <b-button variant="outline-primary" @click="playPause" class="playPause">
+            <b-button
+              variant="outline-primary"
+              class="playPause"
+              @click="playPause"
+            >
               <span v-if="playing">
-                <font-awesome-icon :icon="pauseIcon"/>
+                <font-awesome-icon :icon="pauseIcon" />
               </span>
               <span v-if="!playing">
-                <font-awesome-icon :icon="playIcon"/>
+                <font-awesome-icon :icon="playIcon" />
               </span>
             </b-button>
             <span>{{ currentTime }}/{{ getDuration }}</span>
           </div>
           <div>
             <b-input-group>
-              <b-form-input type="range" min="1" max="100" v-model="volume" @input="setVolume"></b-form-input>
+              <b-form-input
+                v-model="volume"
+                type="range"
+                min="1"
+                max="100"
+                @input="setVolume"
+              />
               <b-input-group-append>
-                <b-button variant="outline-secondary" @click="mute" class="mute">
+                <b-button
+                  variant="outline-secondary"
+                  class="mute"
+                  @click="mute"
+                >
                   <span v-if="muted">
-                    <font-awesome-icon :icon="muteIcon"/>
+                    <font-awesome-icon :icon="muteIcon" />
                   </span>
                   <span v-if="!muted">
-                    <font-awesome-icon :icon="volumeUpIcon"/>
+                    <font-awesome-icon :icon="volumeUpIcon" />
                   </span>
                 </b-button>
               </b-input-group-append>
@@ -46,46 +60,61 @@
     </span>
     <span v-else-if="src.match(/\.(mov|avi|mp4|webm)$/)">
       <video
-        v-bind:src="src"
-        v-bind:alt="alt"
-        controls="controls"
-        v-bind:title="title"
         v-b-tooltip
+        :src="src"
+        :alt="alt"
+        controls="controls"
+        :title="title"
       />
     </span>
     <span v-else>
       <a
         v-if="src.match(/\:attachment/)"
-        v-bind:title="title"
-        v-bind:href="src"
-        target="_blank"
         v-b-tooltip
+        :title="title"
+        :href="src"
+        target="_blank"
       >
-        <font-awesome-icon fas icon="paperclip" class="ml-1"></font-awesome-icon>
-        {{alt}}
+        <font-awesome-icon
+          fas
+          icon="paperclip"
+          class="ml-1"
+        />
+        {{ alt }}
       </a>
-      <a v-else v-bind:title="title" v-bind:href="src" target="_blank" v-b-tooltip>
-        {{alt}}
-        <font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon>
+      <a
+        v-else
+        v-b-tooltip
+        :title="title"
+        :href="src"
+        target="_blank"
+      >
+        {{ alt }}
+        <font-awesome-icon
+          far
+          size="xs"
+          icon="external-link-alt"
+          class="ml-1"
+        />
       </a>
     </span>
   </div>
 </template>
 <script>
 // Button
-import bButton from "bootstrap-vue/es/components/button/button";
+import bButton from 'bootstrap-vue/es/components/button/button';
 // imgタグの展開を遅らせることで描画負荷を減らす
-import bImgLazy from "bootstrap-vue/es/components/image/img-lazy";
+import bImgLazy from 'bootstrap-vue/es/components/image/img-lazy';
 // Form Input
-import bFormInput from "bootstrap-vue/es/components/form-input/form-input";
+import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
 
-import bInputGroup from "bootstrap-vue/es/components/input-group/input-group";
-import bInputGroupAppend from "bootstrap-vue/es/components/input-group/input-group-append";
+import bInputGroup from 'bootstrap-vue/es/components/input-group/input-group';
+import bInputGroupAppend from 'bootstrap-vue/es/components/input-group/input-group-append';
 
 // オーディオプレイヤー
 // https://github.com/ChadRoberts21/WaveSurferVue/ を参考に作成
-import WaveSurfer from "wavesurfer.js";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import WaveSurfer from 'wavesurfer.js';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
   faPlay,
   faPause,
@@ -93,28 +122,36 @@ import {
   faVolumeMute,
   faVolumeUp,
   faVolumeDown
-} from "@fortawesome/free-solid-svg-icons";
+} from '@fortawesome/free-solid-svg-icons';
 
 export default {
+  components: {
+    'b-button':bButton,
+    'b-img-lazy': bImgLazy,
+    'b-form-input': bFormInput,
+    'b-input-group': bInputGroup,
+    'b-input-group-append': bInputGroupAppend,
+    'font-awesome-icon': FontAwesomeIcon
+  },
   data() {
     const data = this.$slots.default[0].data.attrs;
     // 重複しないであろうIDを生成
     const N = 8;
-    var S = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    var S = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const id = Array.from(crypto.getRandomValues(new Uint8Array(N)))
       .map(n => S[n % S.length])
-      .join("");
+      .join('');
     this.name = id;
     this.href = data.href;
     return {
       src: data.href,
       name: id,
-      alt: data.href.match(".+/(.+?)([?#;].*)?$")[1],
+      alt: data.href.match('.+/(.+?)([?#;].*)?$')[1],
       title: data.title,
       ext: this.$vnode.data.ext,
       // Websurfer
       wavesurfer: null,
-      currentTime: "0:00",
+      currentTime: '0:00',
       timeInterval: null,
       volume: 100,
       playing: false,
@@ -126,54 +163,6 @@ export default {
       volumeUpIcon: faVolumeUp,
       volumeDownIcon: faVolumeDown
     };
-  },
-  methods: {
-    timeDisplay(time) {
-      // Hours, minutes and seconds
-      let hrs = Math.floor(time / 3600);
-      let mins = Math.floor((time % 3600) / 60);
-      let secs = Math.floor(time % 60);
-      // Output like "1:01" or "4:03:59" or "123:03:59"
-      let output = "";
-      if (hrs > 0) {
-        output += "" + hrs + ":" + (mins < 10 ? "0" : "");
-      }
-      output += "" + mins + ":" + (secs < 10 ? "0" : "");
-      output += "" + secs;
-      return output;
-    },
-    playPause() {
-      this.playing = this.wavesurfer.isPlaying();
-      if (this.playing) {
-        this.pause();
-      } else {
-        this.play();
-      }
-      this.playing = this.wavesurfer.isPlaying();
-    },
-    play() {
-      this.timeInterval = setInterval(() => {
-        this.currentTime = this.timeDisplay(this.wavesurfer.getCurrentTime());
-      }, 1000);
-      this.wavesurfer.play();
-    },
-    pause() {
-      this.wavesurfer.pause();
-    },
-    stop() {
-      this.wavesurfer.stop();
-      this.timeInterval = null;
-      this.currentTime = this.timeDisplay(0);
-    },
-    mute() {
-      this.muted = this.getMute;
-      this.wavesurfer.setMute(!this.muted);
-      this.muted = this.getMute;
-    },
-    setVolume() {
-      let floatValue = this.volume / 100;
-      this.wavesurfer.setVolume(Number.parseFloat(floatValue.toFixed(2)));
-    }
   },
   computed: {
     id() {
@@ -217,12 +206,12 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.wavesurfer = WaveSurfer.create({
-        container: "#" + this.name,
-        waveColor: "#ced4da",
-        progressColor: "#007bff",
-        cursorColor: "#343a40",
+        container: '#' + this.name,
+        waveColor: '#ced4da',
+        progressColor: '#007bff',
+        cursorColor: '#343a40',
         cursorWidth: 1,
-        height: "128",
+        height: '128',
         fillParent: true,
         loopSelection: true,
         interact: true,
@@ -235,12 +224,53 @@ export default {
   beforeDestroy() {
     this.wavesurfer.destroy();
   },
-  components: {
-    "b-img-lazy": bImgLazy,
-    "b-form-imput": bFormInput,
-    "b-input-group": bInputGroup,
-    "b-input-group-append": bInputGroupAppend,
-    "font-awesome-icon": FontAwesomeIcon
+  methods: {
+    timeDisplay(time) {
+      // Hours, minutes and seconds
+      let hrs = Math.floor(time / 3600);
+      let mins = Math.floor((time % 3600) / 60);
+      let secs = Math.floor(time % 60);
+      // Output like "1:01" or "4:03:59" or "123:03:59"
+      let output = '';
+      if (hrs > 0) {
+        output += '' + hrs + ':' + (mins < 10 ? '0' : '');
+      }
+      output += '' + mins + ':' + (secs < 10 ? '0' : '');
+      output += '' + secs;
+      return output;
+    },
+    playPause() {
+      this.playing = this.wavesurfer.isPlaying();
+      if (this.playing) {
+        this.pause();
+      } else {
+        this.play();
+      }
+      this.playing = this.wavesurfer.isPlaying();
+    },
+    play() {
+      this.timeInterval = setInterval(() => {
+        this.currentTime = this.timeDisplay(this.wavesurfer.getCurrentTime());
+      }, 1000);
+      this.wavesurfer.play();
+    },
+    pause() {
+      this.wavesurfer.pause();
+    },
+    stop() {
+      this.wavesurfer.stop();
+      this.timeInterval = null;
+      this.currentTime = this.timeDisplay(0);
+    },
+    mute() {
+      this.muted = this.getMute;
+      this.wavesurfer.setMute(!this.muted);
+      this.muted = this.getMute;
+    },
+    setVolume() {
+      let floatValue = this.volume / 100;
+      this.wavesurfer.setVolume(Number.parseFloat(floatValue.toFixed(2)));
+    }
   }
 };
 </script>

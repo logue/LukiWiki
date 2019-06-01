@@ -1,72 +1,93 @@
 <template>
-  <div v-bind:class="{ 'form-group row': type === 'auth', 'd-inline': type==='share' }">
-    <label v-if="type === 'auth'" class="col-md-4 col-form-label text-md-right">Login With</label>
-    <div v-bind:class="{ 'col-md-8': type === 'auth', 'd-inline': type==='share'}">
+  <div :class="{ 'form-group row': type === 'auth', 'd-inline': type==='share' }">
+    <label
+      v-if="type === 'auth'"
+      class="col-md-4 col-form-label text-md-right"
+    >Login With</label>
+    <div :class="{ 'col-md-8': type === 'auth', 'd-inline': type==='share'}">
       <b-button
-        v-on:click="jump('facebook', type)"
+        v-b-tooltip
         title="Facebook"
         class="btn-social-icon btn-facebook"
-        v-bind:class="{ 'btn-sm': type === 'share' }"
-        v-b-tooltip
+        :class="{ 'btn-sm': type === 'share' }"
+        @click="jump('facebook', type)"
       >
-        <font-awesome-icon fixed-width :icon="{ prefix: 'fab', iconName: 'facebook' }"/>
+        <font-awesome-icon
+          fixed-width
+          :icon="{ prefix: 'fab', iconName: 'facebook' }"
+        />
       </b-button>
       <b-button
-        v-on:click="jump('twitter', type)"
+        v-b-tooltip
         title="Twitter"
         class="btn-social-icon btn-twitter"
-        v-bind:class="{ 'btn-sm': type === 'share' }"
-        v-b-tooltip
+        :class="{ 'btn-sm': type === 'share' }"
+        @click="jump('twitter', type)"
       >
-        <font-awesome-icon fixed-width :icon="{ prefix: 'fab', iconName: 'twitter' }"/>
+        <font-awesome-icon
+          fixed-width
+          :icon="{ prefix: 'fab', iconName: 'twitter' }"
+        />
       </b-button>
       <b-button
-        v-on:click="jump('google', type)"
         v-if="type === 'auth'"
+        v-b-tooltip
         title="Google Account"
         class="btn-social-icon btn-google"
-        v-b-tooltip
+        @click="jump('google', type)"
       >
-        <font-awesome-icon fixed-width :icon="{ prefix: 'fab', iconName: 'google' }"/>
+        <font-awesome-icon
+          fixed-width
+          :icon="{ prefix: 'fab', iconName: 'google' }"
+        />
       </b-button>
       <b-button
-        v-on:click="jump('live', type)"
         v-if="type === 'auth'"
+        v-b-tooltip
         title="Microsoft Account"
         class="btn-social-icon btn-microsoft"
-        v-b-tooltip
+        @click="jump('live', type)"
       >
-        <font-awesome-icon fixed-width :icon="{ prefix: 'fab', iconName: 'microsoft' }"/>
+        <font-awesome-icon
+          fixed-width
+          :icon="{ prefix: 'fab', iconName: 'microsoft' }"
+        />
       </b-button>
       <b-button
-        v-on:click="jump('line', type)"
+        v-b-tooltip
         title="Line"
         class="btn-social-icon btn-line"
-        v-bind:class="{ 'btn-sm': type === 'share' }"
-        v-b-tooltip
+        :class="{ 'btn-sm': type === 'share' }"
+        @click="jump('line', type)"
       >
-        <font-awesome-icon fixed-width :icon="{ prefix: 'fab', iconName: 'line' }"/>
+        <font-awesome-icon
+          fixed-width
+          :icon="{ prefix: 'fab', iconName: 'line' }"
+        />
       </b-button>
       <b-button
-        v-on:click="jump('github', type)"
         v-if="type === 'auth'"
+        v-b-tooltip
         title="Github"
         class="btn-social-icon btn-github"
-        v-b-tooltip
+        @click="jump('github', type)"
       >
-        <font-awesome-icon fixed-width :icon="{ prefix: 'fab', iconName: 'github' }"/>
+        <font-awesome-icon
+          fixed-width
+          :icon="{ prefix: 'fab', iconName: 'github' }"
+        />
       </b-button>
     </div>
   </div>
 </template>
 <script>
 // Button
-import bButton from "bootstrap-vue/es/components/button/button";
+import bButton from 'bootstrap-vue/es/components/button/button';
 // Tooltip
-import vBTooltip from "bootstrap-vue/es/directives/tooltip/tooltip";
+import vBTooltip from 'bootstrap-vue/es/directives/tooltip/tooltip';
 // FontAwesome
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faFacebook,
   faTwitter,
@@ -74,7 +95,7 @@ import {
   faGithub,
   faMicrosoft,
   faLine
-} from "@fortawesome/free-brands-svg-icons";
+} from '@fortawesome/free-brands-svg-icons';
 
 library.add(
   // SNS
@@ -86,6 +107,13 @@ library.add(
   faLine
 );
 export default {
+  components: {
+    'b-button': bButton,
+    'font-awesome-icon': FontAwesomeIcon
+  },
+  directives: {
+    'b-tooltip': vBTooltip
+  },
   data() {
     //console.log(this.$attrs);
     return {
@@ -94,37 +122,27 @@ export default {
   },
   methods: {
     jump: (sns, type) => {
-      console.log(sns, type);
-      switch (type) {
-        case "share":
-          const canonical = document.head.querySelector("link[rel=canonical]")
-            .href;
-          let url;
-          switch (sns) {
-            case "facebook":
-              url = "http://www.facebook.com/share.php?u=";
-              break;
-            case "twitter":
-              url = "https://twiter.com/share?url=";
-              break;
-            case "line":
-              url = "https://social-plugins.line.me/lineit/share?url=";
-              break;
-          }
-          window.open(url + canonical, "share", "width=512,height=512");
+      //console.log(sns, type);
+      if (type === 'share') {
+        const canonical = document.head.querySelector('link[rel=canonical]')
+          .href;
+        let url;
+        switch (sns) {
+        case 'facebook':
+          url = 'http://www.facebook.com/share.php?u=';
           break;
-        case "auth":
-          location.href = location.origin + "/:login/" + sns;
+        case 'twitter':
+          url = 'https://twiter.com/share?url=';
           break;
+        case 'line':
+          url = 'https://social-plugins.line.me/lineit/share?url=';
+          break;
+        }
+        window.open(url + canonical, 'share', 'width=512,height=512');
+      } else {
+        location.href = location.origin + '/:login/' + sns;
       }
     }
-  },
-  components: {
-    "b-button": bButton,
-    "font-awesome-icon": FontAwesomeIcon
-  },
-  directives: {
-    "b-tooltip": vBTooltip
   }
 };
 </script>

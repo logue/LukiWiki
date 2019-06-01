@@ -5,25 +5,66 @@
         <tr>
           <td colspan="7">
             <div class="d-flex justify-content-between">
-              <div class="order-1">{{ yearMonth }}</div>
-              <b-button class="order-0" @click="goPrevMonth">prev</b-button>
-              <b-button class="order-2" @click="goNextMonth">next</b-button>
+              <div class="order-1">
+                {{ yearMonth }}
+              </div>
+              <b-button
+                class="order-0"
+                @click="goPrevMonth"
+              >
+                prev
+              </b-button>
+              <b-button
+                class="order-2"
+                @click="goNextMonth"
+              >
+                next
+              </b-button>
             </div>
           </td>
         </tr>
         <tr>
-          <th scope="col" style="color: var(--red)">日</th>
-          <th scope="col">月</th>
-          <th scope="col">火</th>
-          <th scope="col">水</th>
-          <th scope="col">木</th>
-          <th scope="col">金</th>
-          <th scope="col" style="color: var(--blue)">土</th>
+          <th
+            scope="col"
+            style="color: var(--red)"
+          >
+            日
+          </th>
+          <th scope="col">
+            月
+          </th>
+          <th scope="col">
+            火
+          </th>
+          <th scope="col">
+            水
+          </th>
+          <th scope="col">
+            木
+          </th>
+          <th scope="col">
+            金
+          </th>
+          <th
+            scope="col"
+            style="color: var(--blue)"
+          >
+            土
+          </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-bind:key="week" v-for="week in calendarData">
-          <td v-bind:key="day" v-for="day in week" class="text-center">{{ day }}</td>
+        <tr
+          v-for="week in calendarData"
+          :key="week"
+        >
+          <td
+            v-for="day in week"
+            :key="day"
+            class="text-center"
+          >
+            {{ day }}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -32,39 +73,46 @@
 
 <script>
 // Button
-import bButton from "bootstrap-vue/es/components/button/button";
+import bButton from 'bootstrap-vue/es/components/button/button';
 // Tooltip
-import vBTooltip from "bootstrap-vue/es/directives/tooltip/tooltip";
+import vBTooltip from 'bootstrap-vue/es/directives/tooltip/tooltip';
 // FontAwesome
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faChevronLeft,
   faChevronRight
-} from "@fortawesome/free-solid-svg-icons";
+} from '@fortawesome/free-solid-svg-icons';
 
 library.add(faChevronLeft, faChevronRight);
 
-import moment from "moment";
+import moment from 'moment';
 
 export default {
+  components: {
+    'b-button': bButton,
+    'font-awesome-icon': FontAwesomeIcon
+  },
+  directives: {
+    'b-tooltip': vBTooltip
+  },
   data: () => ({
     current: 0
   }),
   computed: {
     currentMoment() {
-      return moment().add(this.current, "months");
+      return moment().add(this.current, 'months');
     },
     yearMonth() {
-      return this.currentMoment.format("YYYY MM");
+      return this.currentMoment.format('YYYY MM');
     },
     calendarData() {
       // この月に何日まであるかを算出
-      const numOfMonth = this.currentMoment.endOf("month").date();
+      const numOfMonth = this.currentMoment.endOf('month').date();
       // この月の1日〜最終日までの配列
       const daysOfMonth = [...Array(numOfMonth).keys()].map(i => ++i);
       // 1日の曜日（0~6の数値で取得）
-      const firstWeekDay = this.currentMoment.startOf("month").weekday();
+      const firstWeekDay = this.currentMoment.startOf('month').weekday();
       // 週ごとの二次元配列を生成
       const data = [...Array(6)].map((empty, weekIndex) =>
         [...Array(7)].map((empty, dayIndex) => {
@@ -86,13 +134,6 @@ export default {
     goPrevMonth() {
       this.current--;
     }
-  },
-  components: {
-    "b-button": bButton,
-    "font-awesome-icon": FontAwesomeIcon
-  },
-  directives: {
-    "b-tooltip": vBTooltip
   }
 };
 </script>
