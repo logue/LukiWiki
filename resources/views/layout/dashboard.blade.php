@@ -27,9 +27,15 @@
                     <div class="sidebar-sticky">
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link active" href="#">
+                                <a class="nav-link active" href="{{ url(':dashboardi') }}">
                                     <span data-feather="home"></span>
-                                    Dashboard <span class="sr-only">(current)</span>
+                                    ダッシュボード <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url(':dashboard/maintenance') }}">
+                                    <span data-feather="bar-chart-2"></span>
+                                    メンテナンス
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -48,12 +54,6 @@
                                 <a class="nav-link" href="{{ url(':dashboard/users') }}">
                                     <span data-feather="users"></span>
                                     ユーザ一覧
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="bar-chart-2"></span>
-                                    Reports
                                 </a>
                             </li>
                             <li class="nav-item">

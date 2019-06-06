@@ -10,13 +10,13 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Config;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use RegexpTrie\RegexpTrie;
 use Symfony\Component\Intl\Collator\Collator;
 
@@ -29,8 +29,10 @@ class Page extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
+        'name'   => 'string',
         'locked' => 'bool',
         'status' => 'int',
+        'source' => 'string',
     ];
 
     /**
@@ -99,56 +101,6 @@ class Page extends Model
     }
 
     /**
-     * ページ名からIDを取得.
-     *
-     * @param string $page
-     *
-     * @return null|int
-     */
-    public static function getId(string $page): ?int
-    {
-        return self::getEntry($page)->value('id');
-    }
-
-    /**
-     * ページのデータを取得.
-     *
-     * @param string $page
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public static function getEntry(string $page): Builder
-    {
-        return self::where('pages.name', '=', $page);
-    }
-
-    /**
-     * ページに貼り付けられた添付ファイル一覧.
-     *
-     * @param string $page
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public static function getAttachments(string $page): Builder
-    {
-        return self::getEntry($page)
-            ->join('attachments', 'pages.id', '=', 'attachments.page_id');
-    }
-
-    /**
-     * ページのバックアップ一覧.
-     *
-     * @param string $page ページ名
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public static function getBackups(string $page): Builder
-    {
-        return self::getEntry($page)
-            ->join('backups', 'pages.id', '=', 'backups.page_id');
-    }
-
-    /**
      * 新着記事を取得.
      *
      * @param int $limit 制限数
@@ -200,18 +152,6 @@ class Page extends Model
     }
 
     /**
-     * ページの存在チェック.
-     *
-     * @param string $page ページ名
-     *
-     * @return bool
-     */
-    public static function exists(string $page): bool
-    {
-        return self::getEntry($page)->exists();
-    }
-
-    /**
      * 最新更新日.
      *
      * @param string $name ページ名
@@ -227,6 +167,15 @@ class Page extends Model
     }
 
     /**
+     * キャッシュ削除.
+     */
+    public static function clearCache(): void
+    {
+        Cache::forget(self::PAGELIST_CACHE);
+        Cache::forget(self::PAGELIST_TRIE_CACHE);
+    }
+
+    /**
      * 保存時にキャッシュ削除.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -235,8 +184,7 @@ class Page extends Model
      */
     protected function setKeysForSaveQuery(Builder $query): Builder
     {
-        Cache::forget(self::PAGELIST_CACHE);
-        Cache::forget(self::PAGELIST_TRIE_CACHE);
+        self::clearCache();
 
         return parent::setKeysForSaveQuery($query);
     }

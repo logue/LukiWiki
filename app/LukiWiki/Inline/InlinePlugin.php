@@ -30,7 +30,10 @@ class InlinePlugin extends AbstractInline
         }
         $body = (empty($this->body)) ? null : InlineFactory::factory($this->body, $this->page);
 
-        return '<span class="badge badge-pill badge-primary" title="Plugin">&amp;'.$this->name.'(<var>'.implode(',', $this->params).'</var>){'.$body.'}</span>';
+        return '<span class="badge badge-pill badge-primary" title="Plugin">&amp;'.
+            $this->name.
+            (\count($this->params) < 1 ? '(<var>'.implode(',', $this->params).'</var>)' : '').
+            (!empty($body) ? '{'.$body.'}' : '').';</span>';
     }
 
     public function getPattern(): string

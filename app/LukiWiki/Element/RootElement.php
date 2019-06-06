@@ -10,6 +10,7 @@
 namespace App\LukiWiki\Element;
 
 use App\LukiWiki\AbstractElement;
+use App\LukiWiki\Inline\Media;
 use App\LukiWiki\Rules\HeadingAnchor;
 
 /**
@@ -183,6 +184,9 @@ class RootElement extends AbstractElement
                             continue 2;
                         }
                         break;
+                    case'!':
+                        // Block Media
+                        //$media = new Media()
                     default:
                         $content = new InlineElement($line, $this->page);
                         break;

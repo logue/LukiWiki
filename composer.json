@@ -29,6 +29,7 @@
         "laravel/tinker": "^1.0",
         "mews/captcha": "^2.2",
         "owen-oj/laravel-getid3": "^0.1.0@alpha",
+        "php-promise/promise": "dev-master",
         "socialiteproviders/facebook": "dev-master",
         "socialiteproviders/google": "^3.0",
         "socialiteproviders/line": "^2.1",

@@ -9,6 +9,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -32,5 +33,10 @@ class Counter extends Model
     public function page(): BelongsTo
     {
         return $this->belongsTo(Page::class);
+    }
+
+    public static function today(): Builder
+    {
+        return self::whereRaw('DATE(updated_at) = DATE(NOW())');
     }
 }

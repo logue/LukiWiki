@@ -9,13 +9,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Counter;
 use App\Models\InterWiki;
 use App\Models\Page;
 use App\User;
-use Cache;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Storage;
 
 class DashboardController extends Controller
 {
@@ -29,8 +30,6 @@ class DashboardController extends Controller
     {
         // 認証用ミドルウェア
         //$this->middleware('auth');
-        // ページモデルオブジェクト
-        $this->page = new Page();
     }
 
     /**
@@ -40,7 +39,7 @@ class DashboardController extends Controller
      */
     public function __invoke(): View
     {
-        return view('dashboard/index', ['title'=>'Administrator']);
+        return view('dashboard/index', ['title'=>'Administrator', 'counter' => new Counter()]);
     }
 
     /**
@@ -188,13 +187,36 @@ class DashboardController extends Controller
      */
     public function interwiki(Request $request): View
     {
+        $interwiki = new InterWiki();
+
         if ($request->isMethod('post')) {
-            // TODO:編集処理
+            // 編集処理
+            // TODO: バリデーション
+            $value = [
+                'name'   => $request->input('name'),
+                'value'  => $request->input('value'),
+                'type'   => $request->input('type'),
+                'encode' => $request->input('encode'),
+            ];
+            switch ($request->input('action')) {
+                case 'create':
+                    $interwiki->create($value);
+                    $request->session()->flash('message', 'InterWikiを作成しました。');
+                    break;
+                case 'update':
+                    $interwiki->update($value)->where('id', '=', $request->input('id'));
+                    $request->session()->flash('message', 'InterWikiを保存しました。');
+                    break;
+                case 'delete':
+                    $interwiki->destroy($request->input('id'));
+                    $request->session()->flash('message', 'InterWikiを削除しました。');
+                    break;
+            }
         }
 
         return view('dashboard/interwiki', [
             'title'  => 'InterWikiName.',
-            'entries'=> InterWiki::paginate(20),
+            'entries'=> $interwiki->paginate(20),
         ]);
     }
 

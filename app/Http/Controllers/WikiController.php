@@ -14,11 +14,12 @@ use App\Models\Attachment;
 use App\Models\Backup;
 use App\Models\Page;
 use Carbon\Carbon;
-use Config;
 use Debugbar;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use SebastianBergmann\Diff\Differ;
@@ -60,56 +61,55 @@ class WikiController extends Controller
 
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', '=', $page)->first();
+        Debugbar::stopMeasure('db');
 
         if (!$entry) {
             // ページが見つからない
             abort(404, __('Page %s is not found.', $page));
-        } else {
-            Debugbar::startMeasure('counter', 'Update counter.');
-            // カウンターを更新
-            $counter = [
-                'ip_address' => \Request::ip(),
-                'updated_at' => Carbon::now()->toDateTimeString(),
-            ];
-            if ($entry->counter) {
-                // 全カウントを代入
-                $counter['total'] = $entry->counter->total;
-                // 最後のカウントからの経過日数
-                $interval_day = $entry->counter->updated_at->day - Carbon::now()->day;
-
-                if ($interval_day !== 0) {
-                    // 1日以上ブランクがある場合、本日のカウントをリセット
-                    $counter['today'] = 0;
-                    // 前日にアクセスが無かった場合、前日のカウントを0にする。
-                    // それまでの本日のカウントを昨日のカウントに代入して、本日のカウントに1を代入
-                    $counter['yesterday'] = ($interval_day >= 2) ? 0 : $entry->counter->today;
-                }
-                if ($interval_day === 0 && $entry->counter->ip_address === \Request::ip()) {
-                    // 同一の日のアクセスかつ、同一IPだった場合、カウンタの更新日のみアップデート
-                    $entry->counter->update(['updated_at'=>Carbon::now()->toDateTimeString()]);
-
-                    // viewでパラメータを$counter変数の値を流用するため既存の値を代入
-                    $counter['today'] = $entry->counter->today;
-                    $counter['yesterday'] = $entry->counter->yesterday;
-                    $counter['total'] = $entry->counter->total;
-                } else {
-                    // カウンタを加算
-                    $counter['today']++;
-                    $counter['total']++;
-                    $entry->counter->update($counter);
-                }
-            } else {
-                // カウンタレコード作成
-                $counter['page_id'] = $entry->id;
-                $counter['today'] = 1;
-                $counter['total'] = 1;
-                $entry->counter()->insert($counter);
-            }
-            Debugbar::stopMeasure('counter');
         }
-        Debugbar::stopMeasure('db');
+        Debugbar::startMeasure('counter', 'Update counter.');
+        // カウンターを更新
+        // TODO:あまり速くない
+        $counter = [
+            'today'      => 0,
+            'yesterday'  => 0,
+            'today'      => 0,
+            'ip_address' => \Request::ip(),
+            'updated_at' => Carbon::now()->toDateTimeString(),
+        ];
+        if ($entry->counter) {
+            // カウンタが存在する場合
+            // 全カウントを代入
+            $counter['total'] = $entry->counter->total;
+            // 最後のカウントからの経過日数
+            $interval_day = $entry->counter->updated_at->day - Carbon::now()->day;
 
-        // dd($entry);
+            if ($interval_day === 0 && $entry->counter->ip_address === $counter['ip_address']) {
+                // 同一の日のアクセスかつ、同一IPだった場合、カウンタの更新日のみアップデートし、カウント数は更新しない
+                $entry->counter->update(['updated_at'=>Carbon::now()->toDateTimeString()]);
+
+                // viewでパラメータを$counter変数の値を流用するため既存の値を代入
+                $counter['today'] = $entry->counter->today;
+                $counter['yesterday'] = $entry->counter->yesterday;
+                $counter['total'] = $entry->counter->total;
+            } else {
+                // カウンタを加算
+                $counter['today']++;
+                $counter['total']++;
+                // 前日にアクセスが無かった場合、前日のカウントを0にする。
+                // それまでの本日のカウントを昨日のカウントに代入して、本日のカウントに1を代入
+                $counter['yesterday'] = ($interval_day >= 2) ? 0 : $entry->counter->today;
+                // DBを更新
+                $entry->counter->update($counter);
+            }
+        } else {
+            // カウンタが存在しない場合レコード作成
+            $counter['page_id'] = $entry->id;
+            $counter['today'] = 1;
+            $counter['total'] = 1;
+            $entry->counter()->insert($counter);
+        }
+        Debugbar::stopMeasure('counter');
 
         // 変換処理
         $body = Parser::factory($entry->source, $page);
@@ -140,11 +140,12 @@ class WikiController extends Controller
     {
         // DBからページデータを取得
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
-        $entry = $this->page->getEntry($page)->first();
-        if (!$entry) {
-            abort(404, __('Page %s is not found.', $page));
-        }
+        $entry = $this->page->where('name', '=', $page)->first();
         Debugbar::stopMeasure('db');
+
+        if (!$entry) {
+            abort(404, sprintf(__('Page %s is not found.'), $page));
+        }
 
         return view(
            'default.source', [
@@ -166,10 +167,10 @@ class WikiController extends Controller
     public function attachments(Request $request, string $page, ?string $file = null)
     {
         $attach_id = null;
-        Debugbar::startMeasure('db', 'Fetch '.$page.' attached files from db.');
-        $attachments = $this->page->getAttachments($page);
+        Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
+        $entry = $this->page->where('name', '=', $page)->first()->attachments();
         if (!empty($file)) {
-            $attach_id = $attachments->where('attachments.name', $file)->select('attachments.id')->first()->id;
+            $attach_id = $entry->where('attachments.name', $file)->select('attachments.id')->first()->id;
         }
         Debugbar::stopMeasure('db');
 
@@ -181,7 +182,7 @@ class WikiController extends Controller
         return view(
            'default.attachment', [
                 'page'         => $page,
-                'attachments'  => $attachments->select('attachments.*')->get(),
+                'attachments'  => $entry->get(),
             ]
         );
     }
@@ -198,12 +199,8 @@ class WikiController extends Controller
     public function history(Request $request, string $page, ?int $age = null): View
     {
         Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
-        $backups = $this->page->getBackups($page)->select('backups.*')->orderBy('updated_at', 'desc');
-        if (!empty($age)) {
-            $backup = $backups->offset($age - 1)->first();
-        } else {
-            $backup = $backups->get();
-        }
+        $entry = $this->page->where('name', '=', $page)->first()->backups()->orderBy('updated_at', 'desc');
+        $backup = !empty($age) ? $entry->offset($age - 1)->first() : $entry->get();
         Debugbar::stopMeasure('db');
 
         if (!$backup) {
@@ -240,21 +237,18 @@ class WikiController extends Controller
     public function diff(Request $request, string $page, int $age = 0): View
     {
         Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
-        $page_id = $this->page->getId($page);
-        $old = Backup::where('page_id', '=', $page_id)->offset($age)->limit(1)->value('backups.source');
-        $new = $this->page->where('id', $page_id)->value('source');
+        $entry = $this->page->where('name', '=', $page);
+        $new = $entry->value('source');
+        $old = $entry->first()->backups()->orderBy('updated_at', 'desc')->offset($age)->value('source');
         Debugbar::stopMeasure('db');
 
         $differ = new Differ();
 
-        //dd($age, $old);
-
-        echo $old;
-
         return view(
             'default.diff', [
-                'page'  => $page,
-                'diff'  => $differ->diff($old, $new),
+                'page'   => $page,
+                'offset' => $age,
+                'diff'   => $differ->diff($old, $new),
             ]
         );
     }
@@ -262,19 +256,19 @@ class WikiController extends Controller
     /**
      * 印刷.
      *
-     * @param Illuminate\Http\Request $request
-     * @param string                  $page    ページ名
+     * @param \Illuminate\Http\Request $request
+     * @param string                   $page    ページ名
      *
      * @return \Illuminate\View\View
      */
     public function print(Request $request, string $page): View
     {
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
-        $entry = $this->page->where('name', $page)->first();
-        if (!$entry) {
-            abort(404, __('Page %s is not found.', $page));
-        }
+        $entry = $this->page->where('name', '=', $page)->first();
         Debugbar::stopMeasure('db');
+        if (!$entry) {
+            abort(404, sprintf(__('Page %s is not found.'), $page));
+        }
 
         // 変換処理
         $body = Parser::factory($entry->source, $page);
@@ -468,7 +462,7 @@ class WikiController extends Controller
                 // バリデーター
                 'file',
                 // アップロード可能なMIMEタイプを指定
-                'mimes:doc,docx,pdf|image|text|archive|audio|video',
+                'mimes:doc,docx,pdf,xslx|image|text|archive|audio|video',
             ],
         ]);
 

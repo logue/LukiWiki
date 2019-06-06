@@ -44,17 +44,4 @@ class Attachment extends Model
     {
         return $this->BelongsTo(User::class);
     }
-
-    /**
-     * ファイルの存在チェック.
-     *
-     * @param string $page
-     * @param string $file
-     *
-     * @return bool
-     */
-    public static function exsists(string $page, string $file): bool
-    {
-        // TODO:
-    }
 }

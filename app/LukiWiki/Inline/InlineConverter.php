@@ -24,7 +24,7 @@ class InlineConverter
         'App\LukiWiki\Inline\Url',              // URL schemes
 
         'App\LukiWiki\Inline\Media',            // Media Link: ![alt](url file "title"){option}
-        'App\LukiWiki\Inline\Link',             // Link: [alt](media file "title"){option}
+        //'App\LukiWiki\Inline\Link',             // Link: [alt](media file "title"){option}
         'App\LukiWiki\Inline\BracketName',      // AutoLink
 
         'App\LukiWiki\Inline\Note',             // Footnotes
