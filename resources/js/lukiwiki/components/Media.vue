@@ -1,151 +1,162 @@
 <template>
-  <div>
-    <span v-if="src.match(/\.(jpe?g|gif|png|webp)$/)">
-      <b-img-lazy
-        v-b-tooltip
-        :src="src"
-        :alt="alt"
-        blank-color="#f8f9fa"
-        :title="title"
-      />
-    </span>
-    <span v-else-if="src.match(/\.(mp3|m4a|wave?|aif?f|flac)$/)">
-      <figure class="p-3 mb-2 bg-light rounded">
-        <figcaption>{{ title }}</figcaption>
-        <div :id="name" />
-        <div class="d-flex justify-content-around">
-          <!-- controls -->
-          <div>
-            <b-button
-              variant="outline-primary"
-              class="playPause"
-              @click="playPause"
-            >
-              <span v-if="playing">
-                <font-awesome-icon :icon="pauseIcon" />
-              </span>
-              <span v-if="!playing">
-                <font-awesome-icon :icon="playIcon" />
-              </span>
-            </b-button>
-            <span>{{ currentTime }}/{{ getDuration }}</span>
-          </div>
-          <div>
-            <b-input-group>
-              <b-form-input
-                v-model="volume"
-                type="range"
-                min="1"
-                max="100"
-                @input="setVolume"
-              />
-              <b-input-group-append>
-                <b-button
-                  variant="outline-secondary"
-                  class="mute"
-                  @click="mute"
-                >
-                  <span v-if="muted">
-                    <font-awesome-icon :icon="muteIcon" />
-                  </span>
-                  <span v-if="!muted">
-                    <font-awesome-icon :icon="volumeUpIcon" />
-                  </span>
-                </b-button>
-              </b-input-group-append>
-            </b-input-group>
-          </div>
+  <span v-if="src.match(/\.(jpe?g|gif|png|webp)$/)">
+    <b-img-lazy
+      :id="name"
+      v-b-tooltip
+      :src="src"
+      :alt="alt"
+      blank-color="#f8f9fa"
+      :title="title"
+    />
+  </span>
+  <span v-else-if="src.match(/\.(mp3|m4a|wave?|aif?f|flac)$/)">
+    <figure class="p-3 mb-2 bg-light rounded">
+      <figcaption>{{ title }}</figcaption>
+      <div :id="name" />
+      <div class="d-flex justify-content-around">
+        <!-- controls -->
+        <div>
+          <b-button
+            variant="outline-primary"
+            class="playPause"
+            @click="playPause"
+          >
+            <span v-if="playing">
+              <font-awesome-icon :icon="pauseIcon" />
+            </span>
+            <span v-if="!playing">
+              <font-awesome-icon :icon="playIcon" />
+            </span>
+          </b-button>
+          <span>{{ currentTime }}/{{ getDuration }}</span>
         </div>
-      </figure>
-    </span>
-    <span v-else-if="src.match(/\.(mov|avi|mp4|webm)$/)">
-      <video
-        v-b-tooltip
-        :src="src"
-        :alt="alt"
-        controls="controls"
-        :title="title"
+        <div>
+          <b-input-group>
+            <b-form-input
+              v-model="volume"
+              type="range"
+              min="1"
+              max="100"
+              @input="setVolume"
+            />
+            <b-input-group-append>
+              <b-button
+                variant="outline-secondary"
+                class="mute"
+                @click="mute"
+              >
+                <span v-if="muted">
+                  <font-awesome-icon :icon="muteIcon" />
+                </span>
+                <span v-else>
+                  <font-awesome-icon :icon="volumeUpIcon" />
+                </span>
+              </b-button>
+            </b-input-group-append>
+          </b-input-group>
+        </div>
+      </div>
+    </figure>
+  </span>
+  <span v-else-if="src.match(/\.(mov|avi|mp4|webm)$/)">
+    <video
+      :id="name"
+      v-b-tooltip
+      :src="src"
+      :alt="alt"
+      controls="controls"
+      :title="title"
+    />
+  </span>
+  <span v-else>
+    <a
+      v-if="src.match(/\:attachment/)"
+      :id="name"
+      v-b-tooltip
+      :title="title"
+      :href="src"
+      target="_blank"
+    >
+      <font-awesome-icon
+        fas
+        icon="paperclip"
+        class="ml-1"
       />
-    </span>
-    <span v-else>
-      <a
-        v-if="src.match(/\:attachment/)"
-        v-b-tooltip
-        :title="title"
-        :href="src"
-        target="_blank"
-      >
-        <font-awesome-icon
-          fas
-          icon="paperclip"
-          class="ml-1"
-        />
-        {{ alt }}
-      </a>
-      <a
-        v-else
-        v-b-tooltip
-        :title="title"
-        :href="src"
-        target="_blank"
-      >
-        {{ alt }}
-        <font-awesome-icon
-          far
-          size="xs"
-          icon="external-link-alt"
-          class="ml-1"
-        />
-      </a>
-    </span>
-  </div>
+      {{ alt }}
+    </a>
+    <a
+      v-else
+      :id="name"
+      v-b-tooltip
+      :title="title"
+      :href="src"
+      target="_blank"
+    >
+      {{ alt }}
+      <font-awesome-icon
+        far
+        size="xs"
+        icon="external-link-alt"
+        class="ml-1"
+      />
+    </a>
+  </span>
 </template>
 <script>
-// Button
-import bButton from 'bootstrap-vue/es/components/button/button';
-// imgタグの展開を遅らせることで描画負荷を減らす
-import bImgLazy from 'bootstrap-vue/es/components/image/img-lazy';
-// Form Input
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
+// Bootstrap Vue
+import {
+  BButton,
+  BFormInput,
+  BImgLazy,
+  BInputGroup,
+  BInputGroupAppend,
+  VBTooltip
+} from 'bootstrap-vue';
 
-import bInputGroup from 'bootstrap-vue/es/components/input-group/input-group';
-import bInputGroupAppend from 'bootstrap-vue/es/components/input-group/input-group-append';
+// FontAwesome
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { 
+  faPaperclip,
+  faPause,
+  faPlay,
+  faStop,
+  faVolumeDown,
+  faVolumeMute,
+  faVolumeUp } from '@fortawesome/free-solid-svg-icons';
+library.add(
+  faPaperclip,
+  faPause,
+  faPlay,
+  faStop,
+  faVolumeDown,
+  faVolumeMute,
+  faVolumeUp
+);
 
 // オーディオプレイヤー
 // https://github.com/ChadRoberts21/WaveSurferVue/ を参考に作成
 import WaveSurfer from 'wavesurfer.js';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import {
-  faPlay,
-  faPause,
-  faStop,
-  faVolumeMute,
-  faVolumeUp,
-  faVolumeDown
-} from '@fortawesome/free-solid-svg-icons';
 
 export default {
   components: {
-    'b-button':bButton,
-    'b-img-lazy': bImgLazy,
-    'b-form-input': bFormInput,
-    'b-input-group': bInputGroup,
-    'b-input-group-append': bInputGroupAppend,
+    'b-button':BButton,
+    'b-img-lazy': BImgLazy,
+    'b-form-input': BFormInput,
+    'b-input-group': BInputGroup,
+    'b-input-group-append': BInputGroupAppend,
     'font-awesome-icon': FontAwesomeIcon
+  },
+  directives: {
+    'b-tooltip': VBTooltip
   },
   data() {
     const data = this.$slots.default[0].data.attrs;
-    // 重複しないであろうIDを生成
-    const N = 8;
-    var S = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const id = Array.from(crypto.getRandomValues(new Uint8Array(N)))
-      .map(n => S[n % S.length])
-      .join('');
-    this.name = id;
+    
     this.href = data.href;
     return {
       src: data.href,
-      name: id,
+      name: this.name,
       alt: data.href.match('.+/(.+?)([?#;].*)?$')[1],
       title: data.title,
       ext: this.$vnode.data.ext,
@@ -166,7 +177,7 @@ export default {
   },
   computed: {
     id() {
-      console.log(this.name);
+      //console.log(this.name);
       return `#${this.name}`;
     },
     getDuration() {
@@ -202,6 +213,15 @@ export default {
     audio(newValue, oldValue) {
       this.wavesurfer.load(newValue);
     }
+  },
+  created(){
+    // 重複しないであろうランダムのIDを生成
+    const N = 8;
+    var S = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const id = Array.from(crypto.getRandomValues(new Uint8Array(N)))
+      .map(n => S[n % S.length])
+      .join('');
+    this.name = 'media_'+id;
   },
   mounted() {
     this.$nextTick(() => {

@@ -104,17 +104,15 @@
 </template>
 
 <script>
-// Button
-import bButton from 'bootstrap-vue/es/components/button/button';
-// Form Checkbox
-import bFormCheckbox from 'bootstrap-vue/es/components/form-checkbox/form-checkbox';
-// Form Checkbox group
-import bFormCheckboxGroup from 'bootstrap-vue/es/components/form-checkbox/form-checkbox-group';
-// Form Input
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
-// Input Group
-import bInputGroup from 'bootstrap-vue/es/components/input-group/input-group';
-import bInputGroupText from 'bootstrap-vue/es/components/input-group/input-group-text';
+// Bootstrap Vue
+import {
+  BButton,
+  BFormCheckbox,
+  BFormCheckboxGroup,
+  BFormInput,
+  BInputGroup,
+  BInputGroupText
+} from 'bootstrap-vue';
 
 // language
 //import "codemirror/mode/css/css.js";
@@ -146,12 +144,11 @@ library.add(faBan, faCheck, faQuestion);
 
 export default {
   components: {
-    'b-button': bButton,
-    'b-form-input': bFormInput,
-    'b-form-checkbox': bFormCheckbox,
-    'b-form-checkbox-group': bFormCheckboxGroup,
-    'b-input-group': bInputGroup,
-    'b-input-group-text': bInputGroupText,
+    'b-button': BButton,
+    'b-form-checkbox': BFormCheckbox,
+    'b-form-input': BFormInput,
+    'b-input-group': BInputGroup,
+    'b-input-group-text': BInputGroupText,
     'font-awesome-icon': FontAwesomeIcon
   },
 

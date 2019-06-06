@@ -38,13 +38,13 @@ function ensureDeps(mode, cont) {
 }
 
 CodeMirror.requireMode = function(name, cont) {
-  console.log(name);
+  //console.log(name);
   if (CodeMirror.modes.hasOwnProperty(name)) return ensureDeps(name, cont);
   if (loading.hasOwnProperty(name)) return loading[name].push(cont);
 
   CodeMirror.on(meta, 'load', function() {
     const mode = CodeMirror.findModeByName(name).mode;
-    console.log(name, mode);
+    //console.log(name, mode);
 
     const script = document.createElement('script');
     script.src = CodeMirror.modeUrl.replace(/%N/g, mode);

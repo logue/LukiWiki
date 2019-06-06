@@ -247,23 +247,17 @@
 </template>
 
 <script>
-import CodeMirror from 'codemirror';
-
-// Button
-import bButton from 'bootstrap-vue/es/components/button/button';
-// Button Group
-import bButtonGroup from 'bootstrap-vue/es/components/button-group/button-group';
-// Button Toolbar
-import bButtonToolbar from 'bootstrap-vue/es/components/button-toolbar/button-toolbar';
-// Form Checkbox
-import bFormCheckbox from 'bootstrap-vue/es/components/form-checkbox/form-checkbox';
-// Form Input
-import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
-// Input Group
-import bInputGroup from 'bootstrap-vue/es/components/input-group/input-group';
-import bInputGroupText from 'bootstrap-vue/es/components/input-group/input-group-text';
-// Tooltip
-import vBTooltip from 'bootstrap-vue/es/directives/tooltip/tooltip';
+// Bootstrap Vue
+import {
+  BButton,
+  BButtonGroup,
+  BButtonToolbar,
+  BFormCheckbox,
+  BFormInput,
+  BInputGroup,
+  BInputGroupText,
+  VBTooltip
+} from 'bootstrap-vue';
 
 // FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -300,6 +294,9 @@ library.add(
   faTextHeight,
   faUnderline
 );
+
+// CodeMirror
+import CodeMirror from 'codemirror';
 
 // language
 import '../codemirror_lukiwiki.js';
@@ -339,17 +336,17 @@ import axios from 'axios';
 
 export default {
   components: {
-    'b-button': bButton,
-    'b-button-group': bButtonGroup,
-    'b-button-toolbar': bButtonToolbar,
-    'b-form-checkbox': bFormCheckbox,
-    'b-form-input': bFormInput,
-    'b-input-group': bInputGroup,
-    'b-input-group-text': bInputGroupText,
+    'b-button': BButton,
+    'b-button-group': BButtonGroup,
+    'b-button-toolbar': BButtonToolbar,
+    'b-form-checkbox': BFormCheckbox,
+    'b-form-input': BFormInput,
+    'b-input-group': BInputGroup,
+    'b-input-group-text': BInputGroupText,
     'font-awesome-icon': FontAwesomeIcon
   },
   directives: {
-    'b-tooltip': vBTooltip
+    'b-tooltip': VBTooltip
   },
   data() {
     return {

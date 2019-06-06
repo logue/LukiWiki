@@ -81,10 +81,12 @@
   </div>
 </template>
 <script>
-// Button
-import bButton from 'bootstrap-vue/es/components/button/button';
-// Tooltip
-import vBTooltip from 'bootstrap-vue/es/directives/tooltip/tooltip';
+// Bootstrap Vue
+import {
+  BButton,
+  VBTooltip
+} from 'bootstrap-vue';
+
 // FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -96,7 +98,6 @@ import {
   faMicrosoft,
   faLine
 } from '@fortawesome/free-brands-svg-icons';
-
 library.add(
   // SNS
   faFacebook,
@@ -106,13 +107,14 @@ library.add(
   faMicrosoft,
   faLine
 );
+
 export default {
   components: {
-    'b-button': bButton,
+    'b-button': BButton,
     'font-awesome-icon': FontAwesomeIcon
   },
   directives: {
-    'b-tooltip': vBTooltip
+    'b-tooltip': VBTooltip
   },
   data() {
     //console.log(this.$attrs);

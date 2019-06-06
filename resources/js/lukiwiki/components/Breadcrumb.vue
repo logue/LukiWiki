@@ -2,12 +2,11 @@
   <b-breadcrumb :items="items" />
 </template>
 <script>
-import bBreadcrumb from 'bootstrap-vue/es/components/breadcrumb/breadcrumb';
-import bBreadcrumbItem from 'bootstrap-vue/es/components/breadcrumb/breadcrumb-item';
+import { BBreadcrumb, BBreadcrumbItem } from 'bootstrap-vue';
 export default {
   components: {
-    'b-breadcrumb': bBreadcrumb,
-    'b-breadcrumb-item': bBreadcrumbItem
+    'b-breadcrumb': BBreadcrumb,
+    'b-breadcrumb-item': BBreadcrumbItem
   },
   data() {
     return {
