@@ -14,7 +14,7 @@ use App\LukiWiki\AbstractElement;
 class TableCell extends AbstractElement
 {
     /** @var string セルのパラメータの正規表現 */
-    const CELL_OPTION_MATCH_PATTERN = '/^(?:(LEFT|CENTER|RIGHT|JUSTIFY)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\w+)\)|LANG\((\w+2)\)|(BASELINE|TOP|MIDDLE|BOTTOM|TEXT-TOP|TEXT-BOTTOM)|(NOWRAP)(TRUNCATE)):(.*)$/';
+    //const CELL_OPTION_MATCH_PATTERN = '^(?:(LEFT|CENTER|RIGHT|JUSTIFY|BASELINE|TOP|MIDDLE|BOTTOM|TEXT-TOP|TEXT-BOTTOM|NOWRAP|TRUNCATE|((BG)?COLOR|SIZE|LANG)(?:\((\w+)\)))):.+$';
     /** @var int 縦連結 */
     public $colspan = 1;
     /** @var int 横連結 */
@@ -33,45 +33,7 @@ class TableCell extends AbstractElement
     public function __construct($text, $is_template, $page)
     {
         parent::__construct();
-        $matches = [];
 
-        // 必ず$matchesの末尾の配列にテキストの内容が入るのでarray_popの返り値を使用する方法に変更。
-        // もうすこし、マシな実装方法ないかな・・・。12/05/03
-        while (preg_match(self::CELL_OPTION_MATCH_PATTERN, $text, $matches)) {
-            // 内容
-            $text = array_pop($matches);
-            // スイッチ
-            if ($matches[1]) {
-                // LEFT CENTER RIGHT JUSTIFY
-                $this->class[] = 'text-'.self::processText($matches[1]);
-            } elseif ($matches[3]) {
-                // COLOR / BGCOLOR
-                $name = $matches[2] ? 'background-color' : 'color';
-                $this->style[$name] = self::processText($matches[3]);
-            } elseif ($matches[4]) {
-                // SIZE
-                $value = self::processText($matches[4]);
-                if (is_numeric($value)) {
-                    // 10px = 1rem
-                    $this->style['font-size'] = (int) $value.'rem';
-                } elseif (preg_match('/^h[1-6]$', $value)) {
-                    // h1 ~ h6
-                    $this->class[] = $value;
-                }
-            } elseif ($matches[5]) {
-                // LANG
-                $this->lang = self::processText($matches[5]);
-            } elseif ($matches[6]) {
-                // BASELINE / TOP / MIDDLE / BOTTOM / TEXT-TOP / TEXT-BOTTOM
-                $this->class[] = 'align-'.self::processText($matches[6]);
-            } elseif ($matches[7]) {
-                // NOWRAP
-                $this->class[] = 'text-nowrap';
-            } elseif ($matches[8]) {
-                // TRUNCATE（長いテキストを省略）
-                $this->class[] = 'text-truncate';
-            }
-        }
         if ($is_template) {
             // テンプレート行（末尾にhを入れるヘッダー行の前の行の処理）
             if (is_numeric($text)) {
@@ -80,6 +42,8 @@ class TableCell extends AbstractElement
                 // %指定
                 $this->style['width'] = $text.'%';
             }
+
+            return;
         }
 
         if (preg_match('/\\S+/', $text) === false) {
@@ -93,6 +57,66 @@ class TableCell extends AbstractElement
         } elseif (substr($text, 0, 1) === '~') {
             $this->tag = 'th';
             $text = substr($text, 1);
+        } elseif (strpos($text, ':') !== false) {
+            // :が含まれていた場合末尾をテキストとし、それ以外をパラメータとして処理をする。
+            $matches = explode(':', $text);
+            // 内容
+            $text = array_pop($matches);
+            // 配列の先端から順に評価する
+            while ($match = array_shift($matches)) {
+                // 大文字にする
+                switch (strtoupper($match)) {
+                    case 'LEFT':
+                    case 'CENTER':
+                    case 'RIGHT':
+                    case 'JUSTIFY':
+                        // 水平位置
+                        $this->class['align'] = 'text-'.strtolower(self::processText($match));
+                        break;
+                    case 'BASELINE':
+                    case 'TOP':
+                    case 'MIDDLE':
+                    case 'BOTTOM':
+                    case 'TEXT-TOP':
+                    case 'TEXT-BOTTOM':
+                        // 垂直位置
+                        $this->class['valign'] = 'align-'.strtolower(self::processText($match));
+                        break;
+                    case 'NOWRAP':
+                        // 回り込み禁止
+                        $this->class['nowrap'] = 'text-nowrap';
+                        break;
+                    case 'TRUNCATE':
+                        // 長いテキストを省略
+                        $this->class['truncate'] = 'text-truncate';
+                        break;
+                    case preg_match('/^(\w+)\((.+)\)$/', $match, $m2) === 1:
+                        $value = self::processText($m2[2]);
+                        switch ($m2[1]) {
+                            case 'BGCOLOR':
+                                $this->style['background-color'] = $value;
+                                break;
+                            case 'COLOR':
+                                $this->style['color'] = $value;
+                                break;
+                            case 'SIZE':
+                                if (is_numeric($value)) {
+                                    // 単位が含まれていない場合、rem表記とする
+                                    $this->style['font-size'] = (int) $value.'rem';
+                                // TODO:数値は制限したほうがいい？
+                                } elseif (preg_match('/^h[1-6]$', $value)) {
+                                    // h1～h6が入力されていた場合、bootstrapのヘッダーの文字サイズとする
+                                    $this->class['h'] = $value;
+                                }
+                                // あえて%指定はできないようにする。
+                                break;
+                            case 'LANG':
+                                $this->lang = $value;
+                                break;
+                        }
+                        break;
+                }
+            }
         }
 
         $obj = new InlineElement($text, $page);
@@ -117,7 +141,7 @@ class TableCell extends AbstractElement
         if (!empty($this->style)) {
             $style = [];
             foreach ($this->style as $key => $value) {
-                $style[] = $key.':'.$value;
+                $style[] = $key.': '.$value;
             }
             $param['style'] = implode(';', $style);
         }
