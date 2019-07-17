@@ -1,13 +1,13 @@
 @extends('layout.default')
 
-@if(!empty($source))
-@section('title', sprintf(__('Edit %s'), $page) )
+@if(!empty($page))
+@section('title', __('Edit :page', ['page' => $page]) )
 @else
 @section('title', __('Create new page') )
 @endif
 
 @section('content')
-<form action="{{ url($page) }}" method="POST">
+<form action="{{ !empty($page) ? url($page) : url('/') }}" method="POST">
     @csrf
     <input type="hidden" name="hash" value="{{ $hash ?? 0 }}" />
     <input type="hidden" name="origin" value="{{ $source ?? '' }}" />

@@ -278,9 +278,12 @@ class ProcessWikiData implements ShouldQueue
                     break;
                 case '|':
                     if (preg_match('/\|(.+)\|(\w+)$/i', $line, $matches) !== 0) {
+                        // オプション
+                        $option = strtolower($matches[2]);
                         // テーブル定義行の処理
-                        if (isset($matches[1]) && strpos(strtolower($matches[2]), 'c') !== false) {
+                        if (isset($matches[1]) && strpos($option, 'c') !== false) {
                             $cells = explode('|', $matches[1]);
+                            $option =
                             $c = [];
                             foreach ($cells as $cell) {
                                 if (strpos($cell, ':') !== false) {
@@ -300,7 +303,10 @@ class ProcessWikiData implements ShouldQueue
                                     $c[] = trim($cell);
                                 }
                             }
-                            $ret[] = '|'.implode('|', $c).'|'.$matches[2];
+                            if ($option === 'c') {
+                                $option = 't';
+                            }
+                            $ret[] = '|'.implode('|', $c).'|'.$option;
                         } else {
                             // cが含まれていない場合、そのまま移行
                             $ret[] = $line;

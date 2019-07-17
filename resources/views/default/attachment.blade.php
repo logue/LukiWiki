@@ -1,6 +1,6 @@
 @extends('layout.default')
 
-@section('title', sprintf(__('Attached files of %s'), $page))
+@section('title', __('File attached to :page', ['page'=>$page]))
 
 @section('content')
 <section id="filelist">
@@ -17,11 +17,14 @@
     <tbody>
       @foreach($attachments as $attachment)
       <tr>
-        <td><a href="{{ url($page.':attachments/'.$attachment->name) }}" title="{{ $attachment->hash }}">{{ $attachment->name }}</a></td>
-        <td>{{$attachment->size}}</td>
-        <td>{{$attachment->mime}}</td>
-        <td>{{$attachment->updated_at}}</td>
-        <td></td>
+        <td><a href="{{ url($page.':attachments/'.$attachment->name) }}"
+            title="{{ $attachment->hash }}">{{ $attachment->name }}</a></td>
+        <td>{{ $attachment->size }}</td>
+        <td>{{ $attachment->mime }}</td>
+        <td>{{ $attachment->updated_at }}</td>
+        <td>
+          <lw-manage-attach id="{{ $attachment->id }}"></lw-manage-attach>
+        </td>
       </tr>
       @endforeach
     </tbody>
@@ -29,17 +32,19 @@
 </section>
 
 <section id="upload">
-  <fieldset>
-    <legend>{{ __('Upload') }}</legend>
-    <form enctype="multipart/form-data" action="{{ url($page.':upload') }}" method="post" class="form-inline">
-      @csrf
-      <input type="hidden" name="action" value="attachment" />
+  <h2>{{ __('Attach to this page') }}</h2>
+  <form action="{{ url($page.':upload') }}" method="post" enctype="multipart/form-data">
+    @csrf
+    <div class="input-group">
       <div class="custom-file">
-        <input type="file" class="custom-file-input" id="attachment" name="file" />
-        <label class="custom-file-label" for="attachment" multiple="multiple">{{ __('Select attachment file') }}</label>
+        <input type="file" class="custom-file-input" id="attachment" aria-describedby="upload" name="file">
+        <label class="custom-file-label" for="attachment">{{ __('Please select the file you want to attach.') }}</label>
       </div>
-      <button class="btn btn-primary" type="submit" ><span class="fa fa-upload"></span>{{ __('Upload') }}</button>
-    </form>
-  </fieldset>
+      <div class="input-group-append">
+        <button class="btn btn-primary" type="submit" id="upload"><i
+            class="fas fa-file-upload"></i>{{ __('Upload') }}</button>
+      </div>
+    </div>
+  </form>
 </section>
 @endsection

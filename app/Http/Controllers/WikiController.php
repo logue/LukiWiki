@@ -59,16 +59,17 @@ class WikiController extends Controller
             $page = Config::get('lukiwiki.special_page.default');
         }
 
+        // ページを読み込み
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', '=', $page)->first();
-        Debugbar::stopMeasure('db');
-
         if (!$entry) {
             // ページが見つからない
-            abort(404, __('Page %s is not found.', $page));
+            abort(404, __('Page :page is not found.', ['page'=>$page]));
         }
+        Debugbar::stopMeasure('db');
+
+        // カウンタを更新
         Debugbar::startMeasure('counter', 'Update counter.');
-        // カウンターを更新
         // TODO:あまり速くない
         $counter = [
             'today'      => 0,
@@ -111,7 +112,7 @@ class WikiController extends Controller
         }
         Debugbar::stopMeasure('counter');
 
-        // 変換処理
+        // WikiをHTMLに変換
         $body = Parser::factory($entry->source, $page);
         $meta = $body->getMeta();
         $content = $body->__toString();
@@ -141,11 +142,10 @@ class WikiController extends Controller
         // DBからページデータを取得
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', '=', $page)->first();
-        Debugbar::stopMeasure('db');
-
         if (!$entry) {
-            abort(404, sprintf(__('Page %s is not found.'), $page));
+            abort(404, __('Page :page is not found.', ['page'=>$page]));
         }
+        Debugbar::stopMeasure('db');
 
         return view(
            'default.source', [
@@ -169,6 +169,9 @@ class WikiController extends Controller
         $attach_id = null;
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', '=', $page)->first()->attachments();
+        if (!$entry) {
+            abort(404, __('Page :page is not found.', ['page'=>$page]));
+        }
         if (!empty($file)) {
             $attach_id = $entry->where('attachments.name', $file)->select('attachments.id')->first()->id;
         }
@@ -199,13 +202,17 @@ class WikiController extends Controller
     public function history(Request $request, string $page, ?int $age = null): View
     {
         Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
-        $entry = $this->page->where('name', '=', $page)->first()->backups()->orderBy('updated_at', 'desc');
-        $backup = !empty($age) ? $entry->offset($age - 1)->first() : $entry->get();
-        Debugbar::stopMeasure('db');
-
-        if (!$backup) {
-            abort(404, __('Backup is not found.'));
+        $entry = $this->page->where('name', '=', $page)->first();
+        if (!$entry) {
+            // ページが見つからない
+            abort(404, __('Page :page is not found.', ['page'=>$page]));
         }
+        $entry->backups()->orderBy('updated_at', 'desc');
+        $backup = !empty($age) ? $entry->offset($age - 1)->first() : $entry->get();
+        if (!$backup) {
+            abort(404, __('There is no backup for :page.', ['page'=>$page]));
+        }
+        Debugbar::stopMeasure('db');
 
         if (!empty($age)) {
             return view(
@@ -238,6 +245,10 @@ class WikiController extends Controller
     {
         Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
         $entry = $this->page->where('name', '=', $page);
+        if (!$entry) {
+            // ページが見つからない
+            abort(404, __('Page :page is not found.', ['page'=>$page]));
+        }
         $new = $entry->value('source');
         $old = $entry->first()->backups()->orderBy('updated_at', 'desc')->offset($age)->value('source');
         Debugbar::stopMeasure('db');
@@ -265,10 +276,10 @@ class WikiController extends Controller
     {
         Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
         $entry = $this->page->where('name', '=', $page)->first();
-        Debugbar::stopMeasure('db');
         if (!$entry) {
-            abort(404, sprintf(__('Page %s is not found.'), $page));
+            abort(404, __('Page :page is not found.', ['page'=>$page]));
         }
+        Debugbar::stopMeasure('db');
 
         // 変換処理
         $body = Parser::factory($entry->source, $page);
@@ -294,10 +305,10 @@ class WikiController extends Controller
      */
     public function edit(Request $request, string $page = null): View
     {
-        $p = $page ?? $request->input('page') ?? Config::get('lukiwiki.special_page.default');
+        $p = $page ?? $request->input('page');
 
         $entry = $this->page->where('name', $p)->first();
-
+        
         if (!$entry) {
             // TODO:新規ページ
             return view(
@@ -403,9 +414,8 @@ class WikiController extends Controller
                 $entry->ip_address === $request->ip()
             ) {
                 // バックアップを上書きする
-                // この実装のため、インターバル時間未満で更新があると、DBの作成日と更新日の値が異なることになる。
-                // 同一人物による連続更新かそうでないかはここで判断
-                // ※PukiWiki Plus!およびAdv.と同じ仕様
+                // この実装のため、インターバル時間内に更新があると、DBの作成日と更新日の値が異なることになる。
+                // 同一人物による連続更新かそうでないかはここで判断（※PukiWiki Plus!およびAdv.と同じ仕様）
                 // TODO: 更新の競合が多発する状態（更新合戦）の対策
                 $backup->update([
                     'source'     => $remote->source,
@@ -439,7 +449,7 @@ class WikiController extends Controller
             ]);
         }
 
-        $request->session()->flash('message', __('Saved'));
+        $request->session()->flash('message', __('Saved.'));
 
         return redirect($page);
     }
@@ -530,7 +540,7 @@ class WikiController extends Controller
             $entries = $this->page->search($keywords)->get()->toArray();
             Debugbar::stopMeasure('parse');
         }
-        //dd($entries);
+        // dd($entries);
 
         return view(
             'default.search',
