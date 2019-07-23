@@ -14,7 +14,7 @@ use App\LukiWiki\AbstractElement;
 /**
  * Lists (UL, OL, DL).
  */
-class ListContainer extends AbstractElement
+abstract class ListContainer extends AbstractElement
 {
     public $level = 0;
     protected $tag = 'ul';

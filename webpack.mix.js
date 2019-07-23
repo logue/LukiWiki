@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const mix = require('laravel-mix');
 
 require('laravel-mix-eslint');
@@ -12,6 +13,16 @@ require('laravel-mix-eslint');
  | file for the application as well as bundling up all the JS files.
  |
  */
+
+mix.webpackConfig({
+  plugins: [
+    new webpack.ContextReplacementPlugin(
+      /moment[/\\]locale/,
+      // A regular expression matching files that should be included
+      /(en|ja)\.js/
+    )
+  ]
+});
 
 mix.js('resources/js/app.js', 'public/js')
   .eslint({

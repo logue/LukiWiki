@@ -29,3 +29,7 @@ Route::get('attachment/{id}', 'ApiController@attachment');
 Route::get('list:{page}', 'ApiController@list');
 // プラグインのAPI
 Route::any('{name}:{page}', 'ApiController@plugin')->middleware('sanitize');
+// パッケージ一覧
+Route::get('composer', 'ComposerController@index');
+// Composer実行
+Route::post('composer', 'ComposerController@execute');

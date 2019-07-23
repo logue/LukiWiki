@@ -19,7 +19,9 @@
     "require": {
         "php": "^7.2",
         "ext-pdo": "*",
+        "barryvdh/laravel-translation-manager": "*",
         "bensampo/laravel-enum": "^1.17",
+        "bookin/composer-api": "dev-master",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",
         "florianwolters/component-util-singleton": "^0.3.2",

@@ -10,7 +10,6 @@
             <div class="card bg-primary text-white p-3">
                 <div class="card-body pb-0">
                     本日のアクセス：{{ $counter->today()->sum('today') }}
-                    @php(dd($counter->pluck('counters.today', 'pages.name')))
                     <ul>
 
                     </ul>
@@ -32,5 +31,10 @@
             </div>
         </div>
     </div>
+</section>
+
+<section>
+    <h2>Package Infomation</h2>
+    <lw-composer />
 </section>
 @endsection

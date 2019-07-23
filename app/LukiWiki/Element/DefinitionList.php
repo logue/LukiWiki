@@ -3,7 +3,7 @@
  * 定義文クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018,2019 Logue
  * @license   MIT
  */
 
@@ -18,15 +18,15 @@ use App\LukiWiki\AbstractElement;
  */
 class DefinitionList extends ListContainer
 {
-    public function __construct($out, $isAmp)
+    public function __construct(string $line, string $page)
     {
+        $out = explode('|', $line);
         parent::__construct('dl', 'dt', ':', $out[0]);
         $element = new ListElement($this->level, 'dd');
-        $element->isAmp = $isAmp;
         $this->last = AbstractElement::insert($element);
 
         if (!empty($out[1])) {
-            $content = new InlineElement($out[1], $isAmp);
+            $content = new InlineElement($out[1], $page);
             $this->meta = $content->getMeta();
             $this->last = $this->last->insert($content);
         }

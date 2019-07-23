@@ -3,7 +3,7 @@
  * テーブルクラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018,2019 Logue
  * @license   MIT
  */
 
@@ -19,28 +19,57 @@ use App\LukiWiki\Rules\Alignment;
  */
 class Table extends AbstractElement
 {
+    /** @var string デフォルトのテーブルの位置 */
     public $align = 'CENTER';
+    /** @var string */
     protected $type;
     protected $types;
-    protected $col;   // number of column
+    /** @var int 列の数 */
+    protected $col;
+    /** @var array セルの種類 */
     protected static $parts = [
+        // ヘッダー行
         'h' => 'thead',
+        // フッター行
         'f' => 'tfoot',
+        // キャプション
+        'c' => 'caption',
+        // 通常の行
         ''  => 'tbody',
     ];
 
-    public function __construct($out, $page)
+    /**
+     * コンストラクタ
+     *
+     * @param string $input
+     * @param string $page
+     */
+    public function __construct(string $input, string $page)
     {
         parent::__construct();
 
-        $cells = explode('|', $out[1]);
+        $cells = explode('|', $input);
+        $last_cell = strtolower(array_pop($cells));
+
+        if ($last_cell === 't' || $last_cell === 'h' || $last_cell === 'f' || $last_cell === 'c') {
+            // T…テンプレート行、H…ヘッダー行、F…フッター行、C…キャプション
+            $this->type = $last_cell;
+            $cells = array_pop($cells);
+        }
+        // 列数
         $this->col = \count($cells);
-        $this->type = strtolower($out[2]);
+        // セルのタイプ
         $this->types = [$this->type];
-        $is_template = $this->type === 'c';
+
         $row = [];
-        foreach ($cells as $cell) {
-            $row[] = new TableCell($cell, $is_template, $page);
+        if ($this->type !== 'c') {
+            // セルの行ごとにセル内を処理
+            foreach ($cells as $cell) {
+                $row[] = new TableCell($cell, $this->type === 't', $page);
+            }
+        } else {
+            // キャプション（最初の値のみ取得。多分使う人はいない）
+            $row[] = new TableCaption($cells[0], $page);
         }
         $this->elements[] = $row;
     }

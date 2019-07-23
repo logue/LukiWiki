@@ -108,7 +108,6 @@
 import {
   BButton,
   BFormCheckbox,
-  BFormCheckboxGroup,
   BFormInput,
   BInputGroup,
   BInputGroupText
@@ -165,7 +164,7 @@ export default {
         origLeft: slot.default[1].children[0].children[0].children[0].text,
         orig: slot.origin[0].data.attrs.value,
         connect: 'align',
-        mode: 'text/lukiwiki',
+        mode: 'lukiwiki',
         lineNumbers: true,
         collapseIdentical: false,
         highlightDifferences: true
@@ -176,22 +175,22 @@ export default {
   mounted() {},
   methods: {
     onCmCursorActivity(a, b, c) {
-      //console.log("onCmCursorActivity", a, b, c);
+      console.log('onCmCursorActivity', a, b, c);
     },
     onCmReady(a, b, c) {
-      //console.log("onCmReady", a, b, c);
+      console.log('onCmReady', a, b, c);
     },
     onCmFocus(a, b, c) {
-      //console.log("onCmFocus", a, b, c);
+      console.log('onCmFocus', a, b, c);
     },
     onCmBlur(a, b, c) {
-      //console.log("onCmBlur", a, b, c);
+      console.log('onCmBlur', a, b, c);
     },
     onCmInput(code) {
-      //console.log("onCmInput", code);
+      console.log('onCmInput', code);
     },
     onCmScroll() {
-      //console.log("onCmScroll");
+      console.log('onCmScroll');
     }
   }
 };

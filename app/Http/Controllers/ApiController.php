@@ -127,4 +127,31 @@ class ApiController extends Controller
 
         abort(501, __('Not implemented.'));
     }
+
+    /**
+     * fetch composer.
+     */
+    public function composer()
+    {
+        $factory = new \Composer\Factory();
+        $composer = $factory->create(new \Composer\IO\NullIO(), base_path('composer.json'));
+
+        $repository = $composer->getRepositoryManager()->getLocalRepository();
+        $result = [];
+
+        $result['name'] = $composer->getPackage()->getName();
+        $result['packages'] = [];
+        foreach ($repository->getPackages() as $currentPackage) {
+            // @var PackageInterface $currentPackage
+            $result['packages'][] = [
+                'prettyName'    => $currentPackage->getPrettyName(),
+                'prettyVersion' => $currentPackage->getPrettyVersion(),
+                'releaseDate'   => $currentPackage->getReleaseDate(),
+                'license'       => $currentPackage->getLicense(),
+            ];
+        }
+        // not working yet
+        //$result['update'] = $this->fetchUpdateableVersions();
+        return response($result);
+    }
 }

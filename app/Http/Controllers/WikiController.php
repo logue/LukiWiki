@@ -308,7 +308,7 @@ class WikiController extends Controller
         $p = $page ?? $request->input('page');
 
         $entry = $this->page->where('name', $p)->first();
-        
+
         if (!$entry) {
             // TODO:新規ページ
             return view(

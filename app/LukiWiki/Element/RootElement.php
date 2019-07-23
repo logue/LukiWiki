@@ -142,15 +142,11 @@ class RootElement extends AbstractElement
                         $content = new Blockquote($this, $line, $this->page);
                         break;
                     case ':':
-                        $out = explode('|', ltrim($line), 2);
-                        if (!\count($out) < 2) {
-                            $content = new DefinitionList($out, $this->page);
-                        }
+                        $content = new DefinitionList($line, $this->page);
+
                         break;
                     case '|':
-                        if (preg_match('/^\|(.+)\|([hHfFcC]?)$/', $line, $out)) {
-                            $content = new Table($out, $this->page);
-                        }
+                        $content = new Table($line, $this->page);
                         break;
                     case '@':
                         $matches = [];

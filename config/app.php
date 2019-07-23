@@ -164,6 +164,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Mews\Captcha\CaptchaServiceProvider::class,
         \SocialiteProviders\Manager\ServiceProvider::class,
+        Barryvdh\TranslationManager\ManagerServiceProvider::class,
 
         // Application Service Providers...
         App\Providers\AppServiceProvider::class,
@@ -221,10 +222,10 @@ return [
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
 
-        'Debugbar'  => Barryvdh\Debugbar\Facade::class,
-        'MediaInfo' => Owenoj\LaravelGetId3\Facades\MediaInfo::class,
-        'Image'     => Intervention\Image\Facedes\Image::class,
         'Captcha'   => Mews\Captcha\Facades\Captcha::class,
+        'Debugbar'  => Barryvdh\Debugbar\Facade::class,
+        'Image'     => Intervention\Image\Facedes\Image::class,
+        'MediaInfo' => Owenoj\LaravelGetId3\Facades\MediaInfo::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
     ],
 ];
