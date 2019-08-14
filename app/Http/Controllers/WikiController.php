@@ -74,32 +74,32 @@ class WikiController extends Controller
         $counter = [
             'today'      => 0,
             'yesterday'  => 0,
-            'today'      => 0,
+            'total'      => 0,
             'ip_address' => \Request::ip(),
             'updated_at' => Carbon::now()->toDateTimeString(),
         ];
         if ($entry->counter) {
             // カウンタが存在する場合
+
             // 全カウントを代入
-            $counter['total'] = $entry->counter->total;
+            $counter['total'] = $entry->counter['total'];
             // 最後のカウントからの経過日数
-            $interval_day = $entry->counter->updated_at->day - Carbon::now()->day;
+            $interval_day = $entry->counter['updated_at']->day - Carbon::now()->day;
 
             if ($interval_day === 0 && $entry->counter->ip_address === $counter['ip_address']) {
                 // 同一の日のアクセスかつ、同一IPだった場合、カウンタの更新日のみアップデートし、カウント数は更新しない
                 $entry->counter->update(['updated_at'=>Carbon::now()->toDateTimeString()]);
 
                 // viewでパラメータを$counter変数の値を流用するため既存の値を代入
-                $counter['today'] = $entry->counter->today;
-                $counter['yesterday'] = $entry->counter->yesterday;
-                $counter['total'] = $entry->counter->total;
+                $counter['today'] = $entry->counter['today'];
+                $counter['yesterday'] = $entry->counter['yesterday'];
             } else {
                 // カウンタを加算
                 $counter['today']++;
                 $counter['total']++;
                 // 前日にアクセスが無かった場合、前日のカウントを0にする。
                 // それまでの本日のカウントを昨日のカウントに代入して、本日のカウントに1を代入
-                $counter['yesterday'] = ($interval_day >= 2) ? 0 : $entry->counter->today;
+                $counter['yesterday'] = ($interval_day >= 2) ? 0 : $entry->counter['today'];
                 // DBを更新
                 $entry->counter->update($counter);
             }
@@ -307,9 +307,9 @@ class WikiController extends Controller
     {
         $p = $page ?? $request->input('page');
 
-        $entry = $this->page->where('name', $p)->first();
+        $entry = $this->page->where('name', $p);
 
-        if (!$entry) {
+        if (!$entry->exists()) {
             // TODO:新規ページ
             return view(
                 'default.edit',
@@ -322,13 +322,15 @@ class WikiController extends Controller
              );
         }
 
+        $ret = $entry->first();
+
         return view(
             'default.edit',
             [
                 'page'        => $page,
-                'source'      => $entry->source,
-                'description' => $entry->description,
-                'hash'        => hash(self::HASH_ALGORITHM, $entry->source),
+                'source'      => $ret['source'],
+                'description' => $ret['description'],
+                'hash'        => hash(self::HASH_ALGORITHM, (string) $ret['source']),
             ]
          );
     }
@@ -363,8 +365,8 @@ class WikiController extends Controller
         if ($this->page->exists($page)) {
             // ページが存在する場合、DB上のソースを取得。
             $remote = $this->page->where('name', $page)->first();
-            $page_id = $remote->id;
-            $hash = hash(self::HASH_ALGORITHM, $remote->source);
+            $page_id = $remote['id'];
+            $hash = hash(self::HASH_ALGORITHM, (string) $remote['source']);
 
             if ($hash === hash(self::HASH_ALGORITHM, $request->input('hash'))) {
                 // 編集前とハッシュが同じだった場合処理しない
@@ -382,7 +384,7 @@ class WikiController extends Controller
                     [
                         'page'   => $page,
                         'origin' => $request->input('origin'),
-                        'remote' => $remote->source,
+                        'remote' => $remote['source'],
                         'source' => $request->input('source'),
                         'hash'   => hash(self::HASH_ALGORITHM, $request->input('origin')),
                     ]
@@ -479,14 +481,9 @@ class WikiController extends Controller
         $page_id = $this->page->getId($page);
         $replace = $request->input('replace') ?? false;
 
-        if (\is_array($request->file('file'))) {
-            // 複数のファイルを一度にアップロードしたときは配列になるので一つづつ処理
-            foreach ($request->file('file') as $entry) {
-                self::processUpload($entry, $page_id, $replace);
-            }
-        } else {
-            // 一つのファイルのみをアップロードしたときはオブジェクトになる。
-            self::processUpload($request->file('file'), $page_id, $replace);
+        // 一つづつ処理
+        foreach ($request->file('file') as $entry) {
+            $this->processUpload($entry, $page_id, $replace);
         }
 
         $request->session()->flash('message', __('Uploaded'));
@@ -555,7 +552,8 @@ class WikiController extends Controller
      * アップロード内部処理.
      *
      * @param \Illuminate\Http\UploadedFile $entry
-     * @param string                        $page
+     * @param int                           $page_id
+     * @param bool                          $replace
      *
      * @return bool
      */

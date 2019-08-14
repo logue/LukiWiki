@@ -8,7 +8,7 @@ use Tests\TestCase;
 /**
  * @coversNothing
  */
-class LukiWikiTest extends TestCase
+class LukiWikiElementTest extends TestCase
 {
     /**
      * ブロック型引用文テスト.
@@ -112,10 +112,12 @@ class LukiWikiTest extends TestCase
     public function testTable()
     {
         $html = Parser::factory(implode("\n", [
-            '|title1            |title2             |title3         |',
+            '|10                |20                 |15             |t',
+            '|title1            |title2             |title3         |h',
             '|LEFT:cell1        |CENTER:cell2       |RIGHT:cell3    |',
             '|COLOR(red):cell4  |BGCOLOR(blue):cell5|LANG(en):cell6 |',
+            '|footer1           |footer2            |footer3        |f',
         ]), 'Test');
-        $this->assertSame('<table class="table table-bordered mx-auto"><thead></thead><tfoot></tfoot><tbody><tr><td>title1</td><td>title2</td><td>title3</td></tr><tr><td class="text-left">cell1</td><td class="text-center">cell2</td><td class="text-right">cell3</td></tr><tr><td style="color: red">cell4</td><td style="background-color: blue">cell5</td><td lang="en">cell6</td></tr></tbody></table>', $html->__toString());
+        $this->assertSame('<table class="table table-bordered mx-auto"><tbody><tr><td>title1</td><td>title2</td><td>title3</td></tr><tr><td class="text-left">cell1</td><td class="text-center">cell2</td><td class="text-right">cell3</td></tr><tr><td style="color: red">cell4</td><td style="background-color: blue">cell5</td><td lang="en">cell6</td></tr></tbody></table>', $html->__toString());
     }
 }
