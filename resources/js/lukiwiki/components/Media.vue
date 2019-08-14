@@ -210,7 +210,7 @@ export default {
     }
   },
   watch: {
-    audio(newValue, oldValue) {
+    audio(newValue) {
       this.wavesurfer.load(newValue);
     }
   },
