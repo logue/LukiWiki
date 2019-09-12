@@ -15,10 +15,8 @@ use Illuminate\Http\Response;
 
 class ComposerController extends Controller
 {
-    /** @var Composer */
+    /** @var \bookin\composer\api\Composer */
     private static $composer;
-
-    /** @var WebApplication */
 
     /**
      * Constructor.
@@ -38,7 +36,7 @@ class ComposerController extends Controller
     public function index()
     {
         $result = [];
-        foreach (self::$composer::getLocalPackages() as $package) {
+        foreach (self::$composer::getLocalPackages() as /** @var \Composer\Package\CompletePackageInterface */ $package) {
             $result[] = [
                 'name'         => $package->getName(),
                 'version'      => $package->getVersion(),
@@ -55,7 +53,7 @@ class ComposerController extends Controller
     }
 
     /**
-     * search package.
+     * Search package.
      *
      * @param \Illuminate\Http\Request $request
      *
@@ -78,6 +76,6 @@ class ComposerController extends Controller
         $command = $request->input('command') ?? 'list';
         $options = $request->input('options') ?? [];
 
-        return self::$composer::runCommand($command, $options);
+        return response(self::$composer::runCommand($command, $options));
     }
 }

@@ -11,7 +11,6 @@
                 <div class="card-body pb-0">
                     本日のアクセス：{{ $counter->today()->sum('today') }}
                     <ul>
-
                     </ul>
                 </div>
             </div>
@@ -31,10 +30,5 @@
             </div>
         </div>
     </div>
-</section>
-
-<section>
-    <h2>Package Infomation</h2>
-    <lw-composer />
 </section>
 @endsection

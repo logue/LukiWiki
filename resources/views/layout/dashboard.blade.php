@@ -28,38 +28,38 @@
                         <ul class="nav flex-column">
                             <li class="nav-item">
                                 <a class="nav-link active" href="{{ url(':dashboardi') }}">
-                                    <span data-feather="home"></span>
+                                    
                                     ダッシュボード <span class="sr-only">(current)</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url(':dashboard/maintenance') }}">
-                                    <span data-feather="bar-chart-2"></span>
+                                    <font-awesome-icon fas icon="tools" />
                                     メンテナンス
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url(':dashboard/interwiki') }}">
-                                    <span data-feather="file"></span>
+                                    <font-awesome-icon fab icon="wikipedia-w" />
                                     InterWiki設定
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url(':dashboard/convert') }}">
-                                    <span data-feather="shopping-cart"></span>
+                                    <font-awesome-icon fas icon="sync" />
                                     変換
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url(':dashboard/users') }}">
-                                    <span data-feather="users"></span>
+                                    <font-awesome-icon fas icon="users" />
                                     ユーザ一覧
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="layers"></span>
-                                    Integrations
+                                <a class="nav-link" href="{{ url(':dashboard/packages') }}">
+                                    <font-awesome-icon fas icon="sync" />
+                                    パッケージの一覧・更新
                                 </a>
                             </li>
                         </ul>
