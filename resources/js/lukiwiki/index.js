@@ -45,20 +45,15 @@ Vue.config.productionTip = false;
 /*****************************************************************************/
 // Bootstrap Vue
 
-import BootstrapVue from 'bootstrap-vue';
-Vue.use(BootstrapVue);
+import {VBTooltip, BAlert, BButton, BModal} from 'bootstrap-vue';
 // ツールチップ
-import vBTooltip from 'bootstrap-vue/es/directives/tooltip/tooltip';
-Vue.directive('b-tooltip', vBTooltip);
+Vue.directive('b-tooltip', VBTooltip);
 // アラート
-import bAlert from 'bootstrap-vue/es/components/alert/alert';
-Vue.component('b-alert', bAlert);
-
-import bButton from 'bootstrap-vue/es/components/button/button';
-Vue.component('b-button', bButton);
-
-import bModal from 'bootstrap-vue/es/components/modal/modal';
-Vue.component('b-modal', bModal);
+Vue.component('b-alert', BAlert);
+// ボタン
+Vue.component('b-button', BButton);
+// モーダル
+Vue.component('b-modal', BModal);
 /*****************************************************************************/
 // Vue Codemirror
 import VueCodemirror from 'vue-codemirror';

@@ -36,7 +36,7 @@ class ComposerController extends Controller
     public function index()
     {
         $result = [];
-        foreach (self::$composer::getLocalPackages() as /** @var \Composer\Package\CompletePackageInterface */ $package) {
+        foreach (self::$composer::getLocalPackages() as /* @var \Composer\Package\CompletePackageInterface */ $package) {
             $result[] = [
                 'name'         => $package->getName(),
                 'version'      => $package->getVersion(),

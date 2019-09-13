@@ -1,8 +1,8 @@
 build:
     environment:
         php: '7.3'
-        mysql: '5.7'
-        node: '10.14'
+        mariadb: '10.4'
+        node: '12.10'
         hosts:
             lukiwiki.dev: '127.0.0.1'
         variables:

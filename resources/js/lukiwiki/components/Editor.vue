@@ -504,7 +504,7 @@ export default {
         );
       });
     },
-    onCmFocus(cm) {
+    onCmFocus() {
       //console.log("the editor is focus!", cm);
     },
     onCmCodeChange(newCode) {

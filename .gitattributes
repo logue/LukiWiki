@@ -1,4 +1,4 @@
-* text=auto eol=lf
+* text=auto eol=lf encoding=utf-8
 *.css linguist-vendored
 *.scss linguist-vendored
 *.js linguist-vendored

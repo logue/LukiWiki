@@ -32,7 +32,7 @@ import Vue from 'vue';
 // LukiWiki Start
 require('./lukiwiki');
 
-const app = new Vue({
+new Vue({
   el: '#app',
   delimiters: [{ replace: () => { return '^(?!.).'; } }, { replace: () => { return ''; } }],
 });
