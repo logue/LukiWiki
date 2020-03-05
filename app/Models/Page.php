@@ -18,14 +18,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use RegexpTrie\RegexpTrie;
-use Symfony\Component\Intl\Collator\Collator;
 
 class Page extends Model
 {
     use SoftDeletes;
 
-    const PAGELIST_TRIE_CACHE = 'page_trie';
-    const PAGELIST_CACHE = 'pages';
+    private const PAGELIST_TRIE_CACHE = 'page_trie';
+    private const PAGELIST_CACHE = 'pages';
     protected $guarded = ['id'];
 
     protected $casts = [
@@ -127,8 +126,8 @@ class Page extends Model
             $entries = array_keys($data);
 
             // ページ名でソート
-            $collator = new Collator(Config::get('locale'));
-            $collator->asort($entries, Collator::SORT_STRING);
+            $collator = new \Collator(Config::get('locale') ?? 'en');
+            $collator->asort($entries, \Collator::SORT_STRING);
 
             // ページ名と更新日時をマージする
             foreach ($entries as $entry) {

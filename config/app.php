@@ -164,7 +164,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Mews\Captcha\CaptchaServiceProvider::class,
         \SocialiteProviders\Manager\ServiceProvider::class,
-        Barryvdh\TranslationManager\ManagerServiceProvider::class,
+        HighSolutions\TranslationManager\ManagerServiceProvider::class,
 
         // Application Service Providers...
         App\Providers\AppServiceProvider::class,
