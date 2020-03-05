@@ -1,4 +1,5 @@
 <?php
+
 /**
  * WikiテキストをHTMLに変換する.
  *
@@ -34,8 +35,8 @@ class Parser
     {
         $instance = ++self::$instance;
 
-        Debugbar::startMeasure('parse', 'Converting wiki data... ['.$instance.']');
-        $lines = explode("\n", str_replace([\chr(0x0d).\chr(0x0a), \chr(0x0d), \chr(0x0a)], "\n", $source));
+        Debugbar::startMeasure('parse', 'Converting wiki data... [' . $instance . ']');
+        $lines = explode("\n", str_replace([\chr(0x0d) . \chr(0x0a), \chr(0x0d), \chr(0x0a)], "\n", $source));
         $body = new RootElement($page, ['id' => $instance]);
         $body->parse($lines);
         Debugbar::stopMeasure('parse');

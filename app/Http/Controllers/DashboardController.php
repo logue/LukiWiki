@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ダッシュボード面コントローラー.
  *
@@ -39,7 +40,7 @@ class DashboardController extends Controller
      */
     public function __invoke(): View
     {
-        return view('dashboard/index', ['title'=>'Administrator', 'counter' => new Counter()]);
+        return view('dashboard/index', ['title' => 'Administrator', 'counter' => new Counter()]);
     }
 
     /**
@@ -51,7 +52,7 @@ class DashboardController extends Controller
     {
         $users = User::paginate(15);
 
-        return view('dashboard/users', ['title'=>'User List']);
+        return view('dashboard/users', ['title' => 'User List']);
     }
 
     /**
@@ -71,7 +72,7 @@ class DashboardController extends Controller
                 switch ($request->input('type')) {
                     case 'attach':
                         $request->session()->flash('message', '添付ファイルのインポートのキューを実行しました。');
-                        foreach (Storage::files($path.'/attach/') as $file) {
+                        foreach (Storage::files($path . '/attach/') as $file) {
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessAttachmentData($file));
                             } catch (\Exception $e) {
@@ -81,7 +82,7 @@ class DashboardController extends Controller
                         break;
                     case 'backup':
                         $request->session()->flash('message', 'バックアップのインポートのキューを実行しました。');
-                        foreach (Storage::files($path.'/backup/') as $file) {
+                        foreach (Storage::files($path . '/backup/') as $file) {
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessBackupData($file));
                             } catch (\Exception $e) {
@@ -91,7 +92,7 @@ class DashboardController extends Controller
                         break;
                     case 'counter':
                         $request->session()->flash('message', 'カウンターのインポートのキューを実行しました。');
-                        foreach (Storage::files($path.'/counter/') as $file) {
+                        foreach (Storage::files($path . '/counter/') as $file) {
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessCounterData($file));
                             } catch (\Exception $e) {
@@ -101,7 +102,7 @@ class DashboardController extends Controller
                         break;
                     case 'wiki':
                         $request->session()->flash('message', 'Wikiデータのインポートのキューを実行しました。');
-                        foreach (Storage::files($path.'/wiki/') as $file) {
+                        foreach (Storage::files($path . '/wiki/') as $file) {
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessWikiData($file));
                             } catch (\Exception $e) {
@@ -113,7 +114,7 @@ class DashboardController extends Controller
                         $request->session()->flash('message', 'キューの実行をキャンセルしました。');
                 }
                 if (\count($errors) !== 0) {
-                    $request->session()->flash('message', '以下のファイルでエラーが発生しました。：'."\n".implode("\n", $errors));
+                    $request->session()->flash('message', '以下のファイルでエラーが発生しました。：' . "\n" . implode("\n", $errors));
                 }
             } else {
                 $request->session()->flash('message', 'ディレクトリが見つかりません。');
@@ -132,7 +133,7 @@ class DashboardController extends Controller
             return redirect(':dashboard/convert');
         }
 
-        return view('dashboard/convert', ['title'=>'Convert PukiWiki data.']);
+        return view('dashboard/convert', ['title' => 'Convert PukiWiki data.']);
     }
 
     /**
@@ -156,14 +157,14 @@ class DashboardController extends Controller
         foreach ($args as $cache) {
             switch ($cache) {
                 case 'view':
-                    $files = glob(storage_path('framework/views').'/*.php');
-                    foreach ($files as $no=>$file) {
+                    $files = glob(storage_path('framework/views') . '/*.php');
+                    foreach ($files as $no => $file) {
                         unlink($file);
                     }
                     $msg[] = 'ビューキャッシュ';
                     break;
                 case 'debug':
-                    $files = glob(storage_path('framework/debugbar').'/*.json');
+                    $files = glob(storage_path('framework/debugbar') . '/*.json');
                     $msg[] = 'デバッグ情報';
                     break;
                 case 'system':
@@ -173,7 +174,7 @@ class DashboardController extends Controller
             }
         }
 
-        $request->session()->flash('message', '以下のキャッシュを削除しました：<br />'.implode("<br />\n", $msg));
+        $request->session()->flash('message', '以下のキャッシュを削除しました：<br />' . implode("<br />\n", $msg));
 
         return redirect(self::DEFAULT_PATH);
     }
@@ -216,7 +217,7 @@ class DashboardController extends Controller
 
         return view('dashboard/interwiki', [
             'title'  => 'InterWikiName.',
-            'entries'=> $interwiki->paginate(20),
+            'entries' => $interwiki->paginate(20),
         ]);
     }
 
@@ -240,8 +241,8 @@ class DashboardController extends Controller
         }
 
         $form = '<form method="post" action="captcha-test">';
-        $form .= '<input type="hidden" name="_token" value="'.csrf_token().'">';
-        $form .= '<p>'.captcha_img().'</p>';
+        $form .= '<input type="hidden" name="_token" value="' . csrf_token() . '">';
+        $form .= '<p>' . captcha_img() . '</p>';
         $form .= '<p><input type="text" name="captcha" class=""/></p>';
         $form .= '<p><button type="submit" name="check">Check</button></p>';
         $form .= '</form>';

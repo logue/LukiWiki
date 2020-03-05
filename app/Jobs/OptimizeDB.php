@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DB最適化.
  *
@@ -22,6 +23,7 @@ class OptimizeDB implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     private $db;
 
     /**
@@ -41,7 +43,7 @@ class OptimizeDB implements ShouldQueue
         if ($this->db === 'sqlite') {
             \DB::statement('VACUUM');
         } elseif ($this->db === 'mysql') {
-            \DB::statement('OPTIMIZE TABLE '.\DB::getTablePrefix().'.*');
+            \DB::statement('OPTIMIZE TABLE ' . \DB::getTablePrefix() . '.*');
         } elseif ($this->db === 'pgsql') {
             \DB::statement('VACUUM FULL');
         }

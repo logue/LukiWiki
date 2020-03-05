@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 添付ファイル取り込みのメイン処理.
  *
@@ -26,6 +27,7 @@ class ProcessAttachmentData implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     /**
      * 最大試行回数.
      *
@@ -79,11 +81,11 @@ class ProcessAttachmentData implements ShouldQueue
         if (!$page_id) {
             return;
         }
-        Log::info('Page: '.$page);
+        Log::info('Page: ' . $page);
 
-        if (Attachment::where(['page_id'=>$page_id, 'name' => $this->original_name])->exists()) {
+        if (Attachment::where(['page_id' => $page_id, 'name' => $this->original_name])->exists()) {
             // すでにデーターベースに登録されている場合スキップ
-            Log::info('-> File: '.$this->original_name.' is already registed to db. Skipped.');
+            Log::info('-> File: ' . $this->original_name . ' is already registed to db. Skipped.');
 
             return;
         }
@@ -102,28 +104,28 @@ class ProcessAttachmentData implements ShouldQueue
 
         // 閲覧回数を取得
         $count = 0;
-        if (Storage::exists($this->file.'.log')) {
-            $log = explode("\n", trim(Storage::get($this->file.'.log')));
+        if (Storage::exists($this->file . '.log')) {
+            $log = explode("\n", trim(Storage::get($this->file . '.log')));
             $count = (int) explode(',', array_unshift($log))[0];
             $locked = $count !== 1 && array_shift($log) === '1';
         }
 
         // Storageクラスにハッシュなどの命令がないためファイルの実体のパスを取得
-        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
+        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/' . $this->file));
 
         // サーバーに保存する実際のファイル名はハッシュ値＋拡張子
         $s = hash_file('sha1', $from);
-        $stored_name = $s.'.'.$ext;
+        $stored_name = $s . '.' . $ext;
         // 保存先のパス
-        $dest = $this->attach_dir.'/'.$stored_name;
+        $dest = $this->attach_dir . '/' . $stored_name;
 
         if (!Storage::exists($dest)) {
             // LukiWikiの添付ディレクトリにコピー
-            Log::info('-> File: '.$this->original_name.' Copied to '.$stored_name.'.');
+            Log::info('-> File: ' . $this->original_name . ' Copied to ' . $stored_name . '.');
             Storage::copy($this->file, $dest);
         } else {
             // TODO:同一のファイルが別ページにアップされている
-            Log::info('-> File: '.$this->original_name.' is already exists or same file('.$stored_name.'). Skipped.');
+            Log::info('-> File: ' . $this->original_name . ' is already exists or same file(' . $stored_name . '). Skipped.');
         }
 
         Attachment::updateOrCreate([
@@ -147,7 +149,7 @@ class ProcessAttachmentData implements ShouldQueue
      */
     public function failed(\Exception $exception)
     {
-        Log::error('Convert Error: '.$this->original_name.' ('.$this->page.')');
+        Log::error('Convert Error: ' . $this->original_name . ' (' . $this->page . ')');
         Log::error($exception);
     }
 }

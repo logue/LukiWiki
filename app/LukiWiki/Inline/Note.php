@@ -1,4 +1,5 @@
 <?php
+
 /**
  * フットノート変換クラス.
  *
@@ -27,7 +28,7 @@ class Note extends AbstractInline
         $converter = new InlineConverter([], [__CLASS__], $this->page);
         $this->meta['note'] = trim($converter->convert($this->body));
 
-        return '<sup><a id="note-anchor-'.$id.'" href="#note-'.$id.'" class="note-anchor"><font-awesome-icon fas icon="thumbtack" size="xs">*</font-awesome-icon>'.$id.'</a></sup>';
+        return '<sup><a id="note-anchor-' . $id . '" href="#note-' . $id . '" class="note-anchor"><font-awesome-icon fas icon="thumbtack" size="xs">*</font-awesome-icon>' . $id . '</a></sup>';
     }
 
     /**
@@ -36,8 +37,8 @@ class Note extends AbstractInline
     public function getPattern(): string
     {
         return
-            '\(\('.
-             '((?>(?=\(\()(?R)|(?!\)\)).)*)'.	// (1) note body
+            '\(\(' .
+             '((?>(?=\(\()(?R)|(?!\)\)).)*)' .   // (1) note body
             '\)\)';
     }
 

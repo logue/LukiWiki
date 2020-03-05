@@ -19,7 +19,7 @@ class LukiWikiElementTest extends TestCase
             '> Someting cited',
             '> like E-mail text.',
         ]), 'Test');
-        $this->assertSame('<blockquote class="blockquote">Someting cited'."\n".'like E-mail text.</blockquote>', $html->__toString());
+        $this->assertSame('<blockquote class="blockquote">Someting cited' . "\n" . 'like E-mail text.</blockquote>', $html->__toString());
     }
 
     /**

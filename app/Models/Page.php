@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ページモデル.
  *
@@ -87,12 +88,12 @@ class Page extends Model
         foreach ($keywords as $keyword) {
             if (\Config::get('database.default') === 'mysql') {
                 $query
-                    ->where('name', 'like', '%'.$keyword.'%')
+                    ->where('name', 'like', '%' . $keyword . '%')
                     ->orWhereRaw('match(`source`) against (? IN NATURAL LANGUAGE MODE)', [$keyword]);
             } else {
                 $query
-                    ->where('name', 'like', '%'.$keyword.'%')
-                    ->orWhere('source', 'like', '%'.$keyword.'%');
+                    ->where('name', 'like', '%' . $keyword . '%')
+                    ->orWhere('source', 'like', '%' . $keyword . '%');
             }
         }
 
@@ -161,8 +162,7 @@ class Page extends Model
     {
         return Carbon::parse(empty($name) ?
             self::select('updated_at')->max('updated_at') :
-            self::select('updated_at')->where('name', $name)
-        );
+            self::select('updated_at')->where('name', $name));
     }
 
     /**

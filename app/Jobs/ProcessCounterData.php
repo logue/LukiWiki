@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PukiWikiカウンター取り込み処理.
  *
@@ -26,6 +27,7 @@ class ProcessCounterData implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     /**
      * 最大試行回数.
      *
@@ -60,7 +62,7 @@ class ProcessCounterData implements ShouldQueue
     {
         // :が含まれるページ名は_に変更
         $page = preg_replace('/\:/', '_', $this->page);
-        Log::info('Loading "'.$this->file.'"('.$page.')...');
+        Log::info('Loading "' . $this->file . '"(' . $page . ')...');
 
         // ページが存在しない場合、移行はしない。（IDで管理するため）
         $page_id = Page::getId($page);
@@ -76,7 +78,8 @@ class ProcessCounterData implements ShouldQueue
             [
                 // 更新対象
                 'page_id'        => $page_id,
-            ], [
+            ],
+            [
                 'total'           => $data[0],
                 'today'           => $data[2],
                 'yesterday'       => $data[3],
@@ -93,7 +96,7 @@ class ProcessCounterData implements ShouldQueue
      */
     public function failed(\Exception $exception)
     {
-        Log::error('Convert Error: '.$this->page);
+        Log::error('Convert Error: ' . $this->page);
         Log::error($exception);
     }
 }

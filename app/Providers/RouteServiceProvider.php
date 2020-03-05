@@ -28,7 +28,7 @@ class RouteServiceProvider extends ServiceProvider
 
         // 利用可能なSNSによってフィルタリング
         $availables = [];
-        foreach (\Config::get('services') as $key=>$value) {
+        foreach (\Config::get('services') as $key => $value) {
             if (isset($value['client_id']) && !empty($value['client_id'])) {
                 $availables[] = $key;
             }

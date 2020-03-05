@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Naviプラグイン.
  *
@@ -25,10 +26,10 @@ class Navi extends AbstractPlugin implements BlockPluginInterface
             $home = WikiUrl::getFullname($home, $this->page);
             $is_home = $home === $this->page;
             if (!Page::exists($home)) {
-                return $this->error('No such page: '.e($home));
+                return $this->error('No such page: ' . e($home));
             }
-            if (!$is_home && preg_match('/^'.preg_quote($home, '/').'/', $this->page) === false) {
-                return $this->error('Not a child page like: '.e($home.'/'.WikiUrl::stripRelativePath($this->page)));
+            if (!$is_home && preg_match('/^' . preg_quote($home, '/') . '/', $this->page) === false) {
+                return $this->error('Not a child page like: ' . e($home . '/' . WikiUrl::stripRelativePath($this->page)));
             }
             $reverse = strtolower($reverse) === 'reverse';
             $ret['home'] = $home;
@@ -37,7 +38,7 @@ class Navi extends AbstractPlugin implements BlockPluginInterface
             $is_home = true;
         }
 
-        $pages = array_unique(preg_grep('/^'.preg_quote($ret['home'], '/').'($|\/)/', array_keys(Page::getEntries())));
+        $pages = array_unique(preg_grep('/^' . preg_quote($ret['home'], '/') . '($|\/)/', array_keys(Page::getEntries())));
 
         if ($reverse) {
             $pages = array_reverse($pages);
@@ -45,7 +46,7 @@ class Navi extends AbstractPlugin implements BlockPluginInterface
 
         $ret['prev'] = $home;
         $ret['next'] = current($pages);
-        foreach ($pages as $index=>$page) {
+        foreach ($pages as $index => $page) {
             if ($page === $this->page) {
                 $next_key = $index + 1;
                 if (\array_key_exists($next_key, $pages)) {
@@ -74,10 +75,10 @@ class Navi extends AbstractPlugin implements BlockPluginInterface
             }
             if ($count === 1) {
                 // Sentinel only: Show usage and warning;
-                return $this->error('No child page like: '.e($home).'/Foo');
+                return $this->error('No child page like: ' . e($home) . '/Foo');
             }
         }
         //dd($ret);
-        return view('plugin.navi', ['ret'=>$ret]);
+        return view('plugin.navi', ['ret' => $ret]);
     }
 }

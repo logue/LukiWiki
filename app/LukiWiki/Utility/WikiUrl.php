@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Wikiのファイルシステム関数.
  *
@@ -56,7 +57,7 @@ class WikiUrl
             }
             // ディレクトリを結合する
             $name = !empty($arrp) ? implode('/', array_merge($arrp, $arrn)) :
-                (!empty($arrn) ? $defaultpage.'/'.implode('/', $arrn) : $defaultpage);
+                (!empty($arrn) ? $defaultpage . '/' . implode('/', $arrn) : $defaultpage);
         }
 
         return $name;

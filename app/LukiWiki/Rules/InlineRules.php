@@ -1,4 +1,5 @@
 <?php
+
 /**
  * インラインWiki文法定義クラス.
  *
@@ -97,7 +98,7 @@ class InlineRules
      */
     public static function isInterWiki($str)
     {
-        return preg_match('/^'.self::INTERWIKINAME_PATTERN.'$/', $str);
+        return preg_match('/^' . self::INTERWIKINAME_PATTERN . '$/', $str);
     }
 
     /**
@@ -109,7 +110,7 @@ class InlineRules
      */
     public static function isBracketName($str)
     {
-        return preg_match('/^(?!\/)'.self::BRACKETNAME_PATTERN.'$(?<!\/$)/', $str);
+        return preg_match('/^(?!\/)' . self::BRACKETNAME_PATTERN . '$(?<!\/$)/', $str);
     }
 
     /**
@@ -121,7 +122,7 @@ class InlineRules
      */
     public static function isWikiName($str)
     {
-        return preg_match('/^'.self::WIKINAME_PATTERN.'$/', $str);
+        return preg_match('/^' . self::WIKINAME_PATTERN . '$/', $str);
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * インライン要素クラス.
  *
@@ -95,7 +96,7 @@ abstract class AbstractInline
     {
         if (empty($this->page) && !empty($this->anchor)) {
             // ページ内リンク
-            return '<a href="'.$this->anchor.'">'.$this->alias.'</a>';
+            return '<a href="' . $this->anchor . '">' . $this->alias . '</a>';
         }
 
         $anchor_name = trim(empty($this->alias) ? $this->page : $this->alias);
@@ -103,12 +104,12 @@ abstract class AbstractInline
         $title = !empty($this->title) ? $this->title : $this->page;
 
         if (\in_array($this->page, array_keys(Page::getEntries()), true)) {
-            return '<a href="'.url($this->page).$anchor.'" title="'.$this->title.'" v-b-tooltip>'.$anchor_name.'</a>';
+            return '<a href="' . url($this->page) . $anchor . '" title="' . $this->title . '" v-b-tooltip>' . $anchor_name . '</a>';
         }
         if (!empty($this->page)) {
-            $retval = $anchor_name.'<a href="'.url($this->page).':edit" rel="nofollow" title="Edit '.$this->page.'" v-b-tooltip>?</a>';
+            $retval = $anchor_name . '<a href="' . url($this->page) . ':edit" rel="nofollow" title="Edit ' . $this->page . '" v-b-tooltip>?</a>';
 
-            return '<span class="bg-light text-dark">'.$retval.'</span>';
+            return '<span class="bg-light text-dark">' . $retval . '</span>';
         }
 
         return $alias;
@@ -162,7 +163,7 @@ abstract class AbstractInline
             }
             // ディレクトリを結合する
             $name = !empty($arrp) ? implode('/', array_merge($arrp, $arrn)) :
-                (!empty($arrn) ? $defaultpage.'/'.implode('/', $arrn) : $defaultpage);
+                (!empty($arrn) ? $defaultpage . '/' . implode('/', $arrn) : $defaultpage);
         }
 
         return $name;
@@ -220,7 +221,7 @@ abstract class AbstractInline
             $purl = parse_url($params['href']);
             if (isset($purl['host']) && substr($purl['host'], 0, 4) === 'xn--') {
                 // 国際化ドメインのときにアドレスをpunycode変換する。（https://日本語.jp → https://xn--wgv71a119e.jp）
-                $this->name = preg_replace('/'.$purl['host'].'/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $params['href']);
+                $this->name = preg_replace('/' . $purl['host'] . '/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $params['href']);
             }
         } else {
             $this->href = url(self::getPageName($params['href']));

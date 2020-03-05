@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 入力文字列のサニタイズ.
  *
@@ -34,7 +35,7 @@ class Sanitize
             if (\is_string($val)) {
                 $processed = trim(
                     str_replace(
-                        [\chr(0x0d).\chr(0x0a), \chr(0x0d), \chr(0x0a)],
+                        [\chr(0x0d) . \chr(0x0a), \chr(0x0d), \chr(0x0a)],
                         "\n",
                         preg_replace('/\A[\p{C}\p{Z}]++|[\p{C}\p{Z}]++\z/u', '', $val)
                     )

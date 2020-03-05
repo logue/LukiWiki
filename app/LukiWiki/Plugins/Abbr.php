@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 略語要素プラグイン.
  *
@@ -16,6 +17,6 @@ class Abbr extends AbstractPlugin implements InlinePluginInterface
 {
     public function inline(): string
     {
-        return '<abbr title="'.e($this->body).'" v-b-tooltip>'.e($this->params[0]).'</abbr>';
+        return '<abbr title="' . e($this->body) . '" v-b-tooltip>' . e($this->params[0]) . '</abbr>';
     }
 }

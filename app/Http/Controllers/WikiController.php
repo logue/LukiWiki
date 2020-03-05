@@ -1,4 +1,5 @@
 <?php
+
 /**
  * LukiWikiコントローラー.
  *
@@ -60,11 +61,11 @@ class WikiController extends Controller
         }
 
         // ページを読み込み
-        Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
+        Debugbar::startMeasure('db', 'Fetch ' . $page . ' data from db.');
         $entry = $this->page->where('name', '=', $page)->first();
         if (!$entry) {
             // ページが見つからない
-            abort(404, __('Page :page is not found.', ['page'=>$page]));
+            abort(404, __('Page :page is not found.', ['page' => $page]));
         }
         Debugbar::stopMeasure('db');
 
@@ -88,7 +89,7 @@ class WikiController extends Controller
 
             if ($interval_day === 0 && $entry->counter->ip_address === $counter['ip_address']) {
                 // 同一の日のアクセスかつ、同一IPだった場合、カウンタの更新日のみアップデートし、カウント数は更新しない
-                $entry->counter->update(['updated_at'=>Carbon::now()->toDateTimeString()]);
+                $entry->counter->update(['updated_at' => Carbon::now()->toDateTimeString()]);
 
                 // viewでパラメータを$counter変数の値を流用するため既存の値を代入
                 $counter['today'] = $entry->counter['today'];
@@ -118,8 +119,8 @@ class WikiController extends Controller
         $content = $body->__toString();
 
         return view(
-           'default.content',
-           [
+            'default.content',
+            [
                 'page'      => $page,
                 'content'   => $content,
                 'entry'     => $entry,
@@ -140,15 +141,16 @@ class WikiController extends Controller
     public function source(Request $request, string $page): View
     {
         // DBからページデータを取得
-        Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
+        Debugbar::startMeasure('db', 'Fetch ' . $page . ' data from db.');
         $entry = $this->page->where('name', '=', $page)->first();
         if (!$entry) {
-            abort(404, __('Page :page is not found.', ['page'=>$page]));
+            abort(404, __('Page :page is not found.', ['page' => $page]));
         }
         Debugbar::stopMeasure('db');
 
         return view(
-           'default.source', [
+            'default.source',
+            [
                 'page'    => $entry->name,
                 'source'  => $entry->source,
             ]
@@ -167,10 +169,10 @@ class WikiController extends Controller
     public function attachments(Request $request, string $page, ?string $file = null)
     {
         $attach_id = null;
-        Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
+        Debugbar::startMeasure('db', 'Fetch ' . $page . ' data from db.');
         $entry = $this->page->where('name', '=', $page)->first()->attachments();
         if (!$entry) {
-            abort(404, __('Page :page is not found.', ['page'=>$page]));
+            abort(404, __('Page :page is not found.', ['page' => $page]));
         }
         if (!empty($file)) {
             $attach_id = $entry->where('attachments.name', $file)->select('attachments.id')->first()->id;
@@ -179,11 +181,12 @@ class WikiController extends Controller
 
         if (!empty($attach_id)) {
             // TODO: 効率が悪い
-            return redirect(':api/attachment/'.$attach_id);
+            return redirect(':api/attachment/' . $attach_id);
         }
 
         return view(
-           'default.attachment', [
+            'default.attachment',
+            [
                 'page'         => $page,
                 'attachments'  => $entry->get(),
             ]
@@ -201,22 +204,23 @@ class WikiController extends Controller
      */
     public function history(Request $request, string $page, ?int $age = null): View
     {
-        Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
+        Debugbar::startMeasure('db', 'Fetch ' . $page . ' backup data from db.');
         $entry = $this->page->where('name', '=', $page)->first();
         if (!$entry) {
             // ページが見つからない
-            abort(404, __('Page :page is not found.', ['page'=>$page]));
+            abort(404, __('Page :page is not found.', ['page' => $page]));
         }
         $entry->backups()->orderBy('updated_at', 'desc');
         $backup = !empty($age) ? $entry->offset($age - 1)->first() : $entry->get();
         if (!$backup) {
-            abort(404, __('There is no backup for :page.', ['page'=>$page]));
+            abort(404, __('There is no backup for :page.', ['page' => $page]));
         }
         Debugbar::stopMeasure('db');
 
         if (!empty($age)) {
             return view(
-               'default.source', [
+                'default.source',
+                [
                     'page'    => $page,
                     'age'     => $age,
                     'source'  => $backup->source,
@@ -225,7 +229,8 @@ class WikiController extends Controller
         }
 
         return view(
-           'default.history', [
+            'default.history',
+            [
                 'page'         => $page,
                 'entries'      => $backup,
             ]
@@ -243,11 +248,11 @@ class WikiController extends Controller
      */
     public function diff(Request $request, string $page, int $age = 0): View
     {
-        Debugbar::startMeasure('db', 'Fetch '.$page.' backup data from db.');
+        Debugbar::startMeasure('db', 'Fetch ' . $page . ' backup data from db.');
         $entry = $this->page->where('name', '=', $page);
         if (!$entry) {
             // ページが見つからない
-            abort(404, __('Page :page is not found.', ['page'=>$page]));
+            abort(404, __('Page :page is not found.', ['page' => $page]));
         }
         $new = $entry->value('source');
         $old = $entry->first()->backups()->orderBy('updated_at', 'desc')->offset($age)->value('source');
@@ -256,7 +261,8 @@ class WikiController extends Controller
         $differ = new Differ();
 
         return view(
-            'default.diff', [
+            'default.diff',
+            [
                 'page'   => $page,
                 'offset' => $age,
                 'diff'   => $differ->diff($old, $new),
@@ -274,10 +280,10 @@ class WikiController extends Controller
      */
     public function print(Request $request, string $page): View
     {
-        Debugbar::startMeasure('db', 'Fetch '.$page.' data from db.');
+        Debugbar::startMeasure('db', 'Fetch ' . $page . ' data from db.');
         $entry = $this->page->where('name', '=', $page)->first();
         if (!$entry) {
-            abort(404, __('Page :page is not found.', ['page'=>$page]));
+            abort(404, __('Page :page is not found.', ['page' => $page]));
         }
         Debugbar::stopMeasure('db');
 
@@ -286,7 +292,8 @@ class WikiController extends Controller
         $meta = $body->getMeta();
 
         return view(
-           'layout.print', [
+            'layout.print',
+            [
                 'page'  => $entry->name,
                 'body'  => $body,
                 'entry' => $entry,
@@ -319,7 +326,7 @@ class WikiController extends Controller
                     'description' => '',
                     'hash'        => 0,
                 ]
-             );
+            );
         }
 
         $ret = $entry->first();
@@ -332,7 +339,7 @@ class WikiController extends Controller
                 'description' => $ret['description'],
                 'hash'        => hash(self::HASH_ALGORITHM, (string) $ret['source']),
             ]
-         );
+        );
     }
 
     /**
@@ -340,7 +347,6 @@ class WikiController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param string                   $page
-     * @param string                   $file
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
@@ -488,7 +494,7 @@ class WikiController extends Controller
 
         $request->session()->flash('message', __('Uploaded'));
 
-        return redirect($page.':attachments');
+        return redirect($page . ':attachments');
     }
 
     /**
@@ -571,7 +577,7 @@ class WikiController extends Controller
         // 保存するファイル名
         $md5Name = hash_file('sha1', $entry->getRealPath());
         $ext = $entry->guessExtension();
-        $stored_name = $md5Name.'.'.$ext;
+        $stored_name = $md5Name . '.' . $ext;
 
         if ($replace) {
             // 同名で登録されている添付ファイルがあるか
@@ -580,7 +586,7 @@ class WikiController extends Controller
             if ($old_attach) {
                 if (!Attachment::where('stored_name', $old_attach->stored_name)->exists()) {
                     // 同一ハッシュのファイルがDBに登録されていない（他から参照されていない）場合、ファイルを削除する
-                    Storage::delete('attachments/'.$old_attach->stored_name);
+                    Storage::delete('attachments/' . $old_attach->stored_name);
                 }
             }
 

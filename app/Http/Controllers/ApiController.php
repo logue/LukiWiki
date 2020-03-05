@@ -1,4 +1,5 @@
 <?php
+
 /**
  * APIコントローラー.
  *
@@ -64,15 +65,15 @@ class ApiController extends Controller
      * 添付ファイルを出力.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int                      $int
+     * @param int                      $id
      *
-     * @retun \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response
      */
     public function attachment(Request $request, int $id): Response
     {
         $file = Attachment::select('stored_name')->where('attachments.id', $id)->first();
 
-        return response(Storage::get('attachments/'.$file->stored_name))
+        return response(Storage::get('attachments/' . $file->stored_name))
             ->header('Content-Type', $file->mime)
             ->header('Content-length', $file->size)
             ->header('Last-Modified', $file->updated_at);
@@ -87,7 +88,7 @@ class ApiController extends Controller
      */
     public function list(string $prefix): Response
     {
-        return response(Page::where('name', 'like', $prefix.'%')->pluck('updated_at', 'name'));
+        return response(Page::where('name', 'like', $prefix . '%')->pluck('updated_at', 'name'));
     }
 
     /**
@@ -118,8 +119,8 @@ class ApiController extends Controller
      */
     public function plugin(Request $request, string $name, ?string $page): Response
     {
-        if (Config::has('lukiwiki.plugin.'.$name)) {
-            $class = Config::get('lukiwiki.plugin.'.$name);
+        if (Config::has('lukiwiki.plugin.' . $name)) {
+            $class = Config::get('lukiwiki.plugin.' . $name);
             $plugin = new $class(PluginType::Api, $request->input('params') ?? [], '', $page);
 
             return response($plugin->api());

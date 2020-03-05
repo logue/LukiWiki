@@ -1,4 +1,5 @@
 <?php
+
 /**
  * テーブルクラス.
  *
@@ -138,7 +139,7 @@ class Table extends AbstractElement
         }
         $align = Alignment::block($this->align);
 
-        return $this->wrap($string, 'table', ['class' => 'table table-bordered '.$align], false);
+        return $this->wrap($string, 'table', ['class' => 'table table-bordered ' . $align], false);
     }
 
     public function canContain($obj)

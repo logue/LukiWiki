@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ページモデル.
  *
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Model
 {
     use SoftDeletes;
+
     protected $guarded = ['id'];
 
     /**

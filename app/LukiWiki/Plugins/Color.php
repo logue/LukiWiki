@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Colorプラグイン.
  *
@@ -24,13 +25,13 @@ class Color extends AbstractPlugin implements InlinePluginInterface
 
         list($style['color'], $style['background-color']) = array_pad($this->params, 2, '');
 
-        foreach ($style as $key=> $value) {
+        foreach ($style as $key => $value) {
             if (!empty($value) && !preg_match(self::COLOR_MATCH_PATTERN, $value)) {
-                return $this->error('Invalid color: '.e($value));
+                return $this->error('Invalid color: ' . e($value));
             }
-            $this->style[] = $key.':'.$value;
+            $this->style[] = $key . ':' . $value;
         }
 
-        return '<span style="'.e(implode(';', $this->style)).'">'.e($this->body).'</span>';
+        return '<span style="' . e(implode(';', $this->style)) . '">' . e($this->body) . '</span>';
     }
 }

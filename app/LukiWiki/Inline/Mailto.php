@@ -1,4 +1,5 @@
 <?php
+
 /**
  * メールアドレス変換クラス.
  *
@@ -20,7 +21,7 @@ class Mailto extends AbstractInline
 
     public function __toString()
     {
-        return '<a href="mailto:'.$this->name.'" rel="nofollow"><font-awesome-icon fas icon="envelope" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
+        return '<a href="mailto:' . $this->name . '" rel="nofollow"><font-awesome-icon fas icon="envelope" class="mr-1"></font-awesome-icon>' . $this->alias . '</a>';
     }
 
     public function getPattern(): string
@@ -28,18 +29,18 @@ class Mailto extends AbstractInline
         $s1 = $this->start + 1;
 
         return
-            '(?:(?:\['.
-                '(.[^\]\[]+)'.                          // [1] alias
-            '\])'.
-            '(?:'.
-                '\('.
-                    '([\w.-]+@)'.                       // [2] toname
-                    '([^\/"<>\s]+\.[A-Za-z0-9-]+)'.     // [3] host
-                    '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.  // [4] Title
-                '\)'.
-            ')'.
-            '(?:\{'.
-                '(.*[^\}]?)'.                           // [5] Body (option)
+            '(?:(?:\[' .
+                '(.[^\]\[]+)' .                          // [1] alias
+            '\])' .
+            '(?:' .
+                '\(' .
+                    '([\w.-]+@)' .                       // [2] toname
+                    '([^\/"<>\s]+\.[A-Za-z0-9-]+)' .     // [3] host
+                    '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?' .  // [4] Title
+                '\)' .
+            ')' .
+            '(?:\{' .
+                '(.*[^\}]?)' .                           // [5] Body (option)
             '\})?)';
     }
 
@@ -48,8 +49,8 @@ class Mailto extends AbstractInline
         list($this->alias, $toname, $host, $this->title, $this->body) = $this->splice($arr);
 
         if (substr($host, 0, 4) === 'xn--') {
-            $this->href = $toname.preg_replace('/'.$host.'/', Idn::idn_to_ascii($host, IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $this->href);
+            $this->href = $toname . preg_replace('/' . $host . '/', Idn::idn_to_ascii($host, IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $this->href);
         }
-        $this->href = $toname.$host;
+        $this->href = $toname . $host;
     }
 }

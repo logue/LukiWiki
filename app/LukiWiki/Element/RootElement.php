@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 基底要素クラス.
  *
@@ -37,7 +38,7 @@ class RootElement extends AbstractElement
 
         $count = \count($lines);
         for ($i = 0; $i < $count; $i++) {
-            $line = rtrim(array_shift($lines), "\t\r\n\0\x0B");	// スペース以外の空白文字をトリム;
+            $line = rtrim(array_shift($lines), "\t\r\n\0\x0B"); // スペース以外の空白文字をトリム;
 
             // Empty
             if (empty($line)) {
@@ -65,7 +66,7 @@ class RootElement extends AbstractElement
                 $line .= "\r";
                 while (!empty($lines)) {
                     $next_line = preg_replace('/[\r\n]*$/', '', array_shift($lines));
-                    if (preg_match('/\}{'.$len.'}/', $next_line)) {
+                    if (preg_match('/\}{' . $len . '}/', $next_line)) {
                         $line .= $next_line;
                         break;
                     }
@@ -92,7 +93,7 @@ class RootElement extends AbstractElement
 
             // Line Break
             if (substr($line, -1) === '~') {
-                $line = substr($line, 0, -1)."\r";
+                $line = substr($line, 0, -1) . "\r";
             }
 
             // Other Character
@@ -162,7 +163,7 @@ class RootElement extends AbstractElement
 
                             $m2 = [];
                             $body = '';
-                            if (preg_match('/\{{'.$level.'}\s*\r(.*)\r\}{'.$level.'}/', $line, $m2)) {
+                            if (preg_match('/\{{' . $level . '}\s*\r(.*)\r\}{' . $level . '}/', $line, $m2)) {
                                 $body = trim(str_replace("\r", "\n", $m2[1]));
                             }
 
@@ -180,7 +181,7 @@ class RootElement extends AbstractElement
                             continue 2;
                         }
                         break;
-                    case'!':
+                    case '!':
                         // Block Media
                         //$media = new Media()
                     default:
@@ -207,12 +208,12 @@ class RootElement extends AbstractElement
     public function getAnchor($text, $level)
     {
         // Heading id (auto-generated)
-        $autoid = 'content_'.$this->id.'_'.$this->count;
+        $autoid = 'content_' . $this->id . '_' . $this->count;
         $this->count++;
 
         list($_text, $id, $level) = HeadingAnchor::get($text, false); // Cut fixed-anchor from $text
 
-        $this->meta['contents'][] = str_repeat(' ', $level).'- ['.$_text.'](#'.$autoid.')';
+        $this->meta['contents'][] = str_repeat(' ', $level) . '- [' . $_text . '](#' . $autoid . ')';
 
         // Add heding
         return [$_text, null, $autoid];

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *バックアップをパースしてDBに保存するジョブ.
  *
@@ -26,6 +27,7 @@ class ProcessBackupData implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     /**
      * 最大試行回数.
      *
@@ -55,7 +57,7 @@ class ProcessBackupData implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('Loading "'.$this->file.'"...');
+        Log::info('Loading "' . $this->file . '"...');
 
         // :が含まれるページ名は_に変更
         $page = preg_replace('/\:/', '_', $this->page);
@@ -64,13 +66,13 @@ class ProcessBackupData implements ShouldQueue
         if (!$page_id) {
             return;
         }
-        Log::info('Page: '.$page);
+        Log::info('Page: ' . $page);
 
         // :が含まれるページ名は_に変更する。
         $page = preg_replace('/\:/', '_', $this->page);
 
         // Storageクラスに作成日を取得する関数がないためファイルの実体のパスを取得
-        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
+        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/' . $this->file));
 
         // 拡張子を取得
         $ext = substr($this->file, strrpos($this->file, '.') + 1);
@@ -121,8 +123,8 @@ class ProcessBackupData implements ShouldQueue
                 // 割当
                 $entries[$age] = [
                     'page_id'   => $page_id,
-                    'created_at'=> (int) $match[1],
-                    'updated_at'=> isset($match[2]) ? (int) $match[2] : (int) $match[1],
+                    'created_at' => (int) $match[1],
+                    'updated_at' => isset($match[2]) ? (int) $match[2] : (int) $match[1],
                 ];
 
             //dd($match);
@@ -132,7 +134,7 @@ class ProcessBackupData implements ShouldQueue
             }
         }
 
-        foreach ($entries as $age=>$entry) {
+        foreach ($entries as $age => $entry) {
             if (empty($entry['data'])) {
                 continue;
             }

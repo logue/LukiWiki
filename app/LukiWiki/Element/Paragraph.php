@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 段落クラス.
  *
@@ -25,7 +26,7 @@ class Paragraph extends AbstractElement
         parent::__construct();
 
         if (substr($text, 0, 1) === '~') {
-            $text = ' '.substr($text, 1);
+            $text = ' ' . substr($text, 1);
         }
 
         $obj = new InlineElement($text, $page);

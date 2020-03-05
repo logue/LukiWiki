@@ -1,4 +1,5 @@
 <?php
+
 /**
  * メディアアドレス変換クラス.
  *
@@ -55,7 +56,7 @@ class Media extends AbstractInline
             }
             */
 
-            return '<lw-media><a href="'.$this->href.'" title="'.$this->title.'" rel="attachment">'.$this->alias.'</a></lw-media>';
+            return '<lw-media><a href="' . $this->href . '" title="' . $this->title . '" rel="attachment">' . $this->alias . '</a></lw-media>';
         }
 
         return parent::setLink($this->alias, $this->href, $this->name);
@@ -65,18 +66,18 @@ class Media extends AbstractInline
     {
         // ![alt](URL or WikiName "title"){option}
         return
-            '!'.                                            // Media link detector
-                '(?:\['.
-                    '(.[^\]\)]+)?'.                         // [1] alias
-                '\])'.
-                '(?:'.
-                    '\('.
-                       '(.[^\(\)\[\]]+?)'.                  // [2] URL or WikiName and Filename
-                       '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.   // [3] Title
-                    '\)'.
-                ')'.
-                '(?:\{'.
-                    '(.*[^\}])'.                            // [4] Body (option)
+            '!' .                                            // Media link detector
+                '(?:\[' .
+                    '(.[^\]\)]+)?' .                         // [1] alias
+                '\])' .
+                '(?:' .
+                    '\(' .
+                       '(.[^\(\)\[\]]+?)' .                  // [2] URL or WikiName and Filename
+                       '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?' .   // [3] Title
+                    '\)' .
+                ')' .
+                '(?:\{' .
+                    '(.*[^\}])' .                            // [4] Body (option)
                 '\})?';
     }
 
@@ -94,7 +95,7 @@ class Media extends AbstractInline
 
         if (strpos($this->href, 'http') === false) {
             $this->title = $this->href;
-            $this->href = url($this->page.':attachments/'.$this->href);
+            $this->href = url($this->page . ':attachments/' . $this->href);
         }
 
         // TODO:添付ファイルの処理

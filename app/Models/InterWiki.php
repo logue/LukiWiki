@@ -1,4 +1,5 @@
 <?php
+
 /**
  * InterWikiモデル.
  *
@@ -59,6 +60,6 @@ class InterWiki extends Model
         }
 
         // Replace or Add the parameter
-        return (strpos($interwiki->value, '$1') !== false) ? str_replace('$1', $param, $interwiki->value) : $interwiki->value.$param;
+        return (strpos($interwiki->value, '$1') !== false) ? str_replace('$1', $param, $interwiki->value) : $interwiki->value . $param;
     }
 }

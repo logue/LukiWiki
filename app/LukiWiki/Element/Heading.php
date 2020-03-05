@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 見出しクラス.
  *
@@ -48,7 +49,7 @@ class Heading extends AbstractElement
 
         $this->meta[$id] = $this->text;
 
-        return $this->wrap(parent::__toString(), 'h'.$this->level, ['id' => $id], false);
+        return $this->wrap(parent::__toString(), 'h' . $this->level, ['id' => $id], false);
     }
 
     public function insert($obj)

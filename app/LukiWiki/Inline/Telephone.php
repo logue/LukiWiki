@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 電話番号変換クラス.
  *
@@ -18,7 +19,7 @@ class Telephone extends AbstractInline
 
     public function __toString()
     {
-        return '<a href="tel:'.$this->name.'" rel="nofollow"><font-awesome-icon fas icon="phone" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
+        return '<a href="tel:' . $this->name . '" rel="nofollow"><font-awesome-icon fas icon="phone" class="mr-1"></font-awesome-icon>' . $this->alias . '</a>';
     }
 
     public function getPattern(): string
@@ -26,16 +27,16 @@ class Telephone extends AbstractInline
         $s1 = $this->start + 1;
 
         return
-            '(?:(?:\['.
-                '(.[^\]\[]+)'.                          // [1] alias
-            '\])'.
-            '(?:'.
-                '\('.
-                    'tel:(([0-9]+-?)?[0-9]+-?[0-9]+)'.  // [2] telephone
-                '\)'.
-            ')'.
-            '(?:\{'.
-                '(.*[^\}]?)'.                           // [3] Body (option)
+            '(?:(?:\[' .
+                '(.[^\]\[]+)' .                          // [1] alias
+            '\])' .
+            '(?:' .
+                '\(' .
+                    'tel:(([0-9]+-?)?[0-9]+-?[0-9]+)' .  // [2] telephone
+                '\)' .
+            ')' .
+            '(?:\{' .
+                '(.*[^\}]?)' .                           // [3] Body (option)
             '\})?)';
     }
 

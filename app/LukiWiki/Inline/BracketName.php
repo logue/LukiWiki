@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ブラケット名クラス.
  *
@@ -25,24 +26,24 @@ class BracketName extends AbstractInline
         //dd($this->href);
         if (strpos($this->href, 'http') !== false) {
             // Anchor Link
-            return '<a href="'.$this->href.'" title="'.$this->title.'">'.$this->alias.'</a>';
+            return '<a href="' . $this->href . '" title="' . $this->title . '">' . $this->alias . '</a>';
         }
 
         if (strpos($this->href, ':') !== false) {
             // InterWikiName
             $interwiki = InterWiki::getInterWikiName($this->href);
             if ($interwiki) {
-                return '<a href="'.$interwiki.'" title="'.$this->href.'" class="interwikiname" v-b-tooltip><font-awesome-icon fas icon="globe" class="mr-1"></font-awesome-icon>'.$this->alias.'</a>';
+                return '<a href="' . $interwiki . '" title="' . $this->href . '" class="interwikiname" v-b-tooltip><font-awesome-icon fas icon="globe" class="mr-1"></font-awesome-icon>' . $this->alias . '</a>';
             }
         }
 
         if (!empty($this->page)) {
             // 自動リンク
             if (\in_array($this->page, array_keys(Page::getEntries()), true)) {
-                return '<a href="'.url($this->page).'" title="'.$this->title.'" v-b-tooltip>'.$this->alias.'</a>';
+                return '<a href="' . url($this->page) . '" title="' . $this->title . '" v-b-tooltip>' . $this->alias . '</a>';
             }
             // ページが見つからない場合のリンク
-            return '<span class="bg-light text-dark">'.$this->alias.'<a href="'.url($this->page).':edit" rel="nofollow" title="Edit '.$this->page.'" v-b-tooltip>?</a></span>';
+            return '<span class="bg-light text-dark">' . $this->alias . '<a href="' . url($this->page) . ':edit" rel="nofollow" title="Edit ' . $this->page . '" v-b-tooltip>?</a></span>';
         }
     }
 
@@ -51,23 +52,23 @@ class BracketName extends AbstractInline
         $s2 = $this->start + 2;
         // [alt](WikiName "title"){option}
         return
-            '(?:\['.
-                '(.[^\]\[]+)'.                          // [1] alias
-            '\])'.
-            '(?:'.
-                '\('.
-                    '('.
-                        '(?:https?|ftp|ssh)'.   // protocol
-                        '(?::\/\/[^\(\)][-_.!~*\'a-zA-Z0-9;\/?:\@&=+\$,%#]+)'.
-                        '|'.
-                        '(?:.[^\r\n\t\f&"(\)]+?)'.
-                        '(?:\#(\w[^\#]+?))?'.       // [3] Anchor
-                    ')'.
-                    '(?:\s+(?:"(.*[^\(\)"]?)"))?'.  // [4] Title
-                '\)'.
-            ')?'.
-            '(?:\{'.
-                '(.*[^\}]?)'.                       // [5] Body (option)
+            '(?:\[' .
+                '(.[^\]\[]+)' .                          // [1] alias
+            '\])' .
+            '(?:' .
+                '\(' .
+                    '(' .
+                        '(?:https?|ftp|ssh)' .   // protocol
+                        '(?::\/\/[^\(\)][-_.!~*\'a-zA-Z0-9;\/?:\@&=+\$,%#]+)' .
+                        '|' .
+                        '(?:.[^\r\n\t\f&"(\)]+?)' .
+                        '(?:\#(\w[^\#]+?))?' .       // [3] Anchor
+                    ')' .
+                    '(?:\s+(?:"(.*[^\(\)"]?)"))?' .  // [4] Title
+                '\)' .
+            ')?' .
+            '(?:\{' .
+                '(.*[^\}]?)' .                       // [5] Body (option)
             '\})?';
     }
 
@@ -95,7 +96,7 @@ class BracketName extends AbstractInline
             if (empty($this->anchor)) {
                 //return false;
             } elseif (!InlineRules::isWikiName($page) && empty($alias)) {
-                $this->alias = $this->href.$this->anchor;
+                $this->alias = $this->href . $this->anchor;
             }
         }
     }

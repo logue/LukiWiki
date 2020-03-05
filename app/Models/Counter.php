@@ -1,4 +1,5 @@
 <?php
+
 /**
  * カウンターモデル.
  *
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Counter extends Model
 {
-    const CREATED_AT = null;
+    public const CREATED_AT = null;
 
     protected $guarded = ['id'];
 

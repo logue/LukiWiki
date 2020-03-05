@@ -48,10 +48,12 @@ Route::prefix(':auth')->group(function () {
     Route::post('/password/reset', 'Auth\ResetPasswordController@reset');
     // SNS認証
     Route::group(
-        ['as' => 'oauth.', 'middleware' => ['guest', 'throttle']], function () {
+        ['as' => 'oauth.', 'middleware' => ['guest', 'throttle']],
+        function () {
             Route::get('/{provider}', 'Auth\SocialiteController@redirectToProvider')->name('login')->where('provider', 'google|github');
             Route::get('/{provider}/callback', 'Auth\SocialiteController@handleProviderCallback')->where('provider', 'google|github');
-        });
+        }
+    );
 });
 
 // ユーザ管理

@@ -24,7 +24,7 @@ class JobController extends Controller
     public function index(Request $request): View
     {
         return view('dashboard/job', [
-            'title'=> 'List of queues.',
+            'title' => 'List of queues.',
             'jobs' => Job::paginate(20),
         ]);
     }
@@ -87,10 +87,10 @@ class JobController extends Controller
         $connection = $this->getConnection();
 
         $this->queueWorker->runNextJob(
-                $this->getConnection(),
-                $this->getQueue($connection),
-                new WorkerOptions()
-            );
+            $this->getConnection(),
+            $this->getQueue($connection),
+            new WorkerOptions()
+        );
 
         return ['process complete'];
     }

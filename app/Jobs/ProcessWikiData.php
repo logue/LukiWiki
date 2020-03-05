@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PukiWikiデータの変換および取り込みのメイン処理.
  *
@@ -27,6 +28,7 @@ class ProcessWikiData implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     /**
      * 最大試行回数.
      *
@@ -58,12 +60,12 @@ class ProcessWikiData implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('Loading "'.$this->file.'"...');
+        Log::info('Loading "' . $this->file . '"...');
 
         // :configから始まるページ名はPukiWikiのプラグインの初期設定で使う。
         // この値は使用しないため移行しない
         if (substr($this->page, 0, 7) === ':config' || substr($this->page, 0, 3) === ':log' || substr($this->page, 0, 9) === 'PukiWiki/') {
-            Log::info('Skipped "'.$this->page.'".');
+            Log::info('Skipped "' . $this->page . '".');
 
             return;
         }
@@ -73,7 +75,7 @@ class ProcessWikiData implements ShouldQueue
         $data = explode("\n", /* @scrutinizer ignore-type */ Storage::get($this->file));
 
         // Storageクラスに作成日を取得する関数がないためファイルの実体のパスを取得
-        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
+        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/' . $this->file));
 
         // タイムスタンプを取得
         $this->created_at = Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s');
@@ -98,7 +100,7 @@ class ProcessWikiData implements ShouldQueue
                 break;
         }
 
-        Log::info('Save "'.$page.'" to DB.');
+        Log::info('Save "' . $page . '" to DB.');
 
         //if ($page !== 'Web素材') {
         //    continue;
@@ -107,7 +109,8 @@ class ProcessWikiData implements ShouldQueue
             [
                 // 更新対象
                 'name'        => $page,
-            ], [
+            ],
+            [
                 'source'      => $ret['source'],
                 'title'       => $ret['title'],
                 'description' => $ret['description'],
@@ -125,7 +128,7 @@ class ProcessWikiData implements ShouldQueue
      */
     public function failed(\Exception $exception)
     {
-        Log::error('Convert Error: '.$this->page);
+        Log::error('Convert Error: ' . $this->page);
         Log::error($exception);
     }
 
@@ -158,7 +161,7 @@ class ProcessWikiData implements ShouldQueue
                 $line .= "\r";
                 while (!empty($lines)) {
                     $next_line = preg_replace('/[\r\n]*$/', '', array_shift($lines));
-                    if (preg_match('/^\}{'.$len.'}$/', $next_line)) {
+                    if (preg_match('/^\}{' . $len . '}$/', $next_line)) {
                         $line .= $next_line;
                         break;
                     }
@@ -181,7 +184,7 @@ class ProcessWikiData implements ShouldQueue
                 $tmp = trim(implode("\n", $pre));
                 // 統合してトリムして空白しか残らなかった場合は処理しない。
                 if (!empty($tmp)) {
-                    $ret[] = '```'."\n".$tmp."\n".'```';
+                    $ret[] = '```' . "\n" . $tmp . "\n" . '```';
                 }
             }
             $pre = [];
@@ -193,7 +196,7 @@ class ProcessWikiData implements ShouldQueue
 
             $line = preg_replace_callback('/(?:SIZE\((\d+)\))/u', function ($matches) {
                 // サイズはrem指定に変更
-                return 'SIZE('.self::px2rem((int) $matches[1]).')';
+                return 'SIZE(' . self::px2rem((int) $matches[1]) . ')';
             }, $line);
 
             // リンクの形式変更（LukiWikiでは[...](...)という形式。添付ファイルとの区別は!でする）
@@ -205,15 +208,15 @@ class ProcessWikiData implements ShouldQueue
 
                 if (preg_match('/^(.+)>(.+)$/u', $matches[1], $m) !== 0) {
                     // [[foo>bar]]、[[foo>bar:fiz]]、[[foo>http://aaa]]
-                    return '['.$m[1].']('.$m[2].')';
+                    return '[' . $m[1] . '](' . $m[2] . ')';
                 }
                 if (\count($tmp) > 2) {
                     // 正規表現でやるのがめんどうなのでexplodeで:で分割して最初の値がリンク名、残りはアドレスという扱い
                     // [[foo:bar]]、[[foo:http://aaa]]
-                    return '['.array_shift($tmp).']('.implode(':', $tmp).')';
+                    return '[' . array_shift($tmp) . '](' . implode(':', $tmp) . ')';
                 }
                 // 通常のリンク（Braketが1個になるだけだが・・・）
-                return '['.$matches[1].']';
+                return '[' . $matches[1] . ']';
             }, $line);
 
             // 打ち消し線
@@ -231,10 +234,9 @@ class ProcessWikiData implements ShouldQueue
                 $option = isset($matches[3]) ? explode(',', trim($matches[3])) : [];
                 $body = isset($matches[4]) ? trim($matches[4]) : null;
 
-                return self::processPlugin('&', $plugin, $option, $body).';';
+                return self::processPlugin('&', $plugin, $option, $body) . ';';
             },
-                $line
-            );
+                $line);
 
             switch ($char) {
                 // ブロック型プラグイン
@@ -261,7 +263,7 @@ class ProcessWikiData implements ShouldQueue
                     if (preg_match('/^(\*{1,3})(.+)\s\[\#(\w+)\]?$/s', $line, $matches) !== 0) {
                         $level = \strlen($matches[1]);
                         // *を# に変換する。
-                        $ret[] = str_repeat('#', $level).' '.trim($matches[2]).(isset($matches[3]) ? (' [#'.trim($matches[3]).']') : '');
+                        $ret[] = str_repeat('#', $level) . ' ' . trim($matches[2]) . (isset($matches[3]) ? (' [#' . trim($matches[3]) . ']') : '');
                         // また改行を設ける。
                         $ret[] = '';
                         $matches = [];
@@ -272,7 +274,7 @@ class ProcessWikiData implements ShouldQueue
                     if (preg_match('/^([\+|\-]{1,3})(.+)$/s', $line, $matches) !== 0) {
                         $level = \strlen($matches[1]);
                         $text = trim($matches[2]);
-                        $ret[] = str_repeat(' ', $level - 1).$char.' '.$text;
+                        $ret[] = str_repeat(' ', $level - 1) . $char . ' ' . $text;
                         $matches = [];
                     }
                     break;
@@ -306,7 +308,7 @@ class ProcessWikiData implements ShouldQueue
                             if ($option === 'c') {
                                 $option = 't';
                             }
-                            $ret[] = '|'.implode('|', $c).'|'.$option;
+                            $ret[] = '|' . implode('|', $c) . '|' . $option;
                         } else {
                             // cが含まれていない場合、そのまま移行
                             $ret[] = $line;
@@ -343,26 +345,26 @@ class ProcessWikiData implements ShouldQueue
         switch ($plugin) {
             case 'aname':
                 if (!empty($body)) {
-                    return  '['.$body.'](#'.$options[0].')';
+                    return  '[' . $body . '](#' . $options[0] . ')';
                 }
 
-                return  '[#'.$options[0].']';
+                return  '[#' . $options[0] . ']';
             case 'new':
                 // 新着
                 $t = preg_replace('/\((.+)\)/u', '', $body);
                 $dt = Carbon::parse($t);
 
-                return $char.'timestamp('.$dt->timestamp.')';
+                return $char . 'timestamp(' . $dt->timestamp . ')';
             case 'size':
                 // サイズはrem単位に変換する。
-                return $char.'size('.self::px2rem((int) $options[0]).'){'.$body.'}';
+                return $char . 'size(' . self::px2rem((int) $options[0]) . '){' . $body . '}';
             case 'epoch':
                 // 時差を考慮した新着（Adv.）
-                return $char.'timestamp('.$options[0].');';
+                return $char . 'timestamp(' . $options[0] . ');';
             case 'tooltip':
                 // ツールチップはabbrに
                 if (!empty($body)) {
-                    return $char.'abbr('.$options[0].'){'.$body.'};';
+                    return $char . 'abbr(' . $options[0] . '){' . $body . '};';
                 }
                 // no break
             case 'hr':
@@ -379,7 +381,7 @@ class ProcessWikiData implements ShouldQueue
                     $lang = 'plain';
                 }
 
-                return  '```'.$lang."\n".$body."\n".'```';
+                return  '```' . $lang . "\n" . $body . "\n" . '```';
             case 'img':
             case 'attach':
             case 'attachref':
@@ -401,13 +403,13 @@ class ProcessWikiData implements ShouldQueue
 
                 if (isset($options[1]) && preg_match('/\[{2}([^\]{2}].+)?\]{2}/u', $options[1], $m)) {
                     // 古い形式の添付ファイル（#ref(ファイル名, [[ページ名]], ...);という形式
-                    $file = $m[1].'/'.$file;
+                    $file = $m[1] . '/' . $file;
                     unset($options[1]);
                 }
 
                 if (\in_array(['noimg', 'novideo', 'noaudio'], $options, true)) {
                     // メディアファイルを展開しないオプションが含まれていた場合、単純なリンクを出力
-                    return '['.$file.']';
+                    return '[' . $file . ']';
                 }
 
                 $title = '';
@@ -424,25 +426,25 @@ class ProcessWikiData implements ShouldQueue
                             // 位置決めパラメータが含まれていた場合、
                             if (\in_array('around', $options, true) && ($option === 'left' || $option === 'right')) {
                                 // aroundが含まれている場合
-                                $params[] = '.float-'.$option;
+                                $params[] = '.float-' . $option;
                                 unset($options['around']);
                             } else {
                                 // CENTER:![](ファイル名)という形式にする。
-                                $align = strtoupper($option).':';
+                                $align = strtoupper($option) . ':';
                             }
                         }
                         unset($options[$option]);
                     } elseif ($option === 'rounded' || $option === 'circle') {
                         // クラス
-                        $params[] = '.'.$option;
+                        $params[] = '.' . $option;
                         unset($options[$option]);
                     } elseif ($option === 'thumbnail') {
                         $params[] = '.img-thumbnail';
                         unset($options[$option]);
                     } elseif (preg_match('/^([0-9]+%?)(?:x([0-9]+%?))?$/', $option, $m)) {
-                        $params[] = 'width='.$m[1];
+                        $params[] = 'width=' . $m[1];
                         if (isset($m[2])) {
-                            $params[] = 'height='.$m[2];
+                            $params[] = 'height=' . $m[2];
                         }
                         unset($options[$option]);
                     } else {
@@ -452,18 +454,18 @@ class ProcessWikiData implements ShouldQueue
                 }
 
                 if (\count($params) !== 0) {
-                    return  $align.'!['.$title.']('.$file.'){'.implode(' ', $params).'}';
+                    return  $align . '![' . $title . '](' . $file . '){' . implode(' ', $params) . '}';
                 }
 
-                return  $align.'!['.$title.']('.$file.')';
+                return  $align . '![' . $title . '](' . $file . ')';
             case 'ruby':
                 // ルビはoptionとbodyを逆転させる　&ruby(ルビの内容){対象}; →　&ruby(対象){ルビの内容};
                 // tooltipの仕様と合わせる。LaTeX互換。
-                return $char.'ruby('.$body.'){'.$options[0].'}';
+                return $char . 'ruby(' . $body . '){' . $options[0] . '}';
             case 'ls':
             case 'ls2':
             case 'ls3':
-                return $char.'ls'.isset($options) ? '('.implode(',', $options).')' : '';
+                return $char . 'ls' . isset($options) ? '(' . implode(',', $options) . ')' : '';
             case 'edit':
             case 'counter':
             case 'norelated':
@@ -482,19 +484,19 @@ class ProcessWikiData implements ShouldQueue
             case 'version':
             case 'versionlist':
                 // 無視するプラグイン
-                return '/*'.'deprecated plugin:"'.$plugin.'" param:'.implode(',', $options).' body:'.$body.'*/';
+                return '/*' . 'deprecated plugin:"' . $plugin . '" param:' . implode(',', $options) . ' body:' . $body . '*/';
         }
         if ($char === '@' && strpos($body, "\r") !== false) {
             // 複数行の場合
             $body = trim(str_replace("\r", "\n", $body));
             if (!empty($body)) {
-                $body = '{'."\n".$body."\n".'}';
+                $body = '{' . "\n" . $body . "\n" . '}';
             }
         }
 
-        return $char.$plugin.
-            (\count($options) !== 0 ? '('.implode(',', $options).')' : '').
-            (!empty($body) ? '{'.$body.'}' : '');
+        return $char . $plugin .
+            (\count($options) !== 0 ? '(' . implode(',', $options) . ')' : '') .
+            (!empty($body) ? '{' . $body . '}' : '');
     }
 
     /**
@@ -529,7 +531,8 @@ class ProcessWikiData implements ShouldQueue
                     [
                         'name' => $name,
                         'type' => InterWikiType::InterWikiName,
-                    ], [
+                    ],
+                    [
                         'value'       => $value,
                         'encode'      => $encode,
                         'created_at'  => $this->created_at,
@@ -560,7 +563,8 @@ class ProcessWikiData implements ShouldQueue
                     [
                         'name' => $name,
                         'type' => InterWikiType::AutoAliasName,
-                    ], [
+                    ],
+                    [
                         'value'       => $value,
                         'created_at'  => $this->created_at,
                         'updated_at'  => $this->updated_at,
@@ -590,7 +594,8 @@ class ProcessWikiData implements ShouldQueue
                     [
                         'name' => $name,
                         'type' => InterWikiType::Glossary,
-                    ], [
+                    ],
+                    [
                         'value'       => self::pukiwiki2lukiwiki([$value])['source'],
                         'created_at'  => $this->created_at,
                         'updated_at'  => $this->updated_at,

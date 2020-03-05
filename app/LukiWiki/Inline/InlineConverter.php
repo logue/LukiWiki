@@ -1,4 +1,5 @@
 <?php
+
 /**
  * インライン要素変換クラス.
  *
@@ -84,7 +85,7 @@ class InlineConverter
             }
             //echo $name."\n";
 
-            $patterns[] = '('.$pattern.')';
+            $patterns[] = '(' . $pattern . ')';
             $this->converters[$start] = $converter;
             $start += $converter->getCount();
 
@@ -142,7 +143,7 @@ class InlineConverter
         }
         $this->result = [];
         $page = $this->page;
-        $string = preg_replace_callback('/'.$this->pattern.'/ux', function ($arr) use ($page) {
+        $string = preg_replace_callback('/' . $this->pattern . '/ux', function ($arr) use ($page) {
             $obj = $this->getConverter($arr);
 
             if ($obj !== null) {
@@ -162,7 +163,7 @@ class InlineConverter
         $retval = [];
 
         while (!empty($arr)) {
-            $retval[] = trim(array_shift($arr).array_shift($this->result));
+            $retval[] = trim(array_shift($arr) . array_shift($this->result));
         }
 
         return trim(implode('', $retval));

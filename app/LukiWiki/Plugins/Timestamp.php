@@ -1,4 +1,5 @@
 <?php
+
 /**
  * タイムスタンププラグイン.
  *
@@ -17,6 +18,6 @@ class Timestamp extends AbstractPlugin implements InlinePluginInterface
 {
     public function inline(): string
     {
-        return '<time>'.Carbon::createFromTimestamp($this->params[0])->toDateTimeString().'</time>';
+        return '<time>' . Carbon::createFromTimestamp($this->params[0])->toDateTimeString() . '</time>';
     }
 }

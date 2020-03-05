@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ブロック要素クラス.
  *
@@ -134,11 +135,11 @@ abstract class AbstractElement
                 $attributes[] = $key;
                 continue;
             }
-            $attributes[] = $key.'="'.$value.'"';
+            $attributes[] = $key . '="' . $value . '"';
         }
 
         return ($canomit && empty($string)) ? '' :
-            '<'.$tag.(\count($attributes) !== 0 ? ' '.implode(' ', $attributes) : '').'>'.trim($innerHtml).'</'.$tag.'>';
+            '<' . $tag . (\count($attributes) !== 0 ? ' ' . implode(' ', $attributes) : '') . '>' . trim($innerHtml) . '</' . $tag . '>';
     }
 
     /**
@@ -161,6 +162,9 @@ abstract class AbstractElement
     protected static function processText(string $str): string
     {
         return htmlspecialchars(
-            trim(str_replace("\r", "\n", $str)), ENT_HTML5, 'UTF-8');
+            trim(str_replace("\r", "\n", $str)),
+            ENT_HTML5,
+            'UTF-8'
+        );
     }
 }

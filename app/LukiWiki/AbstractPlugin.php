@@ -1,4 +1,5 @@
 <?php
+
 /**
  * プラグイン抽象化基底クラス.
  *
@@ -50,7 +51,7 @@ abstract class AbstractPlugin
         $this->params = $params;
         $this->body = $body;
         $this->page = $page;
-        Debugbar::startMeasure('plugin', 'Process '.$this->name.' plugin.');
+        Debugbar::startMeasure('plugin', 'Process ' . $this->name . ' plugin.');
         $this->init();
     }
 
@@ -167,10 +168,10 @@ abstract class AbstractPlugin
     public function message(string $message, string $message_type = 'info'): string
     {
         if ($this->type === PluginType::Inline) {
-            return '<span class="badge badge-'.$message_type.'">&amp;'.$this->name.': '.$message.'</span>';
+            return '<span class="badge badge-' . $message_type . '">&amp;' . $this->name . ': ' . $message . '</span>';
         }
 
-        return '<div class="alert alert-'.$message_type.'"><b>@'.$this->name.'</b> :'.$message.'</div>';
+        return '<div class="alert alert-' . $message_type . '"><b>@' . $this->name . '</b> :' . $message . '</div>';
     }
 
     /**

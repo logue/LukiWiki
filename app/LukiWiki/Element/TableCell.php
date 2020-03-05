@@ -1,4 +1,5 @@
 <?php
+
 /**
  * テーブルのセルクラス.
  *
@@ -45,10 +46,10 @@ class TableCell extends AbstractElement
         if ($is_template) {
             // テンプレート行（末尾にhを入れるヘッダー行の前の行の処理）
             if (is_numeric($text)) {
-                $this->style['width'] = $text.'rem';
+                $this->style['width'] = $text . 'rem';
             } elseif (preg_match('/\d+%$/', $text)) {
                 // %指定
-                $this->style['width'] = $text.'%';
+                $this->style['width'] = $text . '%';
             }
 
             return;
@@ -92,7 +93,7 @@ class TableCell extends AbstractElement
                     case 'RIGHT':
                     case 'JUSTIFY':
                         // 水平位置
-                        $this->class['align'] = 'text-'.strtolower(self::processText($match));
+                        $this->class['align'] = 'text-' . strtolower(self::processText($match));
                         break;
                     case 'BASELINE':
                     case 'TOP':
@@ -101,7 +102,7 @@ class TableCell extends AbstractElement
                     case 'TEXT-TOP':
                     case 'TEXT-BOTTOM':
                         // 垂直位置
-                        $this->class['valign'] = 'align-'.strtolower(self::processText($match));
+                        $this->class['valign'] = 'align-' . strtolower(self::processText($match));
                         break;
                     case 'NOWRAP':
                         // 回り込み禁止
@@ -127,7 +128,7 @@ class TableCell extends AbstractElement
                                 // セルの文字サイズ
                                 if (is_numeric($value)) {
                                     // 単位が含まれていない場合、rem表記とする
-                                    $this->style['font-size'] = (int) $value.'rem';
+                                    $this->style['font-size'] = (int) $value . 'rem';
                                 // TODO:数値は制限したほうがいい？
                                 } elseif (preg_match('/^h[1-6]$', $value)) {
                                     // h1～h6が入力されていた場合、bootstrapのヘッダーの文字サイズとする
@@ -175,7 +176,7 @@ class TableCell extends AbstractElement
             // スタイルシート
             $style = [];
             foreach ($this->style as $key => $value) {
-                $style[] = $key.': '.$value;
+                $style[] = $key . ': ' . $value;
             }
             $param['style'] = implode(';', $style);
         }
@@ -195,7 +196,7 @@ class TableCell extends AbstractElement
      */
     private function setStyle(array $style): void
     {
-        foreach ($style as $key=>$value) {
+        foreach ($style as $key => $value) {
             if (!isset($this->style[$key])) {
                 $this->style[$key] = $value;
             }
