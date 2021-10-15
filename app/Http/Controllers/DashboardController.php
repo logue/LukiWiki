@@ -21,6 +21,8 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    private const DEFAULT_PATH = '/';
+
     /** @var \Illuminate\Database\Eloquent\Model $page ページモデル */
     protected $page;
 
@@ -50,7 +52,7 @@ class DashboardController extends Controller
      */
     public function user(Request $request)
     {
-        $users = User::paginate(15);
+        // $users = User::paginate(15);
 
         return view('dashboard/users', ['title' => 'User List']);
     }
@@ -67,7 +69,7 @@ class DashboardController extends Controller
         if ($request->isMethod('post')) {
             $path = $request->input('path');
 
-            if (\Storage::exists($path)) {
+            if (Storage::exists($path)) {
                 $errors = [];
                 switch ($request->input('type')) {
                     case 'attach':
@@ -113,7 +115,7 @@ class DashboardController extends Controller
                     default:
                         $request->session()->flash('message', 'キューの実行をキャンセルしました。');
                 }
-                if (\count($errors) !== 0) {
+                if (count($errors) !== 0) {
                     $request->session()->flash('message', '以下のファイルでエラーが発生しました。：' . "\n" . implode("\n", $errors));
                 }
             } else {
@@ -164,7 +166,7 @@ class DashboardController extends Controller
                     $msg[] = 'ビューキャッシュ';
                     break;
                 case 'debug':
-                    $files = glob(storage_path('framework/debugbar') . '/*.json');
+                    // $files = glob(storage_path('framework/debugbar') . '/*.json');
                     $msg[] = 'デバッグ情報';
                     break;
                 case 'system':
@@ -205,7 +207,7 @@ class DashboardController extends Controller
                     $request->session()->flash('message', 'InterWikiを作成しました。');
                     break;
                 case 'update':
-                    $interwiki->update($value)->where('id', '=', $request->input('id'));
+                    // $interwiki->update($value)->where('id', '=', $request->input('id'));
                     $request->session()->flash('message', 'InterWikiを保存しました。');
                     break;
                 case 'delete':
@@ -230,6 +232,7 @@ class DashboardController extends Controller
      */
     public function captchaTest(Request $request)
     {
+        /*
         if ($request->isMethod('post')) {
             $rules = ['captcha' => 'required|captcha'];
             $validator = \Validator::make($request->all(), $rules);
@@ -248,5 +251,6 @@ class DashboardController extends Controller
         $form .= '</form>';
 
         return $form;
+        */
     }
 }

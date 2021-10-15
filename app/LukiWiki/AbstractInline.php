@@ -63,9 +63,9 @@ abstract class AbstractInline
      *
      * @return string
      */
-    public function getPattern(): string
+    public function getPattern(): ?string
     {
-        return '';
+        return null;
     }
 
     /**
@@ -104,7 +104,7 @@ abstract class AbstractInline
         $title = !empty($this->title) ? $this->title : $this->page;
 
         if (\in_array($this->page, array_keys(Page::getEntries()), true)) {
-            return '<a href="' . url($this->page) . $anchor . '" title="' . $this->title . '" v-b-tooltip>' . $anchor_name . '</a>';
+            return '<a href="' . url($this->page) . $this->anchor . '" title="' . $title . '" v-b-tooltip>' . $anchor_name . '</a>';
         }
         if (!empty($this->page)) {
             $retval = $anchor_name . '<a href="' . url($this->page) . ':edit" rel="nofollow" title="Edit ' . $this->page . '" v-b-tooltip>?</a>';
@@ -112,7 +112,7 @@ abstract class AbstractInline
             return '<span class="bg-light text-dark">' . $retval . '</span>';
         }
 
-        return $alias;
+        return $this->alias;
     }
 
     /**
@@ -162,8 +162,7 @@ abstract class AbstractInline
                 array_pop($arrp);
             }
             // ディレクトリを結合する
-            $name = !empty($arrp) ? implode('/', array_merge($arrp, $arrn)) :
-                (!empty($arrn) ? $defaultpage . '/' . implode('/', $arrn) : $defaultpage);
+            $name = !empty($arrp) ? implode('/', array_merge($arrp, $arrn)) : (!empty($arrn) ? $defaultpage . '/' . implode('/', $arrn) : $defaultpage);
         }
 
         return $name;
@@ -235,7 +234,7 @@ abstract class AbstractInline
 
         //dd($this);
 
-/*
+        /*
         if (!empty($this->alias)) {
             $alias = $converter->convert($params['alias'], $params['page']);
             // aタグのみ削除

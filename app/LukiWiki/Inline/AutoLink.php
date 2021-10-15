@@ -23,7 +23,7 @@ class AutoLink extends AbstractInline
         return '<a href="' . url($this->name) . '" class="autolink">' . $this->name . '</a>';
     }
 
-    public function getPattern(): string
+    public function getPattern(): ?string
     {
         return Page::getTrie();
     }

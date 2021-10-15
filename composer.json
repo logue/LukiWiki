@@ -1,62 +1,29 @@
 {
-    "name": "logue/lukiwiki",
+    "name": "laravel/laravel",
     "type": "project",
-    "description": "The next generation of wiki system.",
-    "keywords": [
-        "pukiwiki",
-        "lukiwiki",
-        "laravel"
-    ],
+    "description": "The Laravel Framework.",
+    "keywords": ["framework", "laravel"],
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Logue",
-            "email": "logue@hotmail.co.jp",
-            "homepage": "https://logue.dev/",
-            "role": "Developer"
-        }
-    ],
     "require": {
-        "php": "^7.2.5",
-        "ext-pdo": "*",
-        "highsolutions/laravel-translation-manager": "^1.0",
-        "bensampo/laravel-enum": "^1.17",
-        "bookin/composer-api": "dev-master",
-        "doctrine/dbal": "^2.9",
-        "fideloper/proxy": "^4.2",
-        "florianwolters/component-util-singleton": "^0.3.2",
-        "intervention/image": "^2.4",
-        "fruitcake/laravel-cors": "^1.0",
-        "guzzlehttp/guzzle": "^6.3",
-        "laravel/framework": "^6.0",
-        "laravel/socialite": "^4.1",
-        "laravel/tinker": "^2.0",
-        "mews/captcha": "^3.0",
-        "owen-oj/laravel-getid3": "^0.1.0@alpha",
-        "php-promise/promise": "dev-master",
-        "socialiteproviders/facebook": "dev-master",
-        "socialiteproviders/google": "^3.0",
-        "socialiteproviders/line": "^2.1",
-        "socialiteproviders/microsoft-live": "^3.0",
-        "socialiteproviders/twitter": "^3.0",
-        "sters/regexp-trie": "^0.0.4",
-        "symfony/intl": "^4.2",
-        "symfony/polyfill-intl-idn": "^1.10"
+        "php": "^7.3|^8.0",
+        "bensampo/laravel-enum": "^3.4",
+        "fruitcake/laravel-cors": "^2.0",
+        "guzzlehttp/guzzle": "^7.0.1",
+        "intervention/image": "^2.7",
+        "laravel/framework": "^8.54",
+        "laravel/sanctum": "^2.11",
+        "laravel/tinker": "^2.5",
+        "owen-oj/laravel-getid3": "^1.3",
+        "sters/regexp-trie": "^0.0.4"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.1",
-        "beyondcode/laravel-dump-server": "^1.0",
-        "beyondcode/laravel-er-diagram-generator": "^1.2",
-        "facade/ignition": "^1.4",
-        "filp/whoops": "^2.0",
-        "fzaninotto/faker": "^1.4",
-        "mockery/mockery": "^1.0",
-        "nunomaduro/collision": "^3.0",
-        "nunomaduro/larastan": "^0.5.2",
-        "phpmd/phpmd": "^2.8",
-        "phpstan/phpstan": "^0.12.11",
-        "phpunit/phpunit": "^9",
-        "squizlabs/php_codesniffer": "*"
+        "barryvdh/laravel-debugbar": "^3.6",
+        "facade/ignition": "^2.5",
+        "fakerphp/faker": "^1.9.1",
+        "laravel/sail": "^1.0.1",
+        "mockery/mockery": "^1.4.4",
+        "nunomaduro/collision": "^5.10",
+        "phpunit/phpunit": "^9.5.8"
     },
     "suggest": {
         "ext-intl": "for page listing and process punycode etc.",
@@ -77,20 +44,16 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
-        },
-        "classmap": [
-            "database/seeds",
-            "database/factories"
-        ]
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "scripts": {
         "test": "phpunit --no-logging",
         "coverage": "phpunit --coverage-html coverage",
@@ -117,11 +80,26 @@
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
         ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi"
+        ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ]
-    }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

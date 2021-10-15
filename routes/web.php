@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -10,10 +12,12 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+/*
 // 管理
 Route::prefix(':dashboard')->group(function () {
     // 管理用トップページ
-    Route::get('/', 'DashboardController');
+    Route::get('/', 'DashboardController')->name('page');
     // データー変換処理
     Route::get('/convert', 'DashboardController@convert');
     Route::post('/convert', 'DashboardController@convert');
@@ -28,7 +32,7 @@ Route::prefix(':dashboard')->group(function () {
     Route::get('/job', 'JobController@index');
     // ユーザ個人管理
 });
-
+*/
 // 認証系のルーティング
 //Auth::routes();
 // 登録系
@@ -46,14 +50,6 @@ Route::prefix(':auth')->group(function () {
     Route::post('/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
     Route::get('/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
     Route::post('/password/reset', 'Auth\ResetPasswordController@reset');
-    // SNS認証
-    Route::group(
-        ['as' => 'oauth.', 'middleware' => ['guest', 'throttle']],
-        function () {
-            Route::get('/{provider}', 'Auth\SocialiteController@redirectToProvider')->name('login')->where('provider', 'google|github');
-            Route::get('/{provider}/callback', 'Auth\SocialiteController@handleProviderCallback')->where('provider', 'google|github');
-        }
-    );
 });
 
 // ユーザ管理
@@ -94,7 +90,7 @@ Route::get('{page}:print', 'WikiController@print');
 // ソース
 Route::get('{page}:source', 'WikiController@source');
 // ページ表示
-Route::get('{page?}{file?}', 'WikiController');
+Route::get('{page?}{file?}', 'WikiController')->name('page');
 // ページ保存処理
 Route::post('{page?}', 'WikiController@save')->middleware('sanitize');
 // ページ削除処理

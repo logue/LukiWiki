@@ -56,4 +56,7 @@
     "vetur.format.defaultFormatter.js": "none",
     "vetur.format.defaultFormatter.html": "js-beautify-html",
     "workbench.iconTheme": "vscode-icons",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
 }

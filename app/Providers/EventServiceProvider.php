@@ -18,6 +18,7 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+/*
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
             // add your listeners (aka providers) here
             'SocialiteProviders\\Facebook\\FacebookExtendSocialite@handle',
@@ -26,13 +27,16 @@ class EventServiceProvider extends ServiceProvider
             'SocialiteProviders\\Live\\LiveExtendSocialite@handle',
             'SocialiteProviders\\Line\\LineExtendSocialite@handle',
         ],
+*/
     ];
 
     /**
      * Register any events for your application.
+     *
+     * @return void
      */
     public function boot()
     {
-        parent::boot();
+        //
     }
 }

@@ -13,19 +13,18 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        //
     ];
 
     /**
      * Define the application's command schedule.
      *
-     * @param \Illuminate\Console\Scheduling\Schedule $schedule
+     * @param  \Illuminate\Console\Scheduling\Schedule $schedule
+     * @return void
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
-
-        // キューの実行
+        // $schedule->command('inspire')->hourly();
         //
         $schedule->command('queue:restart')->everyTenMinutes();
         $schedule->command('queue:work --tries=3')->everyMinute()->withoutOverlapping();
@@ -33,6 +32,8 @@ class Kernel extends ConsoleKernel
 
     /**
      * Register the commands for the application.
+     *
+     * @return void
      */
     protected function commands()
     {

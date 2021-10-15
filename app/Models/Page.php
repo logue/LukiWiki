@@ -86,7 +86,7 @@ class Page extends Model
     {
         $query = self::select('name');
         foreach ($keywords as $keyword) {
-            if (\Config::get('database.default') === 'mysql') {
+            if (Config::get('database.default') === 'mysql') {
                 $query
                     ->where('name', 'like', '%' . $keyword . '%')
                     ->orWhereRaw('match(`source`) against (? IN NATURAL LANGUAGE MODE)', [$keyword]);
@@ -144,7 +144,7 @@ class Page extends Model
      *
      * @return string
      */
-    public static function getTrie(): string
+    public static function getTrie(): ?string
     {
         return Cache::rememberForever(self::PAGELIST_TRIE_CACHE, function () {
             return RegexpTrie::union(array_keys(self::getEntries()))->build();
@@ -181,10 +181,12 @@ class Page extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
+    /*
     protected function setKeysForSaveQuery(Builder $query): Builder
     {
         self::clearCache();
 
         return parent::setKeysForSaveQuery($query);
     }
+    */
 }
