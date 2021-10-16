@@ -76,7 +76,7 @@ class WikiController extends Controller
             'today'      => 0,
             'yesterday'  => 0,
             'total'      => 0,
-            'ip_address' => \Request::ip(),
+            'ip_address' => $request->ip(),
             'updated_at' => Carbon::now()->toDateTimeString(),
         ];
         if ($entry->counter) {

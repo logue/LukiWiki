@@ -1,0 +1,4 @@
+# .gitignore syntax (uses node-ignore behind the scenes)
+node_modules/*
+docs/*
+public/*

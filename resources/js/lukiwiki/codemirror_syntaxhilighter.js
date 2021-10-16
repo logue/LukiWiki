@@ -13,26 +13,44 @@ CodeMirror.modeURL = 'js/codemirror/mode/%N/%N.js';
 
 const loading = {};
 
-function splitCallback (cont, n) {
+/**
+ *
+ * @param {function} cont
+ * @param {int} n
+ * @returns
+ */
+function splitCallback(cont, n) {
   let countDown = n;
-  return function () {
+  return () => {
     if (--countDown === 0) cont();
   };
 }
 
-function ensureDeps (mode, cont) {
+/**
+ *
+ * @param {string} mode
+ * @param {function} cont
+ * @returns
+ */
+function ensureDeps(mode, cont) {
   const deps = CodeMirror.modes[mode].dependencies;
   if (!deps) return cont();
   const missing = [];
-  for (let i = 0; i < deps.length; ++i) {
-    if (!CodeMirror.modes.hasOwnProperty(deps[i])) missing.push(deps[i]);
+  for (const dep in deps) {
+    if (!CodeMirror.modes.hasOwnProperty(dep)) {
+      missing.push(dep);
+    }
   }
   if (!missing.length) return cont();
   const split = splitCallback(cont, missing.length);
-  for (let i = 0; i < missing.length; ++i) CodeMirror.requireMode(missing[i], split);
+  for (const dep in missing) {
+    if (!CodeMirror.modes.hasOwnProperty(dep)) {
+      CodeMirror.requireMode(dep, split);
+    }
+  }
 }
 
-CodeMirror.requireMode = function (mode, cont) {
+CodeMirror.requireMode = (mode, cont) => {
   if (typeof mode !== 'string') mode = mode.name;
   if (CodeMirror.modes.hasOwnProperty(mode)) return ensureDeps(mode, cont);
   if (loading.hasOwnProperty(mode)) return loading[mode].push(cont);
@@ -42,28 +60,28 @@ CodeMirror.requireMode = function (mode, cont) {
   const script = document.createElement('script');
   script.src = file;
   const others = document.getElementsByTagName('script')[0];
-  const list = loading[mode] = [cont];
+  const list = (loading[mode] = [cont]);
 
-  CodeMirror.on(script, 'load', function () {
-    ensureDeps(mode, function () {
-      for (let i = 0; i < list.length; ++i) list[i]();
+  CodeMirror.on(script, 'load', () => {
+    ensureDeps(mode, () => {
+      list.each((e) => e());
     });
   });
 
   others.parentNode.insertBefore(script, others);
 };
 
-CodeMirror.autoLoadMode = function (instance, mode) {
+CodeMirror.autoLoadMode = (instance, mode) => {
   if (CodeMirror.modes.hasOwnProperty(mode)) return;
 
-  CodeMirror.requireMode(mode, function () {
+  CodeMirror.requireMode(mode, () => {
     instance.setOption('mode', instance.getOption('mode'));
   });
 };
 
-var isBlock = /^(p|li|div|h\\d|pre|blockquote|td)$/;
+const isBlock = /^(p|li|div|h\\d|pre|blockquote|td)$/;
 
-function textContent (node, out) {
+function textContent(node, out) {
   if (node.nodeType === 3) return out.push(node.nodeValue);
   for (let ch = node.firstChild; ch; ch = ch.nextSibling) {
     textContent(ch, out);
@@ -74,13 +92,15 @@ function textContent (node, out) {
 CodeMirror.colorize = function (collection, defaultMode) {
   if (!collection) collection = document.body.getElementsByTagName('pre');
 
-  for (let i = 0; i < collection.length; ++i) {
+  for (const node in collection.length) {
+    if (!collection.hasOwnProperty(node)) {
+      return;
+    }
     const options = {};
-    const node = collection[i];
     const mode = node.getAttribute('data-lang') || defaultMode;
     options.tabsize = node.getAttribute('data-tab-size') || 4;
     options.state = node.getAttribute('data-state') || null;
-        
+
     if (!mode) continue;
 
     const text = [];
@@ -94,7 +114,7 @@ CodeMirror.colorize = function (collection, defaultMode) {
   }
 };
 
-CodeMirror.runMode = function (string, modespec, callback, options) {
+CodeMirror.runMode = (string, modespec, callback, options) => {
   const mode = CodeMirror.getMode(CodeMirror.defaults, modespec);
   if (mode.name === 'null') {
     console.warn('CodeMirror: Could not load run mode:', modespec);
@@ -107,7 +127,7 @@ CodeMirror.runMode = function (string, modespec, callback, options) {
     const node = callback;
     let col = 0;
     node.innerHTML = '';
-    callback = function (text, style) {
+    callback = (text, style) => {
       if (text === '\n') {
         // Emitting LF or CRLF on IE8 or earlier results in an incorrect display.
         // Emitting a carriage return makes everything ok.
@@ -117,7 +137,7 @@ CodeMirror.runMode = function (string, modespec, callback, options) {
       }
       let content = '';
       // replace tabs
-      for (let pos = 0; ;) {
+      for (let pos = 0; ; ) {
         const idx = text.indexOf('\t', pos);
         if (idx === -1) {
           content += text.slice(pos);
@@ -126,7 +146,7 @@ CodeMirror.runMode = function (string, modespec, callback, options) {
         } else {
           col += idx - pos;
           content += text.slice(pos, idx);
-          const size = tabSize - col % tabSize;
+          const size = tabSize - (col % tabSize);
           col += size;
           for (let i = 0; i < size; ++i) content += ' ';
           pos = idx + 1;
@@ -164,9 +184,8 @@ setTimeout(function () {
 }, 20);
 
 const textareas = document.body.getElementsByTagName('textarea');
-for (let i = 0; i < textareas.length; ++i) {
+for (const node in textareas) {
   const options = {};
-  const node = textareas[i];
   const mode = node.getAttribute('data-lang') || false;
   options.tabsize = node.getAttribute('data-tab-size') || 4;
   options.state = node.getAttribute('data-state') || null;
@@ -174,18 +193,16 @@ for (let i = 0; i < textareas.length; ++i) {
 
   const height = node.getAttribute('data-height') || 'auto';
 
-  CodeMirror.requireMode(mode, function () {
-    let cm = CodeMirror.fromTextArea(node, {
+  CodeMirror.requireMode(mode, () => {
+    const cm = CodeMirror.fromTextArea(node, {
       lineNumbers: true,
       mode: mode,
-      //viewportMargin: Infinity
+      // viewportMargin: Infinity
     });
     if (height !== 'auto') {
       cm.setSize(null, height);
     }
   });
-
-    
 }
 
 window.CodeMirror = CodeMirror;

@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -47,7 +48,7 @@ class User extends Authenticatable
     protected $guarded = ['id'];
 
     /**
-     * �y�[�W�ɓ\��t����ꂽ�Y�t�t�@�C��.
+     * ページに貼り付けられた添付ファイル.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -57,7 +58,7 @@ class User extends Authenticatable
     }
 
     /**
-     * �y�[�W�̃o�b�N�A�b�v.
+     * ページのバックアップ.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -67,7 +68,7 @@ class User extends Authenticatable
     }
 
     /**
-     * ��Ɨ���.
+     * 作業履歴.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough
      */
@@ -77,7 +78,7 @@ class User extends Authenticatable
     }
 
     /**
-     * ���̃y�[�W�̏��L��.
+     * このページの所有者.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

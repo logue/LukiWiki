@@ -1,163 +1,163 @@
 /**
  * CodeMirror Merge for Bootstrap
- * 
+ *
  * @author    Logue <logue@hotmail.co.jp>
  * @copyright 2019 Logue
  * @license   MIT
  */
 
 .CodeMirror-merge {
-    position: relative;
-    white-space: pre;
-    .CodeMirror {
-        border-radius: 0;
-    }
+  position: relative;
+  white-space: pre;
+  .CodeMirror {
+    border-radius: 0;
+  }
 }
 
 .CodeMirror-merge,
 .CodeMirror-merge .CodeMirror {
-    height: 350px;
+  height: 350px;
 }
 
 .CodeMirror-merge-2pane {
-    .CodeMirror-merge-pane {
-        width: 47%;
-    }
-    .CodeMirror-merge-gap {
-        width: 6%;
-    }
+  .CodeMirror-merge-pane {
+    width: 47%;
+  }
+  .CodeMirror-merge-gap {
+    width: 6%;
+  }
 }
 
 .CodeMirror-merge-3pane {
-    .CodeMirror-merge-pane {
-        width: 31%;
-    }
-    .CodeMirror-merge-gap {
-        width: 3.5%;
-    }
+  .CodeMirror-merge-pane {
+    width: 31%;
+  }
+  .CodeMirror-merge-gap {
+    width: 3.5%;
+  }
 }
 
 .CodeMirror-merge-pane {
-    display: inline-block;
-    white-space: normal;
-    vertical-align: top;
+  display: inline-block;
+  white-space: normal;
+  vertical-align: top;
 }
 
 .CodeMirror-merge-pane-rightmost {
-    position: absolute;
-    right: 0;
-    z-index: 1;
+  position: absolute;
+  right: 0;
+  z-index: 1;
 }
 
 .CodeMirror-merge-gap {
-    z-index: 2;
-    display: inline-block;
-    height: 100%;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    overflow: hidden;
-    border-top: thin solid $gray-300;
-    border-bottom: thin solid $gray-300;
-    position: relative;
-    background: $gray-200;
+  z-index: 2;
+  display: inline-block;
+  height: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-top: thin solid $gray-300;
+  border-bottom: thin solid $gray-300;
+  position: relative;
+  background: $gray-200;
 }
 
 .CodeMirror-merge-scrolllock-wrap {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
 }
 
 .CodeMirror-merge-scrolllock {
-    position: relative;
-    left: -50%;
-    cursor: pointer;
-    color: $gray-700;
-    line-height: 1;
+  position: relative;
+  left: -50%;
+  cursor: pointer;
+  color: $gray-700;
+  line-height: 1;
 }
 
 .CodeMirror-merge-copybuttons-left,
 .CodeMirror-merge-copybuttons-right {
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    line-height: 1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  line-height: 1;
 }
 
 .CodeMirror-merge-copy {
-    position: absolute;
-    cursor: pointer;
-    color: $purple;
+  position: absolute;
+  cursor: pointer;
+  color: $purple;
 }
 
 .CodeMirror-merge-copybuttons-left .CodeMirror-merge-copy {
-    left: 2px;
+  left: 2px;
 }
 
 .CodeMirror-merge-copybuttons-right .CodeMirror-merge-copy {
-    right: 2px;
+  right: 2px;
 }
 
 .CodeMirror-merge-r-inserted,
 .CodeMirror-merge-l-inserted {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAGUlEQVQI12MwuCXy3+CWyH8GBgYGJgYkAABZbAQ9ELXurwAAAABJRU5ErkJggg==);
-    background-position: bottom left;
-    background-repeat: repeat-x;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAGUlEQVQI12MwuCXy3+CWyH8GBgYGJgYkAABZbAQ9ELXurwAAAABJRU5ErkJggg==);
+  background-position: bottom left;
+  background-repeat: repeat-x;
 }
 
 .CodeMirror-merge-r-deleted,
 .CodeMirror-merge-l-deleted {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAGUlEQVQI12M4Kyb2/6yY2H8GBgYGJgYkAABURgPz6Ks7wQAAAABJRU5ErkJggg==);
-    background-position: bottom left;
-    background-repeat: repeat-x;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAGUlEQVQI12M4Kyb2/6yY2H8GBgYGJgYkAABURgPz6Ks7wQAAAABJRU5ErkJggg==);
+  background-position: bottom left;
+  background-repeat: repeat-x;
 }
 
 .CodeMirror-merge-r-chunk {
-    background: lighten($yellow, 45%);
+  background: lighten($yellow, 45%);
 }
 
 .CodeMirror-merge-r-chunk-start {
-    border-top: thin solid $yellow;
+  border-top: thin solid $yellow;
 }
 
 .CodeMirror-merge-r-chunk-end {
-    border-bottom: thin solid $yellow;
+  border-bottom: thin solid $yellow;
 }
 
 .CodeMirror-merge-r-connect {
-    fill: lighten($yellow, 45%);
-    stroke: $yellow;
-    stroke-width: 1px;
+  fill: lighten($yellow, 45%);
+  stroke: $yellow;
+  stroke-width: 1px;
 }
 
 .CodeMirror-merge-l-chunk {
-    background: lighten($indigo, 45%);
+  background: lighten($indigo, 45%);
 }
 
 .CodeMirror-merge-l-chunk-start {
-    border-top: thin solid $indigo;
+  border-top: thin solid $indigo;
 }
 
 .CodeMirror-merge-l-chunk-end {
-    border-bottom: thin solid $indigo;
+  border-bottom: thin solid $indigo;
 }
 
 .CodeMirror-merge-l-connect {
-    fill: lighten($indigo, 45%);
-    stroke: $indigo;
-    stroke-width: 1px;
+  fill: lighten($indigo, 45%);
+  stroke: $indigo;
+  stroke-width: 1px;
 }
 
 .CodeMirror-merge-l-chunk.CodeMirror-merge-r-chunk {
-    background: lighten($teal, 45%);
+  background: lighten($teal, 45%);
 }
 
 .CodeMirror-merge-l-chunk-start.CodeMirror-merge-r-chunk-start {
-    border-top: thin solid $teal;
+  border-top: thin solid $teal;
 }
 
 .CodeMirror-merge-l-chunk-end.CodeMirror-merge-r-chunk-end {
-    border-bottom: thin solid $teal;
+  border-bottom: thin solid $teal;
 }

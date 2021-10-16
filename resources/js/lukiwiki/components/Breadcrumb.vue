@@ -6,25 +6,25 @@ import { BBreadcrumb, BBreadcrumbItem } from 'bootstrap-vue';
 export default {
   components: {
     'b-breadcrumb': BBreadcrumb,
-    'b-breadcrumb-item': BBreadcrumbItem
+    'b-breadcrumb-item': BBreadcrumbItem,
   },
   data() {
     return {
       items: [
         {
           text: 'Admin',
-          href: '#'
+          href: '#',
         },
         {
           text: 'Manage',
-          href: '#'
+          href: '#',
         },
         {
           text: 'Library',
-          active: true
-        }
-      ]
+          active: true,
+        },
+      ],
     };
-  }
+  },
 };
 </script>

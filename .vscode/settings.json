@@ -59,4 +59,5 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
     },
+    "intelephense.diagnostics.undefinedTypes": false,
 }

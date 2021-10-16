@@ -40,11 +40,7 @@
               @input="setVolume"
             />
             <b-input-group-append>
-              <b-button
-                variant="outline-secondary"
-                class="mute"
-                @click="mute"
-              >
+              <b-button variant="outline-secondary" class="mute" @click="mute">
                 <span v-if="muted">
                   <font-awesome-icon :icon="muteIcon" />
                 </span>
@@ -77,28 +73,12 @@
       :href="src"
       target="_blank"
     >
-      <font-awesome-icon
-        fas
-        icon="paperclip"
-        class="ml-1"
-      />
+      <font-awesome-icon fas icon="paperclip" class="ml-1" />
       {{ alt }}
     </a>
-    <a
-      v-else
-      :id="name"
-      v-b-tooltip
-      :title="title"
-      :href="src"
-      target="_blank"
-    >
+    <a v-else :id="name" v-b-tooltip :title="title" :href="src" target="_blank">
       {{ alt }}
-      <font-awesome-icon
-        far
-        size="xs"
-        icon="external-link-alt"
-        class="ml-1"
-      />
+      <font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1" />
     </a>
   </span>
 </template>
@@ -110,20 +90,21 @@ import {
   BImgLazy,
   BInputGroup,
   BInputGroupAppend,
-  VBTooltip
+  VBTooltip,
 } from 'bootstrap-vue';
 
 // FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { 
+import {
   faPaperclip,
   faPause,
   faPlay,
   faStop,
   faVolumeDown,
   faVolumeMute,
-  faVolumeUp } from '@fortawesome/free-solid-svg-icons';
+  faVolumeUp,
+} from '@fortawesome/free-solid-svg-icons';
 library.add(
   faPaperclip,
   faPause,
@@ -140,19 +121,19 @@ import WaveSurfer from 'wavesurfer.js';
 
 export default {
   components: {
-    'b-button':BButton,
+    'b-button': BButton,
     'b-img-lazy': BImgLazy,
     'b-form-input': BFormInput,
     'b-input-group': BInputGroup,
     'b-input-group-append': BInputGroupAppend,
-    'font-awesome-icon': FontAwesomeIcon
+    'font-awesome-icon': FontAwesomeIcon,
   },
   directives: {
-    'b-tooltip': VBTooltip
+    'b-tooltip': VBTooltip,
   },
   data() {
     const data = this.$slots.default[0].data.attrs;
-    
+
     this.href = data.href;
     return {
       src: data.href,
@@ -172,12 +153,12 @@ export default {
       stopIcon: faStop,
       muteIcon: faVolumeMute,
       volumeUpIcon: faVolumeUp,
-      volumeDownIcon: faVolumeDown
+      volumeDownIcon: faVolumeDown,
     };
   },
   computed: {
     id() {
-      //console.log(this.name);
+      // console.log(this.name);
       return `#${this.name}`;
     },
     getDuration() {
@@ -207,21 +188,21 @@ export default {
       } else {
         return false;
       }
-    }
+    },
   },
   watch: {
     audio(newValue) {
       this.wavesurfer.load(newValue);
-    }
+    },
   },
-  created(){
+  created() {
     // 重複しないであろうランダムのIDを生成
     const N = 8;
-    var S = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const S = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const id = Array.from(crypto.getRandomValues(new Uint8Array(N)))
-      .map(n => S[n % S.length])
+      .map((n) => S[n % S.length])
       .join('');
-    this.name = 'media_'+id;
+    this.name = 'media_' + id;
   },
   mounted() {
     this.$nextTick(() => {
@@ -235,7 +216,7 @@ export default {
         fillParent: true,
         loopSelection: true,
         interact: true,
-        removeMediaElementOnDestroy: this.removeMediaElementOnDestroy
+        removeMediaElementOnDestroy: this.removeMediaElementOnDestroy,
       });
 
       this.wavesurfer.load(this.href);
@@ -247,9 +228,9 @@ export default {
   methods: {
     timeDisplay(time) {
       // Hours, minutes and seconds
-      let hrs = Math.floor(time / 3600);
-      let mins = Math.floor((time % 3600) / 60);
-      let secs = Math.floor(time % 60);
+      const hrs = Math.floor(time / 3600);
+      const mins = Math.floor((time % 3600) / 60);
+      const secs = Math.floor(time % 60);
       // Output like "1:01" or "4:03:59" or "123:03:59"
       let output = '';
       if (hrs > 0) {
@@ -288,10 +269,10 @@ export default {
       this.muted = this.getMute;
     },
     setVolume() {
-      let floatValue = this.volume / 100;
+      const floatValue = this.volume / 100;
       this.wavesurfer.setVolume(Number.parseFloat(floatValue.toFixed(2)));
-    }
-  }
+    },
+  },
 };
 </script>
 

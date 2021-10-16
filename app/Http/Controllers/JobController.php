@@ -34,9 +34,11 @@ class JobController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /*
     public function create(): Response
     {
     }
+    */
 
     /**
      * Store a newly created resource in storage.
@@ -45,9 +47,11 @@ class JobController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /*
     public function store(Request $request): Response
     {
     }
+    */
 
     /**
      * Display the specified resource.
@@ -56,9 +60,11 @@ class JobController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /*
     public function show(Job $job): Response
     {
     }
+    */
 
     /**
      * Show the form for editing the specified resource.
@@ -67,9 +73,11 @@ class JobController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /*
     public function execute(Job $job): Response
     {
     }
+    */
 
     /**
      * Remove the specified resource from storage.
@@ -78,9 +86,11 @@ class JobController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /*
     public function destroy(Job $job): Response
     {
     }
+    */
 
     public function work()
     {

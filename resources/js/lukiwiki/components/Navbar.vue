@@ -1,128 +1,83 @@
 <template>
-  <b-navbar
-    toggleable="md"
-    variant="dark"
-    type="dark"
-  >
+  <b-navbar toggleable="md" variant="dark" type="dark">
     <b-navbar-brand :href="baseUri">
       {{ brand }}
     </b-navbar-brand>
     <b-navbar-toggle target="nav_collapse" />
-    <b-collapse
-      id="nav_collapse"
-      is-nav
-    >
+    <b-collapse id="nav_collapse" is-nav>
       <b-navbar-nav class="ml-auto">
         <!-- page menu -->
-        <b-nav-item-dropdown
-          text="Page"
-          :disabled="this.$attrs.page === ''"
-        >
+        <b-nav-item-dropdown text="Page" :disabled="$attrs.page === ''">
           <b-dropdown-item
             :href="baseUri + ':new'"
             :active="isPageAction && action === 'new'"
           >
-            <font-awesome-icon
-              far
-              fixed-width
-              icon="file"
-              class="mr-1"
-            />New
+            <font-awesome-icon far fixed-width icon="file" class="mr-1" />
+            New
           </b-dropdown-item>
           <b-dropdown-item
             :href="pageUri + ':edit'"
             :active="isPageAction && action === 'edit'"
           >
-            <font-awesome-icon
-              fas
-              fixed-width
-              icon="edit"
-              class="mr-1"
-            />Edit
+            <font-awesome-icon fas fixed-width icon="edit" class="mr-1" />
+            Edit
           </b-dropdown-item>
           <b-dropdown-item
             :href="pageUri + ':copy'"
             :active="isPageAction && action === 'copy'"
           >
-            <font-awesome-icon
-              fas
-              fixed-width
-              icon="copy"
-              class="mr-1"
-            />Copy
+            <font-awesome-icon fas fixed-width icon="copy" class="mr-1" />
+            Copy
           </b-dropdown-item>
           <b-dropdown-item
             :href="pageUri + ':source'"
             :active="isPageAction && action === 'source'"
           >
-            <font-awesome-icon
-              far
-              fixed-width
-              icon="file-code"
-              class="mr-1"
-            />Source
+            <font-awesome-icon far fixed-width icon="file-code" class="mr-1" />
+            Source
           </b-dropdown-item>
           <b-dropdown-item
             :href="pageUri + ':diff'"
             :active="isPageAction && action === 'diff'"
           >
             <font-awesome-layers class="mr-1">
-              <font-awesome-icon
-                fas
-                fixed-width
-                icon="file"
-              />
+              <font-awesome-icon fas fixed-width icon="file" />
               <font-awesome-icon
                 fas
                 icon="slash"
                 :style="{ color: 'white' }"
                 class="fa-flip-vertical"
               />
-            </font-awesome-layers>Diff
+            </font-awesome-layers>
+            Diff
           </b-dropdown-item>
           <b-dropdown-item
             :href="pageUri + ':attachments'"
             :active="isPageAction && action === 'attachments'"
           >
-            <font-awesome-icon
-              fas
-              fixed-width
-              icon="paperclip"
-              class="mr-1"
-            />Attachments
+            <font-awesome-icon fas fixed-width icon="paperclip" class="mr-1" />
+            Attachments
           </b-dropdown-item>
           <b-dropdown-item
             :href="pageUri + ':history'"
             :active="isPageAction && action === 'history'"
           >
-            <font-awesome-icon
-              fas
-              fixed-width
-              icon="history"
-              class="mr-1"
-            />History
+            <font-awesome-icon fas fixed-width icon="history" class="mr-1" />
+            History
           </b-dropdown-item>
           <b-dropdown-item
             :href="pageUri + ':lock'"
             :active="isPageAction && action === 'lock'"
           >
-            <font-awesome-icon
-              fas
-              fixed-width
-              icon="unlock"
-              class="mr-1"
-            />Lock
+            <font-awesome-icon fas fixed-width icon="unlock" class="mr-1" />
+            Lock
           </b-dropdown-item>
           <b-dropdown-item
             :href="pageUri + ':print'"
             :active="isPageAction && action === 'print'"
           >
-            <font-awesome-icon
-              fas
-              fixed-width
-              icon="print"
-              class="mr-1"
-            />Print
+            <font-awesome-icon fas fixed-width icon="print" class="mr-1" />
+            Print
           </b-dropdown-item>
         </b-nav-item-dropdown>
         <!-- List menu -->
@@ -131,23 +86,15 @@
             :href="baseUri + ':list'"
             :active="isPageAction && action === 'list'"
           >
-            <font-awesome-icon
-              far
-              fixed-width
-              icon="list-alt"
-              class="mr-1"
-            />Page List
+            <font-awesome-icon far fixed-width icon="list-alt" class="mr-1" />
+            Page List
           </b-dropdown-item>
           <b-dropdown-item
             :href="baseUri + ':recent'"
             :active="isPageAction && action === 'recent'"
           >
-            <font-awesome-icon
-              far
-              fixed-width
-              icon="clock"
-              class="mr-1"
-            />Recent Changes
+            <font-awesome-icon far fixed-width icon="clock" class="mr-1" />
+            Recent Changes
           </b-dropdown-item>
         </b-nav-item-dropdown>
         <!-- search form -->
@@ -156,38 +103,22 @@
           method="post"
           class="my-lg-0 mr-0"
         >
-          <input
-            type="hidden"
-            name="_token"
-            :value="token"
-          >
-          <b-form-input
-            class="mr-sm-2"
-            type="search"
-            name="keyword"
-          />
+          <input type="hidden" name="_token" :value="token" />
+          <b-form-input class="mr-sm-2" type="search" name="keyword" />
           <b-button
             variant="outline-success"
             class="my-2 my-sm-0"
             type="submit"
           >
-            <font-awesome-icon
-              far
-              fixed-width
-              icon="search"
-              class="mr-1"
-            />Search
+            <font-awesome-icon far fixed-width icon="search" class="mr-1" />
+            Search
           </b-button>
         </b-nav-form>
         <!-- user menu -->
         <b-nav-item-dropdown right>
           <!-- Using button-content slot -->
           <template slot="button-content">
-            <font-awesome-icon
-              far
-              fixed-width
-              icon="user"
-            />
+            <font-awesome-icon far fixed-width icon="user" />
           </template>
           <b-dropdown-item href=":user/logout">
             <font-awesome-icon
@@ -195,7 +126,8 @@
               fixed-width
               icon="sign-out-alt"
               class="mr-1"
-            />Signout
+            />
+            Signout
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -214,13 +146,13 @@ import {
   BNavbar,
   BNavbarBrand,
   BNavbarNav,
-  BNavbarToggle
+  BNavbarToggle,
 } from 'bootstrap-vue';
 
 // 使用するアイコンの登録
 import {
   FontAwesomeIcon,
-  FontAwesomeLayers
+  FontAwesomeLayers,
 } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
@@ -240,7 +172,7 @@ import {
   faUser,
   faCog,
   faSignInAlt,
-  faSignOutAlt
+  faSignOutAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -276,13 +208,13 @@ export default {
     'b-navbar-nav': BNavbarNav,
     'b-navbar-toggle': BNavbarToggle,
     'font-awesome-icon': FontAwesomeIcon,
-    'font-awesome-layers': FontAwesomeLayers
+    'font-awesome-layers': FontAwesomeLayers,
   },
   data() {
     this.page = encodeURI(this.$attrs.page).replace('%2F', '/');
     this.action = window.qs.action;
     this.isPageAction = this.action !== void 0 && this.page !== '';
-    //console.log(this.$attrs);
+    // console.log(this.$attrs);
     this.baseUri = this.$attrs['base-uri'] + '/';
     this.pageUri = this.baseUri + this.page;
 
@@ -290,8 +222,8 @@ export default {
       baseUri: this.baseUri,
       pageUri: this.pageUri,
       brand: this.$attrs.brand,
-      token: document.head.querySelector('meta[name="csrf-token"]').content
+      token: document.head.querySelector('meta[name="csrf-token"]').content,
     };
-  }
+  },
 };
 </script>

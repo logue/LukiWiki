@@ -1,10 +1,11 @@
 <template>
-  <div :class="{ 'form-group row': type === 'auth', 'd-inline': type==='share' }">
-    <label
-      v-if="type === 'auth'"
-      class="col-md-4 col-form-label text-md-right"
-    >Login With</label>
-    <div :class="{ 'col-md-8': type === 'auth', 'd-inline': type==='share'}">
+  <div
+    :class="{ 'form-group row': type === 'auth', 'd-inline': type === 'share' }"
+  >
+    <label v-if="type === 'auth'" class="col-md-4 col-form-label text-md-right">
+      Login With
+    </label>
+    <div :class="{ 'col-md-8': type === 'auth', 'd-inline': type === 'share' }">
       <b-button
         v-b-tooltip
         title="Facebook"
@@ -80,12 +81,10 @@
     </div>
   </div>
 </template>
+
 <script>
 // Bootstrap Vue
-import {
-  BButton,
-  VBTooltip
-} from 'bootstrap-vue';
+import { BButton, VBTooltip } from 'bootstrap-vue';
 
 // FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -96,7 +95,7 @@ import {
   faGoogle,
   faGithub,
   faMicrosoft,
-  faLine
+  faLine,
 } from '@fortawesome/free-brands-svg-icons';
 library.add(
   // SNS
@@ -111,48 +110,49 @@ library.add(
 export default {
   components: {
     'b-button': BButton,
-    'font-awesome-icon': FontAwesomeIcon
+    'font-awesome-icon': FontAwesomeIcon,
   },
   directives: {
-    'b-tooltip': VBTooltip
+    'b-tooltip': VBTooltip,
   },
   data() {
-    //console.log(this.$attrs);
+    // console.log(this.$attrs);
     return {
-      type: this.$attrs.type
+      type: this.$attrs.type,
     };
   },
   methods: {
     jump: (sns, type) => {
-      //console.log(sns, type);
+      // console.log(sns, type);
       if (type === 'share') {
-        const canonical = document.head.querySelector('link[rel=canonical]')
-          .href;
+        const canonical = document.head.querySelector(
+          'link[rel=canonical]'
+        ).href;
         let url;
         switch (sns) {
-        case 'facebook':
-          url = 'http://www.facebook.com/share.php?u=';
-          break;
-        case 'twitter':
-          url = 'https://twiter.com/share?url=';
-          break;
-        case 'line':
-          url = 'https://social-plugins.line.me/lineit/share?url=';
-          break;
+          case 'facebook':
+            url = 'http://www.facebook.com/share.php?u=';
+            break;
+          case 'twitter':
+            url = 'https://twiter.com/share?url=';
+            break;
+          case 'line':
+            url = 'https://social-plugins.line.me/lineit/share?url=';
+            break;
         }
         window.open(url + canonical, 'share', 'width=512,height=512');
       } else {
         location.href = location.origin + '/:login/' + sns;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss">
 // This scss is inspired from https://github.com/ladjs/bootstrap-social/
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
 
 .btn-social {
   padding: $btn-padding-y;

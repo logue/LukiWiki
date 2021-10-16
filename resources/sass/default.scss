@@ -8,10 +8,10 @@
 @charset "utf-8";
 
 // Variables
-@import "variables";
+@import 'variables';
 // Bootstrap: 4;
-@import "~bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
 // Bootstrap Vue
-@import "~bootstrap-vue/src/index.scss";
+@import '~bootstrap-vue/src/index.scss';
 // overrides
-@import "overrides";
+@import 'overrides';

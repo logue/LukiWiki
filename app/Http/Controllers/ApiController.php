@@ -15,7 +15,7 @@ use App\Enums\PluginType;
 use App\Models\Attachment;
 use App\Models\InterWiki;
 use App\Models\Page;
-use Config;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -132,6 +132,7 @@ class ApiController extends Controller
     /**
      * fetch composer.
      */
+    /*
     public function composer()
     {
         $factory = new \Composer\Factory();
@@ -155,4 +156,5 @@ class ApiController extends Controller
         //$result['update'] = $this->fetchUpdateableVersions();
         return response($result);
     }
+    */
 }

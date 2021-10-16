@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpdoc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://www.phpdoc.org">
-    <title>app.audi.co.jp</title>
-    <parser>
-        <target>build/docs</target>
-    </parser>
-    <transformer>
-        <target>build/docs</target>
-    </transformer>
-    <files>
-        <directory>app</directory>
-    </files>
-    <transformations>
-        <template name="responsive"/>
-    </transformations>
+  xmlns="http://www.phpdoc.org">
+  <parser>
+    <target>build/docs</target>
+  </parser>
+  <transformer>
+    <target>build/docs</target>
+  </transformer>
+  <files>
+    <directory>app</directory>
+  </files>
+  <transformations>
+    <template name="responsive"/>
+  </transformations>
 </phpdoc>

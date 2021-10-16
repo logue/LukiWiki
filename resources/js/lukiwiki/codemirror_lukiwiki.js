@@ -12,82 +12,82 @@ CodeMirror.defineSimpleMode('lukiwiki', {
     // ul, ol, li,
     {
       regex: /^[-+]{1,3}/,
-      token: 'def'
+      token: 'def',
     },
     // dt, dl
     {
       regex: /^:.+\|.+$/,
-      token: 'def'
+      token: 'def',
     },
     // table
     {
       regex: /^\|/,
-      token: 'qualifier'
+      token: 'qualifier',
     },
     // h2~h6
     {
       regex: /^#{1,5}.+$/,
-      token: 'keyword'
+      token: 'keyword',
     },
     // Block Plugin
     {
       regex: /^@.+?$/,
-      token: 'string'
+      token: 'string',
     },
     // Blacket
     {
       // regex: /\[\[(?:[A-Z](?:[a-z]|\xc3[\x9f-\xbf])+(?:[A-Z](?:[a-z]|\xc3[\x9f-\xbf])+)+)(?!\w)\]\]/,
       regex: /\[{2}[^\]]+?\]{2}/,
-      token: 'bracket'
+      token: 'bracket',
     },
     // Blockquote
     {
       regex: /^>{1,3}.+$/,
-      token: 'quote'
+      token: 'quote',
     },
     // hr
     {
       regex: /^-{4,}$/,
-      token: 'hr'
+      token: 'hr',
     },
     // Strings
     {
       regex: /&(.+);/,
-      token: 'string'
+      token: 'string',
     },
     // Emoji
     {
       regex: /:\w+.:/,
-      token: 'def'
+      token: 'def',
     },
     // Align
     {
       regex: /^(LEFT|CENTER|RIGHT|JUSTIFY):$/,
-      token: 'def'
+      token: 'def',
     },
 
     // Inline
     {
       regex: /(_|~|'|%){1,3}(.+)(_|~|'|%){1,3}/,
-      token: 'string'
+      token: 'string',
     },
     // Inline
     {
       regex: /(COLOR|SIZE|SUP|SUB|LANG|ABBR)\(.+\)\{.+\}/,
-      token: 'atom'
+      token: 'atom',
     },
 
     // Note
     {
       regex: /\({2}[^)]+?\){2}/,
-      token: 'attribute'
+      token: 'attribute',
     },
 
     // br
     {
       regex: /~|&amp;br;$/,
-      token: 'hr'
-    }
+      token: 'hr',
+    },
     // pre
     //   {
     //     regex: /^ .+/,
@@ -101,39 +101,45 @@ CodeMirror.defineSimpleMode('lukiwiki', {
     //  next: 'comment'
     // }
   ],
-  comment: [{
-    regex: /\/\*/,
-    token: 'comment',
-    next: 'start'
-  },
-  {
-    regex: /\*\//,
-    token: 'comment'
-  }],
-  pre: [{
-    regex: /^```(.+)(:(.+)?)$/,
-    token: 'comment',
-    next: 'start'
-  },
-  {
-    regex: /^```$/,
-    token: 'comment'
-  }],
-  plugin: [{
-    regex: /^@[^{]+(\{\{+)\s*$/,
-    token: 'string',
-    next: 'start'
-  },
-  {
-    regex: /^\}\}$/,
-    token: 'string'
-  }],
+  comment: [
+    {
+      regex: /\/\*/,
+      token: 'comment',
+      next: 'start',
+    },
+    {
+      regex: /\*\//,
+      token: 'comment',
+    },
+  ],
+  pre: [
+    {
+      regex: /^```(.+)(:(.+)?)$/,
+      token: 'comment',
+      next: 'start',
+    },
+    {
+      regex: /^```$/,
+      token: 'comment',
+    },
+  ],
+  plugin: [
+    {
+      regex: /^@[^{]+(\{\{+)\s*$/,
+      token: 'string',
+      next: 'start',
+    },
+    {
+      regex: /^\}\}$/,
+      token: 'string',
+    },
+  ],
   meta: {
     electricInput: /^{{|}}$/,
     blockCommentStart: '/*',
     blockCommentEnd: '*/',
-    lineComment: ['//']
-  }
+    lineComment: ['//'],
+  },
 });
 
 CodeMirror.defineMIME('text/lukiwiki', 'lukiwiki');

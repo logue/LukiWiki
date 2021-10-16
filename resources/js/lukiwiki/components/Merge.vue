@@ -10,20 +10,11 @@
           title="Help"
           @click="help('remote')"
         >
-          <font-awesome-icon
-            fas
-            size="sm"
-            fixed-width
-            icon="question"
-          />
+          <font-awesome-icon fas size="sm" fixed-width icon="question" />
         </b-button>
       </div>
-      <div class="mx-auto">
-        Local
-      </div>
-      <div class="mx-auto">
-        Origin
-      </div>
+      <div class="mx-auto">Local</div>
+      <div class="mx-auto">Origin</div>
     </div>
     <codemirror
       v-model="source"
@@ -37,10 +28,7 @@
       @input="onCmInput"
       @scroll="onCmScroll"
     />
-    <div
-      class="form-row align-items-center d-flex"
-      aria-label="Editor Footer"
-    >
+    <div class="form-row align-items-center d-flex" aria-label="Editor Footer">
       <div class="p-1">
         <b-form-checkbox
           v-model="keep_timestamp"
@@ -55,10 +43,7 @@
       <div class="p-1">
         <b-input-group>
           <b-input-group-text slot="prepend">
-            <font-awesome-icon
-              fas
-              icon="key"
-            />
+            <font-awesome-icon fas icon="key" />
           </b-input-group-text>
           <b-form-input
             v-model="key"
@@ -78,12 +63,8 @@
           value="save"
           :disabled="keep_timestamp == 1 && key == ''"
         >
-          <font-awesome-icon
-            fas
-            fixed-width
-            icon="check"
-            class="mr-1"
-          />Submit
+          <font-awesome-icon fas fixed-width icon="check" class="mr-1" />
+          Submit
         </b-button>
         <b-button
           variant="secondary"
@@ -91,12 +72,8 @@
           name="action"
           value="cancel"
         >
-          <font-awesome-icon
-            fas
-            fixed-width
-            icon="ban"
-            class="mr-1"
-          />Cancel
+          <font-awesome-icon fas fixed-width icon="ban" class="mr-1" />
+          Cancel
         </b-button>
       </div>
     </div>
@@ -110,16 +87,16 @@ import {
   BFormCheckbox,
   BFormInput,
   BInputGroup,
-  BInputGroupText
+  BInputGroupText,
 } from 'bootstrap-vue';
 
 // language
-//import "codemirror/mode/css/css.js";
-//import "codemirror/mode/xml/xml.js";
-//import "codemirror/mode/htmlmixed/htmlmixed.js";
+// import "codemirror/mode/css/css.js";
+// import "codemirror/mode/xml/xml.js";
+// import "codemirror/mode/htmlmixed/htmlmixed.js";
 
 // merge css
-//import "codemirror/addon/merge/merge.css";
+// import "codemirror/addon/merge/merge.css";
 
 // merge js
 import 'codemirror/addon/merge/merge.js';
@@ -148,7 +125,7 @@ export default {
     'b-form-input': BFormInput,
     'b-input-group': BInputGroup,
     'b-input-group-text': BInputGroupText,
-    'font-awesome-icon': FontAwesomeIcon
+    'font-awesome-icon': FontAwesomeIcon,
   },
 
   data() {
@@ -167,8 +144,8 @@ export default {
         mode: 'lukiwiki',
         lineNumbers: true,
         collapseIdentical: false,
-        highlightDifferences: true
-      }
+        highlightDifferences: true,
+      },
     };
   },
   beforeCreate() {},
@@ -191,7 +168,7 @@ export default {
     },
     onCmScroll() {
       console.log('onCmScroll');
-    }
-  }
+    },
+  },
 };
 </script>

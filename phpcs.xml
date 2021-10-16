@@ -1,34 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset name="Customized PSR-12 Rule"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./vendor/squizlabs/php_codesniffer/phpcs.xsd">>
-    <description>コーディングルール／整形設定（PSR-12準拠）</description>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://github.com/squizlabs/PHP_CodeSniffer/raw/master/phpcs.xsd">
+  <description>コーディングルール／整形設定（PSR-12準拠）</description>
 
-    <!-- display progress -->
-    <arg value="p"/>
-    <!-- use colors in output -->
-    <arg name="colors"/>
+  <!-- display progress -->
+  <arg value="p"/>
+  <!-- use colors in output -->
+  <arg name="colors"/>
+  <!-- 拡張子が php のものにだけ適用 -->
+  <arg name="extensions" value="php" />
+  <!-- オプション p:進捗表示  s:エラー表示時にルールを表示 -->
+  <arg value="ps" />
+  <!-- rule に PSR12 を指定可能 -->
+  <rule ref="PSR12" />
 
-    <!-- inherit rules from: -->
-    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
-    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
-    <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
-    <rule ref="Generic.Strings.UnnecessaryStringConcat"/>
-    <rule ref="PEAR.Commenting.FunctionComment">
-        <exclude name="PEAR.Commenting.FunctionComment.MissingReturn"/>
-        <exclude name="PEAR.Commenting.FunctionComment.MissingParamComment"/>
-        <exclude name="PEAR.Commenting.FunctionComment.SpacingBeforeTags"/>
-        <exclude name="PEAR.Commenting.FunctionComment.MissingParamTag"/>
-        <exclude name="PEAR.Commenting.FunctionComment.Missing"/>
-        <exclude name="PEAR.Commenting.FunctionComment.ParameterCommentsNotAligned"/>
-    </rule>
-    <rule ref="PSR12">
-        <exclude name="Generic.Files.LineLength.TooLong"/>
-    </rule>
-
-    <!-- Paths to check -->
-    <file>app</file>
-    <file>bootstrap</file>
-    <file>database</file>
-    <file>routes</file>
-    <file>tests</file>
+  <!-- Paths to check -->
+  <file>app</file>
+  <file>bootstrap</file>
+  <file>database</file>
+  <file>routes</file>
+  <file>tests</file>
 </ruleset>

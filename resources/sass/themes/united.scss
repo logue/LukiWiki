@@ -7,13 +7,13 @@
  */
 @charset "utf-8";
 // Variables
-@import "~bootswatch/dist/united/variables";
-@import "../variables";
+@import '~bootswatch/dist/united/variables';
+@import '../variables';
 // Bootstrap: 4;
-@import "~bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
 // Bootswatch
-@import "~bootswatch/dist/united/bootswatch";
+@import '~bootswatch/dist/united/bootswatch';
 // Bootstrap Vue
-@import "~bootstrap-vue/src/index.scss";
+@import '~bootstrap-vue/src/index.scss';
 // overrides
-@import "../overrides";
+@import '../overrides';

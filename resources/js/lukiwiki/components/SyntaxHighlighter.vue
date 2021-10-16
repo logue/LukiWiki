@@ -1,5 +1,7 @@
 <script>
-// CodemirrorによるSyntaxHilighter
+/**
+ *  CodemirrorによるSyntaxHilighter
+ */
 import CodeMirror from 'codemirror/lib/codemirror';
 require('codemirror/addon/runmode/runmode');
 
@@ -15,9 +17,9 @@ others.parentNode.insertBefore(meta, others);
 CodeMirror.modeUrl = modeUrl + '%N/%N.js';
 
 //
-let loading = {};
+const loading = {};
 
-function splitCallback (cont, n) {
+function splitCallback(cont, n) {
   let countDown = n;
   return function () {
     if (--countDown === 0) cont();
@@ -28,31 +30,36 @@ function ensureDeps(mode, cont) {
   const deps = CodeMirror.modes[mode].dependencies;
   if (!deps) return cont();
   const missing = [];
-  for (let i = 0; i < deps.length; ++i) {
-    if (!CodeMirror.modes.hasOwnProperty(deps[i])) missing.push(deps[i]);
+  for (const dep in deps) {
+    if (!CodeMirror.modes.hasOwnProperty(dep)) {
+      missing.push(dep);
+    }
   }
   if (!missing.length) return cont();
   const split = splitCallback(cont, missing.length);
-  for (let i = 0; i < missing.length; ++i)
-    CodeMirror.requireMode(missing[i], split);
+  for (const dep in missing) {
+    if (!CodeMirror.modes.hasOwnProperty(dep)) {
+      CodeMirror.requireMode(dep, split);
+    }
+  }
 }
 
-CodeMirror.requireMode = function(name, cont) {
-  //console.log(name);
+CodeMirror.requireMode = function (name, cont) {
+  // console.log(name);
   if (CodeMirror.modes.hasOwnProperty(name)) return ensureDeps(name, cont);
   if (loading.hasOwnProperty(name)) return loading[name].push(cont);
 
-  CodeMirror.on(meta, 'load', function() {
+  CodeMirror.on(meta, 'load', () => {
     const mode = CodeMirror.findModeByName(name).mode;
-    //console.log(name, mode);
+    // console.log(name, mode);
 
     const script = document.createElement('script');
     script.src = CodeMirror.modeUrl.replace(/%N/g, mode);
     const list = (loading[mode] = [cont]);
 
-    CodeMirror.on(script, 'load', function() {
-      ensureDeps(mode, function() {
-        for (let i = 0; i < list.length; ++i) list[i]();
+    CodeMirror.on(script, 'load', () => {
+      ensureDeps(mode, () => {
+        list.each((e) => e());
       });
     });
 
@@ -60,10 +67,10 @@ CodeMirror.requireMode = function(name, cont) {
   });
 };
 
-CodeMirror.autoLoadMode = function(instance, mode) {
+CodeMirror.autoLoadMode = (instance, mode) => {
   if (CodeMirror.modes.hasOwnProperty(mode)) return;
 
-  CodeMirror.requireMode(mode, function() {
+  CodeMirror.requireMode(mode, () => {
     instance.setOption('mode', instance.getOption('mode'));
   });
 };
@@ -101,12 +108,12 @@ for (let i = 0; i < textareas.length; ++i) {
 }
 */
 export default {
-  bind: element => {
+  bind: (element) => {
     const data = element.dataset;
 
-    let options = {};
-    let text = [];
-    let mode = data.lang || null;
+    const options = {};
+    const text = [];
+    const mode = data.lang || null;
     options.tabsize = data.tabSize || 4;
     options.state = data.state || null;
     options.lineNumbers = data.lineNumbers || true;
@@ -129,15 +136,15 @@ export default {
 
     textContent(element, text);
 
-    if (text.length !== 0){
+    if (text.length !== 0) {
       element.innerHTML = '';
     }
     element.className += ' cm-s-default';
     element.style.height = data.height || 'auto';
 
-    CodeMirror.requireMode(mode, function() {
+    CodeMirror.requireMode(mode, () => {
       CodeMirror.runMode(text.join(''), mode, element, options);
     });
-  }
+  },
 };
 </script>
