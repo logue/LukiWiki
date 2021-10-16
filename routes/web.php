@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*
 // 管理
 Route::prefix(':dashboard')->group(function () {
     // 管理用トップページ
@@ -22,7 +21,7 @@ Route::prefix(':dashboard')->group(function () {
     Route::get('/convert', 'DashboardController@convert');
     Route::post('/convert', 'DashboardController@convert');
     // キャッシュ処理
-    Route::get('/clear-cache', 'DashboardController@clearCache');
+    Route::post('/clear-cache', 'DashboardController@clearCache');
     // InterWikiNameの管理
     Route::get('/interwiki', 'DashboardController@interwiki');
     Route::post('/interwiki', 'DashboardController@interwiki');
@@ -32,7 +31,7 @@ Route::prefix(':dashboard')->group(function () {
     Route::get('/job', 'JobController@index');
     // ユーザ個人管理
 });
-*/
+
 // 認証系のルーティング
 //Auth::routes();
 // 登録系

@@ -21,7 +21,7 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    private const DEFAULT_PATH = '/';
+    private const DEFAULT_PATH = '/:dashboard';
 
     /** @var \Illuminate\Database\Eloquent\Model $page ページモデル */
     protected $page;
@@ -147,34 +147,36 @@ class DashboardController extends Controller
      */
     public function clearCache(Request $request)
     {
-        $args = $request->input('cache');
+        // $args = $request->input('cache');
         $msg = [];
 
+        /*
         if (\count($args) === 0) {
             $request->session()->flash('message', '何も選択されていないため処理を中断しました。');
 
             return redirect(self::DEFAULT_PATH);
         }
+        */
 
-        foreach ($args as $cache) {
-            switch ($cache) {
-                case 'view':
-                    $files = glob(storage_path('framework/views') . '/*.php');
-                    foreach ($files as $no => $file) {
-                        unlink($file);
-                    }
-                    $msg[] = 'ビューキャッシュ';
-                    break;
-                case 'debug':
-                    // $files = glob(storage_path('framework/debugbar') . '/*.json');
-                    $msg[] = 'デバッグ情報';
-                    break;
-                case 'system':
-                    Cache::flush();
-                    $msg[] = 'システムキャッシュ';
-                    break;
-            }
+        // foreach ($args as $cache) {
+        switch ($request->input('cache')) {
+            case 'view':
+                $files = glob(storage_path('framework/views') . '/*.php');
+                foreach ($files as $no => $file) {
+                    unlink($file);
+                }
+                $msg[] = 'ビューキャッシュ';
+                break;
+            case 'debug':
+                // $files = glob(storage_path('framework/debugbar') . '/*.json');
+                $msg[] = 'デバッグ情報';
+                break;
+            case 'system':
+                Cache::flush();
+                $msg[] = 'システムキャッシュ';
+                break;
         }
+        // }
 
         $request->session()->flash('message', '以下のキャッシュを削除しました：<br />' . implode("<br />\n", $msg));
 

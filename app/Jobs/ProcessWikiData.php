@@ -129,7 +129,7 @@ class ProcessWikiData implements ShouldQueue
     public function failed(\Exception $exception)
     {
         Log::error('Convert Error: ' . $this->page);
-        Log::error($exception);
+        Log::error($exception->__toString());
     }
 
     /**
@@ -229,17 +229,20 @@ class ProcessWikiData implements ShouldQueue
             $line = preg_replace('/\'{2}(.+)\'{2}/u', '**${1}**', $line);
 
             // インライン型プラグイン
-            $line = preg_replace_callback('/&((\w+)(?:\(((?:(?!\)[;{]).)*)\))?)(?:\{((?:(?R)|(?!};).)*)\})?;/u', function ($matches) {
-                $plugin = $matches[2];
-                $option = isset($matches[3]) ? explode(',', trim($matches[3])) : [];
-                $body = isset($matches[4]) ? trim($matches[4]) : null;
+            $line = preg_replace_callback(
+                '/&((\w+)(?:\(((?:(?!\)[;{]).)*)\))?)(?:\{((?:(?R)|(?!};).)*)\})?;/u',
+                function ($matches) {
+                    $plugin = $matches[2];
+                    $option = isset($matches[3]) ? explode(',', trim($matches[3])) : [];
+                    $body = isset($matches[4]) ? trim($matches[4]) : null;
 
-                return self::processPlugin('&', $plugin, $option, $body) . ';';
-            },
-                $line);
+                    return self::processPlugin('&', $plugin, $option, $body) . ';';
+                },
+                $line
+            );
 
             switch ($char) {
-                // ブロック型プラグイン
+                    // ブロック型プラグイン
                 case '#':
                     preg_match('/^#([^\(\{]+)(?:\(([^\r]*)\))?(?:\{\{*(.+?)\}\}*)?/', $line, $matches);
                     $plugin = trim($matches[1]);
@@ -286,7 +289,7 @@ class ProcessWikiData implements ShouldQueue
                         if (isset($matches[1]) && strpos($option, 'c') !== false) {
                             $cells = explode('|', $matches[1]);
                             $option =
-                            $c = [];
+                                $c = [];
                             foreach ($cells as $cell) {
                                 if (strpos($cell, ':') !== false) {
                                     // セルにパラメータが含まれている場合
@@ -308,7 +311,11 @@ class ProcessWikiData implements ShouldQueue
                             if ($option === 'c') {
                                 $option = 't';
                             }
-                            $ret[] = '|' . implode('|', $c) . '|' . $option;
+                            if (typeOf($c) === 'array') {
+                                $ret[] = '|' . implode('|', $c) . '|' . $option;
+                            } else {
+                                $ret[] = '|' .  $c . '|' . $option;
+                            }
                         } else {
                             // cが含まれていない場合、そのまま移行
                             $ret[] = $line;

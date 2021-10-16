@@ -43,6 +43,10 @@
     <input type="radio" id="typeInterWiki" name="type" value="interwiki" class="custom-control-input">
     <label class="custom-control-label" for="typeInterWiki">InterWikiName、AutoAlias、Glossary</label>
   </div>
+  <!--div class="form-group">
+    <label for="password">パスワード</label>
+    <input type="text" class="form-control" name="password" id="password" />
+  </div-->
   <button type="submit" class="btn btn-primary">実行</button>
 </form>
 @endsection
