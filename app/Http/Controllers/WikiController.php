@@ -30,17 +30,17 @@ class WikiController extends Controller
     // 新旧のデーターの比較に用いる要約用のハッシュのアルゴリズム
     // 使用可能な値：http://php.net/manual/ja/function.hash-algos.php
     // あくまでも新旧のデーターに変化があったかのチェック用途であるため、衝突性能は考慮しない。高速なcrc32で十分だと思う。
-    const HASH_ALGORITHM = 'crc32';
+    private const HASH_ALGORITHM = 'crc32';
 
     /** @var \Illuminate\Database\Eloquent\Model $page ページモデル */
-    protected $page;
+    protected Page $model;
 
     /**
      * コンストラクタ
      */
     public function __construct()
     {
-        $this->page = new Page();
+        $this->model = new Page();
     }
 
     /**
@@ -62,7 +62,7 @@ class WikiController extends Controller
 
         // ページを読み込み
         Debugbar::startMeasure('db', 'Fetch ' . $page . ' data from db.');
-        $entry = $this->page->where('name', '=', $page)->first();
+        $entry = $this->model->where('name', '=', $page)->first();
         if (!$entry) {
             // ページが見つからない
             abort(404, __('Page :page is not found.', ['page' => $page]));
@@ -142,7 +142,7 @@ class WikiController extends Controller
     {
         // DBからページデータを取得
         Debugbar::startMeasure('db', 'Fetch ' . $page . ' data from db.');
-        $entry = $this->page->where('name', '=', $page)->first();
+        $entry = $this->model->where('name', '=', $page)->first();
         if (!$entry) {
             abort(404, __('Page :page is not found.', ['page' => $page]));
         }
@@ -170,7 +170,7 @@ class WikiController extends Controller
     {
         $attach_id = null;
         Debugbar::startMeasure('db', 'Fetch ' . $page . ' data from db.');
-        $entry = $this->page->where('name', '=', $page)->first()->attachments();
+        $entry = $this->model->where('name', '=', $page)->first()->attachments();
         if (!$entry) {
             abort(404, __('Page :page is not found.', ['page' => $page]));
         }
@@ -205,13 +205,14 @@ class WikiController extends Controller
     public function history(Request $request, string $page, ?int $age = null): View
     {
         Debugbar::startMeasure('db', 'Fetch ' . $page . ' backup data from db.');
-        $entry = $this->page->where('name', '=', $page)->first();
-        if (!$entry) {
+        if (!$this->model->where('name', '=', $page)->exists()) {
             // ページが見つからない
             abort(404, __('Page :page is not found.', ['page' => $page]));
         }
-        $entry->backups()->orderBy('updated_at', 'desc');
-        $backup = !empty($age) ? $entry->offset($age - 1)->first() : $entry->get();
+        $backups = $this->model->join('backups', 'backups.id', '=', 'pages.id')
+            ->where('pages.name', '=', $page)->orderBy('updated_at', 'desc');
+        $backup = !empty($age) ? $backups->offset($age - 1)->first() : $backups->get();
+
         if (!$backup) {
             abort(404, __('There is no backup for :page.', ['page' => $page]));
         }
@@ -249,7 +250,7 @@ class WikiController extends Controller
     public function diff(Request $request, string $page, int $age = 0): View
     {
         Debugbar::startMeasure('db', 'Fetch ' . $page . ' backup data from db.');
-        $entry = $this->page->where('name', '=', $page);
+        $entry = $this->model->where('name', '=', $page);
         if (!$entry) {
             // ページが見つからない
             abort(404, __('Page :page is not found.', ['page' => $page]));
@@ -281,7 +282,7 @@ class WikiController extends Controller
     public function print(Request $request, string $page): View
     {
         Debugbar::startMeasure('db', 'Fetch ' . $page . ' data from db.');
-        $entry = $this->page->where('name', '=', $page)->first();
+        $entry = $this->model->where('name', '=', $page)->first();
         if (!$entry) {
             abort(404, __('Page :page is not found.', ['page' => $page]));
         }
@@ -314,7 +315,7 @@ class WikiController extends Controller
     {
         $p = $page ?? $request->input('page');
 
-        $entry = $this->page->where('name', $p);
+        $entry = $this->model->where('name', $p);
 
         if (!$entry->exists()) {
             // TODO:新規ページ
@@ -361,16 +362,21 @@ class WikiController extends Controller
             abort(400, __('Page name is undefined.'));
         }
 
-        if ($request->input('action') !== 'save') {
+        if ($request->post('action') !== 'save') {
             // キャンセル時の処理
             $request->session()->flash('message', __('Cancelled'));
 
             return redirect($page);
         }
 
-        if ($this->page->exists($page)) {
+        // 簡易パスワード確認
+        if (Config::get('lukiwiki.password') !== $request->post('password')) {
+            abort(403, __('Permission denied.'));
+        }
+
+        if ($this->model->where('name', $page)->exists()) {
             // ページが存在する場合、DB上のソースを取得。
-            $remote = $this->page->where('name', $page)->first();
+            $remote = $this->model->where('name', $page)->first();
             $page_id = $remote['id'];
             $hash = hash(self::HASH_ALGORITHM, (string) $remote['source']);
 
@@ -401,7 +407,7 @@ class WikiController extends Controller
             \DB::beginTransaction();
 
             // 更新処理
-            $this->page->where('name', $page)->update([
+            $this->model->where('name', $page)->update([
                 'source'     => $request->input('source'),
                 'ip_address' => $request->ip(),
             ]);
@@ -472,6 +478,11 @@ class WikiController extends Controller
      */
     public function upload(Request $request, string $page): RedirectResponse
     {
+        // 簡易パスワード確認
+        if (Config::get('lukiwiki.password') !== $request->post('password')) {
+            abort(403, __('Permission denied.'));
+        }
+
         // ファイルのバリデーション
         $this->validate($request, [
             'file.*, file' => [
@@ -484,7 +495,7 @@ class WikiController extends Controller
             ],
         ]);
 
-        $page_id = $this->page->getId($page);
+        $page_id = $this->model->getId($page);
         $replace = $request->input('replace') ?? false;
 
         // 一つづつ処理
@@ -507,7 +518,7 @@ class WikiController extends Controller
         return view(
             'default.list',
             [
-                'entries' => $this->page->getEntries(),
+                'entries' => $this->model->getEntries(),
             ]
         );
     }
@@ -522,7 +533,7 @@ class WikiController extends Controller
         return view(
             'default.recent',
             [
-                'entries' => $this->page->getLatest()->get(),
+                'entries' => $this->model->getLatest()->get(),
             ]
         );
     }
@@ -540,7 +551,7 @@ class WikiController extends Controller
         $keywords = $request->input('keyword');
         if (!empty($keywords)) {
             Debugbar::startMeasure('search', 'Searching...');
-            $entries = $this->page->search($keywords)->get()->toArray();
+            $entries = $this->model->search($keywords)->get()->toArray();
             Debugbar::stopMeasure('parse');
         }
         // dd($entries);
@@ -565,7 +576,7 @@ class WikiController extends Controller
      */
     private function processUpload(UploadedFile $entry, int $page_id, bool $replace = false): bool
     {
-        $attach = $this->page->find($page_id)->attachment();
+        $attach = $this->model->find($page_id)->attachment();
 
         if (!$entry->isValid()) {
             return false;
@@ -583,11 +594,9 @@ class WikiController extends Controller
             // 同名で登録されている添付ファイルがあるか
             $old_attach = $attach->where('name', $entry->getClientOriginalName())->first();
 
-            if ($old_attach) {
-                if (!Attachment::where('stored_name', $old_attach->stored_name)->exists()) {
-                    // 同一ハッシュのファイルがDBに登録されていない（他から参照されていない）場合、ファイルを削除する
-                    Storage::delete('attachments/' . $old_attach->stored_name);
-                }
+            if ($old_attach && !Attachment::where('stored_name', $old_attach->stored_name)->exists()) {
+                // 同一ハッシュのファイルがDBに登録されていない（他から参照されていない）場合、ファイルを削除する
+                Storage::delete('attachments/' . $old_attach->stored_name);
             }
 
             // ファイル差し替え

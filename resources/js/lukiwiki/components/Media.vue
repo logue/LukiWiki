@@ -1,5 +1,5 @@
 <template>
-  <span v-if="src.match(/\.(jpe?g|gif|png|webp)$/)">
+  <figure v-if="src.match(/\.(?:jpe?g|gif|png|webp)$/)">
     <b-img-lazy
       :id="name"
       v-b-tooltip
@@ -8,53 +8,45 @@
       blank-color="#f8f9fa"
       :title="title"
     />
-  </span>
-  <span v-else-if="src.match(/\.(mp3|m4a|wave?|aif?f|flac)$/)">
-    <figure class="p-3 mb-2 bg-light rounded">
-      <figcaption>{{ title }}</figcaption>
-      <div :id="name" />
-      <div class="d-flex justify-content-around">
-        <!-- controls -->
-        <div>
-          <b-button
-            variant="outline-primary"
-            class="playPause"
-            @click="playPause"
-          >
-            <span v-if="playing">
-              <font-awesome-icon :icon="pauseIcon" />
-            </span>
-            <span v-if="!playing">
-              <font-awesome-icon :icon="playIcon" />
-            </span>
-          </b-button>
-          <span>{{ currentTime }}/{{ getDuration }}</span>
-        </div>
-        <div>
-          <b-input-group>
-            <b-form-input
-              v-model="volume"
-              type="range"
-              min="1"
-              max="100"
-              @input="setVolume"
-            />
-            <b-input-group-append>
-              <b-button variant="outline-secondary" class="mute" @click="mute">
-                <span v-if="muted">
-                  <font-awesome-icon :icon="muteIcon" />
-                </span>
-                <span v-else>
-                  <font-awesome-icon :icon="volumeUpIcon" />
-                </span>
-              </b-button>
-            </b-input-group-append>
-          </b-input-group>
-        </div>
+  </figure>
+  <figure
+    v-else-if="src.match(/.(?:mp3|m4a|wav|aif?f|flac)$/)"
+    class="p-3 mb-2 bg-light rounded"
+  >
+    <figcaption v-text="title" />
+    <div :id="name" />
+    <div class="d-flex justify-content-around">
+      <!-- controls -->
+      <div>
+        <b-button
+          variant="outline-primary"
+          class="playPause"
+          @click="playPause"
+        >
+          <font-awesome-icon :icon="playing ? pauseIcon : playIcon" />
+        </b-button>
+        <span>{{ currentTime }}/{{ getDuration }}</span>
       </div>
-    </figure>
-  </span>
-  <span v-else-if="src.match(/\.(mov|avi|mp4|webm)$/)">
+      <div>
+        <b-input-group>
+          <b-form-input
+            v-model="volume"
+            type="range"
+            min="1"
+            max="100"
+            @input="setVolume"
+          />
+          <b-input-group-append>
+            <b-button variant="outline-secondary" class="mute" @click="mute">
+              <font-awesome-icon :icon="muted ? muteIcon : volumeUpIcon" />
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
+      </div>
+    </div>
+  </figure>
+  <figure v-else-if="src.match(/\.(?:mov|avi|mp4|webm)$/)">
+    <figcaption v-text="title" />
     <video
       :id="name"
       v-b-tooltip
@@ -63,7 +55,7 @@
       controls="controls"
       :title="title"
     />
-  </span>
+  </figure>
   <span v-else>
     <a
       v-if="src.match(/\:attachment/)"
@@ -82,6 +74,7 @@
     </a>
   </span>
 </template>
+
 <script>
 // Bootstrap Vue
 import {
@@ -135,6 +128,7 @@ export default {
     const data = this.$slots.default[0].data.attrs;
 
     this.href = data.href;
+    console.log(data.href);
     return {
       src: data.href,
       name: this.name,

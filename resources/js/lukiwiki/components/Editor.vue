@@ -160,7 +160,6 @@
             type="password"
             autocomplete="off"
             placeholder="Password"
-            :disabled="keep_timestamp == 0"
           />
         </b-input-group>
       </div>

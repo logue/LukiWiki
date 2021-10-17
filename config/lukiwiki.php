@@ -2,9 +2,9 @@
 
 return [
     // Author
-    'author' => 'Owner',
+    'author' => env('LUKIWIKI_AUTHOR', 'owner'),
     // Password (This feature will be removed in 1.0)
-    'password' => 'adminpass',
+    'password' => env('LUKIWIKI_PASSWORD', 'adminpass'),
     // Theme (bootswatch only)
     'theme' => env('LUKIWIKI_THEME', 'default'),
     // Directory Configure
@@ -17,9 +17,9 @@ return [
     // Special Page Name
     'special_page' => [
         // Default Page Name
-        'default' => 'MainPage',
+        'default' => env('LUKIWIKI_MAINPAGE', 'MainPage'),
         // Sidebar Page Name
-        'sidebar' => 'SideBar',
+        'sidebar' => env('LUKIWIKI_SIDEBAR', 'SideBar'),
     ],
     // Feed
     'feed' => [
