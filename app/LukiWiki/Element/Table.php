@@ -4,7 +4,7 @@
  * テーブルクラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018,2019 Logue
+ * @copyright 2013-2014,2018,2019,2021 Logue
  * @license   MIT
  */
 
@@ -21,14 +21,14 @@ use App\LukiWiki\Rules\Alignment;
 class Table extends AbstractElement
 {
     /** @var string デフォルトのテーブルの位置 */
-    public $align = 'CENTER';
+    public string $align = 'CENTER';
     /** @var string */
-    protected $type;
-    protected $types;
+    protected string $type = '';
+    protected array $types;
     /** @var int 列の数 */
-    protected $col;
+    protected int $col;
     /** @var array セルの種類 */
-    protected static $parts = [
+    protected static array $parts = [
         // ヘッダー行
         'h' => 'thead',
         // フッター行
@@ -128,6 +128,7 @@ class Table extends AbstractElement
                 if ($this->types[$nrow] !== $type) {
                     continue;
                 }
+
                 $row = $this->elements[$nrow];
                 $row_string = '';
                 foreach (array_keys($row) as $ncol) {
@@ -137,9 +138,9 @@ class Table extends AbstractElement
             }
             $string .= $this->wrap($part_string, $part, [], false);
         }
-        $align = Alignment::block($this->align);
-
-        return $this->wrap($string, 'table', ['class' => 'table table-bordered ' . $align], false);
+        return $this->wrap($string, 'table', [
+            'class' => 'table table-bordered ' . Alignment::block($this->align)
+        ], false);
     }
 
     public function canContain($obj)
@@ -151,7 +152,6 @@ class Table extends AbstractElement
     {
         $this->elements[] = $obj->elements[0];
         $this->types[] = $obj->type;
-
         return $this;
     }
 }

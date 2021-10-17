@@ -69,14 +69,19 @@ class ApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function attachment(Request $request, int $id): Response
+    public function attachment(Request $request, int $id)
     {
         $file = Attachment::select('stored_name')->where('attachments.id', $id)->first();
-
-        return response(Storage::get('attachments/' . $file->stored_name))
-            ->header('Content-Type', $file->mime)
-            ->header('Content-length', $file->size)
-            ->header('Last-Modified', $file->updated_at);
+        return Storage::response(
+            'attachments/' . $file->stored_name,
+            $file->name,
+            [
+                'Content-Type' => $file->mime,
+                'Content-length' => $file->size,
+                'Last-Modified' => $file->updated_at
+            ],
+            'attachment'
+        );
     }
 
     /**
