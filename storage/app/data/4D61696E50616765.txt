@@ -1,4 +1,4 @@
-﻿# Welcome to LukiWiki
+# Welcome to LukiWiki
 
 インストール成功おめでとうございます。この画面が正常に表示されているということは、インストールに成功したということです。
 まずは、[SandBox]で行きLukiWikiの機能を試してみましょう。
@@ -8,12 +8,12 @@
 # カスタマイズ
 
 -[MainPage] - このページです。
--[:admin] - 管理ページです。ここに入る場合ログインする必要があります。
+-[:dashboard] - 管理ページです。ここに入る場合ログインする必要があります。
 
 # サポート
 
 - [プロジェクトサイト](https://github.com/logue/LukiWiki)
  - [問題報告](https://github.com/logue/LukiWiki/issues)
-- [Twitter]https://twitter.com/pukiwiki_adv)
-- [PukiWiki Adv.公式サイト](http://pukiwiki.logue.be/)
+- [Twitter](https://twitter.com/pukiwiki_adv)
+- [PukiWiki Adv.公式サイト](https://pukiwiki.logue.be/)
  - [PukiWiki Adv.初心者ガイド](adv.:Documents/For Biggner) - Wikiサイト作りに迷ったらこちら

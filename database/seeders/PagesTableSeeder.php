@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Page;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class PagesTableSeeder extends Seeder
 {
@@ -14,25 +15,16 @@ class PagesTableSeeder extends Seeder
     {
         Page::insert([
             'name'    => 'MainPage',
-            'source'  => '# Welcome to LukiWiki
-
-インストール成功おめでとうございます。この画面が正常に表示されているということは、インストールに成功したということです。
-まずは、[SandBox]で行きLukiWikiの機能を試してみましょう。
-
-実働環境に置く前に、.envの書き換えを行ってください。
-
-# カスタマイズ
-
-- [MainPage] - このページです。
-- [SideBar] - サイドメニューを定義します
-
-# サポート
-
-- [プロジェクトサイト](https://github.com/logue/LukiWiki)
- - [問題報告](https://github.com/logue/LukiWiki/issues)
-- [Twitter](https://twitter.com/pukiwiki_adv)',
+            'source'  => Storage::get('data/4D61696E50616765.txt'),
             'updated_at' => \Carbon\Carbon::now()->format('Y-m-d H:i:s'),
             'created_at' => '2021-01-01 0:0:0',
         ]);
+        Page::insert([
+            'name'    => 'SandBox',
+            'source'  => Storage::get('data/53616E64426F78.txt'),
+            'updated_at' => \Carbon\Carbon::now()->format('Y-m-d H:i:s'),
+            'created_at' => '2021-01-01 0:0:0',
+        ]);
+        Page::clearCache();
     }
 }

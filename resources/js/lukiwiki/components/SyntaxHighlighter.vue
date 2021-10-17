@@ -57,11 +57,9 @@ CodeMirror.requireMode = function (name, cont) {
     script.src = CodeMirror.modeUrl.replace(/%N/g, mode);
     const list = (loading[mode] = [cont]);
 
-    CodeMirror.on(script, 'load', () => {
-      ensureDeps(mode, () => {
-        list.each((e) => e());
-      });
-    });
+    CodeMirror.on(script, 'load', () =>
+      ensureDeps(mode, () => list.forEach((e) => e()))
+    );
 
     others.parentNode.insertBefore(script, others);
   });
@@ -70,9 +68,9 @@ CodeMirror.requireMode = function (name, cont) {
 CodeMirror.autoLoadMode = (instance, mode) => {
   if (CodeMirror.modes.hasOwnProperty(mode)) return;
 
-  CodeMirror.requireMode(mode, () => {
-    instance.setOption('mode', instance.getOption('mode'));
-  });
+  CodeMirror.requireMode(mode, () =>
+    instance.setOption('mode', instance.getOption('mode'))
+  );
 };
 function textContent(node, out) {
   const isBlock = /^(p|li|div|h\\d|pre|blockquote|td)$/;

@@ -209,7 +209,7 @@ class WikiController extends Controller
             // ページが見つからない
             abort(404, __('Page :page is not found.', ['page' => $page]));
         }
-        $backups = $this->model->join('backups', 'backups.id', '=', 'pages.id')
+        $backups = $this->model->join('backups', 'backups.page_id', '=', 'pages.id')
             ->where('pages.name', '=', $page)->orderBy('updated_at', 'desc');
         $backup = !empty($age) ? $backups->offset($age - 1)->first() : $backups->get();
 
@@ -462,6 +462,9 @@ class WikiController extends Controller
                 'updated_at' => Carbon::now()->toDateTimeString(),
             ]);
         }
+
+        // ページ一覧キャッシュを削除
+        Page::clearCache();
 
         $request->session()->flash('message', __('Saved.'));
 

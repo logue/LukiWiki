@@ -55,10 +55,13 @@ class Table extends AbstractElement
         if ($last_cell === 't' || $last_cell === 'h' || $last_cell === 'f' || $last_cell === 'c') {
             // T…テンプレート行、H…ヘッダー行、F…フッター行、C…キャプション
             $this->type = $last_cell;
-            $cells = array_pop($cells);
+            // array_pop($cells);
         }
+
+        array_shift($cells);
+
         // 列数
-        $this->col = \count($cells);
+        $this->col = count($cells);
         // セルのタイプ
         $this->types = [$this->type];
 

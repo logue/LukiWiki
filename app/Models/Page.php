@@ -173,20 +173,4 @@ class Page extends Model
         Cache::forget(self::PAGELIST_CACHE);
         Cache::forget(self::PAGELIST_TRIE_CACHE);
     }
-
-    /**
-     * 保存時にキャッシュ削除.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    /*
-    protected function setKeysForSaveQuery(Builder $query): Builder
-    {
-        self::clearCache();
-
-        return parent::setKeysForSaveQuery($query);
-    }
-    */
 }
