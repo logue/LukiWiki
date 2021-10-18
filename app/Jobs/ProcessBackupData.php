@@ -33,10 +33,10 @@ class ProcessBackupData implements ShouldQueue
      *
      * @var int
      */
-    public $tries = 1;
+    public int $tries = 1;
 
-    private $file;
-    private $page;
+    private string $file;
+    private string $page;
 
     /**
      * Create a new job instance.
@@ -45,11 +45,6 @@ class ProcessBackupData implements ShouldQueue
     {
         $this->file = $file;
         $this->page = hex2bin(pathinfo($this->file, PATHINFO_FILENAME));
-
-        if (empty($this->page)) {
-            // ファイル名が存在しない場合スキップ（.gitignoreとかの隠しファイルも省ける）
-            return;
-        }
     }
 
     /**
@@ -59,20 +54,22 @@ class ProcessBackupData implements ShouldQueue
     {
         Log::info('Loading "' . $this->file . '"...');
 
+        if (empty($this->page)) {
+            // ファイル名が存在しない場合スキップ（.gitignoreとかの隠しファイルも省ける）
+            return;
+        }
+
         // :が含まれるページ名は_に変更
-        $page = preg_replace('/\:/', '_', $this->page);
+        $pagename = str_replace(':', '_', $this->page);
         // ページが存在しない場合、移行はしない。（IDで管理するため）
-        $page_id = Page::where('name', $page)->pluck('id')->first();
+        $page_id = Page::where('name', $pagename)->pluck('id')->first();
         if (!$page_id) {
             return;
         }
-        Log::info('Page: ' . $page);
-
-        // :が含まれるページ名は_に変更する。
-        $page = preg_replace('/\:/', '_', $this->page);
+        Log::info('Page: ' . $pagename);
 
         // Storageクラスに作成日を取得する関数がないためファイルの実体のパスを取得
-        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/' . $this->file));
+        $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/' . $this->file));
 
         // 拡張子を取得
         $ext = substr($this->file, strrpos($this->file, '.') + 1);
@@ -85,23 +82,25 @@ class ProcessBackupData implements ShouldQueue
                 break;
             case 'lzf':
                 // PukiWiki Adv.
-                $data = lzf_decompress(Storage::get($this->file));
+                $data = \lzf_decompress(Storage::get($this->file));
                 break;
             case 'gz':
-                $handle = gzopen($from, 'r');
+                $handle = \gzopen($from, 'r');
                 while (!gzeof($handle)) {
-                    $data .= gzread($handle, 1024);
+                    $data .= \gzread($handle, 1024);
                 }
                 gzclose($handle);
                 break;
             case 'bz2':
                 // PukiWiki Adv.
-                $handle = bzopen($from, 'r');
+                $handle = \bzopen($from, 'r');
                 while (!feof($handle)) {
-                    $data .= bzread($handle, 1024);
+                    $data .= \bzread($handle, 1024);
                 }
                 bzclose($handle);
                 break;
+            default:
+                return;
         }
 
         if (empty($data)) {
@@ -114,7 +113,7 @@ class ProcessBackupData implements ShouldQueue
 
         foreach (explode("\n", $data) as $line) {
             // バックアップデーターをパース
-            if (preg_match('/^\>\>\>\>\>\>\>\>\>\>\s(\d+)(?:\s(\d+))?$/', $line, $match)) {
+            if (preg_match('/^(?:\>{10}\s(\d+)\s?(\d+)?)$/', $line, $matchs)) {
                 $age++;
 
                 // 実際ページを保存した時間が指定されている場合（タイムスタンプを更新しないをチェックして更新した場合）
@@ -123,11 +122,11 @@ class ProcessBackupData implements ShouldQueue
                 // 割当
                 $entries[$age] = [
                     'page_id'   => $page_id,
-                    'created_at' => (int) $match[1],
-                    'updated_at' => isset($match[2]) ? (int) $match[2] : (int) $match[1],
+                    'created_at' => (int) $matchs[1],
+                    'updated_at' => isset($matchs[2]) ? (int) $matchs[2] : (int) $matchs[1],
                 ];
 
-            //dd($match);
+                //dd($match);
             } else {
                 // 中身
                 $entries[$age]['data'][] = rtrim($line);
@@ -151,11 +150,11 @@ class ProcessBackupData implements ShouldQueue
     /**
      * 失敗したジョブの処理.
      *
-     * @param \Exception $exception
+     * @param \Throwable $exception
      */
-    public function failed(\Exception $exception)
+    public function failed(\Throwable $exception)
     {
-        Log::error('Import Backup data Job has been failed.');
-        Log::error($exception);
+        Log::error('Import Backup data Job has been failed: ' . $this->page);
+        Log::error($exception->__toString());
     }
 }

@@ -71,11 +71,11 @@ class ProcessWikiData implements ShouldQueue
         }
 
         // :が含まれるページ名は_に変更する。
-        $page = preg_replace('/\:/', '_', $this->page);
+        $pagename = str_replace(':', '_', $this->page);
         $data = explode("\n", /* @scrutinizer ignore-type */ Storage::get($this->file));
 
         // Storageクラスに作成日を取得する関数がないためファイルの実体のパスを取得
-        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/' . $this->file));
+        $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/' . $this->file));
 
         // タイムスタンプを取得
         $this->created_at = Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s');
@@ -100,7 +100,7 @@ class ProcessWikiData implements ShouldQueue
                 break;
         }
 
-        Log::info('Save "' . $page . '" to DB.');
+        Log::info('Save "' . $pagename . '" to DB.');
 
         //if ($page !== 'Web素材') {
         //    continue;
@@ -108,7 +108,7 @@ class ProcessWikiData implements ShouldQueue
         Page::updateOrCreate(
             [
                 // 更新対象
-                'name'        => $page,
+                'name'        => $pagename,
             ],
             [
                 'source'      => $ret['source'],
@@ -124,9 +124,9 @@ class ProcessWikiData implements ShouldQueue
     /**
      * 失敗したジョブの処理.
      *
-     * @param \Exception $exception
+     * @param \Throwable $exception
      */
-    public function failed(\Exception $exception)
+    public function failed(\Throwable $exception)
     {
         Log::error('Convert Error: ' . $this->page);
         Log::error($exception->__toString());
@@ -180,7 +180,7 @@ class ProcessWikiData implements ShouldQueue
                 continue;
             }
             // 整形済みテキストのエリアが終了したら一気に書き込む
-            if (\count($pre) !== 0) {
+            if (!empty($pre)) {
                 $tmp = trim(implode("\n", $pre));
                 // 統合してトリムして空白しか残らなかった場合は処理しない。
                 if (!empty($tmp)) {
@@ -220,13 +220,13 @@ class ProcessWikiData implements ShouldQueue
             }, $line);
 
             // 打ち消し線
-            $line = preg_replace('/%{2}(.+)%{2}/u', '~~${1}~~', $line);
+            $line = preg_replace('/%{2}(.+)%{2}/u', ' ~~${1}~~ ', $line);
             // コード
-            $line = preg_replace('/@{2}(.+)@{2}/u', '`${1}`', $line);
+            $line = preg_replace('/@{2}(.+)@{2}/u', ' `${1}` ', $line);
             // イタリック
-            $line = preg_replace('/\'{3}(.+)\'{3}/u', '*${1}*', $line);
+            $line = preg_replace('/\'{3}(.+)\'{3}/u', ' *${1}* ', $line);
             // 強調
-            $line = preg_replace('/\'{2}(.+)\'{2}/u', '**${1}**', $line);
+            $line = preg_replace('/\'{2}(.+)\'{2}/u', ' **${1}** ', $line);
 
             // インライン型プラグイン
             $line = preg_replace_callback(
@@ -288,8 +288,7 @@ class ProcessWikiData implements ShouldQueue
                         // テーブル定義行の処理
                         if (isset($matches[1]) && strpos($option, 'c') !== false) {
                             $cells = explode('|', $matches[1]);
-                            $option =
-                                $c = [];
+                            $c = [];
                             foreach ($cells as $cell) {
                                 if (strpos($cell, ':') !== false) {
                                     // セルにパラメータが含まれている場合
@@ -311,11 +310,7 @@ class ProcessWikiData implements ShouldQueue
                             if ($option === 'c') {
                                 $option = 't';
                             }
-                            if (typeOf($c) === 'array') {
-                                $ret[] = '|' . implode('|', $c) . '|' . $option;
-                            } else {
-                                $ret[] = '|' .  $c . '|' . $option;
-                            }
+                            $ret[] = '|' . implode('|', $c) . '|' . $option;
                         } else {
                             // cが含まれていない場合、そのまま移行
                             $ret[] = $line;
@@ -332,7 +327,12 @@ class ProcessWikiData implements ShouldQueue
             }
         }
 
-        return ['source' => implode("\n", $ret), 'locked' => $freezed, 'title' => $title, 'description' => $description];
+        return [
+            'source' => implode("\n", $ret),
+            'locked' => $freezed,
+            'title' => $title,
+            'description' => $description
+        ];
     }
 
     /**
@@ -414,7 +414,7 @@ class ProcessWikiData implements ShouldQueue
                     unset($options[1]);
                 }
 
-                if (\in_array(['noimg', 'novideo', 'noaudio'], $options, true)) {
+                if (in_array(['noimg', 'novideo', 'noaudio'], $options, true)) {
                     // メディアファイルを展開しないオプションが含まれていた場合、単純なリンクを出力
                     return '[' . $file . ']';
                 }
@@ -428,17 +428,14 @@ class ProcessWikiData implements ShouldQueue
                         continue;
                     }
                     if ($option === 'left' || $option === 'center' || $option === 'right' || $option === 'justify') {
-                        // インライン型のときは処理をしない
-                        if ($char === '#') {
-                            // 位置決めパラメータが含まれていた場合、
-                            if (\in_array('around', $options, true) && ($option === 'left' || $option === 'right')) {
-                                // aroundが含まれている場合
-                                $params[] = '.float-' . $option;
-                                unset($options['around']);
-                            } else {
-                                // CENTER:![](ファイル名)という形式にする。
-                                $align = strtoupper($option) . ':';
-                            }
+                        // 位置決めパラメータが含まれていた場合、
+                        if (\in_array('around', $options, true) && ($option === 'left' || $option === 'right')) {
+                            // aroundが含まれている場合
+                            $params[] = '.float-' . $option;
+                            unset($options['around']);
+                        } else {
+                            // CENTER:![](ファイル名)という形式にする。
+                            $align = strtoupper($option) . ':';
                         }
                         unset($options[$option]);
                     } elseif ($option === 'rounded' || $option === 'circle') {
@@ -460,7 +457,7 @@ class ProcessWikiData implements ShouldQueue
                     }
                 }
 
-                if (\count($params) !== 0) {
+                if (!empty($params)) {
                     return  $align . '![' . $title . '](' . $file . '){' . implode(' ', $params) . '}';
                 }
 
@@ -473,6 +470,8 @@ class ProcessWikiData implements ShouldQueue
             case 'ls2':
             case 'ls3':
                 return $char . 'ls' . isset($options) ? '(' . implode(',', $options) . ')' : '';
+            case 'floatclear':
+                return '@clear';
             case 'edit':
             case 'counter':
             case 'norelated':
@@ -502,7 +501,7 @@ class ProcessWikiData implements ShouldQueue
         }
 
         return $char . $plugin .
-            (\count($options) !== 0 ? '(' . implode(',', $options) . ')' : '') .
+            (!empty($options) ? '(' . implode(',', $options) . ')' : '') .
             (!empty($body) ? '{' . $body . '}' : '');
     }
 

@@ -45,16 +45,19 @@ class ProcessAttachmentData implements ShouldQueue
      */
     public function __construct(string $file)
     {
-        $this->file = $file;
+        // 添付ファイルの名前を取得
+        // [ページ名]_[ファイル名].[バックアップ世代]という形式。
+        // 添付するファイル名にファイルシステムの制約がかかるため、LukiWikiではDBで管理する。
         if (!preg_match('/(\w+)_(\w+)(?:\.(\d+|log))?$/', pathinfo($file, PATHINFO_BASENAME), $matches)) {
             return;
         }
+        $this->file = $file;
 
         // ログやバックアップファイルは無視
         if (!empty($matches[3])) {
             return;
         }
-        // 添付ファイルディレクトリ
+        // LukiWikiの添付ファイルディレクトリ
         $this->attach_dir = \Config::get('lukiwiki.directory.attach');
         // ページ名
         $this->page = hex2bin($matches[1]);
@@ -70,18 +73,15 @@ class ProcessAttachmentData implements ShouldQueue
         $meta = [];
         $count = 0;
         $locked = false;
-        // 添付ファイルの名前を取得（かなりいい加減な正規表現だが・・・）
-        // [ページ名]_[ファイル名].[バックアップ世代]という形式。
-        // 添付するファイル名に制約がかかるため、LukiWikiではDBで管理する。
 
         // :が含まれるページ名は_に変更
-        $page = preg_replace('/\:/', '_', $this->page);
-        // ページが存在しない場合、移行はしない。（IDで管理するため）
-        $page_id = Page::where('name', $page)->pluck('id')->first();
+        $pagename = preg_replace('/\:/', '_', $this->page);
+        // ページが存在しない場合（ページと紐付けがない添付ファイル）は移行はしない。（IDで管理するため）
+        $page_id = Page::where('name', $pagename)->pluck('id')->first();
         if (!$page_id) {
             return;
         }
-        Log::info('Page: ' . $page);
+        Log::info('Page: ' . $pagename);
 
         if (Attachment::where(['page_id' => $page_id, 'name' => $this->original_name])->exists()) {
             // すでにデーターベースに登録されている場合スキップ
@@ -114,6 +114,7 @@ class ProcessAttachmentData implements ShouldQueue
         $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/' . $this->file));
 
         // サーバーに保存する実際のファイル名はハッシュ値＋拡張子
+        // 同一の内容のファイルがアップされている（ハッシュが同じ）場合、片方だけを保持する
         $s = hash_file('sha1', $from);
         $stored_name = $s . '.' . $ext;
         // 保存先のパス
@@ -124,7 +125,7 @@ class ProcessAttachmentData implements ShouldQueue
             Log::info('-> File: ' . $this->original_name . ' Copied to ' . $stored_name . '.');
             Storage::copy($this->file, $dest);
         } else {
-            // TODO:同一のファイルが別ページにアップされている
+            // 同一のファイルが別ページにアップされている場合はDB上で紐付けのみを行う
             Log::info('-> File: ' . $this->original_name . ' is already exists or same file(' . $stored_name . '). Skipped.');
         }
 
@@ -145,9 +146,9 @@ class ProcessAttachmentData implements ShouldQueue
     /**
      * 失敗したジョブの処理.
      *
-     * @param \Exception $exception
+     * @param \Throwable $exception
      */
-    public function failed(\Exception $exception)
+    public function failed(\Throwable $exception)
     {
         Log::error('Convert Error: ' . $this->original_name . ' (' . $this->page . ')');
         Log::error($exception);

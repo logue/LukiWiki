@@ -4,7 +4,7 @@
  * ダッシュボード面コントローラー.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2019 Logue
+ * @copyright 2019,2021 Logue
  * @license   MIT
  */
 
@@ -174,6 +174,10 @@ class DashboardController extends Controller
             case 'system':
                 Cache::flush();
                 $msg[] = 'システムキャッシュ';
+                break;
+            case 'list':
+                $msg[] = 'ページ一覧キャッシュ';
+                Page::clearCache();
                 break;
         }
         // }

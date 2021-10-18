@@ -61,18 +61,24 @@ class ProcessCounterData implements ShouldQueue
     public function handle()
     {
         // :が含まれるページ名は_に変更
-        $page = preg_replace('/\:/', '_', $this->page);
-        Log::info('Loading "' . $this->file . '"(' . $page . ')...');
+        $pagename = str_replace(':', '_', $this->page);
+        Log::info('Loading "' . $this->file . '"(' . $pagename . ')...');
 
         // ページが存在しない場合、移行はしない。（IDで管理するため）
-        $page_id = Page::getId($page);
+        $page_id = Page::where('name', $pagename)->pluck('id')->first();
         if (!$page_id) {
-            Log::info('Skipped');
-
             return;
         }
 
         $data = explode("\n", Storage::get($this->file));
+
+        /*
+412
+2012/12/10
+1
+0
+108.162.245.44
+         */
 
         Counter::updateOrCreate(
             [
