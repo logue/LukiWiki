@@ -18,7 +18,7 @@
     "@fortawesome/free-brands-svg-icons": "^5.15.4",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/vue-fontawesome": "^2.0.5",
+    "@fortawesome/vue-fontawesome": "^2.0.6",
     "axios": "^0.23.0",
     "bootstrap": "4.6.0",
     "bootstrap-vue": "^2.21.2",
@@ -34,7 +34,9 @@
     "query-string": "^7.0.1",
     "vue-codemirror": "^4.0.6",
     "vue-runtime-helpers": "^1.1.2",
-    "wavesurfer-player-vue": "^0.1.2"
+    "wavesurfer-player-vue": "^0.1.2",
+    "wavesurfer.js": "^5.2.0",
+    "wavesurfer.js-vue": "^1.0.0"
   },
   "devDependencies": {
     "@vue/eslint-config-prettier": "^6.0.0",
@@ -44,15 +46,16 @@
     "eslint-config-google": "^0.14.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-prettier": "^3.4.1",
-    "eslint-plugin-vue": "^7.19.1",
+    "eslint-plugin-vue": "^7.20.0",
     "eslint-webpack-plugin": "^3.0.1",
     "laravel-mix": "^6.0.34",
     "laravel-mix-eslint": "^0.2.0",
+    "postcss": "^8.3.10",
     "resolve-url-loader": "^4.0.0",
     "sass": "<1.33.00",
     "sass-loader": "^10.2.0",
     "vue": "^2.6.14",
-    "vue-eslint-parser": "^7.11.0",
+    "vue-eslint-parser": "^8.0.0",
     "vue-loader": "15.9.8",
     "vue-template-compiler": "^2.6.14"
   }

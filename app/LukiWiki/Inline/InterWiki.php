@@ -23,7 +23,7 @@ class InterWiki extends AbstractInline
     {
         $target = empty($this->redirect) ? $this->name : $this->redirect . rawurlencode($this->name);
 
-        return parent::setLink($this->alias, $target, $this->name);
+        return parent::setAutoLink($this->alias, $target, $this->name);
     }
 
     public function getPattern(): string

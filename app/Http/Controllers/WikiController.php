@@ -371,7 +371,9 @@ class WikiController extends Controller
 
         // 簡易パスワード確認
         if (Config::get('lukiwiki.password') !== $request->post('password')) {
-            abort(403, __('Permission denied.'));
+            // abort(403, __('Permission denied.'));
+            $request->session()->flash('message', __('Permission denied.'));
+            return redirect($page);
         }
 
         if ($this->model->where('name', $page)->exists()) {

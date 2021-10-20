@@ -44,13 +44,14 @@ function ensureDeps(mode, cont) {
   }
 }
 
-CodeMirror.requireMode = function (name, cont) {
-  // console.log(name);
+CodeMirror.requireMode = (name, cont) => {
   if (CodeMirror.modes.hasOwnProperty(name)) return ensureDeps(name, cont);
   if (loading.hasOwnProperty(name)) return loading[name].push(cont);
 
   CodeMirror.on(meta, 'load', () => {
-    const mode = CodeMirror.findModeByName(name).mode;
+    const mode = CodeMirror.findModeByName(name)
+      ? CodeMirror.findModeByName(name).mode
+      : 'htmlmixed'; // 暫定処置
     // console.log(name, mode);
 
     const script = document.createElement('script');

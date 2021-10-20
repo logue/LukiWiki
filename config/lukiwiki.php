@@ -45,6 +45,7 @@ return [
         'br'        => App\LukiWiki\Plugins\LineBreak::class,
         'calendar'  => App\LukiWiki\Plugins\Calendar::class,
         'color'     => App\LukiWiki\Plugins\Color::class,
+        'image'     => App\LukiWiki\Plugins\Image::class,
         'navi'      => App\LukiWiki\Plugins\Navi::class,
         'ruby'      => App\LukiWiki\Plugins\Ruby::class,
         'timestamp' => App\LukiWiki\Plugins\Timestamp::class,

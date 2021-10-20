@@ -59,7 +59,7 @@ class Media extends AbstractInline
             return '<lw-media><a href="' . $this->href . '" title="' . $this->title . '" rel="attachment">' . $this->alias . '</a></lw-media>';
         }
 
-        return parent::setLink($this->alias, $this->href, $this->name);
+        return parent::setAutoLink($this->alias, $this->href, $this->name);
     }
 
     public function getPattern(): string

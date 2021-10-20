@@ -236,7 +236,10 @@ class ProcessWikiData implements ShouldQueue
                     $option = isset($matches[3]) ? explode(',', trim($matches[3])) : [];
                     $body = isset($matches[4]) ? trim($matches[4]) : null;
 
-                    return self::processPlugin('&', $plugin, $option, $body) . ';';
+                    $isAttach = $plugin === 'img' || $plugin === 'attach' ||
+                        $plugin === 'attachref' || $plugin === 'ref';
+
+                    return self::processPlugin('&', $plugin, $option, $body) . $isAttach ? ';' : '';
                 },
                 $line
             );
@@ -258,6 +261,7 @@ class ProcessWikiData implements ShouldQueue
                         $description = $option[0];
                     } else {
                         $ret[] = self::processPlugin('@', $plugin, $option, $body);
+                        $ret[] = '';
                     }
 
                     break;
@@ -266,7 +270,9 @@ class ProcessWikiData implements ShouldQueue
                     if (preg_match('/^(\*{1,3})(.+)\s\[\#(\w+)\]?$/s', $line, $matches) !== 0) {
                         $level = \strlen($matches[1]);
                         // *を# に変換する。
-                        $ret[] = str_repeat('#', $level) . ' ' . trim($matches[2]) . (isset($matches[3]) ? (' [#' . trim($matches[3]) . ']') : '');
+                        $ret[] = str_repeat('#', $level) . ' ' . trim($matches[2]) .
+                            // アンカーが付いていた場合は[#アンカー名]にする。
+                            (isset($matches[3]) ? (' [#' . trim($matches[3]) . ']') : '');
                         // また改行を設ける。
                         $ret[] = '';
                         $matches = [];
@@ -349,6 +355,10 @@ class ProcessWikiData implements ShouldQueue
     {
         // #プラグイン名(引数){中身} or &プラグイン名(引数){中身};
         // ※帰り値の末尾に;を入れないこと。
+
+        // ブロック型か
+        $isBlock = $char === '#';
+
         switch ($plugin) {
             case 'aname':
                 if (!empty($body)) {
@@ -400,12 +410,8 @@ class ProcessWikiData implements ShouldQueue
                 $file = array_shift($options);   // 一番最初の配列にはファイル名が入る。
 
                 if (empty($file)) {
-                    if ($char === '#') {
-                        // 回り込み解除
-                        return '@clear';
-                    }
-
-                    return;
+                    // 回り込み解除
+                    return '@clear';
                 }
 
                 if (isset($options[1]) && preg_match('/\[{2}([^\]{2}].+)?\]{2}/u', $options[1], $m)) {
@@ -420,48 +426,62 @@ class ProcessWikiData implements ShouldQueue
                 }
 
                 $title = '';
-                $align = '';
                 $params = [];
-                foreach ($options as $option) {
+                foreach (array_unique($options) as $option) {
                     if ($option === 'nolink') {
                         // 無視するパラメータ
                         continue;
                     }
-                    if ($option === 'left' || $option === 'center' || $option === 'right' || $option === 'justify') {
-                        // 位置決めパラメータが含まれていた場合、
-                        if (\in_array('around', $options, true) && ($option === 'left' || $option === 'right')) {
-                            // aroundが含まれている場合
-                            $params[] = '.float-' . $option;
-                            unset($options['around']);
-                        } else {
-                            // CENTER:![](ファイル名)という形式にする。
-                            $align = strtoupper($option) . ':';
-                        }
-                        unset($options[$option]);
-                    } elseif ($option === 'rounded' || $option === 'circle') {
-                        // クラス
-                        $params[] = '.' . $option;
-                        unset($options[$option]);
-                    } elseif ($option === 'thumbnail') {
-                        $params[] = '.img-thumbnail';
-                        unset($options[$option]);
-                    } elseif (preg_match('/^([0-9]+%?)(?:x([0-9]+%?))?$/', $option, $m)) {
-                        $params[] = 'width=' . $m[1];
-                        if (isset($m[2])) {
-                            $params[] = 'height=' . $m[2];
-                        }
-                        unset($options[$option]);
-                    } else {
-                        // そうでない場合タイトルとして処理
-                        $title = $option;
+                    switch ($option) {
+                        case 'nolink':
+                            break;
+                        case 'around':
+                            $isBlock = true;
+                            break;
+                        case 'left':
+                        case 'center':
+                        case 'right':
+                        case 'justify':
+                            if ($isBlock) {
+                                // ブロック型出ない場合は無視する
+                                $params['float'] = $option;
+                            }
+                            break;
+                        case 'rounded':
+                        case 'circle':
+                        case 'thumbnail':
+                            $params['type'] = $option;
+                            break;
+                        default:
+                            if (preg_match('/^([0-9]+%?)(?:x([0-9]+%?))?$/', $option, $m)) {
+                                if (strpos($m[1], '%')) {
+                                    // 50%など%を含んでいた場合片方だけを倍率として使う
+                                    $params['zoom'] = $m[1];
+                                } elseif (isset($m[2])) {
+                                    // 640x480のような指定
+                                    $params['width'] =  $m[1];
+                                    $params['height'] =  $m[2];
+                                }
+                            } else {
+                                // そうでない場合タイトルとして処理
+                                $title = $option;
+                            }
                     }
                 }
 
-                if (!empty($params)) {
-                    return  $align . '![' . $title . '](' . $file . '){' . implode(' ', $params) . '}';
-                }
+                // パラメータ（LukiWiki拡張書式k
+                $param = !empty($params) ? '{' . str_replace('=', ':', http_build_query($params, '', ', ')) . '}' : '';
 
-                return  $align . '![' . $title . '](' . $file . ')';
+                if ($isBlock) {
+                    // ブロック型だった場合
+                    return '![' . $title . '](' . $file . ')' . $param;
+                } elseif (preg_match('/\.(gif|jpe?g|a?png|bmp|svg|webp|avif|ico|tif?f)$/', $file)) {
+                    // imgタグで表示可能なファイルだった場合
+                    return '&image(' . $file . ',' . $title . ')' . $param . ';';
+                } else {
+                    // 展開できないファイルだった場合はリンクに（パラメータは無視）
+                    return '[' . $title . '](' . $file . ')';
+                }
             case 'ruby':
                 // ルビはoptionとbodyを逆転させる　&ruby(ルビの内容){対象}; →　&ruby(対象){ルビの内容};
                 // tooltipの仕様と合わせる。LaTeX互換。

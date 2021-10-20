@@ -1,11 +1,10 @@
 <template>
   <figure v-if="src.match(/\.(?:jpe?g|gif|png|webp)$/)">
     <b-img-lazy
-      :id="name"
       v-b-tooltip
+      v-bind="imgProps"
       :src="src"
       :alt="alt"
-      blank-color="#f8f9fa"
       :title="title"
     />
   </figure>
@@ -13,37 +12,55 @@
     v-else-if="src.match(/.(?:mp3|m4a|wav|aif?f|flac)$/)"
     class="p-3 mb-2 bg-light rounded"
   >
-    <figcaption v-text="title" />
-    <div :id="name" />
-    <div class="d-flex justify-content-around">
-      <!-- controls -->
-      <div>
-        <b-button
-          variant="outline-primary"
-          class="playPause"
-          @click="playPause"
-        >
-          <font-awesome-icon :icon="playing ? pauseIcon : playIcon" />
-        </b-button>
-        <span>{{ currentTime }}/{{ getDuration }}</span>
-      </div>
-      <div>
-        <b-input-group>
-          <b-form-input
-            v-model="volume"
-            type="range"
-            min="1"
-            max="100"
-            @input="setVolume"
-          />
-          <b-input-group-append>
-            <b-button variant="outline-secondary" class="mute" @click="mute">
-              <font-awesome-icon :icon="muted ? muteIcon : volumeUpIcon" />
-            </b-button>
-          </b-input-group-append>
-        </b-input-group>
-      </div>
-    </div>
+    <b-skeleton-wrapper :loading="loading">
+      <b-row>
+        <b-col>
+          <figcaption class="flex-grow-1" v-text="title" />
+        </b-col>
+        <b-col>
+          <b-input-group>
+            <b-input-group-prepend>
+              <b-button
+                variant="outline-primary"
+                class="playPause"
+                size="sm"
+                @click="playPause"
+              >
+                <font-awesome-icon :icon="playing ? pauseIcon : playIcon" />
+              </b-button>
+            </b-input-group-prepend>
+            <b-form-input
+              size="sm"
+              :value="currentTime + '/' + getDuration"
+              readonly
+            />
+          </b-input-group>
+        </b-col>
+        <b-col>
+          <b-input-group>
+            <b-form-input
+              v-model="volume"
+              type="range"
+              size="sm"
+              min="1"
+              max="100"
+              @input="setVolume"
+            />
+            <b-input-group-append>
+              <b-button
+                size="sm"
+                variant="outline-secondary"
+                class="mute"
+                @click="mute"
+              >
+                <font-awesome-icon :icon="muted ? muteIcon : volumeUpIcon" />
+              </b-button>
+            </b-input-group-append>
+          </b-input-group>
+        </b-col>
+      </b-row>
+    </b-skeleton-wrapper>
+    <wavesurfer ref="surf" :src="src" :option="wavesurferOption"></wavesurfer>
   </figure>
   <figure v-else-if="src.match(/\.(?:mov|avi|mp4|webm)$/)">
     <figcaption v-text="title" />
@@ -83,7 +100,11 @@ import {
   BImgLazy,
   BInputGroup,
   BInputGroupAppend,
+  BInputGroupPrepend,
   VBTooltip,
+  BCol,
+  BRow,
+  BSkeletonWrapper,
 } from 'bootstrap-vue';
 
 // FontAwesome
@@ -108,9 +129,7 @@ library.add(
   faVolumeUp
 );
 
-// オーディオプレイヤー
-// https://github.com/ChadRoberts21/WaveSurferVue/ を参考に作成
-import WaveSurfer from 'wavesurfer.js';
+import WaveSurferVue from 'wavesurfer.js-vue/src/WaveSurferVue.vue';
 
 export default {
   components: {
@@ -119,24 +138,42 @@ export default {
     'b-form-input': BFormInput,
     'b-input-group': BInputGroup,
     'b-input-group-append': BInputGroupAppend,
+    'b-input-group-prepend': BInputGroupPrepend,
+    'b-col': BCol,
+    'b-row': BRow,
+    'b-skeleton-wrapper': BSkeletonWrapper,
     'font-awesome-icon': FontAwesomeIcon,
+    wavesurfer: WaveSurferVue,
   },
   directives: {
     'b-tooltip': VBTooltip,
   },
   data() {
     const data = this.$slots.default[0].data.attrs;
-
     this.href = data.href;
-    console.log(data.href);
     return {
       src: data.href,
       name: this.name,
       alt: data.href.match('.+/(.+?)([?#;].*)?$')[1],
       title: data.title,
+      player: null,
       ext: this.$vnode.data.ext,
+      loading: true,
+      imgProps: {
+        blankColor: '#f8f9fa',
+      },
+      wavesurferOption: {
+        waveColor: '#ced4da',
+        progressColor: '#007bff',
+        cursorColor: '#343a40',
+        cursorWidth: 1,
+        height: '128',
+        fillParent: true,
+        loopSelection: true,
+        interact: true,
+        removeMediaElementOnDestroy: false,
+      },
       // Websurfer
-      wavesurfer: null,
       currentTime: '0:00',
       timeInterval: null,
       volume: 100,
@@ -151,34 +188,30 @@ export default {
     };
   },
   computed: {
-    id() {
-      // console.log(this.name);
-      return `#${this.name}`;
-    },
     getDuration() {
-      if (this.wavesurfer) {
-        return this.timeDisplay(this.wavesurfer.getDuration());
+      if (this.player) {
+        return this.timeDisplay(this.player.getDuration());
       } else {
         return null;
       }
     },
     getPlaybackRate() {
-      if (this.wavesurfer) {
-        return this.wavesurfer.getPlaybackRate();
+      if (this.$refs.player) {
+        return this.player.getPlaybackRate();
       } else {
         return null;
       }
     },
     getVolume() {
-      if (this.wavesurfer) {
-        return this.wavesurfer.getVolume();
+      if (this.player) {
+        return this.player.getVolume();
       } else {
         return null;
       }
     },
     getMute() {
-      if (this.wavesurfer) {
-        return this.wavesurfer.getMute();
+      if (this.player) {
+        return this.player.getMute();
       } else {
         return false;
       }
@@ -186,38 +219,19 @@ export default {
   },
   watch: {
     audio(newValue) {
-      this.wavesurfer.load(newValue);
+      this.player.load(newValue);
     },
   },
-  created() {
-    // 重複しないであろうランダムのIDを生成
-    const N = 8;
-    const S = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const id = Array.from(crypto.getRandomValues(new Uint8Array(N)))
-      .map((n) => S[n % S.length])
-      .join('');
-    this.name = 'media_' + id;
-  },
+  created() {},
   mounted() {
-    this.$nextTick(() => {
-      this.wavesurfer = WaveSurfer.create({
-        container: '#' + this.name,
-        waveColor: '#ced4da',
-        progressColor: '#007bff',
-        cursorColor: '#343a40',
-        cursorWidth: 1,
-        height: '128',
-        fillParent: true,
-        loopSelection: true,
-        interact: true,
-        removeMediaElementOnDestroy: this.removeMediaElementOnDestroy,
+    if (this.$refs.surf) {
+      this.player = this.$refs.surf.waveSurfer;
+      this.player.on('ready', () => {
+        this.loading = false;
       });
-
-      this.wavesurfer.load(this.href);
-    });
-  },
-  beforeDestroy() {
-    this.wavesurfer.destroy();
+    } else {
+      this.loading = false;
+    }
   },
   methods: {
     timeDisplay(time) {
@@ -235,36 +249,36 @@ export default {
       return output;
     },
     playPause() {
-      this.playing = this.wavesurfer.isPlaying();
+      this.playing = this.player.isPlaying();
       if (this.playing) {
         this.pause();
       } else {
         this.play();
       }
-      this.playing = this.wavesurfer.isPlaying();
+      this.playing = this.player.isPlaying();
     },
     play() {
       this.timeInterval = setInterval(() => {
-        this.currentTime = this.timeDisplay(this.wavesurfer.getCurrentTime());
+        this.currentTime = this.timeDisplay(this.player.getCurrentTime());
       }, 1000);
-      this.wavesurfer.play();
+      this.player.play();
     },
     pause() {
-      this.wavesurfer.pause();
+      this.player.pause();
     },
     stop() {
-      this.wavesurfer.stop();
+      this.player.stop();
       this.timeInterval = null;
       this.currentTime = this.timeDisplay(0);
     },
     mute() {
       this.muted = this.getMute;
-      this.wavesurfer.setMute(!this.muted);
+      this.player.setMute(!this.muted);
       this.muted = this.getMute;
     },
     setVolume() {
       const floatValue = this.volume / 100;
-      this.wavesurfer.setVolume(Number.parseFloat(floatValue.toFixed(2)));
+      this.player.setVolume(Number.parseFloat(floatValue.toFixed(2)));
     },
   },
 };
