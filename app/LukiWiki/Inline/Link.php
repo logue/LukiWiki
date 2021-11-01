@@ -30,6 +30,11 @@ class Link extends AbstractInline
             // ページリンク
             $url = $this->href;
         }
+        
+        if (preg_match_all('/&(.+);/', $this-alias)) {
+            // リンク内プラグイン
+        
+        }
 
         return '<a href="' . $url . '" rel="nofollow external" title="' . $this->title . '">' . $this->processText($this->alias) . '<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
     }

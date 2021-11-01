@@ -44,6 +44,7 @@ return [
         'abbr'      => App\LukiWiki\Plugins\Abbr::class,
         'br'        => App\LukiWiki\Plugins\LineBreak::class,
         'calendar'  => App\LukiWiki\Plugins\Calendar::class,
+        'clear'     => App\LukiWiki\Plugins\Clearfix::class,
         'color'     => App\LukiWiki\Plugins\Color::class,
         'image'     => App\LukiWiki\Plugins\Image::class,
         'navi'      => App\LukiWiki\Plugins\Navi::class,
