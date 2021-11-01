@@ -1,12 +1,11 @@
 <template>
   <table class="table table-bordered">
+    <caption>Calendar</caption>
     <thead>
       <tr>
         <td colspan="7">
           <div class="d-flex justify-content-between">
-            <div class="order-1">
-              {{ yearMonth }}
-            </div>
+            <div class="order-1">{{ year }}/{{ month }}</div>
             <b-button class="order-0" @click="goPrevMonth">prev</b-button>
             <b-button class="order-2" @click="goNextMonth">next</b-button>
           </div>
@@ -25,7 +24,8 @@
     <tbody>
       <tr v-for="week in calendarData" :key="week">
         <td v-for="day in week" :key="day" class="text-center">
-          {{ day }}
+          <a v-if="day && dayLink(day)" v-text="day" :href="dayLink(day)" />
+          <span v-else v-text="day" />
         </td>
       </tr>
     </tbody>
@@ -46,6 +46,7 @@ import {
 library.add(faChevronLeft, faChevronRight);
 
 import moment from 'moment';
+import axios from 'axios';
 
 export default {
   components: {
@@ -57,13 +58,20 @@ export default {
   },
   data: () => ({
     current: 0,
+    pages: [],
   }),
+  props: {
+    page: String,
+  },
   computed: {
     currentMoment() {
       return moment().add(this.current, 'months');
     },
-    yearMonth() {
-      return this.currentMoment.format('YYYY MM');
+    year() {
+      return this.currentMoment.format('YYYY');
+    },
+    month() {
+      return this.currentMoment.format('MM');
     },
     calendarData() {
       // この月に何日まであるかを算出
@@ -88,12 +96,29 @@ export default {
       );
     },
   },
+  async created() {
+    const ret = await axios.get('/:api/list:' + this.page);
+    const { data } = ret;
+    this.pages = data;
+  },
   methods: {
     goNextMonth() {
       this.current++;
     },
     goPrevMonth() {
       this.current--;
+    },
+    dayLink(day = '0') {
+      const dayStr = `${this.currentMoment.format('YYYY-MM')}-${day
+        .toString()
+        .padStart(2, '0')}`;
+
+      return Object.keys(this.pages).includes(`${this.page}/${dayStr}`)
+        ? `${this.page}/${dayStr}`
+        : null;
+    },
+    async hasPage(d) {
+      return;
     },
   },
 };

@@ -49,6 +49,7 @@ return [
         'image'     => App\LukiWiki\Plugins\Image::class,
         'navi'      => App\LukiWiki\Plugins\Navi::class,
         'ruby'      => App\LukiWiki\Plugins\Ruby::class,
+        'size'      => App\LukiWiki\Plugins\Size::class,
         'timestamp' => App\LukiWiki\Plugins\Timestamp::class,
     ],
 ];

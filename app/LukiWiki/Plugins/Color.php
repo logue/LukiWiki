@@ -4,7 +4,7 @@
  * Colorプラグイン.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2019 Logue
+ * @copyright 2019,2021 Logue
  * @license   MIT
  */
 
@@ -15,17 +15,17 @@ use App\LukiWiki\InlinePluginInterface;
 
 class Color extends AbstractPlugin implements InlinePluginInterface
 {
-    const COLOR_MATCH_PATTERN = '/^(#[0-9a-f]{3}|#[0-9a-f]{6}|[a-z-]+)$/i';
+    private const COLOR_MATCH_PATTERN = '/^(#[0-9a-f]{3}|#[0-9a-f]{6}|[a-z-]+)$/i';
 
     private $style = [];
 
     public function inline(): string
     {
-        $style = [];
+        $s = [];
 
-        list($style['color'], $style['background-color']) = array_pad($this->params, 2, '');
+        list($s['color'], $s['background-color']) = array_pad($this->params, 2, '');
 
-        foreach ($style as $key => $value) {
+        foreach ($s as $key => $value) {
             if (!empty($value) && !preg_match(self::COLOR_MATCH_PATTERN, $value)) {
                 return $this->error('Invalid color: ' . e($value));
             }
