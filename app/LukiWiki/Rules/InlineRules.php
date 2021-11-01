@@ -17,21 +17,21 @@ class InlineRules
     /**
      * InterWikiNameのマッチパターン.
      */
-    const INTERWIKINAME_PATTERN = '\[.*\]\((https?|ftp)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)[\t{1,}|\s{1,}]"".*""\)';
+    public const INTERWIKINAME_PATTERN = '\[.*\]\((https?|ftp)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)[\t{1,}|\s{1,}]"".*""\)';
     /**
      * WikiNameのマッチパターン.
      */
-    const WIKINAME_PATTERN = '(?:[A-Z][a-z]+){2,}(?!\w)';
+    public const WIKINAME_PATTERN = '(?:[A-Z][a-z]+){2,}(?!\w)';
     // \c3\9f through \c3\bf correspond to \df through \ff in ISO8859-1
     //const WIKINAME_PATTERN = '(?:[A-Z](?:[a-z]|\xc3[\x9f-\xbf])+(?:[A-Z](?:[a-z]|\xc3[\x9f-\xbf])+)+)(?!\w)';
     /**
      * BracketNameのマッチパターン.
      */
-    const BRACKETNAME_PATTERN = '(?!\s):?[^\r\n\t\f\[\]<>#&":\(\)]+:?(?<!\s)';
+    public const BRACKETNAME_PATTERN = '(?!\s):?[^\r\n\t\f\[\]<>#&":\(\)]+:?(?<!\s)';
     /**
      * 注釈のパターン.
      */
-    const NOTE_PATTERN = '\(\(((?:(?>(?:(?!\(\()(?!\)\)(?:[^\)]|$)).)+)|(?R))*)\)\)';
+    public const NOTE_PATTERN = '\(\(((?:(?>(?:(?!\(\()(?!\)\)(?:[^\)]|$)).)+)|(?R))*)\)\)';
     /**
      * デフォルトのテキストルール.
      */

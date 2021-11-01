@@ -14,6 +14,7 @@ use App\Enums\InterWikiType;
 use App\Models\InterWiki;
 use App\Models\Page;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -48,11 +49,6 @@ class ProcessWikiData implements ShouldQueue
     {
         $this->file = $file;
         $this->page = hex2bin(pathinfo($this->file, PATHINFO_FILENAME));
-
-        if (empty($this->page)) {
-            // ファイル名が存在しない場合スキップ（.gitignoreとかの隠しファイルも省ける）
-            return;
-        }
     }
 
     /**
@@ -62,9 +58,8 @@ class ProcessWikiData implements ShouldQueue
     {
         Log::info('Loading "' . $this->file . '"...');
 
-        // :configから始まるページ名はPukiWikiのプラグインの初期設定で使う。
         // この値は使用しないため移行しない
-        if (substr($this->page, 0, 7) === ':config' || substr($this->page, 0, 3) === ':log' || substr($this->page, 0, 9) === 'PukiWiki/') {
+        if (substr($this->page, 0, 3) === ':log' || substr($this->page, 0, 9) === 'PukiWiki/') {
             Log::info('Skipped "' . $this->page . '".');
 
             return;
@@ -236,10 +231,7 @@ class ProcessWikiData implements ShouldQueue
                     $option = isset($matches[3]) ? explode(',', trim($matches[3])) : [];
                     $body = isset($matches[4]) ? trim($matches[4]) : null;
 
-                    $isAttach = $plugin === 'img' || $plugin === 'attach' ||
-                        $plugin === 'attachref' || $plugin === 'ref';
-
-                    return self::processPlugin('&', $plugin, $option, $body) . $isAttach ? ';' : '';
+                    return self::processPlugin('&', $plugin, $option, $body);
                 },
                 $line
             );
@@ -344,7 +336,7 @@ class ProcessWikiData implements ShouldQueue
     /**
      * プラグインの処理.
      *
-     * @param string $char   識別子
+     * @param string $char   識別子（@か&のみ）
      * @param string $plugin プラグイン名
      * @param array  $option 引数 ()内
      * @param string $body   中身 {}内
@@ -355,9 +347,12 @@ class ProcessWikiData implements ShouldQueue
     {
         // #プラグイン名(引数){中身} or &プラグイン名(引数){中身};
         // ※帰り値の末尾に;を入れないこと。
+        if (!in_array($char, ['&', '@'])) {
+            throw new Exception('Unknown plugin char:' . $char);
+        }
 
         // ブロック型か
-        $isBlock = $char === '#';
+        $isBlock = $char === '@';
 
         switch ($plugin) {
             case 'aname':
@@ -369,12 +364,18 @@ class ProcessWikiData implements ShouldQueue
             case 'new':
                 // 新着
                 $t = preg_replace('/\((.+)\)/u', '', $body);
-                $dt = Carbon::parse($t);
-
-                return $char . 'timestamp(' . $dt->timestamp . ')';
+                try {
+                    $dt = Carbon::parse($t);
+                    return $char . 'timestamp(' . $dt->timestamp . ');';
+                } catch (Exception $e) {
+                    // Carbonで処理できない数値はそのまま移行（trackerのテンプレートなど）
+                    return $char . 'timestamp(' . $t . ');';
+                }
             case 'size':
                 // サイズはrem単位に変換する。
-                return $char . 'size(' . self::px2rem((int) $options[0]) . '){' . $body . '}';
+                return $char . 'size(' . self::px2rem((int) $options[0]) . '){' . $body . '};';
+            case 'color':
+                return $char . 'color(' . $options[0] . '){' . $body . '};';
             case 'epoch':
                 // 時差を考慮した新着（Adv.）
                 return $char . 'timestamp(' . $options[0] . ');';
@@ -386,6 +387,8 @@ class ProcessWikiData implements ShouldQueue
                 // no break
             case 'hr':
                 return  '----';
+            case 'br':
+                return '&br;';
             case 'pre':
             case 'sh':
             case 'code':
@@ -428,12 +431,9 @@ class ProcessWikiData implements ShouldQueue
                 $title = '';
                 $params = [];
                 foreach (array_unique($options) as $option) {
-                    if ($option === 'nolink') {
-                        // 無視するパラメータ
-                        continue;
-                    }
                     switch ($option) {
                         case 'nolink':
+                        case 'zoom':
                             break;
                         case 'around':
                             $isBlock = true;
@@ -469,15 +469,17 @@ class ProcessWikiData implements ShouldQueue
                     }
                 }
 
-                // パラメータ（LukiWiki拡張書式k
+                // パラメータ（LukiWiki拡張書式）
+                // {width: 640, height: 480}
                 $param = !empty($params) ? '{' . str_replace('=', ':', http_build_query($params, '', ', ')) . '}' : '';
+
 
                 if ($isBlock) {
                     // ブロック型だった場合
                     return '![' . $title . '](' . $file . ')' . $param;
-                } elseif (preg_match('/\.(gif|jpe?g|a?png|bmp|svg|webp|avif|ico|tif?f)$/', $file)) {
+                } elseif (empty($title) || preg_match('/\.(gif|jpe?g|a?png|bmp|svg|webp|avif|ico|tif?f)$/i', $file)) {
                     // imgタグで表示可能なファイルだった場合
-                    return '&image(' . $file . ',' . $title . ')' . $param . ';';
+                    return '&image(' . $file . (!empty($title) ? ', ' . $title : '') . ')' . $param . ';';
                 } else {
                     // 展開できないファイルだった場合はリンクに（パラメータは無視）
                     return '[' . $title . '](' . $file . ')';
@@ -485,11 +487,11 @@ class ProcessWikiData implements ShouldQueue
             case 'ruby':
                 // ルビはoptionとbodyを逆転させる　&ruby(ルビの内容){対象}; →　&ruby(対象){ルビの内容};
                 // tooltipの仕様と合わせる。LaTeX互換。
-                return $char . 'ruby(' . $body . '){' . $options[0] . '}';
+                return $char . 'ruby(' . $body . '){' . $options[0] . '};';
             case 'ls':
             case 'ls2':
             case 'ls3':
-                return $char . 'ls' . isset($options) ? '(' . implode(',', $options) . ')' : '';
+                return '@ls' . isset($options) ? '(' . implode(',', $options) . ')' : '';
             case 'floatclear':
                 return '@clear';
             case 'edit':
@@ -510,9 +512,10 @@ class ProcessWikiData implements ShouldQueue
             case 'version':
             case 'versionlist':
                 // 無視するプラグイン
-                return '/*' . 'deprecated plugin:"' . $plugin . '" param:' . implode(',', $options) . ' body:' . $body . '*/';
+                return '/* ' . 'deprecated plugin:"' . $plugin . '" param:' .
+                    implode(',', $options) . ' body:' . $body . ' */';
         }
-        if ($char === '@' && strpos($body, "\r") !== false) {
+        if ($isBlock && !empty($body) || strpos($body, "\r") !== false) {
             // 複数行の場合
             $body = trim(str_replace("\r", "\n", $body));
             if (!empty($body)) {

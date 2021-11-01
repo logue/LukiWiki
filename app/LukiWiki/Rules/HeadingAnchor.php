@@ -15,15 +15,15 @@ class HeadingAnchor
     /**
      * 見出しの固有IDのマッチパターン.
      */
-    const HEADING_ID_PATTERN = '/^(\#{1,5})\s(.*?)\s(?:\[\#(\w+)\]\s*)?$/m';
+    private const HEADING_ID_PATTERN = '/^(\#{1,5})\s(.*?)\s(?:\[\#(\w+)\]\s*)?$/m';
     /**
      * 見出しのIDの生成で使用出来る文字.
      */
-    const HEADING_ID_ACCEPT_CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    private const HEADING_ID_ACCEPT_CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     /**
      * 見出し判別IDで使用する文字数.
      */
-    const HEADING_ID_LENGTH = 7;
+    private const HEADING_ID_LENGTH = 7;
 
     /**
      * 見出しのIDを作る.

@@ -60,6 +60,13 @@ class RootElement extends AbstractElement
                 $line = $matches[2];
             }
 
+            // 複数行のコメント行
+            if (preg_match('/\/\*.+/', $line, $matches)) {
+                while (!empty($lines)) {
+                    preg_replace('/.+\*\//', '', array_shift($lines));
+                }
+            }
+
             // Multiline-enabled block plugin #plugin{{ ... }}
             if (preg_match('/^@[^{]+(\{\{+)\s*$/', $line, $matches)) {
                 $len = \strlen($matches[1]);
@@ -177,30 +184,32 @@ class RootElement extends AbstractElement
                         break;
                     case '/':
                         // Escape comments
-                        if ($line[1] === '/') {
+                        if ($line[1] === '/' || $line[1] === '*') {
                             continue 2;
                         }
                         break;
+                        /*
                     case '!':
                         // Block Media
-                        //$media = new Media()
-                    default:
-                        $content = new InlineElement($line, $this->page);
-                        break;
+                        $media = new Media()
+                    */
                 }
             }
 
             // Default
-            if (\is_object($content)) {
-                $meta = $content->getMeta();
-
-                if (!empty($meta)) {
-                    foreach ($meta as $key => $value) {
-                        $this->meta[$key][] = $value;
-                    }
-                }
-                $this->last = $this->last->add($content);
+            if (!$content) {
+                $content = new InlineElement($line, $this->page);
             }
+
+            $meta = $content->getMeta();
+
+            if (!empty($meta)) {
+                foreach ($meta as $key => $value) {
+                    $this->meta[$key][] = $value;
+                }
+            }
+            $this->last = $this->last->add($content);
+
             unset($content);
         }
     }
