@@ -1,0 +1,12 @@
+{
+  "upgrade": true,
+  "reject": [
+    "vue",
+    "vue-router",
+    "vuex",
+    "sass",
+    "bootstrap",
+    "codemirror",
+    "vue-codemirror"
+  ]
+}

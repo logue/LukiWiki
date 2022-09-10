@@ -148,11 +148,10 @@ export default {
   },
 };
 </script>
+
 <style lang="scss">
 // This scss is inspired from https://github.com/ladjs/bootstrap-social/
-@import '~bootstrap/scss/functions';
-@import '~bootstrap/scss/variables';
-@import '~bootstrap/scss/mixins';
+@import '~/bootstrap/scss/bootstrap';
 
 .btn-social {
   padding: $btn-padding-y;

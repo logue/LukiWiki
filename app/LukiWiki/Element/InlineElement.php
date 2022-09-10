@@ -27,7 +27,7 @@ class InlineElement extends AbstractElement
         if (substr($text, 0, 1) === "\n") {
             $this->elements[] = $text;
         } else {
-            if (!isset(self::$converter)) {
+            if (! isset(self::$converter)) {
                 self::$converter = new InlineConverter([], [], $page);
             }
 
@@ -45,7 +45,7 @@ class InlineElement extends AbstractElement
 
     public function insert($obj)
     {
-        if (!empty($obj->elements[0])) {
+        if (! empty($obj->elements[0])) {
             $this->elements[] = $obj->elements[0];
         }
 

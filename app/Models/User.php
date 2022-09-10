@@ -2,23 +2,27 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     title="ユーザモデル"
+ * )
+ */
 class User extends Authenticatable
 {
-    use HasApiTokens;
-    use HasFactory;
-    use Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Uuid;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
@@ -29,7 +33,7 @@ class User extends Authenticatable
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -39,51 +43,9 @@ class User extends Authenticatable
     /**
      * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    protected $guarded = ['id'];
-
-    /**
-     * ページに貼り付けられた添付ファイル.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function attachments(): HasMany
-    {
-        return $this->hasMany(Attachment::class);
-    }
-
-    /**
-     * ページのバックアップ.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function backups(): HasMany
-    {
-        return $this->hasMany(Backup::class);
-    }
-
-    /**
-     * 作業履歴.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough
-     */
-    public function pageActivity(): HasOneThrough
-    {
-        return $this->hasOneThrough(Backup::class, Page::class);
-    }
-
-    /**
-     * このページの所有者.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function pages(): HasMany
-    {
-        return $this->hasMany(Page::class);
-    }
 }

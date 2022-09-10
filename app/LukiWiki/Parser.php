@@ -11,7 +11,6 @@
 namespace App\LukiWiki;
 
 use App\LukiWiki\Element\RootElement;
-use Debugbar;
 
 /**
  * パーサー.
@@ -20,26 +19,26 @@ class Parser
 {
     /** @var string */
     const VERSION = '0.0.0-alpha';
+
     /** @var int インスタンス */
     private static $instance = 0;
 
     /**
      * LukiWikiファクトリークラス.
      *
-     * @param string $source Wikiのソース
-     * @param string $page   呼び出し元ページ名
-     *
+     * @param  string  $source Wikiのソース
+     * @param  string  $page   呼び出し元ページ名
      * @return object
      */
     public static function factory(string $source, string $page)
     {
         $instance = ++self::$instance;
 
-        Debugbar::startMeasure('parse', 'Converting wiki data... [' . $instance . ']');
-        $lines = explode("\n", str_replace([\chr(0x0d) . \chr(0x0a), \chr(0x0d), \chr(0x0a)], "\n", $source));
+        clock()->event(`Compile Wiki data. [$instance]`)->begin();
+        $lines = explode("\n", str_replace([\chr(0x0D).\chr(0x0A), \chr(0x0D), \chr(0x0A)], "\n", $source));
         $body = new RootElement($page, ['id' => $instance]);
         $body->parse($lines);
-        Debugbar::stopMeasure('parse');
+        clock()->event(`Compile Wiki data. [$instance]`)->end();
 
         return $body;
     }

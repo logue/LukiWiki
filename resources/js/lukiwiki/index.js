@@ -5,12 +5,10 @@
  * @copyright 2018-2019 Logue
  * @license   MIT
  */
-import Vue from 'vue';
+import Vue from 'vue/dist/vue.common.dev';
 
-// Register global
-window.qs = require('query-string').parse(location.search);
-
-/** ***************************************************************************/
+import '~/bootstrap/scss/bootstrap.scss';
+/** */
 // Vue FontAwesome
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -42,9 +40,7 @@ library.add(
 Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 Vue.config.productionTip = false;
 
-/** ***************************************************************************/
 // Bootstrap Vue
-
 import { VBTooltip, BAlert, BButton, BModal } from 'bootstrap-vue';
 // ツールチップ
 Vue.directive('b-tooltip', VBTooltip);
@@ -54,7 +50,7 @@ Vue.component('BAlert', BAlert);
 Vue.component('BButton', BButton);
 // モーダル
 Vue.component('BModal', BModal);
-/** ***************************************************************************/
+/** */
 // Vue Codemirror
 import VueCodemirror from 'vue-codemirror';
 // require more codemirror resource...
@@ -67,23 +63,21 @@ Vue.use(
 } */
 );
 // LukiWiki簡易シンタックスハイライタ
-require('./codemirror_lukiwiki');
+// import './codemirror_lukiwiki';
 
-/** ***************************************************************************/
 // 独自タグ
-
 // コンポーネント（作用する独自タグ）の登録
 // 例：<lw-editor>...<lw-editor>
-Vue.component('LwCalendar', require('./components/Calendar.vue').default);
-Vue.component('LwComposer', require('./components/Composer.vue').default);
-Vue.component('LwEditor', require('./components/Editor.vue').default);
-Vue.component('LwNavbar', require('./components/Navbar.vue').default);
-Vue.component('LwMedia', require('./components/Media.vue').default);
-Vue.component('LwMerge', require('./components/Merge.vue').default);
-Vue.component('LwBreadcrumb', require('./components/Breadcrumb.vue').default);
-Vue.component('LwSocial', require('./components/Social.vue').default);
+Vue.component('LwCalendar', () => import('./components/Calendar.vue'));
+Vue.component('LwComposer', () => import('./components/Composer.vue'));
+Vue.component('LwNavbar', () => import('./components/Navbar.vue'));
+Vue.component('LwEditor', () => import('./components/Editor.vue'));
+Vue.component('LwMedia', () => import('./components/Media.vue'));
+Vue.component('LwMerge', () => import('./components/Merge.vue'));
+Vue.component('LwBreadcrumb', () => import('./components/Breadcrumb.vue'));
+Vue.component('LwSocial', () => import('./components/Social.vue'));
 
 // ディレクティブ（作用する独自属性）の登録
 // 例：<pre v-lw-sh>...</pre>
-// Vue.directive('lw-passage', require('./components/Passage.vue').default);
-Vue.directive('lw-sh', require('./components/SyntaxHighlighter.vue').default);
+Vue.directive('lw-passage', () => import('./components/Passage.vue'));
+Vue.directive('lw-sh', () => import('./components/SyntaxHighlighter.vue'));

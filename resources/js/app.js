@@ -4,11 +4,9 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+import './bootstrap';
 
-// window.Vue = require('vue');
-import Vue from 'vue';
-
+import Vue from 'vue/dist/vue.common';
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -29,20 +27,12 @@ import Vue from 'vue';
  */
 
 // LukiWiki Start
-require('./lukiwiki');
+import './lukiwiki';
 
-new Vue({
-  el: '#app',
-  delimiters: [
-    {
-      replace: () => {
-        return '^(?!.).';
-      },
-    },
-    {
-      replace: () => {
-        return '';
-      },
-    },
-  ],
-});
+try {
+  new Vue({
+    el: '#app',
+  });
+} catch (e) {
+  console.error(e);
+}

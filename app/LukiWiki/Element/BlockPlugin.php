@@ -20,7 +20,9 @@ use Config;
 class BlockPlugin extends AbstractElement
 {
     protected $name;
+
     protected $params;
+
     protected $body;
 
     public function __construct($out, $page)
@@ -34,8 +36,8 @@ class BlockPlugin extends AbstractElement
 
     public function __toString()
     {
-        if (Config::has('lukiwiki.plugin.' . $this->name)) {
-            $class = Config::get('lukiwiki.plugin.' . $this->name);
+        if (Config::has('lukiwiki.plugin.'.$this->name)) {
+            $class = Config::get('lukiwiki.plugin.'.$this->name);
             $plugin = new $class(PluginType::Block, $this->params, $this->body, $this->page);
 
             return $plugin->__toString();
@@ -44,15 +46,15 @@ class BlockPlugin extends AbstractElement
         // TODO:Call @plugin
         $ret = [
             '<div class="card">',
-            '<div class="card-header">@' . $this->name . '</div>',
+            '<div class="card-header">@'.$this->name.'</div>',
         ];
         if (\count($this->params) !== 0 && $this->body) {
             $ret[] = '<div class="card-body">';
             if (\count($this->params) !== 0) {
-                $ret[] = '<p class="card-title"><code>' . parent::processText(implode(' ,', $this->params)) . '</code></p>';
+                $ret[] = '<p class="card-title"><code>'.parent::processText(implode(' ,', $this->params)).'</code></p>';
             }
             if ($this->body) {
-                $ret[] = '<p class="card-text"><pre class="pre">' . parent::processText($this->body) . '</pre></p>';
+                $ret[] = '<p class="card-text"><pre class="pre">'.parent::processText($this->body).'</pre></p>';
             }
             $ret[] = '</div>';
         }

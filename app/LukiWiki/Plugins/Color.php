@@ -23,15 +23,15 @@ class Color extends AbstractPlugin implements InlinePluginInterface
     {
         $s = [];
 
-        list($s['color'], $s['background-color']) = array_pad($this->params, 2, '');
+        [$s['color'], $s['background-color']] = array_pad($this->params, 2, '');
 
         foreach ($s as $key => $value) {
-            if (!empty($value) && !preg_match(self::COLOR_MATCH_PATTERN, $value)) {
-                return $this->error('Invalid color: ' . e($value));
+            if (! empty($value) && ! preg_match(self::COLOR_MATCH_PATTERN, $value)) {
+                return $this->error('Invalid color: '.e($value));
             }
-            $this->style[] = $key . ':' . $value;
+            $this->style[] = $key.':'.$value;
         }
 
-        return '<span style="' . e(implode(';', $this->style)) . '">' . e($this->body) . '</span>';
+        return '<span style="'.e(implode(';', $this->style)).'">'.e($this->body).'</span>';
     }
 }

@@ -56,7 +56,7 @@ class Media extends AbstractInline
             }
             */
 
-            return '<lw-media><a href="' . $this->href . '" title="' . $this->title . '" rel="attachment">' . $this->alias . '</a></lw-media>';
+            return '<lw-media><a href="'.$this->href.'" title="'.$this->title.'" rel="attachment">'.$this->alias.'</a></lw-media>';
         }
 
         return parent::setAutoLink($this->alias, $this->href, $this->name);
@@ -66,25 +66,25 @@ class Media extends AbstractInline
     {
         // ![alt](URL or WikiName "title"){option}
         return
-            '!' .                                            // Media link detector
-                '(?:\[' .
-                    '(.[^\]\)]+)?' .                         // [1] alias
-                '\])' .
-                '(?:' .
-                    '\(' .
-                       '(.[^\(\)\[\]]+?)' .                  // [2] URL or WikiName and Filename
-                       '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?' .   // [3] Title
-                    '\)' .
-                ')' .
-                '(?:\{' .
-                    '(.*[^\}])' .                            // [4] Body (option)
+            '!'.                                            // Media link detector
+                '(?:\['.
+                    '(.[^\]\)]+)?'.                         // [1] alias
+                '\])'.
+                '(?:'.
+                    '\('.
+                       '(.[^\(\)\[\]]+?)'.                  // [2] URL or WikiName and Filename
+                       '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.   // [3] Title
+                    '\)'.
+                ')'.
+                '(?:\{'.
+                    '(.*[^\}])'.                            // [4] Body (option)
                 '\})?';
     }
 
     public function setPattern(array $arr): void
     {
         //dd($this->getPattern(), $this->splice($arr));
-        list($this->alias, $this->href, $this->title, $this->body) = $this->splice($arr);
+        [$this->alias, $this->href, $this->title, $this->body] = $this->splice($arr);
 
         if (empty($this->alias)) {
             $this->alias = $this->href;
@@ -95,7 +95,7 @@ class Media extends AbstractInline
 
         if (strpos($this->href, 'http') === false) {
             $this->title = $this->href;
-            $this->href = url($this->page . ':attachments/' . $this->href);
+            $this->href = url($this->page.':attachments/'.$this->href);
         }
 
         // TODO:添付ファイルの処理

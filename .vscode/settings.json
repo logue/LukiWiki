@@ -1,20 +1,5 @@
 // Place your settings in this file to overwrite the default settings
 {
-    "editor.tabSize": 4,
-    "[css]": {
-        "editor.tabSize": 2
-    },
-    "[javascript]": {
-        "editor.tabSize": 2
-    },
-    "[vue]": {
-        "editor.tabSize": 2
-    },
-    "[scss]": {
-        "editor.tabSize": 2
-    },
-    "css.validate": false,
-    "editor.fontLigatures": true,
     "emmet.syntaxProfiles": {
         // I disable Blade Since im Using Vue Template
         "vue-html": "html"
@@ -24,18 +9,6 @@
     // "eslint":
     // "eslint-config-standard"
     // "eslint-plugin-html"
-    "eslint.autoFixOnSave": true,
-    "eslint.options": {
-        "configFile": ".eslintrc.json"
-    },
-    "eslint.validate": [
-        "javascript",
-        "javascriptreact",
-        {
-            "language": "vue",
-            "autoFix": true
-        }
-    ],
     // Exclude Vendor Folders During Search and Replace
     "files.watcherExclude": {
         "**/vendor/**": true,
@@ -51,11 +24,6 @@
         "**/vendor/**": true,
         "**/node_modules/**": true
     },
-    "simple-php-cs-fixer.config": ".php_cs",
-    "simple-php-cs-fixer.save": true,
-    "vetur.format.defaultFormatter.js": "none",
-    "vetur.format.defaultFormatter.html": "js-beautify-html",
-    "workbench.iconTheme": "vscode-icons",
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
     },

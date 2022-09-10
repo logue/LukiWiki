@@ -10,7 +10,9 @@
 
 namespace App\Models;
 
+use App\Traits\Uuid;
 use Carbon\Carbon;
+use Collator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,14 +24,16 @@ use RegexpTrie\RegexpTrie;
 
 class Page extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, Uuid;
 
     private const PAGELIST_TRIE_CACHE = 'page_trie';
+
     private const PAGELIST_CACHE = 'pages';
+
     protected $guarded = ['id'];
 
     protected $casts = [
-        'name'   => 'string',
+        'name' => 'string',
         'locked' => 'bool',
         'status' => 'int',
         'source' => 'string',
@@ -78,8 +82,7 @@ class Page extends Model
     /**
      * 検索.
      *
-     * @param array $keywords
-     *
+     * @param  array  $keywords
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function search(array $keywords): Builder
@@ -88,12 +91,12 @@ class Page extends Model
         foreach ($keywords as $keyword) {
             if (Config::get('database.default') === 'mysql') {
                 $query
-                    ->where('name', 'like', '%' . $keyword . '%')
+                    ->where('name', 'like', '%'.$keyword.'%')
                     ->orWhereRaw('match(`source`) against (? IN NATURAL LANGUAGE MODE)', [$keyword]);
             } else {
                 $query
-                    ->where('name', 'like', '%' . $keyword . '%')
-                    ->orWhere('source', 'like', '%' . $keyword . '%');
+                    ->where('name', 'like', '%'.$keyword.'%')
+                    ->orWhere('source', 'like', '%'.$keyword.'%');
             }
         }
 
@@ -103,8 +106,7 @@ class Page extends Model
     /**
      * 新着記事を取得.
      *
-     * @param int $limit 制限数
-     *
+     * @param  int  $limit 制限数
      * @return \Illuminate\Database\Query\Builder
      */
     public static function getLatest(int $limit = 20): Builder
@@ -127,8 +129,8 @@ class Page extends Model
             $entries = array_keys($data);
 
             // ページ名でソート
-            $collator = new \Collator(Config::get('locale') ?? 'en');
-            $collator->asort($entries, \Collator::SORT_STRING);
+            $collator = new Collator(Config::get('locale') ?? 'en');
+            $collator->asort($entries, Collator::SORT_STRING);
 
             // ページ名と更新日時をマージする
             foreach ($entries as $entry) {
@@ -154,8 +156,7 @@ class Page extends Model
     /**
      * 最新更新日.
      *
-     * @param string $name ページ名
-     *
+     * @param  string  $name ページ名
      * @return \Carbon\Carbon
      */
     public static function lastModified(?string $name = null): Carbon

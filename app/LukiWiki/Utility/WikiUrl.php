@@ -15,9 +15,8 @@ class WikiUrl
     /**
      * 相対指定のページ名から全ページ名を取得.
      *
-     * @param string $name  名前の入力値
-     * @param string $refer 引用元のページ名
-     *
+     * @param  string  $name  名前の入力値
+     * @param  string  $refer 引用元のページ名
      * @return string ページのフルパス
      */
     public static function getFullName(string $name, string $refer = null)
@@ -51,13 +50,13 @@ class WikiUrl
             $arrp = preg_split('#/#', $refer, -1, PREG_SPLIT_NO_EMPTY);
 
             // 階層を遡る
-            while (!empty($arrn) && $arrn[0] === '..') {
+            while (! empty($arrn) && $arrn[0] === '..') {
                 array_shift($arrn);
                 array_pop($arrp);
             }
             // ディレクトリを結合する
-            $name = !empty($arrp) ? implode('/', array_merge($arrp, $arrn)) :
-                (!empty($arrn) ? $defaultpage . '/' . implode('/', $arrn) : $defaultpage);
+            $name = ! empty($arrp) ? implode('/', array_merge($arrp, $arrn)) :
+                (! empty($arrn) ? $defaultpage.'/'.implode('/', $arrn) : $defaultpage);
         }
 
         return $name;
@@ -66,8 +65,7 @@ class WikiUrl
     /**
      * 値からパス制御文字を取り除いて基準名を取得.
      *
-     * @param string $str
-     *
+     * @param  string  $str
      * @return string;
      */
     public static function stripRelativePath(string $str)

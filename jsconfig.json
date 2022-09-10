@@ -1,6 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/jsconfig.json",
-  "include": [
-    "./resources/**/*"
-  ]
+  "include": ["./resources/**/*"],
+  "allowJs": true
 }

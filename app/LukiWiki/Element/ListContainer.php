@@ -18,7 +18,9 @@ use App\LukiWiki\AbstractElement;
 abstract class ListContainer extends AbstractElement
 {
     public $level = 0;
+
     protected $tag = 'ul';
+
     protected $tag2 = 'li';
 
     public function __construct($tag, $tag2, $head, $text)
@@ -34,7 +36,7 @@ abstract class ListContainer extends AbstractElement
         $element = new ListElement($this->level, $tag2);
 
         parent::insert($element);
-        if (!empty($text)) {
+        if (! empty($text)) {
             $content = new InlineElement($text, $this->isAmp);
             $this->meta = $content->getMeta();
             $this->last = $this->last->insert($content);
@@ -48,7 +50,7 @@ abstract class ListContainer extends AbstractElement
 
     public function canContain($obj)
     {
-        return !($obj instanceof self)
+        return ! ($obj instanceof self)
             || ($this->tag === $obj->tag && $this->level === $obj->level);
     }
 
@@ -64,7 +66,7 @@ abstract class ListContainer extends AbstractElement
 
     public function insert($obj)
     {
-        if (!$obj instanceof self && $this->level > 3) {
+        if (! $obj instanceof self && $this->level > 3) {
             return $this->last = $this->last->insert($obj);
         }
 

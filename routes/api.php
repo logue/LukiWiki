@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,17 +20,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // 最新記事
-Route::get('atom', 'ApiController@atom');
+Route::get('atom', [ApiController::class, 'atom']);
 // サイトマップ
-Route::get('sitemap', 'ApiController@sitemap');
+Route::get('sitemap', [ApiController::class, 'sitemap']);
 // OpenSearch
-Route::get('opensearch', 'ApiController@opensearch');
+Route::get('opensearch', [ApiController::class, 'opensearch']);
 // 添付ファイル
-Route::get('attachment/{id}', 'ApiController@attachment');
+Route::get('attachment/{id}', [ApiController::class, 'attachment']);
 // 指定ページ階層以下の一覧
-Route::get('list:{page}', 'ApiController@list');
+Route::get('list:{page}', [ApiController::class, 'list']);
 // プラグインのAPI
-Route::any('{name}:{page}', 'ApiController@plugin')->middleware('sanitize');
+Route::any('{name}:{page}', [ApiController::class, 'plugin'])->middleware('sanitize');
 // パッケージ一覧
 Route::get('composer', 'ComposerController@index');
 // Composer実行

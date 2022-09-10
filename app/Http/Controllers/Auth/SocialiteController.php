@@ -18,8 +18,7 @@ class SocialiteController extends Controller
     /**
      * Redirect the user to the Provider authentication page.
      *
-     * @param string $provider
-     *
+     * @param  string  $provider
      * @return mixed
      */
     public function redirectToProvider(string $provider)
@@ -30,12 +29,11 @@ class SocialiteController extends Controller
     /**
      * Obtain the user information from Provider.
      *
-     * @param string $provider
+     * @param  string  $provider
+     * @return \Illuminate\Http\RedirectResponse
      *
      * @throws \Exception
      * @throws \Throwable
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function handleProviderCallback(string $provider): RedirectResponse
     {
@@ -70,16 +68,15 @@ class SocialiteController extends Controller
     /**
      * Create a user if does not exist.
      *
-     * @param string $providerName
-     * @param object $providerUser
-     *
+     * @param  string  $providerName
+     * @param  object  $providerUser
      * @return mixed
      */
     protected function findOrCreateUser($providerName, $providerUser)
     {
         $social = SocialAccount::firstOrNew([
             'provider_user_id' => $providerUser->getId(),
-            'provider'         => $providerName,
+            'provider' => $providerName,
         ]);
 
         if ($social->exists) {
@@ -90,7 +87,7 @@ class SocialiteController extends Controller
             'email' => $providerUser->getEmail(),
         ]);
 
-        if (!$user->exists) {
+        if (! $user->exists) {
             $user->name = $providerUser->getName();
             $user->password = bcrypt(str_random(30));
             $user->save();
@@ -106,8 +103,7 @@ class SocialiteController extends Controller
     /**
      * The user has been authenticated.
      *
-     * @param User $user
-     *
+     * @param  User  $user
      * @return mixed
      */
     protected function authenticated(User $user)

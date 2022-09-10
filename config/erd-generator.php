@@ -52,9 +52,9 @@ return [
      */
     'table' => [
         'header_background_color' => '#dee2e6',
-        'header_font_color'       => '#212529',
-        'row_background_color'    => '#ffffff',
-        'row_font_color'          => '#343a40',
+        'header_font_color' => '#212529',
+        'row_background_color' => '#ffffff',
+        'row_font_color' => '#343a40',
     ],
 
     /*
@@ -65,49 +65,49 @@ return [
      * See http://www.graphviz.org/doc/info/attrs.html#d:label for a full list of attributes.
      */
     'graph' => [
-        'style'       => 'filled',
-        'bgcolor'     => '#f8f9fa',
-        'fontsize'    => 12,
-        'labelloc'    => 't',
+        'style' => 'filled',
+        'bgcolor' => '#f8f9fa',
+        'fontsize' => 12,
+        'labelloc' => 't',
         'concentrate' => true,
-        'splines'     => 'polyline',
-        'overlap'     => false,
-        'nodesep'     => 1,
-        'rankdir'     => 'LR',
-        'pad'         => 0.5,
-        'ranksep'     => 2,
-        'esep'        => true,
-        'fontname'    => 'Helvetica Neue',
+        'splines' => 'polyline',
+        'overlap' => false,
+        'nodesep' => 1,
+        'rankdir' => 'LR',
+        'pad' => 0.5,
+        'ranksep' => 2,
+        'esep' => true,
+        'fontname' => 'Helvetica Neue',
     ],
 
     'node' => [
-        'margin'   => 0,
-        'shape'    => 'rectangle',
+        'margin' => 0,
+        'shape' => 'rectangle',
         'fontname' => 'Helvetica Neue',
     ],
 
     'edge' => [
-        'color'    => '#17a2b8',
+        'color' => '#17a2b8',
         'penwidth' => 1.8,
         'fontname' => 'Helvetica Neue',
     ],
 
     'relations' => [
         'HasOne' => [
-            'dir'       => 'both',
-            'color'     => '#dc3545',
+            'dir' => 'both',
+            'color' => '#dc3545',
             'arrowhead' => 'tee',
             'arrowtail' => 'none',
         ],
         'BelongsTo' => [
-            'dir'       => 'both',
-            'color'     => '#fd7e14',
+            'dir' => 'both',
+            'color' => '#fd7e14',
             'arrowhead' => 'tee',
             'arrowtail' => 'crow',
         ],
         'HasMany' => [
-            'dir'       => 'both',
-            'color'     => '#ffc107',
+            'dir' => 'both',
+            'color' => '#ffc107',
             'arrowhead' => 'crow',
             'arrowtail' => 'none',
         ],

@@ -15,7 +15,7 @@ const loading = {};
 
 /**
  *
- * @param {function} cont
+ * @param {Function} cont
  * @param {int} n
  * @returns
  */
@@ -29,7 +29,7 @@ function splitCallback(cont, n) {
 /**
  *
  * @param {string} mode
- * @param {function} cont
+ * @param {Function} cont
  * @returns
  */
 function ensureDeps(mode, cont) {
@@ -64,7 +64,7 @@ CodeMirror.requireMode = (mode, cont) => {
 
   CodeMirror.on(script, 'load', () => {
     ensureDeps(mode, () => {
-      list.each((e) => e());
+      list.each(e => e());
     });
   });
 
@@ -81,6 +81,9 @@ CodeMirror.autoLoadMode = (instance, mode) => {
 
 const isBlock = /^(p|li|div|h\\d|pre|blockquote|td)$/;
 
+/**
+ *
+ */
 function textContent(node, out) {
   if (node.nodeType === 3) return out.push(node.nodeValue);
   for (let ch = node.firstChild; ch; ch = ch.nextSibling) {

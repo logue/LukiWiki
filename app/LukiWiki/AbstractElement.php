@@ -16,11 +16,17 @@ namespace App\LukiWiki;
 abstract class AbstractElement
 {
     protected $parent;
+
     protected $last;        // Insert new one at the back of the $last
+
     protected $meta;
+
     protected static $converter;
+
     protected $elements = [];    // References of childs
+
     protected $isAmp = false;
+
     protected $page;
 
     /**
@@ -66,7 +72,7 @@ abstract class AbstractElement
     /**
      * 親要素に挿入.
      *
-     * @param object $obj
+     * @param  object  $obj
      */
     public function setParent(object $parent)
     {
@@ -76,7 +82,7 @@ abstract class AbstractElement
     /**
      * 親要素に要素を追加.
      *
-     * @param object $obj
+     * @param  object  $obj
      */
     public function add(object $obj)
     {
@@ -91,7 +97,7 @@ abstract class AbstractElement
     /**
      * 要素を追加.
      *
-     * @param object $obj
+     * @param  object  $obj
      */
     public function insert(object $obj)
     {
@@ -108,8 +114,7 @@ abstract class AbstractElement
     /**
      * 小要素を持つことができるか.
      *
-     * @param object $obj
-     *
+     * @param  object  $obj
      * @return bool
      */
     public function canContain(object $obj)
@@ -120,11 +125,10 @@ abstract class AbstractElement
     /**
      * タグで包む
      *
-     * @param string $string  子要素
-     * @param string $tag     タグ名
-     * @param array  $param   タグに入れる属性
-     * @param bool   $canomit
-     *
+     * @param  string  $string  子要素
+     * @param  string  $tag     タグ名
+     * @param  array  $param   タグに入れる属性
+     * @param  bool  $canomit
      * @return string
      */
     public function wrap(string $innerHtml, string $tag, array $param, bool $canomit)
@@ -133,13 +137,14 @@ abstract class AbstractElement
         foreach ($param as $key => $value) {
             if (empty($value)) {
                 $attributes[] = $key;
+
                 continue;
             }
-            $attributes[] = $key . '="' . $value . '"';
+            $attributes[] = $key.'="'.$value.'"';
         }
 
         return ($canomit && empty($string)) ? '' :
-            '<' . $tag . (\count($attributes) !== 0 ? ' ' . implode(' ', $attributes) : '') . '>' . trim($innerHtml) . '</' . $tag . '>';
+            '<'.$tag.(\count($attributes) !== 0 ? ' '.implode(' ', $attributes) : '').'>'.trim($innerHtml).'</'.$tag.'>';
     }
 
     /**
@@ -155,8 +160,7 @@ abstract class AbstractElement
     /**
      * 文字列をエスケープ.
      *
-     * @param string $str
-     *
+     * @param  string  $str
      * @return string
      */
     protected static function processText(string $str): string

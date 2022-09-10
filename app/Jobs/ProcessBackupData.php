@@ -36,6 +36,7 @@ class ProcessBackupData implements ShouldQueue
     public int $tries = 1;
 
     private string $file;
+
     private string $page;
 
     /**
@@ -52,7 +53,7 @@ class ProcessBackupData implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('Loading "' . $this->file . '"...');
+        Log::info('Loading "'.$this->file.'"...');
 
         if (empty($this->page)) {
             // ファイル名が存在しない場合スキップ（.gitignoreとかの隠しファイルも省ける）
@@ -63,13 +64,13 @@ class ProcessBackupData implements ShouldQueue
         $pagename = str_replace(':', '_', $this->page);
         // ページが存在しない場合、移行はしない。（IDで管理するため）
         $page_id = Page::where('name', $pagename)->pluck('id')->first();
-        if (!$page_id) {
+        if (! $page_id) {
             return;
         }
-        Log::info('Page: ' . $pagename);
+        Log::info('Page: '.$pagename);
 
         // Storageクラスに作成日を取得する関数がないためファイルの実体のパスを取得
-        $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/' . $this->file));
+        $from = str_replace('\\', DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
 
         // 拡張子を取得
         $ext = substr($this->file, strrpos($this->file, '.') + 1);
@@ -86,7 +87,7 @@ class ProcessBackupData implements ShouldQueue
                 break;
             case 'gz':
                 $handle = \gzopen($from, 'r');
-                while (!gzeof($handle)) {
+                while (! gzeof($handle)) {
                     $data .= \gzread($handle, 1024);
                 }
                 gzclose($handle);
@@ -94,7 +95,7 @@ class ProcessBackupData implements ShouldQueue
             case 'bz2':
                 // PukiWiki Adv.
                 $handle = \bzopen($from, 'r');
-                while (!feof($handle)) {
+                while (! feof($handle)) {
                     $data .= \bzread($handle, 1024);
                 }
                 bzclose($handle);
@@ -121,12 +122,12 @@ class ProcessBackupData implements ShouldQueue
 
                 // 割当
                 $entries[$age] = [
-                    'page_id'   => $page_id,
+                    'page_id' => $page_id,
                     'created_at' => (int) $matchs[1],
                     'updated_at' => isset($matchs[2]) ? (int) $matchs[2] : (int) $matchs[1],
                 ];
 
-                //dd($match);
+            //dd($match);
             } else {
                 // 中身
                 $entries[$age]['data'][] = rtrim($line);
@@ -138,11 +139,11 @@ class ProcessBackupData implements ShouldQueue
                 continue;
             }
             Backup::updateOrCreate([
-                'page_id'     => $entry['page_id'],
-                'created_at'  => Carbon::createFromTimestamp($entry['created_at'])->format('Y-m-d H:i:s'),
+                'page_id' => $entry['page_id'],
+                'created_at' => Carbon::createFromTimestamp($entry['created_at'])->format('Y-m-d H:i:s'),
             ], [
-                'source'      => implode("\n", $entry['data']),
-                'updated_at'  => Carbon::createFromTimestamp($entry['updated_at'])->format('Y-m-d H:i:s'),
+                'source' => implode("\n", $entry['data']),
+                'updated_at' => Carbon::createFromTimestamp($entry['updated_at'])->format('Y-m-d H:i:s'),
             ]);
         }
     }
@@ -150,11 +151,11 @@ class ProcessBackupData implements ShouldQueue
     /**
      * 失敗したジョブの処理.
      *
-     * @param \Throwable $exception
+     * @param  \Throwable  $exception
      */
     public function failed(\Throwable $exception)
     {
-        Log::error('Import Backup data Job has been failed: ' . $this->page);
+        Log::error('Import Backup data Job has been failed: '.$this->page);
         Log::error($exception->__toString());
     }
 }

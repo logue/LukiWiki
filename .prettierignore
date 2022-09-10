@@ -1,0 +1,8 @@
+.husky/
+.vscode/
+.yarn/
+public/
+storage/
+vendor/
+resources/js/ziggy.js
+stats.html

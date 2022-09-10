@@ -17,6 +17,6 @@ class Ruby extends AbstractPlugin implements InlinePluginInterface
 {
     public function inline(): string
     {
-        return '<ruby>' . e($this->params[0]) . '<rt>' . e($this->body) . '</rt></ruby>';
+        return '<ruby>'.e($this->params[0]).'<rt>'.e($this->body).'</rt></ruby>';
     }
 }

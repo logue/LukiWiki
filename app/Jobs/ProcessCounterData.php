@@ -36,6 +36,7 @@ class ProcessCounterData implements ShouldQueue
     public $tries = 1;
 
     private $file;
+
     private $page;
 
     /**
@@ -62,11 +63,11 @@ class ProcessCounterData implements ShouldQueue
     {
         // :が含まれるページ名は_に変更
         $pagename = str_replace(':', '_', $this->page);
-        Log::info('Loading "' . $this->file . '"(' . $pagename . ')...');
+        Log::info('Loading "'.$this->file.'"('.$pagename.')...');
 
         // ページが存在しない場合、移行はしない。（IDで管理するため）
         $page_id = Page::where('name', $pagename)->pluck('id')->first();
-        if (!$page_id) {
+        if (! $page_id) {
             return;
         }
 
@@ -83,14 +84,14 @@ class ProcessCounterData implements ShouldQueue
         Counter::updateOrCreate(
             [
                 // 更新対象
-                'page_id'        => $page_id,
+                'page_id' => $page_id,
             ],
             [
-                'total'           => $data[0],
-                'today'           => $data[2],
-                'yesterday'       => $data[3],
-                'ip_address'      => $data[4],
-                'updated_at'      => Carbon::parse($data[1])->format('Y-m-d H:i:s'),
+                'total' => $data[0],
+                'today' => $data[2],
+                'yesterday' => $data[3],
+                'ip_address' => $data[4],
+                'updated_at' => Carbon::parse($data[1])->format('Y-m-d H:i:s'),
             ]
         );
     }
@@ -98,11 +99,11 @@ class ProcessCounterData implements ShouldQueue
     /**
      * 失敗したジョブの処理.
      *
-     * @param \Exception $exception
+     * @param  \Exception  $exception
      */
     public function failed(\Exception $exception)
     {
-        Log::error('Convert Error: ' . $this->page);
+        Log::error('Convert Error: '.$this->page);
         Log::error($exception);
     }
 }

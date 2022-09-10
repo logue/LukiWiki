@@ -10,11 +10,11 @@
 
 namespace App\Enums;
 
-use BenSampo\Enum\Enum;
-
-final class PluginType extends Enum
+enum PluginType: int
 {
-    const Inline = 0;
-    const Block = 1;
-    const Api = 2;
+    case Inline = 0;
+
+    case Block = 1;
+
+    case Api = 2;
 }

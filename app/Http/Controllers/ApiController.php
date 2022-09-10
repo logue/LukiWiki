@@ -15,9 +15,9 @@ use App\Enums\PluginType;
 use App\Models\Attachment;
 use App\Models\InterWiki;
 use App\Models\Page;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
 class ApiController extends Controller
@@ -31,7 +31,7 @@ class ApiController extends Controller
     {
         return response()
             ->view('api.atom', [
-                'entries'    => Page::getLatest(20)->get(),
+                'entries' => Page::getLatest(20)->get(),
                 'updated_at' => Page::getLatest(1)->value('updated_at'),
             ])
             ->header('Content-Type', 'application/atom+xml; charset=UTF-8');
@@ -64,21 +64,21 @@ class ApiController extends Controller
     /**
      * 添付ファイルを出力.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int                      $id
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function attachment(Request $request, int $id)
     {
         $file = Attachment::select('stored_name')->where('attachments.id', $id)->first();
+
         return Storage::response(
-            'attachments/' . $file->stored_name,
+            'attachments/'.$file->stored_name,
             $file->name,
             [
                 'Content-Type' => $file->mime,
                 'Content-length' => $file->size,
-                'Last-Modified' => $file->updated_at
+                'Last-Modified' => $file->updated_at,
             ],
             'attachment'
         );
@@ -87,26 +87,24 @@ class ApiController extends Controller
     /**
      * ページ一覧を出力.
      *
-     * @param string $prefix ページ名の前方一致条件
-     *
+     * @param  string  $prefix ページ名の前方一致条件
      * @return \Illuminate\Http\Response
      */
     public function list(string $prefix): Response
     {
-        return response(Page::where('name', 'like', $prefix . '%')->pluck('updated_at', 'name'));
+        return response(Page::where('name', 'like', $prefix.'%')->pluck('updated_at', 'name'));
     }
 
     /**
      * グロッサリーの内容を出力.
      *
-     * @param string $term グロッサリー名
-     *
+     * @param  string  $term グロッサリー名
      * @return \Illuminate\Http\Response
      */
     public function glossary(string $term): Response
     {
         $ret = InterWiki::where('name', $term)->where('type', InterWikiType::Glossary)->first();
-        if (!$ret) {
+        if (! $ret) {
             abort(404);
         }
 
@@ -116,16 +114,16 @@ class ApiController extends Controller
     /**
      * プラグインのAPI出力.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param string                   $name    プラグイン名
-     * @param null|string              $page    ページ名
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $name    プラグイン名
+     * @param  null|string  $page    ページ名
      *
      * @retun \Illuminate\Http\Response
      */
     public function plugin(Request $request, string $name, ?string $page): Response
     {
-        if (Config::has('lukiwiki.plugin.' . $name)) {
-            $class = Config::get('lukiwiki.plugin.' . $name);
+        if (Config::has('lukiwiki.plugin.'.$name)) {
+            $class = Config::get('lukiwiki.plugin.'.$name);
             $plugin = new $class(PluginType::Api, $request->input('params') ?? [], '', $page);
 
             return response($plugin->api());

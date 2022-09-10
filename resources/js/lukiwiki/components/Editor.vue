@@ -242,7 +242,7 @@ library.add(
 import CodeMirror from 'codemirror';
 
 // language
-import '../codemirror_lukiwiki.js';
+// import '../codemirror_lukiwiki.js';
 // active-line.js
 import 'codemirror/addon/selection/active-line.js';
 // styleSelectedText
@@ -321,7 +321,7 @@ export default {
     const hints = [];
     axios
       .get('/js/emoji.json')
-      .then((response) => {
+      .then(response => {
         const data = response.data;
         for (const line in data) {
           hints.push({
@@ -330,7 +330,7 @@ export default {
           });
         }
       })
-      .catch((error) => console.error(error));
+      .catch(error => console.error(error));
 
     this.hints = hints;
   },
@@ -359,18 +359,20 @@ export default {
         return;
       }
       switch (v) {
-        case 'size':
+        case 'size': {
           const val = prompt('font-size (rem)', '1');
           if (!val || !val.match(/\d+/)) {
             return;
           }
           ret = '&size(' + val + '){' + str + '};';
           break;
-        case 'ncr':
+        }
+        case 'ncr': {
           for (const s in str) {
             ret += '&#' + str.charCodeAt(s) + ';';
           }
           break;
+        }
         case 'b':
           ret = "''" + str + "''";
           break;
@@ -390,7 +392,7 @@ export default {
           ret = '``' + str + '``';
           break;
 
-        case 'url':
+        case 'url': {
           //	var regex = "^s?https?://[-_.!~*'()a-zA-Z0-9;/?:@&=+$,%#]+$";
           const uri = prompt('URL:', 'https://');
           if (uri !== null) {
@@ -399,6 +401,7 @@ export default {
             return;
           }
           break;
+        }
         default:
           alert('error');
           return;
@@ -426,7 +429,7 @@ export default {
             while (ch-- > -1) {
               const t = cm.getTokenAt({ ch, line }).string;
               if (t === ':') {
-                const filteredList = this.hints.filter((item) => {
+                const filteredList = this.hints.filter(item => {
                   return item.text.indexOf(':' + currentWord) == 0
                     ? true
                     : false;

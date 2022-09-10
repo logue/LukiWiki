@@ -1,5 +1,33 @@
 * text=auto
-*.css linguist-vendored
-*.scss linguist-vendored
-*.js linguist-vendored
+
+* vue eol=lf encoding=UTF-8
+*.css eol=lf encoding=UTF-8 diff=css
+*.html eol=lf encoding=UTF-8 diff=html
+*.js eol=lf encoding=UTF-8
+*.jsx eol=lf encoding=UTF-8
+*.md eol=lf encoding=UTF-8 diff=markdown
+*.scss eol=lf encoding=UTF-8 diff=css
+*.ts eol=lf encoding=UTF-8
+*.tsx eol=lf encoding=UTF-8
+*.txt eol=lf encoding=UTF-8
+*.xml eol=lf encoding=UTF-8
+*.php eol=lf encoding=UTF-8 diff=php
+*.blade.php eol=lf encoding=UTF-8 diff=html
+
+# Images
+*.gif binary
+*.ico binary
+*.jpg binary
+*.png binary
+*.svg eol=lf encoding=UTF-8
+*.webp binary
+
+# Fonts
+*.eot binary
+*.otf binary
+*.ttf binary
+*.woff binary
+
+/.github export-ignore
 CHANGELOG.md export-ignore
+.styleci.yml export-ignore

@@ -134,7 +134,9 @@
     </b-collapse>
   </b-navbar>
 </template>
+
 <script>
+import { parse } from 'query-string';
 // Bootstrap Vue
 import {
   BButton,
@@ -211,10 +213,11 @@ export default {
     'font-awesome-layers': FontAwesomeLayers,
   },
   data() {
+    console.log(this.$attrs);
     this.page = encodeURI(this.$attrs.page).replace('%2F', '/');
-    this.action = window.qs.action;
+    this.action = parse(location.href).action;
     this.isPageAction = this.action !== void 0 && this.page !== '';
-    // console.log(this.$attrs);
+
     this.baseUri = this.$attrs['base-uri'] + '/';
     this.pageUri = this.baseUri + this.page;
 

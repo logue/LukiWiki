@@ -35,7 +35,7 @@ class Blockquote extends AbstractElement
             $level = $this->level;
             $this->level = 0;
             $this->last = $this->end($root, $level);
-            if (!empty($text)) {
+            if (! empty($text)) {
                 $this->last = $this->last->insert($content);
             }
         } else {
@@ -50,12 +50,12 @@ class Blockquote extends AbstractElement
 
     public function canContain($obj)
     {
-        return !($obj instanceof self) || $obj->level >= $this->level;
+        return ! ($obj instanceof self) || $obj->level >= $this->level;
     }
 
     public function insert($obj)
     {
-        if (!\is_object($obj)) {
+        if (! \is_object($obj)) {
             return;
         }
 

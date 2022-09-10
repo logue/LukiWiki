@@ -17,6 +17,6 @@ class Clearfix extends AbstractPlugin implements InlinePluginInterface
 {
     public function block(): string
     {
-        return '<div class="clearfix">'. $this->body . '</div>';
+        return '<div class="clearfix">'.$this->body.'</div>';
     }
 }

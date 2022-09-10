@@ -1,4 +1,7 @@
-# .gitignore syntax (uses node-ignore behind the scenes)
-node_modules/*
-docs/*
-public/*
+.husky/
+.vscode/
+.yarn/
+public/
+storage/
+vendor/
+stats.html

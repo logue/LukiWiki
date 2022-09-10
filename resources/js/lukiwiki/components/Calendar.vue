@@ -24,7 +24,7 @@
     <tbody>
       <tr v-for="week in calendarData" :key="week">
         <td v-for="day in week" :key="day" class="text-center">
-          <a v-if="day && dayLink(day)" v-text="day" :href="dayLink(day)" />
+          <a v-if="day && dayLink(day)" :href="dayLink(day)" v-text="day" />
           <span v-else v-text="day" />
         </td>
       </tr>
@@ -36,7 +36,6 @@
 // Bootstrap Vue
 import { VBTooltip, BButton } from 'bootstrap-vue';
 // FontAwesome
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faChevronLeft,
@@ -51,18 +50,17 @@ import axios from 'axios';
 export default {
   components: {
     'b-button': BButton,
-    'font-awesome-icon': FontAwesomeIcon,
   },
   directives: {
     'b-tooltip': VBTooltip,
+  },
+  props: {
+    page: String,
   },
   data: () => ({
     current: 0,
     pages: [],
   }),
-  props: {
-    page: String,
-  },
   computed: {
     currentMoment() {
       return moment().add(this.current, 'months');
@@ -77,7 +75,7 @@ export default {
       // この月に何日まであるかを算出
       const numOfMonth = this.currentMoment.endOf('month').date();
       // この月の1日〜最終日までの配列
-      const daysOfMonth = [...Array(numOfMonth).keys()].map((i) => ++i);
+      const daysOfMonth = [...Array(numOfMonth).keys()].map(i => ++i);
       // 1日の曜日（0~6の数値で取得）
       const firstWeekDay = this.currentMoment.startOf('month').weekday();
       // 週ごとの二次元配列を生成
@@ -91,9 +89,7 @@ export default {
         })
       );
       // 全てnullの配列があれば除去する
-      return data.filter(
-        (week) => week.filter((day) => day != null).length > 0
-      );
+      return data.filter(week => week.filter(day => day != null).length > 0);
     },
   },
   async created() {

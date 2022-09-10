@@ -24,9 +24,9 @@ class PreformattedText extends AbstractElement
         parent::__construct();
         $body = explode("\r", $text);
         $meta = array_shift($body);
-        if (!empty($meta)) {
+        if (! empty($meta)) {
             if (strpos($meta, ':')) {
-                list($this->meta['lang'], $this->meta['name']) = explode(':', $meta);
+                [$this->meta['lang'], $this->meta['name']] = explode(':', $meta);
             } else {
                 $this->meta['lang'] = $meta;
                 $this->meta['name'] = '';
@@ -43,7 +43,7 @@ class PreformattedText extends AbstractElement
             return $this->wrap($content, 'pre', ['class' => 'pre'], false);
         }
 
-        return $this->wrap($content, 'pre', ['v-lw-sh' => null, 'class' => 'pre CodeMirror', 'data-lang' => $this->meta['lang']], false);
+        return $this->wrap($content, 'pre', ['class' => 'pre CodeMirror', 'data-lang' => $this->meta['lang']], false);
     }
 
     public function canContain($obj)

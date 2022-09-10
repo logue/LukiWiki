@@ -5,7 +5,6 @@
 // Author: Logue (http://github.com/logue)
 
 import CodeMirror from 'codemirror';
-import 'codemirror/addon/mode/simple.js';
 
 CodeMirror.defineSimpleMode('lukiwiki', {
   start: [

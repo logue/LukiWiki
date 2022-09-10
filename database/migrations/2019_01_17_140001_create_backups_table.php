@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateBackupsTable extends Migration
 {
     const TABLE_NAME = 'backups';
+
     const TABLE_COMMENT = 'バックアップ';
 
     /**
@@ -23,19 +24,19 @@ class CreateBackupsTable extends Migration
     public function up()
     {
         Schema::create(self::TABLE_NAME, function (Blueprint $table) {
-            $table->bigIncrements('id')->comment('バックアップ番号');
-            $table->unsignedBigInteger('page_id')->references('id')->on('pages')->comment('記事番号');
-            $table->unsignedBigInteger('user_id')->references('id')->on('users')->nullable()->comment('ユーザID');
+            $table->uuid('id')->primary()->comment('バックアップ番号');
+            $table->foreignUuid('page_id')->references('id')->on('pages')->comment('記事番号');
+            $table->foreignUuid('user_id')->references('id')->on('users')->nullable()->comment('ユーザID');
             $table->longText('source')->comment('内容');
             $table->ipAddress('ip_address')->nullable()->comment('IPアドレス');
             $table->timestamps();
         });
         if (\Config::get('database.default') === 'mysql') {
-            \DB::statement('ALTER TABLE ' . \DB::getTablePrefix() . self::TABLE_NAME . ' COMMENT \'' . self::TABLE_COMMENT . '\'');
+            \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' COMMENT \''.self::TABLE_COMMENT.'\'');
         } elseif (\Config::get('database.default') === 'pgsql') {
-            \DB::statement('COMMENT ON DATABASE ' . \DB::getTablePrefix() . self::TABLE_NAME . ' IS \'' . self::TABLE_COMMENT . '\'');
+            \DB::statement('COMMENT ON DATABASE '.\DB::getTablePrefix().self::TABLE_NAME.' IS \''.self::TABLE_COMMENT.'\'');
         } elseif (\Config::get('database.default') === 'sqlserv') {
-            \DB::statement('EXEC sys.sp_addextendedproperty  @name=N\'MS_Description\',@value=N\'' . self::TABLE_COMMENT . '\',@level0type=N\'SCHEMA\',@level0name=N\'dbo\',@level1type=N\'TABLE\',@level1name=N\'' . \DB::getTablePrefix() . self::TABLE_NAME . '\'');
+            \DB::statement('EXEC sys.sp_addextendedproperty  @name=N\'MS_Description\',@value=N\''.self::TABLE_COMMENT.'\',@level0type=N\'SCHEMA\',@level0name=N\'dbo\',@level1type=N\'TABLE\',@level1name=N\''.\DB::getTablePrefix().self::TABLE_NAME.'\'');
         }
     }
 

@@ -1,5 +1,8 @@
-*.min.js
-node_modules/
-public/js/
-public/build/
-public/vendor/
+.husky/
+.vscode/
+.yarn/
+public/
+storage/
+vendor/
+resources/js/ziggy.js
+tsconfig.node.json

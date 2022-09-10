@@ -22,17 +22,25 @@ use Symfony\Polyfill\Intl\Idn\Idn;
 abstract class AbstractInline
 {
     protected $start;   // Origin number of parentheses (0 origin)
+
     protected $text;    // Matched string
 
     protected $page;
 
     protected $name;
+
     protected $body;
+
     protected $href;
+
     protected $anchor;
+
     protected $alias;
+
     protected $title;
+
     protected $option;
+
     protected $count = 0;
 
     protected $redirect;
@@ -42,7 +50,7 @@ abstract class AbstractInline
     /**
      * コンストラクタ
      *
-     * @param int $start
+     * @param  int  $start
      */
     final public function __construct(int $start, ?string $page)
     {
@@ -81,7 +89,7 @@ abstract class AbstractInline
     /**
      * マッチするパターンを設定.
      *
-     * @param array $arr
+     * @param  array  $arr
      */
     public function setPattern(array $arr): void
     {
@@ -94,22 +102,22 @@ abstract class AbstractInline
      */
     public function setAutoLink(): ?string
     {
-        if (empty($this->page) && !empty($this->anchor)) {
+        if (empty($this->page) && ! empty($this->anchor)) {
             // ページ内リンク
-            return '<a href="' . $this->anchor . '">' . $this->alias . '</a>';
+            return '<a href="'.$this->anchor.'">'.$this->alias.'</a>';
         }
 
         $anchor_name = trim(empty($this->alias) ? $this->page : $this->alias);
 
-        $title = !empty($this->title) ? $this->title : $this->page;
+        $title = ! empty($this->title) ? $this->title : $this->page;
 
         if (\in_array($this->page, array_keys(Page::getEntries()), true)) {
-            return '<a href="' . url($this->page) . $this->anchor . '" title="' . $title . '" v-b-tooltip>' . $anchor_name . '</a>';
+            return '<a href="'.url($this->page).$this->anchor.'" title="'.$title.'" v-b-tooltip>'.$anchor_name.'</a>';
         }
-        if (!empty($this->page)) {
-            $retval = $anchor_name . '<a href="' . url($this->page) . ':edit" rel="nofollow" title="Edit ' . $this->page . '" v-b-tooltip>?</a>';
+        if (! empty($this->page)) {
+            $retval = $anchor_name.'<a href="'.url($this->page).':edit" rel="nofollow" title="Edit '.$this->page.'" v-b-tooltip>?</a>';
 
-            return '<span class="bg-light text-dark">' . $retval . '</span>';
+            return '<span class="bg-light text-dark">'.$retval.'</span>';
         }
 
         return $this->alias;
@@ -118,9 +126,8 @@ abstract class AbstractInline
     /**
      * 相対指定のページ名から全ページ名を取得.
      *
-     * @param string $name      名前の入力値
-     * @param string $reference 引用元のページ名
-     *
+     * @param  string  $name      名前の入力値
+     * @param  string  $reference 引用元のページ名
      * @return string ページのフルパス
      */
     public function getPageName(string $name = './'): string
@@ -157,12 +164,12 @@ abstract class AbstractInline
             $arrp = preg_split('#/#', $this->page, -1, PREG_SPLIT_NO_EMPTY);
 
             // 階層を遡る
-            while (!empty($arrn) && $arrn[0] === '..') {
+            while (! empty($arrn) && $arrn[0] === '..') {
                 array_shift($arrn);
                 array_pop($arrp);
             }
             // ディレクトリを結合する
-            $name = !empty($arrp) ? implode('/', array_merge($arrp, $arrn)) : (!empty($arrn) ? $defaultpage . '/' . implode('/', $arrn) : $defaultpage);
+            $name = ! empty($arrp) ? implode('/', array_merge($arrp, $arrn)) : (! empty($arrn) ? $defaultpage.'/'.implode('/', $arrn) : $defaultpage);
         }
 
         return $name;
@@ -191,7 +198,7 @@ abstract class AbstractInline
     /**
      * 正規表現の結果をパースする.
      *
-     * @param array $arr
+     * @param  array  $arr
      */
     protected function splice(array $arr): array
     {
@@ -205,14 +212,14 @@ abstract class AbstractInline
     /**
      * リンクを貼る場合の処理.
      *
-     * @param array $params パラメータ
+     * @param  array  $params パラメータ
      */
     protected function setParam(array $params): void
     {
         //$converter = new InlineConverter(['InlinePlugin'], []);
 
         //$meta = $converter->getMeta();
-        if (!empty($meta)) {
+        if (! empty($meta)) {
             $this->meta = array_merge($this->meta, $meta);
         }
 
@@ -220,7 +227,7 @@ abstract class AbstractInline
             $purl = parse_url($params['href']);
             if (isset($purl['host']) && substr($purl['host'], 0, 4) === 'xn--') {
                 // 国際化ドメインのときにアドレスをpunycode変換する。（https://日本語.jp → https://xn--wgv71a119e.jp）
-                $this->name = preg_replace('/' . $purl['host'] . '/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $params['href']);
+                $this->name = preg_replace('/'.$purl['host'].'/', Idn::idn_to_ascii($purl['host'], IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46), $params['href']);
             }
         } else {
             $this->href = url(self::getPageName($params['href']));
@@ -248,8 +255,7 @@ abstract class AbstractInline
     /**
      * 文字列をエスケープ.
      *
-     * @param string $str
-     *
+     * @param  string  $str
      * @return string
      */
     protected static function processText(?string $str): ?string

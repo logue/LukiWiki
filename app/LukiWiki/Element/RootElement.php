@@ -22,6 +22,7 @@ class RootElement extends AbstractElement
     const MULTILINE_DELIMITER = "\r";
 
     protected $id;
+
     protected $count = 0;
 
     public function __construct(string $page, array $option)
@@ -43,13 +44,14 @@ class RootElement extends AbstractElement
             // Empty
             if (empty($line)) {
                 $this->last = $this;
+
                 continue;
             }
 
             if (preg_match('/^(LEFT|CENTER|RIGHT|JUSTIFY|TOP|MIDDLE|BOTTOM|CLEAR):(.*)$/', $line, $matches)) {
                 $cmd = strtolower($matches[1]);
 
-                if (!empty($cmd)) {
+                if (! empty($cmd)) {
                     if (\is_object($this->last)) {
                         $this->last = $this->last->add(new Align($cmd));
                     }
@@ -62,7 +64,7 @@ class RootElement extends AbstractElement
 
             // 複数行のコメント行
             if (preg_match('/\/\*.+/', $line, $matches)) {
-                while (!empty($lines)) {
+                while (! empty($lines)) {
                     preg_replace('/.+\*\//', '', array_shift($lines));
                 }
             }
@@ -71,9 +73,9 @@ class RootElement extends AbstractElement
             if (preg_match('/^@[^{]+(\{\{+)\s*$/', $line, $matches)) {
                 $len = \strlen($matches[1]);
                 $line .= "\r";
-                while (!empty($lines)) {
+                while (! empty($lines)) {
                     $next_line = preg_replace('/[\r\n]*$/', '', array_shift($lines));
-                    if (preg_match('/\}{' . $len . '}/', $next_line)) {
+                    if (preg_match('/\}{'.$len.'}/', $next_line)) {
                         $line .= $next_line;
                         break;
                     }
@@ -85,7 +87,7 @@ class RootElement extends AbstractElement
             $lang = null;
             if (preg_match('/^```/', $line, $matches)) {
                 $line .= "\r";
-                while (!empty($lines)) {
+                while (! empty($lines)) {
                     $next_line = preg_replace('/[\r\n]*$/', '', array_shift($lines));
                     if (preg_match('/^```$/', $next_line)) {
                         $line .= $next_line;
@@ -100,7 +102,7 @@ class RootElement extends AbstractElement
 
             // Line Break
             if (substr($line, -1) === '~') {
-                $line = substr($line, 0, -1) . "\r";
+                $line = substr($line, 0, -1)."\r";
             }
 
             // Other Character
@@ -109,6 +111,7 @@ class RootElement extends AbstractElement
                 switch ($head) {
                     case '#':
                         $this->insert(new Heading($this, $line, $this->page));
+
                         continue 2;
                         break;
                     case '`':
@@ -122,6 +125,7 @@ class RootElement extends AbstractElement
                         if (substr($line, -1) === '-') {
                             // Horizontal Rule
                             $this->insert(new HorizontalRule($this, $line, $this->page));
+
                             continue 2;
                         }
                         // no break
@@ -170,7 +174,7 @@ class RootElement extends AbstractElement
 
                             $m2 = [];
                             $body = '';
-                            if (preg_match('/\{{' . $level . '}\s*\r(.*)\r\}{' . $level . '}/', $line, $m2)) {
+                            if (preg_match('/\{{'.$level.'}\s*\r(.*)\r\}{'.$level.'}/', $line, $m2)) {
                                 $body = trim(str_replace("\r", "\n", $m2[1]));
                             }
 
@@ -197,13 +201,13 @@ class RootElement extends AbstractElement
             }
 
             // Default
-            if (!$content) {
+            if (! $content) {
                 $content = new InlineElement($line, $this->page);
             }
 
             $meta = $content->getMeta();
 
-            if (!empty($meta)) {
+            if (! empty($meta)) {
                 foreach ($meta as $key => $value) {
                     $this->meta[$key][] = $value;
                 }
@@ -217,12 +221,12 @@ class RootElement extends AbstractElement
     public function getAnchor($text, $level)
     {
         // Heading id (auto-generated)
-        $autoid = 'content_' . $this->id . '_' . $this->count;
+        $autoid = 'content_'.$this->id.'_'.$this->count;
         $this->count++;
 
-        list($_text, $id, $level) = HeadingAnchor::get($text, false); // Cut fixed-anchor from $text
+        [$_text, $id, $level] = HeadingAnchor::get($text, false); // Cut fixed-anchor from $text
 
-        $this->meta['contents'][] = str_repeat(' ', $level) . '- [' . $_text . '](#' . $autoid . ')';
+        $this->meta['contents'][] = str_repeat(' ', $level).'- ['.$_text.'](#'.$autoid.')';
 
         // Add heding
         return [$_text, null, $autoid];

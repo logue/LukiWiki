@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\WikiController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 // 管理
 Route::prefix(':dashboard')->group(function () {
     // 管理用トップページ
-    Route::get('/', 'DashboardController')->name('page');
+    Route::get('/', DashboardController::class)->name('page');
     // データー変換処理
     Route::get('/convert', 'DashboardController@convert');
     Route::post('/convert', 'DashboardController@convert');
@@ -61,38 +64,38 @@ Route::prefix(':user')->group(function () {
 });
 
 // 検索処理
-Route::any(':search', 'WikiController@search')->middleware('sanitize', 'keyword');
+Route::any(':search', [WikiController::class, 'search'])->middleware('sanitize', 'keyword');
 // 記事一覧
-Route::get(':list', 'WikiController@list');
+Route::get(':list', [WikiController::class, 'list']);
 // 記事作成
-Route::get(':new', 'WikiController@edit');
+Route::get(':new', [WikiController::class, 'edit']);
 // 最新記事
-Route::get(':recent', 'WikiController@recent');
+Route::get(':recent', [WikiController::class, 'recent']);
 // 添付一覧
-Route::get('{page}:attachments', 'WikiController@attachments');
+Route::get('{page}:attachments', [WikiController::class, 'attachments']);
 // 添付ファイル
-Route::get('{page}:attachments/{file}', 'WikiController@attachments');
+Route::get('{page}:attachments/{file}', [WikiController::class, 'attachments']);
 // 差分
-Route::get('{page}:diff', 'WikiController@diff');
+Route::get('{page}:diff', [WikiController::class, 'diff']);
 // 編集
-Route::get('{page}:edit', 'WikiController@edit');
+Route::get('{page}:edit', [WikiController::class, 'edit']);
 // バックアップ一覧
-Route::get('{page}:history', 'WikiController@history');
+Route::get('{page}:history', [WikiController::class, 'history']);
 // バックアップの世代表示
-Route::get('{page}:history/{age}', 'WikiController@history');
+Route::get('{page}:history/{age}', [WikiController::class, 'history']);
 // バックアップの世代の今との差分
-Route::get('{page}:history/{age}:diff', 'WikiController@history');
+Route::get('{page}:history/{age}:diff', [WikiController::class, 'history']);
 // バックアップのロールバック
-Route::get('{page}:history/{age}:rollback', 'WikiController@history');
+Route::get('{page}:history/{age}:rollback', [WikiController::class, 'history']);
 // 印刷
-Route::get('{page}:print', 'WikiController@print');
+Route::get('{page}:print', [WikiController::class, 'print']);
 // ソース
-Route::get('{page}:source', 'WikiController@source');
+Route::get('{page}:source', [WikiController::class, 'source']);
 // ページ表示
-Route::get('{page?}{file?}', 'WikiController')->name('page');
+Route::get('{page?}{file?}', WikiController::class)->name('page');
 // ページ保存処理
-Route::post('{page?}', 'WikiController@save')->middleware('sanitize');
+Route::post('{page?}', [WikiController::class, 'save'])->middleware('sanitize');
 // ページ削除処理
-Route::post('{page}:delete', 'WikiController@destroy')->middleware('sanitize');
+Route::post('{page}:delete', [WikiController::class, 'destroy'])->middleware('sanitize');
 // ファイル添付処理
-Route::post('{page}:upload', 'WikiController@upload');
+Route::post('{page}:upload', [WikiController::class, 'upload']);

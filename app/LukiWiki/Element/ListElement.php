@@ -28,6 +28,6 @@ class ListElement extends AbstractElement
 
     public function canContain($obj)
     {
-        return !$obj instanceof ListContainer || $obj->level > $this->level;
+        return ! $obj instanceof ListContainer || $obj->level > $this->level;
     }
 }

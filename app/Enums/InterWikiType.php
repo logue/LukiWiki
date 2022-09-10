@@ -10,11 +10,11 @@
 
 namespace App\Enums;
 
-use BenSampo\Enum\Enum;
-
-final class InterWikiType extends Enum
+enum InterWikiType: int
 {
-    const InterWikiName = 0;
-    const AutoAliasName = 1;
-    const Glossary = 2;
+    case InterWikiName = 0;
+
+    case AutoAliasName = 1;
+
+    case Glossary = 2;
 }

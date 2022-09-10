@@ -19,10 +19,11 @@ class Image extends AbstractPlugin implements InlinePluginInterface
     {
         $alt = e($this->params[0]);
         if (strpos($this->params[0], 'http') === false) {
-            $src = url($this->page . ':attachments/' . $this->params[0]);
+            $src = url($this->page.':attachments/'.$this->params[0]);
         } else {
             $src = $this->params[0];
         }
-        return '<img src="' . $src . '" alt="' . $alt . '" loading="lazy" />';
+
+        return '<img src="'.$src.'" alt="'.$alt.'" loading="lazy" />';
     }
 }

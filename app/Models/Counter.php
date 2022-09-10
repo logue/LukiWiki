@@ -4,26 +4,29 @@
  * カウンターモデル.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2019 Logue
+ * @copyright 2019,2022 Logue
  * @license   MIT
  */
 
 namespace App\Models;
 
+use App\Traits\Uuid;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Carbon\Carbon;
 
 class Counter extends Model
 {
+    use Uuid;
+
     public const CREATED_AT = null;
 
     protected $guarded = ['id'];
 
     protected $casts = [
-        'total'     => 'int',
-        'today'     => 'int',
+        'total' => 'int',
+        'today' => 'int',
         'yesterday' => 'int',
     ];
 
@@ -39,7 +42,6 @@ class Counter extends Model
 
     public static function today(): Builder
     {
-
         return self::where('updated_at', '=', Carbon::now()->today());
     }
 }

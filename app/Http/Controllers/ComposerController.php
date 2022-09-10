@@ -12,7 +12,6 @@ namespace App\Http\Controllers;
 
 use bookin\composer\api\Composer;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class ComposerController extends Controller
 {
@@ -24,7 +23,7 @@ class ComposerController extends Controller
      */
     public function __construct()
     {
-        if (!self::$composer) {
+        if (! self::$composer) {
             self::$composer = Composer::getInstance(base_path('composer.json'), base_path());
         }
     }
@@ -39,14 +38,14 @@ class ComposerController extends Controller
         $result = [];
         foreach (self::$composer::getLocalPackages() as /* @var \Composer\Package\CompletePackageInterface */ $package) {
             $result[] = [
-                'name'         => $package->getName(),
-                'version'      => $package->getVersion(),
-                'license'      => $package->getLicense()[0],
-                'author'       => $package->getAuthors(),
-                'description'  => $package->getDescription(),
-                'keywords'     => $package->getKeywords(),
-                'releaseDate'  => $package->getReleaseDate()->format(\DateTime::ATOM),
-                'url'          => $package->getHomepage() ?? $package->getSourceUrl(),
+                'name' => $package->getName(),
+                'version' => $package->getVersion(),
+                'license' => $package->getLicense()[0],
+                'author' => $package->getAuthors(),
+                'description' => $package->getDescription(),
+                'keywords' => $package->getKeywords(),
+                'releaseDate' => $package->getReleaseDate()->format(\DateTime::ATOM),
+                'url' => $package->getHomepage() ?? $package->getSourceUrl(),
             ];
         }
 
@@ -56,8 +55,7 @@ class ComposerController extends Controller
     /**
      * Search package.
      *
-     * @param \Illuminate\Http\Request $request
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function search(Request $request)
@@ -68,8 +66,7 @@ class ComposerController extends Controller
     /**
      * Execute Composer Command.
      *
-     * @param \Illuminate\Http\Request $request
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function execute(Request $request)

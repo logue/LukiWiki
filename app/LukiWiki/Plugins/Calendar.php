@@ -17,6 +17,6 @@ class Calendar extends AbstractPlugin implements BlockPluginInterface
 {
     public function block(): string
     {
-        return '<lw-calendar page="' . $this->page . '"></lw-calendar>';
+        return '<lw-calendar page="'.$this->page.'"></lw-calendar>';
     }
 }
