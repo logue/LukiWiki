@@ -5,7 +5,7 @@
  * @copyright 2018-2019 Logue
  * @license   MIT
  */
-import Vue from 'vue';
+import Vue from 'vue/dist/vue.esm';
 
 // Register global
 window.qs = require('query-string').parse(location.search);

@@ -1,6 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/jsconfig.json",
-  "include": [
-    "./resources/**/*"
-  ]
+  "compilerOptions": {
+    "jsx": "preserve"
+  },
+  "include": ["./resources/**/*"]
 }

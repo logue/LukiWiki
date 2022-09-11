@@ -1,0 +1,11 @@
+{
+  "upgrade": true,
+  "reject": [
+    "vue",
+    "vue-loader",
+    "eslint",
+    "codemirror",
+    "vue-codemirror",
+    "bootstrap"
+  ]
+}

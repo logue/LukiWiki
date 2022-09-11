@@ -1,10 +1,12 @@
 /*!
- * Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com
- * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <http://feross.org>
+ * @license  MIT
  */
 
 /*!
- * wavesurfer.js 5.2.0 (2021-08-16)
+ * wavesurfer.js 6.2.0 (2022-05-16)
  * https://wavesurfer-js.org
  * @license BSD-3-Clause
  */
@@ -56,6 +58,10 @@
 /*! ./webaudio */
 
 /*! debounce */
+
+/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
+
+/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
 
 /*!***********************!*\
   !*** ./src/drawer.js ***!
