@@ -16,7 +16,7 @@ class InlineFactory
 
     public static function factory(string $string, string $page)
     {
-        if (!isset(self::$converter)) {
+        if (! isset(self::$converter)) {
             self::$converter = new InlineConverter();
         }
         $clone = self::$converter->getClone(self::$converter);

@@ -39,10 +39,10 @@ abstract class AbstractPlugin
     /**
      * コンストラクタ
      *
-     * @param App\Enums\PluginType $type   呼び出しタイプ
-     * @param array                $params パラメータ
-     * @param null|string          $body   本文
-     * @param string               $page   ページ名
+     * @param  App\Enums\PluginType  $type   呼び出しタイプ
+     * @param  array  $params パラメータ
+     * @param  null|string  $body   本文
+     * @param  string  $page   ページ名
      */
     final public function __construct(int $type, array $params, ?string $body, string $page)
     {
@@ -51,7 +51,7 @@ abstract class AbstractPlugin
         $this->params = $params;
         $this->body = $body;
         $this->page = $page;
-        Debugbar::startMeasure('plugin', 'Process ' . $this->name . ' plugin.');
+        Debugbar::startMeasure('plugin', 'Process '.$this->name.' plugin.');
         $this->init();
     }
 
@@ -138,8 +138,7 @@ abstract class AbstractPlugin
     /**
      * ブロック型出力.
      *
-     * @param array $args 引数
-     *
+     * @param  array  $args 引数
      * @return string
      */
     public function block(): string
@@ -150,8 +149,7 @@ abstract class AbstractPlugin
     /**
      * インライン型出力.
      *
-     * @param array $args 引数
-     *
+     * @param  array  $args 引数
      * @return string
      */
     public function inline(): string
@@ -162,23 +160,22 @@ abstract class AbstractPlugin
     /**
      * メッセージ.
      *
-     * @param string $message
-     * @param string $message_type
+     * @param  string  $message
+     * @param  string  $message_type
      */
     public function message(string $message, string $message_type = 'info'): string
     {
         if ($this->type === PluginType::Inline) {
-            return '<span class="badge badge-' . $message_type . '">&amp;' . $this->name . ': ' . $message . '</span>';
+            return '<span class="badge badge-'.$message_type.'">&amp;'.$this->name.': '.$message.'</span>';
         }
 
-        return '<div class="alert alert-' . $message_type . '"><b>@' . $this->name . '</b> :' . $message . '</div>';
+        return '<div class="alert alert-'.$message_type.'"><b>@'.$this->name.'</b> :'.$message.'</div>';
     }
 
     /**
      * エラーメッセージ.
      *
-     * @param string $message
-     *
+     * @param  string  $message
      * @return string
      */
     public function error($message): string

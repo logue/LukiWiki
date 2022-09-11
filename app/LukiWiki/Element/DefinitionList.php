@@ -26,7 +26,7 @@ class DefinitionList extends ListContainer
         $element = new ListElement($this->level, 'dd');
         $this->last = AbstractElement::insert($element);
 
-        if (!empty($out[1])) {
+        if (! empty($out[1])) {
             $content = new InlineElement($out[1], $page);
             $this->meta = $content->getMeta();
             $this->last = $this->last->insert($content);

@@ -18,15 +18,14 @@ class ProhibitDirectAccess
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
     {
         // 参考：https://qiita.com/yukiyukki/items/c5895056a614371473af
-        if (!$request->session()->has('refferal')) {
+        if (! $request->session()->has('refferal')) {
             return abort(403);
         }
 

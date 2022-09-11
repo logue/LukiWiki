@@ -15,10 +15,15 @@ use App\LukiWiki\AbstractElement;
 class TableCell extends AbstractElement
 {
     protected $tag = 'td';    // {td|th}
+
     public $colspan = 1;
+
     public $rowspan = 1;
+
     public $style = [];         // is array('width'=>, 'align'=>...);
+
     public $is_blank = false;
+
     public $class = [];
 
     private const CELL_OPTION_MATCH_PATTERN = '/^(?:(LEFT|CENTER|RIGHT|JUSTIFY)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\w+)\)|LANG\((\w+2)\)|(BASELINE|TOP|MIDDLE|BOTTOM|TEXT-TOP|TEXT-BOTTOM)|(NOWRAP)(TRUNCATE)):(.*)$/';
@@ -36,7 +41,7 @@ class TableCell extends AbstractElement
             // スイッチ
             if ($matches[1]) {
                 // LEFT CENTER RIGHT JUSTIFY
-                $this->class[] = 'text-' . strtolower($matches[1]);
+                $this->class[] = 'text-'.strtolower($matches[1]);
             } elseif ($matches[3]) {
                 // COLOR / BGCOLOR
                 $name = $matches[2] ? 'background-color' : 'color';
@@ -46,7 +51,7 @@ class TableCell extends AbstractElement
                 $value = strtolower($matches[4]);
                 if (is_numeric($value)) {
                     // 10px = 1rem
-                    $this->style['font-size'] = (int) $value . 'rem';
+                    $this->style['font-size'] = (int) $value.'rem';
                 } elseif (preg_match('/^h[1-6]$', $value)) {
                     // h1 ~ h6
                     $this->class[] = $value;
@@ -56,7 +61,7 @@ class TableCell extends AbstractElement
                 $this->lang = strtolower($matches[5]);
             } elseif ($matches[6]) {
                 // BASELINE / TOP / MIDDLE / BOTTOM / TEXT-TOP / TEXT-BOTTOM
-                $this->class[] = 'align-' . strtolower($matches[6]);
+                $this->class[] = 'align-'.strtolower($matches[6]);
             } elseif ($matches[7]) {
                 // NOWRAP
                 $this->class[] = 'text-nowrap';
@@ -68,10 +73,10 @@ class TableCell extends AbstractElement
         if ($is_template) {
             // テンプレート行（末尾にhを入れるヘッダー行の前の行の処理）
             if (is_numeric($text)) {
-                $this->style['width'] = $text . 'rem';
+                $this->style['width'] = $text.'rem';
             } elseif (preg_match('/\d+%$/', $text)) {
                 // %指定
-                $this->style['width'] = $text . '%';
+                $this->style['width'] = $text.'%';
             }
         }
 
@@ -84,7 +89,7 @@ class TableCell extends AbstractElement
             $text = substr($text, 1);
         }
 
-        if (!empty($text) && $text[0] === '#') {
+        if (! empty($text) && $text[0] === '#') {
             // Try using Div class for this $text
             $obj = ElementFactory::factory('Div', $this, $text);
             if ($obj instanceof Paragraph) {
@@ -108,19 +113,19 @@ class TableCell extends AbstractElement
             $param['colspan'] = $this->colspan;
             unset($this->style['width']);
         }
-        if (!empty($this->lang)) {
+        if (! empty($this->lang)) {
             $param['lang'] = $this->lang;
         }
 
-        if (!empty($this->style)) {
+        if (! empty($this->style)) {
             $style = [];
             foreach ($this->style as $key => $value) {
-                $style[] = $key . ':' . $value;
+                $style[] = $key.':'.$value;
             }
             $param['style'] = implode(';', $style);
         }
 
-        if (!empty($this->class)) {
+        if (! empty($this->class)) {
             $param['class'] = implode(' ', $this->class);
         }
 

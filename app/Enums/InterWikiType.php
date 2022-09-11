@@ -15,6 +15,8 @@ use BenSampo\Enum\Enum;
 final class InterWikiType extends Enum
 {
     const InterWikiName = 0;
+
     const AutoAliasName = 1;
+
     const Glossary = 2;
 }

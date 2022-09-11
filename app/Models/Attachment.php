@@ -18,10 +18,10 @@ class Attachment extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'size'   => 'int',
-        'count'  => 'int',
+        'size' => 'int',
+        'count' => 'int',
         'locked' => 'bool',
-        'meta'   => 'json',
+        'meta' => 'json',
     ];
 
     protected $touches = ['page'];

@@ -1,6 +1,7 @@
 <template>
   <b-breadcrumb :items="items" />
 </template>
+
 <script>
 import { BBreadcrumb, BBreadcrumbItem } from 'bootstrap-vue';
 export default {

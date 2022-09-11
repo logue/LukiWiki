@@ -16,10 +16,12 @@ class HeadingAnchor
      * 見出しの固有IDのマッチパターン.
      */
     private const HEADING_ID_PATTERN = '/^(\#{1,5})\s(.*?)\s(?:\[\#(\w+)\]\s*)?$/m';
+
     /**
      * 見出しのIDの生成で使用出来る文字.
      */
     private const HEADING_ID_ACCEPT_CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
     /**
      * 見出し判別IDで使用する文字数.
      */
@@ -28,18 +30,17 @@ class HeadingAnchor
     /**
      * 見出しのIDを作る.
      *
-     * @param string $str  入力文字列
-     * @param string $id   見出しのID
-     * @param mixed  $line
-     *
+     * @param  string  $str  入力文字列
+     * @param  string  $id   見出しのID
+     * @param  mixed  $line
      * @return string
      */
     public static function set($line, $id = null)
     {
         $matches = [];
-        if (preg_match(self::HEADING_ID_PATTERN, $line, $matches) && (!isset($matches[3]) || empty($matches[3]))) {
+        if (preg_match(self::HEADING_ID_PATTERN, $line, $matches) && (! isset($matches[3]) || empty($matches[3]))) {
             // 7桁のランダム英数字をアンカー名として表題の末尾に付加
-            $line = rtrim($matches[1] . $matches[2]) . ' [' . (empty($id) ? substr(str_shuffle(self::HEADING_ID_ACCEPT_CHARS), 0, self::HEADING_ID_LENGTH) : $id) . ']';
+            $line = rtrim($matches[1].$matches[2]).' ['.(empty($id) ? substr(str_shuffle(self::HEADING_ID_ACCEPT_CHARS), 0, self::HEADING_ID_LENGTH) : $id).']';
         }
 
         return $line;
@@ -48,9 +49,8 @@ class HeadingAnchor
     /**
      * 見出しからIDを取得.
      *
-     * @param string $str   入力文字列
-     * @param bool   $strip 見出し編集用のアンカーを削除する
-     *
+     * @param  string  $str   入力文字列
+     * @param  bool  $strip 見出し編集用のアンカーを削除する
      * @return string
      */
     public static function get($str, $strip = true)
@@ -70,7 +70,7 @@ class HeadingAnchor
         // Cut footnotes and tags
         if ($strip === true) {
             $heading = strip_tags(
-                InlineFactory::factory(preg_replace('/' . InlineRules::NOTE_PATTERN . '/x', '', $heading))
+                InlineFactory::factory(preg_replace('/'.InlineRules::NOTE_PATTERN.'/x', '', $heading))
             );
         }
 
@@ -80,8 +80,7 @@ class HeadingAnchor
     /**
      * 見出しIDを削除.
      *
-     * @param string $str
-     *
+     * @param  string  $str
      * @return string
      */
     public static function remove($str)

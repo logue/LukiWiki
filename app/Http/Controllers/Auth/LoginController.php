@@ -50,8 +50,7 @@ class LoginController extends Controller
     /**
      * Obtain the user information from Social Logged in.
      *
-     * @param string $social
-     *
+     * @param  string  $social
      * @return mixed
      */
     public function handleProviderCallback(string $social): mixed

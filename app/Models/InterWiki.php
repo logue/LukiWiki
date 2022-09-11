@@ -16,22 +16,22 @@ use Illuminate\Database\Eloquent\Model;
 class InterWiki extends Model
 {
     protected $guarded = ['id'];
+
     protected $table = 'interwikis';
 
     /**
      * InterWikiNameを取得.
      *
-     * @param string $anchor
-     *
+     * @param  string  $anchor
      * @return null|string
      */
     public static function getInterWikiName(string $anchor): ?string
     {
-        list($name, $param) = explode(':', $anchor);
+        [$name, $param] = explode(':', $anchor);
 
         $interwiki = self::where('name', $name)->where('type', InterWikiType::InterWikiName)->first();
 
-        if (!$interwiki) {
+        if (! $interwiki) {
             return null;
         }
 
@@ -60,6 +60,6 @@ class InterWiki extends Model
         }
 
         // Replace or Add the parameter
-        return (strpos($interwiki->value, '$1') !== false) ? str_replace('$1', $param, $interwiki->value) : $interwiki->value . $param;
+        return (strpos($interwiki->value, '$1') !== false) ? str_replace('$1', $param, $interwiki->value) : $interwiki->value.$param;
     }
 }

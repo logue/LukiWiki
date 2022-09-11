@@ -23,7 +23,9 @@ use App\LukiWiki\Rules\HeadingAnchor;
 class Heading extends AbstractElement
 {
     protected $level;
+
     protected $id;
+
     protected $text;
 
     public function __construct($root, $text, $page)
@@ -32,7 +34,7 @@ class Heading extends AbstractElement
 
         $this->level = min(5, strspn($text, '#'));
         $this->page = $page;
-        list($text, $this->msg_top, $this->id) = $root->getAnchor($text, $this->level);
+        [$text, $this->msg_top, $this->id] = $root->getAnchor($text, $this->level);
         //dd($this->id);
 
         $content = new InlineElement($text, $this->page);
@@ -44,12 +46,12 @@ class Heading extends AbstractElement
 
     public function __toString()
     {
-        list($this->text, $fixed_anchor) = HeadingAnchor::get(parent::__toString(), false);
+        [$this->text, $fixed_anchor] = HeadingAnchor::get(parent::__toString(), false);
         $id = (empty($fixed_anchor)) ? $this->id : $fixed_anchor;
 
         $this->meta[$id] = $this->text;
 
-        return $this->wrap(parent::__toString(), 'h' . $this->level, ['id' => $id], false);
+        return $this->wrap(parent::__toString(), 'h'.$this->level, ['id' => $id], false);
     }
 
     public function insert($obj)

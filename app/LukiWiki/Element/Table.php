@@ -22,11 +22,15 @@ class Table extends AbstractElement
 {
     /** @var string デフォルトのテーブルの位置 */
     public string $align = 'CENTER';
+
     /** @var string */
     protected string $type = '';
+
     protected array $types;
+
     /** @var int 列の数 */
     protected int $col;
+
     /** @var array セルの種類 */
     protected static array $parts = [
         // ヘッダー行
@@ -36,14 +40,14 @@ class Table extends AbstractElement
         // キャプション
         'c' => 'caption',
         // 通常の行
-        ''  => 'tbody',
+        '' => 'tbody',
     ];
 
     /**
      * コンストラクタ
      *
-     * @param string $input
-     * @param string $page
+     * @param  string  $input
+     * @param  string  $page
      */
     public function __construct(string $input, string $page)
     {
@@ -87,6 +91,7 @@ class Table extends AbstractElement
                 $row = $this->elements[$nrow];
                 if ($row[$ncol]->rowspan === 0) {
                     $rowspan++;
+
                     continue;
                 }
                 $row[$ncol]->rowspan = $rowspan;
@@ -109,6 +114,7 @@ class Table extends AbstractElement
             foreach (array_keys($row) as $ncol) {
                 if ($row[$ncol]->colspan === 0) {
                     $colspan++;
+
                     continue;
                 }
                 $row[$ncol]->colspan = $colspan;
@@ -141,8 +147,9 @@ class Table extends AbstractElement
             }
             $string .= $this->wrap($part_string, $part, [], false);
         }
+
         return $this->wrap($string, 'table', [
-            'class' => 'table table-bordered ' . Alignment::block($this->align)
+            'class' => 'table table-bordered '.Alignment::block($this->align),
         ], false);
     }
 
@@ -155,6 +162,7 @@ class Table extends AbstractElement
     {
         $this->elements[] = $obj->elements[0];
         $this->types[] = $obj->type;
+
         return $this;
     }
 }

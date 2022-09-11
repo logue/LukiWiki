@@ -17,6 +17,6 @@ class Size extends AbstractPlugin implements InlinePluginInterface
 {
     public function inline(): string
     {
-        return '<span style="font-size: ' . e($this->params[0]) . 'rem">' . e($this->body) . '</span>';
+        return '<span style="font-size: '.e($this->params[0]).'rem">'.e($this->body).'</span>';
     }
 }

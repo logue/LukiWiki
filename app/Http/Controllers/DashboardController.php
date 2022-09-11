@@ -23,7 +23,7 @@ class DashboardController extends Controller
 {
     private const DEFAULT_PATH = '/:dashboard';
 
-    /** @var \Illuminate\Database\Eloquent\Model $page ページモデル */
+    /** @var \Illuminate\Database\Eloquent\Model ページモデル */
     protected $page;
 
     /**
@@ -60,8 +60,7 @@ class DashboardController extends Controller
     /**
      * WikiデータをLukiWiki形式に変換.
      *
-     * @param \Illuminate\Http\Request $request
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
     public function convert(Request $request)
@@ -74,7 +73,7 @@ class DashboardController extends Controller
                 switch ($request->input('type')) {
                     case 'attach':
                         $request->session()->flash('message', '添付ファイルのインポートのキューを実行しました。');
-                        foreach (Storage::files($path . '/attach/') as $file) {
+                        foreach (Storage::files($path.'/attach/') as $file) {
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessAttachmentData($file));
                             } catch (\Exception $e) {
@@ -84,7 +83,7 @@ class DashboardController extends Controller
                         break;
                     case 'backup':
                         $request->session()->flash('message', 'バックアップのインポートのキューを実行しました。');
-                        foreach (Storage::files($path . '/backup/') as $file) {
+                        foreach (Storage::files($path.'/backup/') as $file) {
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessBackupData($file));
                             } catch (\Exception $e) {
@@ -94,7 +93,7 @@ class DashboardController extends Controller
                         break;
                     case 'counter':
                         $request->session()->flash('message', 'カウンターのインポートのキューを実行しました。');
-                        foreach (Storage::files($path . '/counter/') as $file) {
+                        foreach (Storage::files($path.'/counter/') as $file) {
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessCounterData($file));
                             } catch (\Exception $e) {
@@ -104,7 +103,7 @@ class DashboardController extends Controller
                         break;
                     case 'wiki':
                         $request->session()->flash('message', 'Wikiデータのインポートのキューを実行しました。');
-                        foreach (Storage::files($path . '/wiki/') as $file) {
+                        foreach (Storage::files($path.'/wiki/') as $file) {
                             try {
                                 $this->dispatch(new \App\Jobs\ProcessWikiData($file));
                             } catch (\Exception $e) {
@@ -116,7 +115,7 @@ class DashboardController extends Controller
                         $request->session()->flash('message', 'キューの実行をキャンセルしました。');
                 }
                 if (count($errors) !== 0) {
-                    $request->session()->flash('message', '以下のファイルでエラーが発生しました。：' . "\n" . implode("\n", $errors));
+                    $request->session()->flash('message', '以下のファイルでエラーが発生しました。：'."\n".implode("\n", $errors));
                 }
             } else {
                 $request->session()->flash('message', 'ディレクトリが見つかりません。');
@@ -141,8 +140,7 @@ class DashboardController extends Controller
     /**
      * キャッシュクリア.
      *
-     * @param \Illuminate\Http\Request $request
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
     public function clearCache(Request $request)
@@ -161,7 +159,7 @@ class DashboardController extends Controller
         // foreach ($args as $cache) {
         switch ($request->input('cache')) {
             case 'view':
-                $files = glob(storage_path('framework/views') . '/*.php');
+                $files = glob(storage_path('framework/views').'/*.php');
                 foreach ($files as $no => $file) {
                     unlink($file);
                 }
@@ -182,7 +180,7 @@ class DashboardController extends Controller
         }
         // }
 
-        $request->session()->flash('message', '以下のキャッシュを削除しました：<br />' . implode("<br />\n", $msg));
+        $request->session()->flash('message', '以下のキャッシュを削除しました：<br />'.implode("<br />\n", $msg));
 
         return redirect(self::DEFAULT_PATH);
     }
@@ -190,8 +188,7 @@ class DashboardController extends Controller
     /**
      * InterWiki登録.
      *
-     * @param \Illuminate\Http\Request $request
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
     public function interwiki(Request $request): View
@@ -202,9 +199,9 @@ class DashboardController extends Controller
             // 編集処理
             // TODO: バリデーション
             $value = [
-                'name'   => $request->input('name'),
-                'value'  => $request->input('value'),
-                'type'   => $request->input('type'),
+                'name' => $request->input('name'),
+                'value' => $request->input('value'),
+                'type' => $request->input('type'),
                 'encode' => $request->input('encode'),
             ];
             switch ($request->input('action')) {
@@ -224,7 +221,7 @@ class DashboardController extends Controller
         }
 
         return view('dashboard/interwiki', [
-            'title'  => 'InterWikiName.',
+            'title' => 'InterWikiName.',
             'entries' => $interwiki->paginate(20),
         ]);
     }
@@ -232,8 +229,7 @@ class DashboardController extends Controller
     /**
      * CAPTCHAの動作チェック.
      *
-     * @param \Illuminate\Http\Request $request
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
     public function captchaTest(Request $request)

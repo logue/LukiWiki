@@ -24,7 +24,7 @@
     <tbody>
       <tr v-for="week in calendarData" :key="week">
         <td v-for="day in week" :key="day" class="text-center">
-          <a v-if="day && dayLink(day)" v-text="day" :href="dayLink(day)" />
+          <a v-if="day && dayLink(day)" :href="dayLink(day)" v-text="day" />
           <span v-else v-text="day" />
         </td>
       </tr>
@@ -56,13 +56,13 @@ export default {
   directives: {
     'b-tooltip': VBTooltip,
   },
+  props: {
+    page: String,
+  },
   data: () => ({
     current: 0,
     pages: [],
   }),
-  props: {
-    page: String,
-  },
   computed: {
     currentMoment() {
       return moment().add(this.current, 'months');

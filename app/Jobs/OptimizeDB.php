@@ -43,7 +43,7 @@ class OptimizeDB implements ShouldQueue
         if ($this->db === 'sqlite') {
             \DB::statement('VACUUM');
         } elseif ($this->db === 'mysql') {
-            \DB::statement('OPTIMIZE TABLE ' . \DB::getTablePrefix() . '.*');
+            \DB::statement('OPTIMIZE TABLE '.\DB::getTablePrefix().'.*');
         } elseif ($this->db === 'pgsql') {
             \DB::statement('VACUUM FULL');
         }
@@ -53,7 +53,7 @@ class OptimizeDB implements ShouldQueue
     /**
      * 失敗したジョブの処理.
      *
-     * @param \Exception $exception
+     * @param  \Exception  $exception
      */
     public function failed(\Exception $exception)
     {

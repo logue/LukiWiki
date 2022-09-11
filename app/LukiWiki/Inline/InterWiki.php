@@ -21,7 +21,7 @@ class InterWiki extends AbstractInline
 
     public function __toString()
     {
-        $target = empty($this->redirect) ? $this->name : $this->redirect . rawurlencode($this->name);
+        $target = empty($this->redirect) ? $this->name : $this->redirect.rawurlencode($this->name);
 
         return parent::setAutoLink($this->alias, $target, $this->name);
     }
@@ -30,24 +30,24 @@ class InterWiki extends AbstractInline
     {
         // [alias](URL "title"){option}
         return
-            '\[' .
-                '(.[^\]\[]+)' .              // [1] alias
-            '\]' .
-            '\(' .
-                '(' .                        // [2] Link to
-                    '[^\(\)]' .
-                    '(?:https?|ftp|ssh)' .   // protocol
-                    '(?::\/\/[-_.!~*\'a-zA-Z0-9;\/?:\@&=+\$,%#]+)' . // path, port, etc
-                ')' .                        // [2] Name end
-                '\s*("(?:.*[^"])")?\s*' .    // [3] Title
-            '\)' .
-            '(?:\{' .
-                '(.*[^\}])' .                // [4] Body (option)
+            '\['.
+                '(.[^\]\[]+)'.              // [1] alias
+            '\]'.
+            '\('.
+                '('.                        // [2] Link to
+                    '[^\(\)]'.
+                    '(?:https?|ftp|ssh)'.   // protocol
+                    '(?::\/\/[-_.!~*\'a-zA-Z0-9;\/?:\@&=+\$,%#]+)'. // path, port, etc
+                ')'.                        // [2] Name end
+                '\s*("(?:.*[^"])")?\s*'.    // [3] Title
+            '\)'.
+            '(?:\{'.
+                '(.*[^\}])'.                // [4] Body (option)
             '\})?';
     }
 
     public function setPattern(array $arr): void
     {
-        list($this->alias, $this->href, $this->title, $this->body) = $this->splice($arr);
+        [$this->alias, $this->href, $this->title, $this->body] = $this->splice($arr);
     }
 }

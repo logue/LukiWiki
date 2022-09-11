@@ -18,6 +18,7 @@ use App\LukiWiki\Rules\InlineRules;
 class InlineConverter
 {
     public $page;
+
     /**
      * デフォルトの変換パターン.
      */
@@ -36,10 +37,12 @@ class InlineConverter
         'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
         'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
     ];
+
     /**
      * 変換クラス.
      */
     private $converters = [];
+
     /**
      * 変換処理に用いる正規表現パターン.
      */
@@ -52,14 +55,14 @@ class InlineConverter
     /**
      * コンストラクタ
      *
-     * @param array  $converters 使用する変換クラス名
-     * @param array  $excludes   除外する変換クラス名
-     * @param string $page       ページ名
+     * @param  array  $converters 使用する変換クラス名
+     * @param  array  $excludes   除外する変換クラス名
+     * @param  string  $page       ページ名
      */
     public function __construct(array $converter = [], array $excludes = [], string $page = null)
     {
         static $converters;
-        if (!isset($converters)) {
+        if (! isset($converters)) {
             $converters = self::$default_converters;
         }
         // 除外するクラス
@@ -85,7 +88,7 @@ class InlineConverter
             }
             //echo $name."\n";
 
-            $patterns[] = '(' . $pattern . ')';
+            $patterns[] = '('.$pattern.')';
             $this->converters[$start] = $converter;
             $start += $converter->getCount();
 
@@ -111,15 +114,14 @@ class InlineConverter
      *
      * @staticvar type $clone_func
      *
-     * @param object $obj オブジェクト名
-     *
+     * @param  object  $obj オブジェクト名
      * @return function
      */
     public function getClone(object $obj)
     {
         static $clone_func;
 
-        if (!isset($clone_func)) {
+        if (! isset($clone_func)) {
             $clone_func = function ($a) {
                 return clone $a;
             };
@@ -131,8 +133,7 @@ class InlineConverter
     /**
      * WikiをHTMLに変換するメイン処理.
      *
-     * @param string $string
-     *
+     * @param  string  $string
      * @return string
      */
     public function convert(string $string)
@@ -143,7 +144,7 @@ class InlineConverter
         }
         $this->result = [];
         $page = $this->page;
-        $string = preg_replace_callback('/' . $this->pattern . '/ux', function ($arr) use ($page) {
+        $string = preg_replace_callback('/'.$this->pattern.'/ux', function ($arr) use ($page) {
             $obj = $this->getConverter($arr);
 
             if ($obj !== null) {
@@ -162,8 +163,8 @@ class InlineConverter
 
         $retval = [];
 
-        while (!empty($arr)) {
-            $retval[] = trim(array_shift($arr) . array_shift($this->result));
+        while (! empty($arr)) {
+            $retval[] = trim(array_shift($arr).array_shift($this->result));
         }
 
         return trim(implode('', $retval));
@@ -182,8 +183,7 @@ class InlineConverter
     /**
      * 変換クラスを取得.
      *
-     * @param array $arr
-     *
+     * @param  array  $arr
      * @return object
      */
     private function getConverter(array $arr)

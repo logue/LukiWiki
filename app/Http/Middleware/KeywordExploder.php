@@ -17,16 +17,15 @@ class KeywordExploder
     /**
      * キーワードを空白文字で分割し配列にする。
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
         $keyword = $request->input('keyword');
 
-        if (!empty($keyword)) {
+        if (! empty($keyword)) {
             // +を半角スペースに変換（GETメソッド対策）
             $keyword = str_replace('+', ' ', $keyword);
             // 全角スペースを半角スペースに変換

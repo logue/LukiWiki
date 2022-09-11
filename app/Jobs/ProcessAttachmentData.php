@@ -34,10 +34,13 @@ class ProcessAttachmentData implements ShouldQueue
      * @var int
      */
     public $tries = 1;
+
     public $page;
+
     public $original_name;
 
     private $file;
+
     private $attach_dir;
 
     /**
@@ -48,13 +51,13 @@ class ProcessAttachmentData implements ShouldQueue
         // 添付ファイルの名前を取得
         // [ページ名]_[ファイル名].[バックアップ世代]という形式。
         // 添付するファイル名にファイルシステムの制約がかかるため、LukiWikiではDBで管理する。
-        if (!preg_match('/(\w+)_(\w+)(?:\.(\d+|log))?$/', pathinfo($file, PATHINFO_BASENAME), $matches)) {
+        if (! preg_match('/(\w+)_(\w+)(?:\.(\d+|log))?$/', pathinfo($file, PATHINFO_BASENAME), $matches)) {
             return;
         }
         $this->file = $file;
 
         // ログやバックアップファイルは無視
-        if (!empty($matches[3])) {
+        if (! empty($matches[3])) {
             return;
         }
         // LukiWikiの添付ファイルディレクトリ
@@ -78,14 +81,14 @@ class ProcessAttachmentData implements ShouldQueue
         $pagename = preg_replace('/\:/', '_', $this->page);
         // ページが存在しない場合（ページと紐付けがない添付ファイル）は移行はしない。（IDで管理するため）
         $page_id = Page::where('name', $pagename)->pluck('id')->first();
-        if (!$page_id) {
+        if (! $page_id) {
             return;
         }
-        Log::info('Page: ' . $pagename);
+        Log::info('Page: '.$pagename);
 
         if (Attachment::where(['page_id' => $page_id, 'name' => $this->original_name])->exists()) {
             // すでにデーターベースに登録されている場合スキップ
-            Log::info('-> File: ' . $this->original_name . ' is already registed to db. Skipped.');
+            Log::info('-> File: '.$this->original_name.' is already registed to db. Skipped.');
 
             return;
         }
@@ -104,53 +107,53 @@ class ProcessAttachmentData implements ShouldQueue
 
         // 閲覧回数を取得
         $count = 0;
-        if (Storage::exists($this->file . '.log')) {
-            $log = explode("\n", trim(Storage::get($this->file . '.log')));
+        if (Storage::exists($this->file.'.log')) {
+            $log = explode("\n", trim(Storage::get($this->file.'.log')));
             $count = (int) explode(',', array_unshift($log))[0];
             $locked = $count !== 1 && array_shift($log) === '1';
         }
 
         // Storageクラスにハッシュなどの命令がないためファイルの実体のパスを取得
-        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/' . $this->file));
+        $from = str_replace('\\', \DIRECTORY_SEPARATOR, storage_path('app/'.$this->file));
 
         // サーバーに保存する実際のファイル名はハッシュ値＋拡張子
         // 同一の内容のファイルがアップされている（ハッシュが同じ）場合、片方だけを保持する
         $s = hash_file('sha1', $from);
-        $stored_name = $s . '.' . $ext;
+        $stored_name = $s.'.'.$ext;
         // 保存先のパス
-        $dest = $this->attach_dir . '/' . $stored_name;
+        $dest = $this->attach_dir.'/'.$stored_name;
 
-        if (!Storage::exists($dest)) {
+        if (! Storage::exists($dest)) {
             // LukiWikiの添付ディレクトリにコピー
-            Log::info('-> File: ' . $this->original_name . ' Copied to ' . $stored_name . '.');
+            Log::info('-> File: '.$this->original_name.' Copied to '.$stored_name.'.');
             Storage::copy($this->file, $dest);
         } else {
             // 同一のファイルが別ページにアップされている場合はDB上で紐付けのみを行う
-            Log::info('-> File: ' . $this->original_name . ' is already exists or same file(' . $stored_name . '). Skipped.');
+            Log::info('-> File: '.$this->original_name.' is already exists or same file('.$stored_name.'). Skipped.');
         }
 
         Attachment::updateOrCreate([
-            'page_id'     => $page_id,
-            'name'        => $this->original_name,
+            'page_id' => $page_id,
+            'name' => $this->original_name,
         ], [
-            'count'       => $count,
-            'locked'      => $locked,
+            'count' => $count,
+            'locked' => $locked,
             'stored_name' => $stored_name,
-            'mime'        => Storage::mimeType($dest),
-            'size'        => Storage::size($this->file),
-            'created_at'  => Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s'),
-            'updated_at'  => Carbon::createFromTimestamp(Storage::lastModified($this->file))->format('Y-m-d H:i:s'),
+            'mime' => Storage::mimeType($dest),
+            'size' => Storage::size($this->file),
+            'created_at' => Carbon::createFromTimestamp(filectime($from))->format('Y-m-d H:i:s'),
+            'updated_at' => Carbon::createFromTimestamp(Storage::lastModified($this->file))->format('Y-m-d H:i:s'),
         ]);
     }
 
     /**
      * 失敗したジョブの処理.
      *
-     * @param \Throwable $exception
+     * @param  \Throwable  $exception
      */
     public function failed(\Throwable $exception)
     {
-        Log::error('Convert Error: ' . $this->original_name . ' (' . $this->page . ')');
+        Log::error('Convert Error: '.$this->original_name.' ('.$this->page.')');
         Log::error($exception);
     }
 }

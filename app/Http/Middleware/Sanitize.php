@@ -17,9 +17,8 @@ class Sanitize
     /**
      * 全角を含む空白文字を削除し、LF改行に統一。空白だった場合NULLにする。
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -35,7 +34,7 @@ class Sanitize
             if (\is_string($val)) {
                 $processed = trim(
                     str_replace(
-                        [\chr(0x0d) . \chr(0x0a), \chr(0x0d), \chr(0x0a)],
+                        [\chr(0x0D).\chr(0x0A), \chr(0x0D), \chr(0x0A)],
                         "\n",
                         preg_replace('/\A[\p{C}\p{Z}]++|[\p{C}\p{Z}]++\z/u', '', $val)
                     )

@@ -20,7 +20,7 @@ class Url extends AbstractInline
 
     public function __toString()
     {
-        return '<a href="' . $this->href . '" rel="nofollow external">' . $this->processText($this->href) . '<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
+        return '<a href="'.$this->href.'" rel="nofollow external">'.$this->processText($this->href).'<font-awesome-icon far size="xs" icon="external-link-alt" class="ml-1"></font-awesome-icon></a>';
     }
 
     public function getPattern(): string
@@ -28,24 +28,24 @@ class Url extends AbstractInline
         $s1 = $this->start + 1;
 
         return
-            '(' .
-              '(?:(?:https?|ftp|ssh|git|ssh):\/\/|mailto:)' .    // [1] scheme
-            ')' .
-            '([\w.-]+@)?' .                                      // [2] mailto name
-            '([^\/"<>\s]+|\/)' .                                 // [3] host
-            '(' .
-              '[\w\/\@\$()!?&%#:;.,~\'=*+-]*' .                  // [4] URI
+            '('.
+              '(?:(?:https?|ftp|ssh|git|ssh):\/\/|mailto:)'.    // [1] scheme
+            ')'.
+            '([\w.-]+@)?'.                                      // [2] mailto name
+            '([^\/"<>\s]+|\/)'.                                 // [3] host
+            '('.
+              '[\w\/\@\$()!?&%#:;.,~\'=*+-]*'.                  // [4] URI
             ')';
     }
 
     public function setPattern(array $arr): void
     {
-        list($scheme, $user, $host, $path) = $this->splice($arr);
+        [$scheme, $user, $host, $path] = $this->splice($arr);
         if (substr($host, 0, 4) === 'xn--') {
             $host = Idn::idn_to_ascii($host, IDNA_NONTRANSITIONAL_TO_ASCII, INTL_IDNA_VARIANT_UTS46);
         }
 
-        $this->href = $scheme . $user . $host . $path;
+        $this->href = $scheme.$user.$host.$path;
 
         /*
         // https?:/// -> $this->cont['ROOT_URL']

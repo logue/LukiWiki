@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Schema;
 class CreatePagesTable extends Migration
 {
     const TABLE_NAME = 'pages';
+
     const TABLE_COMMENT = 'ページ情報';
 
     /**
@@ -36,17 +37,17 @@ class CreatePagesTable extends Migration
             $table->softDeletes();  // ソフトデリート
         });
         if (\Config::get('database.default') === 'mysql') {
-            \DB::statement('ALTER TABLE ' . \DB::getTablePrefix() . self::TABLE_NAME . ' COMMENT \'' . self::TABLE_COMMENT . '\'');
+            \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' COMMENT \''.self::TABLE_COMMENT.'\'');
             // ページ名はBINARY属性を加えて大文字小文字を区別する
-            \DB::statement('ALTER TABLE ' . \DB::getTablePrefix() . self::TABLE_NAME . ' MODIFY `name` varchar(255) BINARY');
+            \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' MODIFY `name` varchar(255) BINARY');
             // NGRAMでsourceにインデックスをつける
-            \DB::statement('ALTER TABLE ' . \DB::getTablePrefix() . self::TABLE_NAME . ' ADD FULLTEXT(`source`)');
+            \DB::statement('ALTER TABLE '.\DB::getTablePrefix().self::TABLE_NAME.' ADD FULLTEXT(`source`)');
         } elseif (\Config::get('database.default') === 'pgsql') {
-            \DB::statement('COMMENT ON DATABASE ' . \DB::getTablePrefix() . self::TABLE_NAME . ' IS \'' . self::TABLE_COMMENT . '\'');
+            \DB::statement('COMMENT ON DATABASE '.\DB::getTablePrefix().self::TABLE_NAME.' IS \''.self::TABLE_COMMENT.'\'');
             // NGRAMでsourceにインデックスを付ける
-            \DB::statement('CREATE INDEX source_idx ON ' . \DB::getTablePrefix() . self::TABLE_NAME . ' USING gin (source gin_trgm_ops);');
+            \DB::statement('CREATE INDEX source_idx ON '.\DB::getTablePrefix().self::TABLE_NAME.' USING gin (source gin_trgm_ops);');
         } elseif (\Config::get('database.default') === 'sqlserv') {
-            \DB::statement('EXEC sys.sp_addextendedproperty  @name=N\'MS_Description\',@value=N\'' . self::TABLE_COMMENT . '\',@level0type=N\'SCHEMA\',@level0name=N\'dbo\',@level1type=N\'TABLE\',@level1name=N\'' . \DB::getTablePrefix() . self::TABLE_NAME . '\'');
+            \DB::statement('EXEC sys.sp_addextendedproperty  @name=N\'MS_Description\',@value=N\''.self::TABLE_COMMENT.'\',@level0type=N\'SCHEMA\',@level0name=N\'dbo\',@level1type=N\'TABLE\',@level1name=N\''.\DB::getTablePrefix().self::TABLE_NAME.'\'');
         }
     }
 

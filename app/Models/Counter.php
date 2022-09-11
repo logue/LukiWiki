@@ -10,10 +10,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Carbon\Carbon;
 
 class Counter extends Model
 {
@@ -22,8 +22,8 @@ class Counter extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'total'     => 'int',
-        'today'     => 'int',
+        'total' => 'int',
+        'today' => 'int',
         'yesterday' => 'int',
     ];
 
@@ -39,7 +39,6 @@ class Counter extends Model
 
     public static function today(): Builder
     {
-
         return self::where('updated_at', '=', Carbon::now()->today());
     }
 }
