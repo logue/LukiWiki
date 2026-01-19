@@ -4,11 +4,13 @@
  * Wikiのファイルシステム関数.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2018 Logue
+ * @copyright 2018,2026 Logue
  * @license   MIT
  */
 
 namespace App\LukiWiki\Utility;
+
+use Illuminate\Support\Facades\Config;
 
 class WikiUrl
 {
@@ -21,6 +23,7 @@ class WikiUrl
      */
     public static function getFullName(string $name, ?string $refer = null)
     {
+        $defaultpage = Config::get('lukiwiki.defaultpage');
         // 'Here'
         if (empty($name) || $name === './') {
             // ページ名が指定されてない場合、引用元のページ名を返す
@@ -31,7 +34,7 @@ class WikiUrl
         if ($name[0] === '/') {
             $name = substr($name, 1);
 
-            return empty($name) ? Config::get('lukiwiki.defaultpage') : $name;
+            return empty($name) ? $defaultpage : $name;
         }
 
         // Relative path from 'Here'

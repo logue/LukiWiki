@@ -4,11 +4,13 @@
  * 見出しのIDクラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018,2026 Logue
  * @license   MIT
  */
 
 namespace App\LukiWiki\Rules;
+
+use App\LukiWiki\Inline\InlineFactory;
 
 class HeadingAnchor
 {
@@ -51,9 +53,10 @@ class HeadingAnchor
      *
      * @param  string  $str  入力文字列
      * @param  bool  $strip  見出し編集用のアンカーを削除する
+     * @param  string  $page  ページ名
      * @return string
      */
-    public static function get($str, $strip = true)
+    public static function get($str, $strip = true, $page = '')
     {
         // Cut fixed-heading anchors
         $id = $heading = '';
@@ -70,7 +73,7 @@ class HeadingAnchor
         // Cut footnotes and tags
         if ($strip === true) {
             $heading = strip_tags(
-                InlineFactory::factory(preg_replace('/'.InlineRules::NOTE_PATTERN.'/x', '', $heading))
+                InlineFactory::factory(preg_replace('/'.InlineRules::NOTE_PATTERN.'/x', '', $heading), $page)
             );
         }
 

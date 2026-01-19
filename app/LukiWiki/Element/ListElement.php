@@ -4,7 +4,7 @@
  * リスト要素クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018,2026 Logue
  * @license   MIT
  */
 
@@ -14,6 +14,10 @@ use App\LukiWiki\AbstractElement;
 
 class ListElement extends AbstractElement
 {
+    protected $level;
+
+    protected $head;
+
     public function __construct($level, $head)
     {
         parent::__construct();

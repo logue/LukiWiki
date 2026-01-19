@@ -4,7 +4,7 @@
  * LukiWikiコントローラー.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2018-2019 Logue
+ * @copyright 2018-2019,2026 Logue
  * @license   MIT
  */
 
@@ -429,7 +429,7 @@ class WikiController extends Controller
                 ]);
             }
 
-            \DB::commit();
+            DB::commit();
         } else {
             // 新規作成
             Page::insert([
@@ -462,7 +462,7 @@ class WikiController extends Controller
         }
 
         // ファイルのバリデーション
-        $this->validate($request, [
+        $request->validate([
             'file.*, file' => [
                 // 必須
                 'required',

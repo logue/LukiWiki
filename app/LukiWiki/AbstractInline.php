@@ -4,7 +4,7 @@
  * インライン要素クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright (c)2018-2019 by Logue
+ * @copyright (c)2018-2019,2026 by Logue
  * @license   MIT
  */
 
@@ -13,7 +13,7 @@ namespace App\LukiWiki;
 use App\LukiWiki\Inline\InlineConverter;
 use App\LukiWiki\Rules\InlineRules;
 use App\Models\Page;
-use Config;
+use Illuminate\Support\Facades\Config;
 use Symfony\Polyfill\Intl\Idn\Idn;
 
 /**

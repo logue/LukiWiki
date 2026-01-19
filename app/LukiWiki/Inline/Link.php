@@ -4,7 +4,7 @@
  * リンク変換クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2019 Logue
+ * @copyright 2019,2026 Logue
  * @license   MIT
  */
 
@@ -31,7 +31,7 @@ class Link extends AbstractInline
             $url = $this->href;
         }
 
-        if (preg_match_all('/&(.+);/', $this - alias)) {
+        if (preg_match_all('/&(.+);/', $this->alias)) {
             // リンク内プラグイン
         }
 
@@ -42,17 +42,17 @@ class Link extends AbstractInline
     {
         return
             '(?:(?:\['.
-                '(.[^\]\[]+)'.                          // [1] alias
+            '(.[^\]\[]+)'.                          // [1] alias
             '\])'.
             '(?:'.
-                '\('.
-                   '(.[^\r\n\t\f\[\]#&"\(\)]+?)'.       // [2] Name
-                   '(?:\#(\w[^\#]+?))?'.                // [3] Anchor
-                   '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.   // [4] Title
-                '\)'.
+            '\('.
+            '(.[^\r\n\t\f\[\]#&"\(\)]+?)'.       // [2] Name
+            '(?:\#(\w[^\#]+?))?'.                // [3] Anchor
+            '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.   // [4] Title
+            '\)'.
             ')'.
             '(?:\{'.
-                '(.*[^\}]?)'.                           // [5] Body (option)
+            '(.*[^\}]?)'.                           // [5] Body (option)
             '\})?)';
     }
 

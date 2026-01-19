@@ -4,13 +4,14 @@
  * メディアアドレス変換クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2019 Logue
+ * @copyright 2019,2026 Logue
  * @license   MIT
  */
 
 namespace App\LukiWiki\Inline;
 
 use App\LukiWiki\AbstractInline;
+use Illuminate\Support\Facades\Config;
 
 /**
  * Media.
@@ -22,7 +23,7 @@ class Media extends AbstractInline
     public function __toString()
     {
         // メディアファイル
-        if (\Config::get('lukiwiki.render.expand_external_media_file')) {
+        if (Config::get('lukiwiki.render.expand_external_media_file')) {
             // 拡張子を取得
             $ext = substr($this->name, strrpos($this->href, '.') + 1);
             /*
@@ -67,18 +68,18 @@ class Media extends AbstractInline
         // ![alt](URL or WikiName "title"){option}
         return
             '!'.                                            // Media link detector
-                '(?:\['.
-                    '(.[^\]\)]+)?'.                         // [1] alias
-                '\])'.
-                '(?:'.
-                    '\('.
-                       '(.[^\(\)\[\]]+?)'.                  // [2] URL or WikiName and Filename
-                       '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.   // [3] Title
-                    '\)'.
-                ')'.
-                '(?:\{'.
-                    '(.*[^\}])'.                            // [4] Body (option)
-                '\})?';
+            '(?:\['.
+            '(.[^\]\)]+)?'.                         // [1] alias
+            '\])'.
+            '(?:'.
+            '\('.
+            '(.[^\(\)\[\]]+?)'.                  // [2] URL or WikiName and Filename
+            '(?:\s+(?:"(.*[^\(\)\[\]"]?)"))?'.   // [3] Title
+            '\)'.
+            ')'.
+            '(?:\{'.
+            '(.*[^\}])'.                            // [4] Body (option)
+            '\})?';
     }
 
     public function setPattern(array $arr): void

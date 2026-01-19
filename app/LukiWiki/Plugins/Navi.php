@@ -4,7 +4,7 @@
  * Naviプラグイン.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2019 Logue
+ * @copyright 2019,2026 Logue
  * @license   MIT
  */
 
@@ -80,6 +80,6 @@ class Navi extends AbstractPlugin implements BlockPluginInterface
         }
 
         // dd($ret);
-        return view('plugin.navi', ['ret' => $ret]);
+        return view('plugin.navi', ['ret' => $ret])->render();
     }
 }

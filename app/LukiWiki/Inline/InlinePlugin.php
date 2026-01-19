@@ -4,7 +4,7 @@
  * インライン型プラグイン変換クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018-2019 Logue
+ * @copyright 2013-2014,2018-2019,2026 Logue
  * @license   MIT
  */
 
@@ -12,7 +12,7 @@ namespace App\LukiWiki\Inline;
 
 use App\Enums\PluginType;
 use App\LukiWiki\AbstractInline;
-use Config;
+use Illuminate\Support\Facades\Config;
 
 // Inline plugins
 class InlinePlugin extends AbstractInline
@@ -43,19 +43,19 @@ class InlinePlugin extends AbstractInline
     {
         return
             '(?:\&amp;'.
-                '(?:'.
-                    '(\w+)'.                        // [1] plugin name
-                    '(?:'.
-                        '\('.
-                            '((?:(?!\)[;{]).)*)'.   // [2] parameter
-                        '\)'.
-                    ')?'.
-                ')'.
-                '(?:'.
-                    '\{'.
-                        '((?:(?R)|(?!};).)*)'.      // [3] body
-                    '\}'.
-                ')?'.
+            '(?:'.
+            '(\w+)'.                        // [1] plugin name
+            '(?:'.
+            '\('.
+            '((?:(?!\)[;{]).)*)'.   // [2] parameter
+            '\)'.
+            ')?'.
+            ')'.
+            '(?:'.
+            '\{'.
+            '((?:(?R)|(?!};).)*)'.      // [3] body
+            '\}'.
+            ')?'.
             ';)';
     }
 

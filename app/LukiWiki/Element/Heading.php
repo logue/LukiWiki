@@ -4,7 +4,7 @@
  * 見出しクラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018-2019 Logue
+ * @copyright 2013-2014,2018-2019,2026 Logue
  * @license   MIT
  */
 
@@ -27,6 +27,8 @@ class Heading extends AbstractElement
     protected $id;
 
     protected $text;
+
+    protected $msg_top;
 
     public function __construct($root, $text, $page)
     {

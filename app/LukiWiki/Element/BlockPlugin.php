@@ -4,7 +4,7 @@
  * ブロック型プラグインクラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018 Logue
+ * @copyright 2013-2014,2018,2026 Logue
  * @license   MIT
  */
 
@@ -12,7 +12,7 @@ namespace App\LukiWiki\Element;
 
 use App\Enums\PluginType;
 use App\LukiWiki\AbstractElement;
-use Config;
+use Illuminate\Support\Facades\Config;
 
 /**
  *  Block plugin: @something (started with '@').

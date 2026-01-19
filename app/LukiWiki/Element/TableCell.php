@@ -4,7 +4,7 @@
  * テーブルのセルクラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018,2019 Logue
+ * @copyright 2013-2014,2018,2019,2026 Logue
  * @license   MIT
  */
 
@@ -25,6 +25,8 @@ class TableCell extends AbstractElement
     public $is_blank = false;
 
     public $class = [];
+
+    protected $lang;
 
     private const CELL_OPTION_MATCH_PATTERN = '/^(?:(LEFT|CENTER|RIGHT|JUSTIFY)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\w+)\)|LANG\((\w+2)\)|(BASELINE|TOP|MIDDLE|BOTTOM|TEXT-TOP|TEXT-BOTTOM)|(NOWRAP)(TRUNCATE)):(.*)$/';
 
@@ -52,7 +54,7 @@ class TableCell extends AbstractElement
                 if (is_numeric($value)) {
                     // 10px = 1rem
                     $this->style['font-size'] = (int) $value.'rem';
-                } elseif (preg_match('/^h[1-6]$', $value)) {
+                } elseif (preg_match('/^h[1-6]$/', $value)) {
                     // h1 ~ h6
                     $this->class[] = $value;
                 }

@@ -4,7 +4,7 @@
  * 基底要素クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018-2019 Logue
+ * @copyright 2013-2014,2018-2019,2026 Logue
  * @license   MIT
  */
 
@@ -39,7 +39,7 @@ class RootElement extends AbstractElement
 
         $count = \count($lines);
         for ($i = 0; $i < $count; $i++) {
-            $line = rtrim(array_shift($lines), "\t\r\n\0\x0B"); // スペース以外の空白文字をトリム;
+            $line = rtrim(array_shift($lines) ?? '', "\t\r\n\0\x0B"); // スペース以外の空白文字をトリム;
 
             // Empty
             if (empty($line)) {
@@ -124,7 +124,7 @@ class RootElement extends AbstractElement
                         // List / Holizonal
                         if (substr($line, -1) === '-') {
                             // Horizontal Rule
-                            $this->insert(new HorizontalRule($this, $line, $this->page));
+                            $this->insert(new HorizontalRule);
 
                             continue 2;
                         }
@@ -193,10 +193,10 @@ class RootElement extends AbstractElement
                         }
                         break;
                         /*
-                    case '!':
+            case '!':
                         // Block Media
                         $media = new Media()
-                    */
+            */
                 }
             }
 

@@ -4,7 +4,7 @@
  * インライン要素変換クラス.
  *
  * @author    Logue <logue@hotmail.co.jp>
- * @copyright 2013-2014,2018-2019 Logue
+ * @copyright 2013-2014,2018-2019,2026 Logue
  * @license   MIT
  */
 
@@ -19,23 +19,25 @@ class InlineConverter
 {
     public $page;
 
+    private $result = [];
+
     /**
      * デフォルトの変換パターン.
      */
     private static $default_converters = [
-        'App\LukiWiki\Inline\Url',              // URL schemes
+        Url::class,              // URL schemes
 
-        'App\LukiWiki\Inline\Media',            // Media Link: ![alt](url file "title"){option}
-        // 'App\LukiWiki\Inline\Link',             // Link: [alt](media file "title"){option}
-        'App\LukiWiki\Inline\BracketName',      // AutoLink
+        Media::class,            // Media Link: ![alt](url file "title"){option}
+        // Link::class,             // Link: [alt](media file "title"){option}
+        BracketName::class,      // AutoLink
 
-        'App\LukiWiki\Inline\Note',             // Footnotes
-        'App\LukiWiki\Inline\InlinePlugin',     // Inline plugins
-        'App\LukiWiki\Inline\AutoLink',         // AutoLink
-        'App\LukiWiki\Inline\InterWiki',        // AutoLink
+        Note::class,             // Footnotes
+        InlinePlugin::class,     // Inline plugins
+        AutoLink::class,         // AutoLink
+        InterWiki::class,        // AutoLink
 
-        'App\LukiWiki\Inline\Mailto',           // mailto: URL schemes
-        'App\LukiWiki\Inline\Telephone',        // tel: URL schemes
+        Mailto::class,           // mailto: URL schemes
+        Telephone::class,        // tel: URL schemes
     ];
 
     /**
