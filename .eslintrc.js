@@ -6,11 +6,10 @@ module.exports = {
     node: true,
   },
   extends: [
-    'google',
+    'eslint:recommended',
     'plugin:vue/recommended',
     '@vue/prettier',
-    'plugin:vue/essential',
-    'eslint:recommended',
+    'google',
   ],
   plugins: ['vue', 'prettier'],
   parserOptions: {
