@@ -23,7 +23,6 @@ class Table extends AbstractElement
     /** @var string デフォルトのテーブルの位置 */
     public string $align = 'CENTER';
 
-    /** @var string */
     protected string $type = '';
 
     protected array $types;
@@ -45,9 +44,6 @@ class Table extends AbstractElement
 
     /**
      * コンストラクタ
-     *
-     * @param  string  $input
-     * @param  string  $page
      */
     public function __construct(string $input, string $page)
     {
@@ -118,7 +114,7 @@ class Table extends AbstractElement
                     continue;
                 }
                 $row[$ncol]->colspan = $colspan;
-                if (null !== $stylerow) {
+                if ($stylerow !== null) {
                     $row[$ncol]->setStyle($stylerow[$ncol]->style);
                     // Inherits column style
                     while (--$colspan) {

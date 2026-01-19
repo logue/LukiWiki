@@ -18,8 +18,6 @@ class JobController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
      */
     public function index(Request $request): View
     {
@@ -95,7 +93,7 @@ class JobController extends Controller
         $this->queueWorker->runNextJob(
             $this->getConnection(),
             $this->getQueue($connection),
-            new WorkerOptions()
+            new WorkerOptions
         );
 
         return ['process complete'];

@@ -100,9 +100,9 @@ class ProcessWikiData implements ShouldQueue
 
         Log::info('Save "'.$pagename.'" to DB.');
 
-        //if ($page !== 'Web素材') {
+        // if ($page !== 'Web素材') {
         //    continue;
-        //}
+        // }
         Page::updateOrCreate(
             [
                 // 更新対象
@@ -121,8 +121,6 @@ class ProcessWikiData implements ShouldQueue
 
     /**
      * 失敗したジョブの処理.
-     *
-     * @param  \Throwable  $exception
      */
     public function failed(\Throwable $exception)
     {
@@ -132,9 +130,6 @@ class ProcessWikiData implements ShouldQueue
 
     /**
      * PukiWiki文法をLukiWiki文法に変換.
-     *
-     * @param  array  $lines
-     * @return array
      */
     private static function pukiwiki2lukiwiki(array $lines): array
     {
@@ -215,6 +210,7 @@ class ProcessWikiData implements ShouldQueue
                     // [[foo:bar]]、[[foo:http://aaa]]
                     return '['.array_shift($tmp).']('.implode(':', $tmp).')';
                 }
+
                 // 通常のリンク（Braketが1個になるだけだが・・・）
                 return '['.$matches[1].']';
             }, $line);
@@ -248,7 +244,7 @@ class ProcessWikiData implements ShouldQueue
                     $plugin = trim($matches[1]);
                     $option = isset($matches[2]) ? explode(',', trim($matches[2])) : [];
                     $body = isset($matches[3]) ? trim($matches[3]) : null;
-                    //dd($line, $matches, $body);
+                    // dd($line, $matches, $body);
 
                     if ($plugin === 'freeze') {
                         // 凍結フラグ
@@ -341,13 +337,13 @@ class ProcessWikiData implements ShouldQueue
     /**
      * プラグインの処理.
      *
-     * @param  string  $char   識別子（@か&のみ）
-     * @param  string  $plugin プラグイン名
-     * @param  array  $option 引数 ()内
-     * @param  string  $body   中身 {}内
+     * @param  string  $char  識別子（@か&のみ）
+     * @param  string  $plugin  プラグイン名
+     * @param  array  $option  引数 ()内
+     * @param  string  $body  中身 {}内
      * @return string
      */
-    private static function processPlugin(string $char, string $plugin, array $options = [], string $body = null)
+    private static function processPlugin(string $char, string $plugin, array $options = [], ?string $body = null)
     {
         // #プラグイン名(引数){中身} or &プラグイン名(引数){中身};
         // ※帰り値の末尾に;を入れないこと。
@@ -361,10 +357,10 @@ class ProcessWikiData implements ShouldQueue
         switch ($plugin) {
             case 'aname':
                 if (! empty($body)) {
-                    return  '['.$body.'](#'.$options[0].')';
+                    return '['.$body.'](#'.$options[0].')';
                 }
 
-                return  '[#'.$options[0].']';
+                return '[#'.$options[0].']';
             case 'new':
                 // 新着
                 $t = preg_replace('/\((.+)\)/u', '', $body);
@@ -391,7 +387,7 @@ class ProcessWikiData implements ShouldQueue
                 }
                 // no break
             case 'hr':
-                return  '----';
+                return '----';
             case 'br':
                 return '&br;';
             case 'pre':
@@ -406,7 +402,7 @@ class ProcessWikiData implements ShouldQueue
                     $lang = 'plain';
                 }
 
-                return  '```'.$lang."\n".$body."\n".'```';
+                return '```'.$lang."\n".$body."\n".'```';
             case 'img':
             case 'attach':
             case 'attachref':
@@ -535,8 +531,7 @@ class ProcessWikiData implements ShouldQueue
     /**
      * pxをremに変換.
      *
-     * @param  int  $px ピクセル
-     * @return float
+     * @param  int  $px  ピクセル
      */
     private static function px2rem(int $px): float
     {
@@ -545,8 +540,6 @@ class ProcessWikiData implements ShouldQueue
 
     /**
      * InterWikiNameをインポート.
-     *
-     * @param  array  $lines
      */
     private function interwiki(array $lines)
     {
@@ -578,8 +571,6 @@ class ProcessWikiData implements ShouldQueue
 
     /**
      * AutoAliasNameをインポート.
-     *
-     * @param  array  $lines
      */
     private function autoalias(array $lines)
     {
@@ -609,8 +600,6 @@ class ProcessWikiData implements ShouldQueue
 
     /**
      * Glossaryをインポート.
-     *
-     * @param  array  $lines
      */
     private function glossary(array $lines)
     {

@@ -40,7 +40,7 @@ class Telephone extends AbstractInline
             '\})?)';
     }
 
-    public function setPattern(array $arr, string $page = null): void
+    public function setPattern(array $arr, ?string $page = null): void
     {
         [$alias, $this->anchor] = $this->splice($arr);
         $this->name = $orginalname = $tel;

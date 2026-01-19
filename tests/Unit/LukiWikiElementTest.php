@@ -13,7 +13,7 @@ class LukiWikiElementTest extends TestCase
     /**
      * ブロック型引用文テスト.
      */
-    public function testBlockquote()
+    public function test_blockquote()
     {
         $html = Parser::factory(implode("\n", [
             '> Someting cited',
@@ -25,7 +25,7 @@ class LukiWikiElementTest extends TestCase
     /**
      * 定義文テスト.
      */
-    public function testDefinitionList()
+    public function test_definition_list()
     {
         $html = Parser::factory(implode("\n", [
             ': definition1 | description1',
@@ -44,7 +44,7 @@ class LukiWikiElementTest extends TestCase
     /**
      * 整形テキストテスト.
      */
-    public function testPreformattedText()
+    public function test_preformatted_text()
     {
         $html = Parser::factory(implode("\n", [
             '```plain',
@@ -57,7 +57,7 @@ class LukiWikiElementTest extends TestCase
     /**
      * 見出しテスト.
      */
-    public function testHeading()
+    public function test_heading()
     {
         $id_prefix = 'content_4_';
         $html = Parser::factory(implode("\n", [
@@ -78,7 +78,7 @@ class LukiWikiElementTest extends TestCase
     /**
      * 水平線テスト.
      */
-    public function testHr()
+    public function test_hr()
     {
         $html = Parser::factory('----', 'Test');
         $this->assertSame('<hr />', $html->__toString());
@@ -87,7 +87,7 @@ class LukiWikiElementTest extends TestCase
     /**
      * リストテスト.
      */
-    public function testList()
+    public function test_list()
     {
         $html = Parser::factory(implode("\n", [
             '- level1',
@@ -109,7 +109,7 @@ class LukiWikiElementTest extends TestCase
     /**
      * テーブルテスト.
      */
-    public function testTable()
+    public function test_table()
     {
         $html = Parser::factory(implode("\n", [
             '|10                |20                 |15             |t',

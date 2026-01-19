@@ -61,7 +61,7 @@ class InlinePlugin extends AbstractInline
 
     public function setPattern(array $arr): void
     {
-        //dd($this->getPattern(), $arr, $this->splice($arr));
+        // dd($this->getPattern(), $arr, $this->splice($arr));
         [$name, $param, $this->body] = $this->splice($arr);
         $this->name = strtolower($name);
         $this->params = explode(',', $param);

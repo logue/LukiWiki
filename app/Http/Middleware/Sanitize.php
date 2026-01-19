@@ -18,7 +18,6 @@ class Sanitize
      * 全角を含む空白文字を削除し、LF改行に統一。空白だった場合NULLにする。
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)

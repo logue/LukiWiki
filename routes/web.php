@@ -33,7 +33,7 @@ Route::prefix(':dashboard')->group(function () {
 });
 
 // 認証系のルーティング
-//Auth::routes();
+// Auth::routes();
 // 登録系
 Route::prefix(':auth')->group(function () {
     // ログイン

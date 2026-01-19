@@ -28,7 +28,7 @@ class AutoLink extends AbstractInline
         return Page::getTrie();
     }
 
-    public function setPattern(array $arr, string $page = null): void
+    public function setPattern(array $arr, ?string $page = null): void
     {
         $this->name = $arr[0];
     }

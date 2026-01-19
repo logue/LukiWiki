@@ -45,7 +45,7 @@ class Mailto extends AbstractInline
             '\})?)';
     }
 
-    public function setPattern(array $arr, string $page = null): void
+    public function setPattern(array $arr, ?string $page = null): void
     {
         [$this->alias, $toname, $host, $this->title, $this->body] = $this->splice($arr);
 

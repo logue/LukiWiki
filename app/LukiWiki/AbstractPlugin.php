@@ -39,10 +39,10 @@ abstract class AbstractPlugin
     /**
      * コンストラクタ
      *
-     * @param  App\Enums\PluginType  $type   呼び出しタイプ
-     * @param  array  $params パラメータ
-     * @param  null|string  $body   本文
-     * @param  string  $page   ページ名
+     * @param  App\Enums\PluginType  $type  呼び出しタイプ
+     * @param  array  $params  パラメータ
+     * @param  null|string  $body  本文
+     * @param  string  $page  ページ名
      */
     final public function __construct(int $type, array $params, ?string $body, string $page)
     {
@@ -98,21 +98,15 @@ abstract class AbstractPlugin
     /**
      * 共通開始処理.
      */
-    public function init(): void
-    {
-    }
+    public function init(): void {}
 
     /**
      * 共通終了処理.
      */
-    public function finalize(): void
-    {
-    }
+    public function finalize(): void {}
 
     /**
      * メタ情報取得.
-     *
-     * @return array
      */
     public function getMeta(): array
     {
@@ -138,8 +132,7 @@ abstract class AbstractPlugin
     /**
      * ブロック型出力.
      *
-     * @param  array  $args 引数
-     * @return string
+     * @param  array  $args  引数
      */
     public function block(): string
     {
@@ -149,8 +142,7 @@ abstract class AbstractPlugin
     /**
      * インライン型出力.
      *
-     * @param  array  $args 引数
-     * @return string
+     * @param  array  $args  引数
      */
     public function inline(): string
     {
@@ -159,9 +151,6 @@ abstract class AbstractPlugin
 
     /**
      * メッセージ.
-     *
-     * @param  string  $message
-     * @param  string  $message_type
      */
     public function message(string $message, string $message_type = 'info'): string
     {
@@ -176,7 +165,6 @@ abstract class AbstractPlugin
      * エラーメッセージ.
      *
      * @param  string  $message
-     * @return string
      */
     public function error($message): string
     {

@@ -31,7 +31,7 @@ class HeadingAnchor
      * 見出しのIDを作る.
      *
      * @param  string  $str  入力文字列
-     * @param  string  $id   見出しのID
+     * @param  string  $id  見出しのID
      * @param  mixed  $line
      * @return string
      */
@@ -49,8 +49,8 @@ class HeadingAnchor
     /**
      * 見出しからIDを取得.
      *
-     * @param  string  $str   入力文字列
-     * @param  bool  $strip 見出し編集用のアンカーを削除する
+     * @param  string  $str  入力文字列
+     * @param  bool  $strip  見出し編集用のアンカーを削除する
      * @return string
      */
     public static function get($str, $strip = true)

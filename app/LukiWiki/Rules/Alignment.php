@@ -15,7 +15,6 @@ class Alignment
     /**
      * ブロック型.
      *
-     * @param  string  $align
      * @return string
      */
     public static function block(string $align)

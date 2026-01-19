@@ -19,8 +19,6 @@ class Backup extends Model
 
     /**
      * このバックアップの元ページ.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function page(): BelongsTo
     {
@@ -29,8 +27,6 @@ class Backup extends Model
 
     /**
      * このバックアップの作成者.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {

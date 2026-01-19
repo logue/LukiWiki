@@ -19,9 +19,6 @@ class TableCaption extends AbstractElement
 {
     /**
      * コンストラクタ
-     *
-     * @param  string  $text
-     * @param  string  $page
      */
     public function __construct(string $text, string $page)
     {

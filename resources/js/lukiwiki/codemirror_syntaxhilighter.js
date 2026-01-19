@@ -1,3 +1,6 @@
+/* eslint-disable require-jsdoc */
+/* eslint-disable no-import-assign */
+/* eslint-disable no-prototype-builtins */
 /**
  * CodeMirrorでシンタックスハイライター
  *
@@ -9,15 +12,16 @@
 import * as CodeMirror from 'codemirror/lib/codemirror';
 
 // CodeMirror.modeURL = 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/' + CodeMirror.version + '/mode/%N/%N.js'
+// eslint-disable-next-line no-import-assign
 CodeMirror.modeURL = 'js/codemirror/mode/%N/%N.js';
 
 const loading = {};
 
 /**
- *
- * @param {function} cont
- * @param {int} n
- * @returns
+ * Helper for loading multiple dependencies.
+ * @param {Function} cont
+ * @param {number} n
+ * @return {function}
  */
 function splitCallback(cont, n) {
   let countDown = n;
@@ -27,10 +31,10 @@ function splitCallback(cont, n) {
 }
 
 /**
- *
+ * Ensure that dependencies are loaded.
  * @param {string} mode
- * @param {function} cont
- * @returns
+ * @param {Function} cont
+ * @return {void}
  */
 function ensureDeps(mode, cont) {
   const deps = CodeMirror.modes[mode].dependencies;
@@ -92,16 +96,13 @@ function textContent(node, out) {
 CodeMirror.colorize = function (collection, defaultMode) {
   if (!collection) collection = document.body.getElementsByTagName('pre');
 
-  for (const node in collection.length) {
-    if (!collection.hasOwnProperty(node)) {
-      return;
-    }
+  Array.from(collection).forEach((node) => {
     const options = {};
     const mode = node.getAttribute('data-lang') || defaultMode;
     options.tabsize = node.getAttribute('data-tab-size') || 4;
     options.state = node.getAttribute('data-state') || null;
 
-    if (!mode) continue;
+    if (!mode) return;
 
     const text = [];
     textContent(node, text);
@@ -111,7 +112,7 @@ CodeMirror.colorize = function (collection, defaultMode) {
       CodeMirror.runMode(text.join(''), mode, node, options);
     });
     node.className += ' cm-s-default';
-  }
+  });
 };
 
 CodeMirror.runMode = (string, modespec, callback, options) => {
@@ -184,12 +185,12 @@ setTimeout(function () {
 }, 20);
 
 const textareas = document.body.getElementsByTagName('textarea');
-for (const node in textareas) {
+Array.from(textareas).forEach((node) => {
   const options = {};
   const mode = node.getAttribute('data-lang') || false;
   options.tabsize = node.getAttribute('data-tab-size') || 4;
   options.state = node.getAttribute('data-state') || null;
-  if (!mode) continue;
+  if (!mode) return;
 
   const height = node.getAttribute('data-height') || 'auto';
 
@@ -203,7 +204,7 @@ for (const node in textareas) {
       cm.setSize(null, height);
     }
   });
-}
+});
 
 window.CodeMirror = CodeMirror;
 export default CodeMirror;

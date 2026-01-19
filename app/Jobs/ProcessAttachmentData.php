@@ -94,13 +94,13 @@ class ProcessAttachmentData implements ShouldQueue
         }
 
         // 添付ファイルのバックアップは移行しない
-        //if (!empty($matches[3]) {
+        // if (!empty($matches[3]) {
         //    if ($matches[3] === 'log'){
         //        $count = (int) file_get_contents($file);
         //    }else{
         //        $backup_no = (int) $matches[3];
         //    }
-        //}
+        // }
 
         // 拡張子を取得
         $ext = substr($this->original_name, strrpos($this->original_name, '.') + 1);
@@ -148,8 +148,6 @@ class ProcessAttachmentData implements ShouldQueue
 
     /**
      * 失敗したジョブの処理.
-     *
-     * @param  \Throwable  $exception
      */
     public function failed(\Throwable $exception)
     {

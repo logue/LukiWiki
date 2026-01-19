@@ -35,7 +35,7 @@ class Heading extends AbstractElement
         $this->level = min(5, strspn($text, '#'));
         $this->page = $page;
         [$text, $this->msg_top, $this->id] = $root->getAnchor($text, $this->level);
-        //dd($this->id);
+        // dd($this->id);
 
         $content = new InlineElement($text, $this->page);
         $this->meta = $content->getMeta();

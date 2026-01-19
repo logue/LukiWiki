@@ -25,7 +25,7 @@ class BracketName extends AbstractInline
 
     public function __toString()
     {
-        //dd($this->href);
+        // dd($this->href);
         if (strpos($this->href, 'http') !== false) {
             // Anchor Link
             return '<a href="'.$this->href.'" title="'.$this->title.'">'.$this->alias.'</a>';
@@ -44,6 +44,7 @@ class BracketName extends AbstractInline
             if (\in_array($this->page, array_keys(Page::getEntries()), true)) {
                 return '<a href="'.url($this->page).'" title="'.$this->title.'" v-b-tooltip>'.$this->alias.'</a>';
             }
+
             // ページが見つからない場合のリンク
             return '<span class="bg-light text-dark">'.$this->alias.'<a href="'.url($this->page).':edit" rel="nofollow" title="Edit '.$this->page.'" v-b-tooltip>?</a></span>';
         }
@@ -52,6 +53,7 @@ class BracketName extends AbstractInline
     public function getPattern(): string
     {
         $s2 = $this->start + 2;
+
         // [alt](WikiName "title"){option}
         return
             '(?:\['.
@@ -78,7 +80,7 @@ class BracketName extends AbstractInline
     {
         [$this->alias, $this->href, $this->anchor, $this->title, $this->body] = $this->splice($arr);
 
-        //dd($this);
+        // dd($this);
 
         if (strpos($this->alias, '#')) {
             $this->anchor = $this->alias;
@@ -92,11 +94,11 @@ class BracketName extends AbstractInline
             $this->page = parent::getPageName($this->href);
         }
 
-        //dd($this->page);
+        // dd($this->page);
 
         if (! empty($page)) {
             if (empty($this->anchor)) {
-                //return false;
+                // return false;
             } elseif (! InlineRules::isWikiName($page) && empty($alias)) {
                 $this->alias = $this->href.$this->anchor;
             }

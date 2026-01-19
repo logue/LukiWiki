@@ -168,9 +168,9 @@ return [
         Barryvdh\Debugbar\ServiceProvider::class,
         Owenoj\LaravelGetId3\GetId3ServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
-        //Mews\Captcha\CaptchaServiceProvider::class,
-        //\SocialiteProviders\Manager\ServiceProvider::class,
-        //HighSolutions\TranslationManager\ManagerServiceProvider::class,
+        // Mews\Captcha\CaptchaServiceProvider::class,
+        // \SocialiteProviders\Manager\ServiceProvider::class,
+        // HighSolutions\TranslationManager\ManagerServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -237,8 +237,8 @@ return [
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
         'MediaInfo' => Owenoj\LaravelGetId3\Facades\MediaInfo::class,
         'Image' => Intervention\Image\Facedes\Image::class,
-        //'Captcha'   => Mews\Captcha\Facades\Captcha::class,
-        //'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+        // 'Captcha'   => Mews\Captcha\Facades\Captcha::class,
+        // 'Socialite' => Laravel\Socialite\Facades\Socialite::class,
     ],
 
 ];

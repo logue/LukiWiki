@@ -64,8 +64,6 @@ class ApiController extends Controller
     /**
      * 添付ファイルを出力.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function attachment(Request $request, int $id)
@@ -87,8 +85,7 @@ class ApiController extends Controller
     /**
      * ページ一覧を出力.
      *
-     * @param  string  $prefix ページ名の前方一致条件
-     * @return \Illuminate\Http\Response
+     * @param  string  $prefix  ページ名の前方一致条件
      */
     public function list(string $prefix): Response
     {
@@ -98,8 +95,7 @@ class ApiController extends Controller
     /**
      * グロッサリーの内容を出力.
      *
-     * @param  string  $term グロッサリー名
-     * @return \Illuminate\Http\Response
+     * @param  string  $term  グロッサリー名
      */
     public function glossary(string $term): Response
     {
@@ -114,9 +110,8 @@ class ApiController extends Controller
     /**
      * プラグインのAPI出力.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $name    プラグイン名
-     * @param  null|string  $page    ページ名
+     * @param  string  $name  プラグイン名
+     * @param  null|string  $page  ページ名
      *
      * @retun \Illuminate\Http\Response
      */

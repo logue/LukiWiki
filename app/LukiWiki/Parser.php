@@ -27,8 +27,8 @@ class Parser
     /**
      * LukiWikiファクトリークラス.
      *
-     * @param  string  $source Wikiのソース
-     * @param  string  $page   呼び出し元ページ名
+     * @param  string  $source  Wikiのソース
+     * @param  string  $page  呼び出し元ページ名
      * @return object
      */
     public static function factory(string $source, string $page)

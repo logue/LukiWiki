@@ -30,8 +30,6 @@ class ProcessBackupData implements ShouldQueue
 
     /**
      * 最大試行回数.
-     *
-     * @var int
      */
     public int $tries = 1;
 
@@ -127,7 +125,7 @@ class ProcessBackupData implements ShouldQueue
                     'updated_at' => isset($matchs[2]) ? (int) $matchs[2] : (int) $matchs[1],
                 ];
 
-            //dd($match);
+                // dd($match);
             } else {
                 // 中身
                 $entries[$age]['data'][] = rtrim($line);
@@ -150,8 +148,6 @@ class ProcessBackupData implements ShouldQueue
 
     /**
      * 失敗したジョブの処理.
-     *
-     * @param  \Throwable  $exception
      */
     public function failed(\Throwable $exception)
     {

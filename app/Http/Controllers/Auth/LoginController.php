@@ -39,8 +39,6 @@ class LoginController extends Controller
 
     /**
      * Handle Social login request.
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function socialLogin(string $social): RedirectResponse
     {
@@ -49,9 +47,6 @@ class LoginController extends Controller
 
     /**
      * Obtain the user information from Social Logged in.
-     *
-     * @param  string  $social
-     * @return mixed
      */
     public function handleProviderCallback(string $social): mixed
     {

@@ -16,10 +16,10 @@ class WikiUrl
      * 相対指定のページ名から全ページ名を取得.
      *
      * @param  string  $name  名前の入力値
-     * @param  string  $refer 引用元のページ名
+     * @param  string  $refer  引用元のページ名
      * @return string ページのフルパス
      */
-    public static function getFullName(string $name, string $refer = null)
+    public static function getFullName(string $name, ?string $refer = null)
     {
         // 'Here'
         if (empty($name) || $name === './') {
@@ -65,7 +65,6 @@ class WikiUrl
     /**
      * 値からパス制御文字を取り除いて基準名を取得.
      *
-     * @param  string  $str
      * @return string;
      */
     public static function stripRelativePath(string $str)

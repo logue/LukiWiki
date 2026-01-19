@@ -21,9 +21,6 @@ class InterWiki extends Model
 
     /**
      * InterWikiNameを取得.
-     *
-     * @param  string  $anchor
-     * @return null|string
      */
     public static function getInterWikiName(string $anchor): ?string
     {

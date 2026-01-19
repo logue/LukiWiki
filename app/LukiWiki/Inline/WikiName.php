@@ -33,7 +33,7 @@ class WikiName extends AbstractInline
         return InlineRules::WIKINAME_PATTERN;
     }
 
-    public function setPattern(array $arr, string $page = null): void
+    public function setPattern(array $arr, ?string $page = null): void
     {
         $this->name = $this->splice($arr)[0];
         $this->anchor = $this->name;

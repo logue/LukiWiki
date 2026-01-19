@@ -26,7 +26,7 @@ class InlineConverter
         'App\LukiWiki\Inline\Url',              // URL schemes
 
         'App\LukiWiki\Inline\Media',            // Media Link: ![alt](url file "title"){option}
-        //'App\LukiWiki\Inline\Link',             // Link: [alt](media file "title"){option}
+        // 'App\LukiWiki\Inline\Link',             // Link: [alt](media file "title"){option}
         'App\LukiWiki\Inline\BracketName',      // AutoLink
 
         'App\LukiWiki\Inline\Note',             // Footnotes
@@ -55,11 +55,11 @@ class InlineConverter
     /**
      * コンストラクタ
      *
-     * @param  array  $converters 使用する変換クラス名
-     * @param  array  $excludes   除外する変換クラス名
-     * @param  string  $page       ページ名
+     * @param  array  $converters  使用する変換クラス名
+     * @param  array  $excludes  除外する変換クラス名
+     * @param  string  $page  ページ名
      */
-    public function __construct(array $converter = [], array $excludes = [], string $page = null)
+    public function __construct(array $converter = [], array $excludes = [], ?string $page = null)
     {
         static $converters;
         if (! isset($converters)) {
@@ -70,7 +70,7 @@ class InlineConverter
             $converters = array_diff($converters, $excludes);
         }
 
-        //dd($page);
+        // dd($page);
 
         $this->converters = $patterns = [];
         $start = 1;
@@ -86,7 +86,7 @@ class InlineConverter
             if (empty($pattern)) {
                 continue;
             }
-            //echo $name."\n";
+            // echo $name."\n";
 
             $patterns[] = '('.$pattern.')';
             $this->converters[$start] = $converter;
@@ -114,7 +114,7 @@ class InlineConverter
      *
      * @staticvar type $clone_func
      *
-     * @param  object  $obj オブジェクト名
+     * @param  object  $obj  オブジェクト名
      * @return function
      */
     public function getClone(object $obj)
@@ -133,7 +133,6 @@ class InlineConverter
     /**
      * WikiをHTMLに変換するメイン処理.
      *
-     * @param  string  $string
      * @return string
      */
     public function convert(string $string)
@@ -183,7 +182,6 @@ class InlineConverter
     /**
      * 変換クラスを取得.
      *
-     * @param  array  $arr
      * @return object
      */
     private function getConverter(array $arr)

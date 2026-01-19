@@ -20,6 +20,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use SebastianBergmann\Diff\Differ;
@@ -39,15 +40,11 @@ class WikiController extends Controller
      */
     public function __construct()
     {
-        $this->model = new Page();
+        $this->model = new Page;
     }
 
     /**
      * ページを読み込む
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $query
-     * @return \Illuminate\View\View
      */
     public function __invoke(Request $request, ?string $query = null): View
     {
@@ -131,9 +128,7 @@ class WikiController extends Controller
     /**
      * ソース.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $page    ページ名
-     * @return \Illuminate\View\View
+     * @param  string  $page  ページ名
      */
     public function source(Request $request, string $page): View
     {
@@ -157,9 +152,6 @@ class WikiController extends Controller
     /**
      * 添付ファイル一覧.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $page
-     * @param  null|string  $file
      * @return mixed
      */
     public function attachments(Request $request, string $page, ?string $file = null)
@@ -191,11 +183,6 @@ class WikiController extends Controller
 
     /**
      * バックアップ.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $page
-     * @param  null|int  $age
-     * @return \Illuminate\View\View
      */
     public function history(Request $request, string $page, ?int $age = null): View
     {
@@ -236,10 +223,8 @@ class WikiController extends Controller
     /**
      * 差分.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $page    ページ名
-     * @param  int  $age     世代
-     * @return \Illuminate\View\View
+     * @param  string  $page  ページ名
+     * @param  int  $age  世代
      */
     public function diff(Request $request, string $page, int $age = 0): View
     {
@@ -253,7 +238,7 @@ class WikiController extends Controller
         $old = $entry->first()->backups()->orderBy('updated_at', 'desc')->offset($age)->value('source');
         Debugbar::stopMeasure('db');
 
-        $differ = new Differ();
+        $differ = new Differ;
 
         return view(
             'default.diff',
@@ -268,9 +253,7 @@ class WikiController extends Controller
     /**
      * 印刷.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $page    ページ名
-     * @return \Illuminate\View\View
+     * @param  string  $page  ページ名
      */
     public function print(Request $request, string $page): View
     {
@@ -298,12 +281,8 @@ class WikiController extends Controller
 
     /**
      * 編集画面表示.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  null|string  $page
-     * @return \Illuminate\View\View
      */
-    public function edit(Request $request, string $page = null): View
+    public function edit(Request $request, ?string $page = null): View
     {
         $p = $page ?? $request->input('page');
 
@@ -338,12 +317,13 @@ class WikiController extends Controller
     /**
      * 保存処理.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $page
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function save(Request $request, string $page)
+    public function save(Request $request)
     {
+        // ページ名
+        $page = $request->post('page');
+
         if (! $request->isMethod('post')) {
             // Method not allowed
             abort(405, __('Method not allowd.'));
@@ -361,25 +341,29 @@ class WikiController extends Controller
         }
 
         // 簡易パスワード確認
+        /*
         if (Config::get('lukiwiki.password') !== $request->post('password')) {
             // abort(403, __('Permission denied.'));
             $request->session()->flash('message', __('Permission denied.'));
 
             return redirect($page);
         }
+        */
 
         if ($this->model->where('name', $page)->exists()) {
             // ページが存在する場合、DB上のソースを取得。
             $remote = $this->model->where('name', $page)->first();
+
             $page_id = $remote['id'];
             $hash = hash(self::HASH_ALGORITHM, (string) $remote['source']);
-
-            if ($hash === hash(self::HASH_ALGORITHM, $request->input('hash'))) {
+            /*
+            if ($hash === $request->input('hash')) {
                 // 編集前とハッシュが同じだった場合処理しない
-                $request->session()->flash('message', __('Cancelled'));
+                $request->session()->flash('message', __('Hash mismatched. No changes were made.'));
 
                 return redirect($page);
             }
+            */
             if ($hash !== $request->input('hash')) {
                 // 編集前のデータのハッシュ値と比較し、違いがある場合、編集の競合が起きたと判断。
                 // マージ画面を表示する。
@@ -468,9 +452,7 @@ class WikiController extends Controller
     /**
      * アップロード.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $page    ページ名
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  string  $page  ページ名
      */
     public function upload(Request $request, string $page): RedirectResponse
     {
@@ -506,8 +488,6 @@ class WikiController extends Controller
 
     /**
      * ページ一覧.
-     *
-     * @return \Illuminate\View\View
      */
     public function list(): View
     {
@@ -521,8 +501,6 @@ class WikiController extends Controller
 
     /**
      * 更新履歴表示.
-     *
-     * @return \Illuminate\View\View
      */
     public function recent(): View
     {
@@ -536,9 +514,6 @@ class WikiController extends Controller
 
     /**
      * 検索処理.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
      */
     public function search(Request $request): View
     {
@@ -562,11 +537,6 @@ class WikiController extends Controller
 
     /**
      * アップロード内部処理.
-     *
-     * @param  \Illuminate\Http\UploadedFile  $entry
-     * @param  int  $page_id
-     * @param  bool  $replace
-     * @return bool
      */
     private function processUpload(UploadedFile $entry, int $page_id, bool $replace = false): bool
     {

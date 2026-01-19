@@ -56,9 +56,9 @@ class Link extends AbstractInline
             '\})?)';
     }
 
-    public function setPattern(array $arr, string $page = null): void
+    public function setPattern(array $arr, ?string $page = null): void
     {
-        //dd($this->getPattern(), $arr, $this->splice($arr));
+        // dd($this->getPattern(), $arr, $this->splice($arr));
         [$this->alias, $this->href, $this->anchor, $this->title, $this->body] = $this->splice($arr);
     }
 }

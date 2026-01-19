@@ -49,8 +49,6 @@ abstract class AbstractInline
 
     /**
      * コンストラクタ
-     *
-     * @param  int  $start
      */
     final public function __construct(int $start, ?string $page)
     {
@@ -68,8 +66,6 @@ abstract class AbstractInline
 
     /**
      * Wikiのパース用正規表現を取得.
-     *
-     * @return string
      */
     public function getPattern(): ?string
     {
@@ -78,8 +74,6 @@ abstract class AbstractInline
 
     /**
      * 正規表現の(?: ...)などで帰ってくる値.
-     *
-     * @return int
      */
     public function getCount(): int
     {
@@ -88,17 +82,11 @@ abstract class AbstractInline
 
     /**
      * マッチするパターンを設定.
-     *
-     * @param  array  $arr
      */
-    public function setPattern(array $arr): void
-    {
-    }
+    public function setPattern(array $arr): void {}
 
     /**
      * ページの自動リンクを作成.
-     *
-     * @return string
      */
     public function setAutoLink(): ?string
     {
@@ -126,8 +114,8 @@ abstract class AbstractInline
     /**
      * 相対指定のページ名から全ページ名を取得.
      *
-     * @param  string  $name      名前の入力値
-     * @param  string  $reference 引用元のページ名
+     * @param  string  $name  名前の入力値
+     * @param  string  $reference  引用元のページ名
      * @return string ページのフルパス
      */
     public function getPageName(string $name = './'): string
@@ -139,7 +127,7 @@ abstract class AbstractInline
             // ページ名が指定されてない場合、引用元のページ名を返す
             return $this->page;
         }
-        //dd($this->page);
+        // dd($this->page);
 
         // Absolute path
         if ($name[0] === '/') {
@@ -178,7 +166,7 @@ abstract class AbstractInline
     /**
      * パスを含まないページ名を取得.
      *
-     * @param $page ページ名
+     * @param  $page  ページ名
      */
     public static function getPageNameShort($page)
     {
@@ -197,8 +185,6 @@ abstract class AbstractInline
 
     /**
      * 正規表現の結果をパースする.
-     *
-     * @param  array  $arr
      */
     protected function splice(array $arr): array
     {
@@ -212,13 +198,13 @@ abstract class AbstractInline
     /**
      * リンクを貼る場合の処理.
      *
-     * @param  array  $params パラメータ
+     * @param  array  $params  パラメータ
      */
     protected function setParam(array $params): void
     {
-        //$converter = new InlineConverter(['InlinePlugin'], []);
+        // $converter = new InlineConverter(['InlinePlugin'], []);
 
-        //$meta = $converter->getMeta();
+        // $meta = $converter->getMeta();
         if (! empty($meta)) {
             $this->meta = array_merge($this->meta, $meta);
         }
@@ -239,7 +225,7 @@ abstract class AbstractInline
         $this->option = self::processText($params['option'] ?? null);
         $this->alias = self::processText($params['alias'] ?? null);
 
-        //dd($this);
+        // dd($this);
 
         /*
         if (!empty($this->alias)) {
@@ -254,9 +240,6 @@ abstract class AbstractInline
 
     /**
      * 文字列をエスケープ.
-     *
-     * @param  string  $str
-     * @return string
      */
     protected static function processText(?string $str): ?string
     {

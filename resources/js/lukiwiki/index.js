@@ -6,9 +6,9 @@
  * @license   MIT
  */
 import Vue from 'vue/dist/vue.esm';
-
+import queryString from 'query-string';
 // Register global
-window.qs = require('query-string').parse(location.search);
+window.qs = queryString.parse(location.search);
 
 /** ***************************************************************************/
 // Vue FontAwesome
@@ -61,7 +61,8 @@ import VueCodemirror from 'vue-codemirror';
 
 // you can set default global options and events when use
 Vue.use(
-  VueCodemirror /* {
+  VueCodemirror
+  /* {
   options: { theme: 'base16-dark', ... },
   events: ['scroll', ...]
 } */

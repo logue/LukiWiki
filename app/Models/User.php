@@ -49,8 +49,6 @@ class User extends Authenticatable
 
     /**
      * ページに貼り付けられた添付ファイル.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function attachments(): HasMany
     {
@@ -59,8 +57,6 @@ class User extends Authenticatable
 
     /**
      * ページのバックアップ.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function backups(): HasMany
     {
@@ -69,8 +65,6 @@ class User extends Authenticatable
 
     /**
      * 作業履歴.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough
      */
     public function pageActivity(): HasOneThrough
     {
@@ -79,8 +73,6 @@ class User extends Authenticatable
 
     /**
      * このページの所有者.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function pages(): HasMany
     {

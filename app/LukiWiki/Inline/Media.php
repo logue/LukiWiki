@@ -83,7 +83,7 @@ class Media extends AbstractInline
 
     public function setPattern(array $arr): void
     {
-        //dd($this->getPattern(), $this->splice($arr));
+        // dd($this->getPattern(), $this->splice($arr));
         [$this->alias, $this->href, $this->title, $this->body] = $this->splice($arr);
 
         if (empty($this->alias)) {

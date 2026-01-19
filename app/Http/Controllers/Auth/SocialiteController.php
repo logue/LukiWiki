@@ -18,7 +18,6 @@ class SocialiteController extends Controller
     /**
      * Redirect the user to the Provider authentication page.
      *
-     * @param  string  $provider
      * @return mixed
      */
     public function redirectToProvider(string $provider)
@@ -29,7 +28,6 @@ class SocialiteController extends Controller
     /**
      * Obtain the user information from Provider.
      *
-     * @param  string  $provider
      * @return \Illuminate\Http\RedirectResponse
      *
      * @throws \Exception
@@ -39,11 +37,12 @@ class SocialiteController extends Controller
     {
         try {
             $providerUser = Socialite::driver($provider)->user();
-        } catch (\Throwable | \Exception $e) {
+        } catch (\Throwable|\Exception $e) {
             // Send actual error message in development
             if (config('app.debug')) {
                 throw $e;
             }
+
             // Lets suppress this error
             return redirect()->route('login')
                 ->with('error', __('Unable to authenticate. Please try again.'));
@@ -103,12 +102,9 @@ class SocialiteController extends Controller
     /**
      * The user has been authenticated.
      *
-     * @param  User  $user
      * @return mixed
      */
-    protected function authenticated(User $user)
-    {
-    }
+    protected function authenticated(User $user) {}
 
     /**
      * Where to redirect users after login.

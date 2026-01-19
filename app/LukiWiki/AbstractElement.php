@@ -61,13 +61,9 @@ abstract class AbstractElement
         return implode("\n", $ret);
     }
 
-    public function init()
-    {
-    }
+    public function init() {}
 
-    public function finalize()
-    {
-    }
+    public function finalize() {}
 
     /**
      * 親要素に挿入.
@@ -81,8 +77,6 @@ abstract class AbstractElement
 
     /**
      * 親要素に要素を追加.
-     *
-     * @param  object  $obj
      */
     public function add(object $obj)
     {
@@ -96,8 +90,6 @@ abstract class AbstractElement
 
     /**
      * 要素を追加.
-     *
-     * @param  object  $obj
      */
     public function insert(object $obj)
     {
@@ -114,7 +106,6 @@ abstract class AbstractElement
     /**
      * 小要素を持つことができるか.
      *
-     * @param  object  $obj
      * @return bool
      */
     public function canContain(object $obj)
@@ -126,9 +117,8 @@ abstract class AbstractElement
      * タグで包む
      *
      * @param  string  $string  子要素
-     * @param  string  $tag     タグ名
-     * @param  array  $param   タグに入れる属性
-     * @param  bool  $canomit
+     * @param  string  $tag  タグ名
+     * @param  array  $param  タグに入れる属性
      * @return string
      */
     public function wrap(string $innerHtml, string $tag, array $param, bool $canomit)
@@ -159,9 +149,6 @@ abstract class AbstractElement
 
     /**
      * 文字列をエスケープ.
-     *
-     * @param  string  $str
-     * @return string
      */
     protected static function processText(string $str): string
     {

@@ -55,7 +55,6 @@ class ComposerController extends Controller
     /**
      * Search package.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function search(Request $request)
@@ -66,7 +65,6 @@ class ComposerController extends Controller
     /**
      * Execute Composer Command.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function execute(Request $request)

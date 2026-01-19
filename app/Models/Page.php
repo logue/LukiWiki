@@ -39,8 +39,6 @@ class Page extends Model
 
     /**
      * ページに貼り付けられた添付ファイル.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function attachments(): HasMany
     {
@@ -49,8 +47,6 @@ class Page extends Model
 
     /**
      * ページのバックアップ.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function backups(): HasMany
     {
@@ -59,8 +55,6 @@ class Page extends Model
 
     /**
      * このページの所有者（未使用）.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\hasOne
      */
     public function user(): hasOne
     {
@@ -69,8 +63,6 @@ class Page extends Model
 
     /**
      * ページのカウンター
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function counter(): HasOne
     {
@@ -79,9 +71,6 @@ class Page extends Model
 
     /**
      * 検索.
-     *
-     * @param  array  $keywords
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function search(array $keywords): Builder
     {
@@ -104,7 +93,7 @@ class Page extends Model
     /**
      * 新着記事を取得.
      *
-     * @param  int  $limit 制限数
+     * @param  int  $limit  制限数
      * @return \Illuminate\Database\Query\Builder
      */
     public static function getLatest(int $limit = 20): Builder
@@ -114,8 +103,6 @@ class Page extends Model
 
     /**
      * 全ページを取得.
-     *
-     * @return array
      */
     public static function getEntries(): array
     {
@@ -141,8 +128,6 @@ class Page extends Model
 
     /**
      * 自動リンク用トライ木を生成.
-     *
-     * @return string
      */
     public static function getTrie(): ?string
     {
@@ -154,8 +139,7 @@ class Page extends Model
     /**
      * 最新更新日.
      *
-     * @param  string  $name ページ名
-     * @return \Carbon\Carbon
+     * @param  string  $name  ページ名
      */
     public static function lastModified(?string $name = null): Carbon
     {

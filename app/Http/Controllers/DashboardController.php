@@ -32,17 +32,15 @@ class DashboardController extends Controller
     public function __construct()
     {
         // 認証用ミドルウェア
-        //$this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     /**
      * 管理トップページ.
-     *
-     * @return \Illuminate\View\View
      */
     public function __invoke(): View
     {
-        return view('dashboard/index', ['title' => 'Administrator', 'counter' => new Counter()]);
+        return view('dashboard/index', ['title' => 'Administrator', 'counter' => new Counter]);
     }
 
     /**
@@ -60,7 +58,6 @@ class DashboardController extends Controller
     /**
      * WikiデータをLukiWiki形式に変換.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
     public function convert(Request $request)
@@ -122,13 +119,13 @@ class DashboardController extends Controller
             }
 
             if ($request->input('type') === 'test') {
-                //$request->session()->flash('message', 'テスト実行');
-                //$testfile = 'main/wiki/E3839EE38393E3838EE382AE2F4D4D4C2F4C6F6E646F6E646572727920416972.txt';
-                //dd(Storage::exists($testfile), Storage::path($testfile));
-                //$f = str_replace('/', DIRECTORY_SEPARATOR, Storage::path($testfile));
-                //dd($f);
+                // $request->session()->flash('message', 'テスト実行');
+                // $testfile = 'main/wiki/E3839EE38393E3838EE382AE2F4D4D4C2F4C6F6E646F6E646572727920416972.txt';
+                // dd(Storage::exists($testfile), Storage::path($testfile));
+                // $f = str_replace('/', DIRECTORY_SEPARATOR, Storage::path($testfile));
+                // dd($f);
                 // http://localhost:8000/%E3%83%9E%E3%83%93%E3%83%8E%E3%82%AE/MML/Londonderry%20Air
-                //$this->dispatch(new \App\Jobs\ProcessWikiData($testfile));
+                // $this->dispatch(new \App\Jobs\ProcessWikiData($testfile));
             }
 
             return redirect(':dashboard/convert');
@@ -140,7 +137,6 @@ class DashboardController extends Controller
     /**
      * キャッシュクリア.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
     public function clearCache(Request $request)
@@ -187,13 +183,10 @@ class DashboardController extends Controller
 
     /**
      * InterWiki登録.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
      */
     public function interwiki(Request $request): View
     {
-        $interwiki = new InterWiki();
+        $interwiki = new InterWiki;
 
         if ($request->isMethod('post')) {
             // 編集処理
@@ -229,7 +222,6 @@ class DashboardController extends Controller
     /**
      * CAPTCHAの動作チェック.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
     public function captchaTest(Request $request)

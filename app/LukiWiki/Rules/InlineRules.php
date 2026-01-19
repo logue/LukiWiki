@@ -25,7 +25,7 @@ class InlineRules
     public const WIKINAME_PATTERN = '(?:[A-Z][a-z]+){2,}(?!\w)';
 
     // \c3\9f through \c3\bf correspond to \df through \ff in ISO8859-1
-    //const WIKINAME_PATTERN = '(?:[A-Z](?:[a-z]|\xc3[\x9f-\xbf])+(?:[A-Z](?:[a-z]|\xc3[\x9f-\xbf])+)+)(?!\w)';
+    // const WIKINAME_PATTERN = '(?:[A-Z](?:[a-z]|\xc3[\x9f-\xbf])+(?:[A-Z](?:[a-z]|\xc3[\x9f-\xbf])+)+)(?!\w)';
     /**
      * BracketNameのマッチパターン.
      */

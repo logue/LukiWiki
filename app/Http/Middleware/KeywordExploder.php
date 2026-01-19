@@ -18,7 +18,6 @@ class KeywordExploder
      * キーワードを空白文字で分割し配列にする。
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)

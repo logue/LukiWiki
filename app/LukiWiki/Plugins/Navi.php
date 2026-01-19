@@ -78,7 +78,8 @@ class Navi extends AbstractPlugin implements BlockPluginInterface
                 return $this->error('No child page like: '.e($home).'/Foo');
             }
         }
-        //dd($ret);
+
+        // dd($ret);
         return view('plugin.navi', ['ret' => $ret]);
     }
 }
