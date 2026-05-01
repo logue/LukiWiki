@@ -1,84 +1,84 @@
 {
-  "$schema": "https://getcomposer.org/schema.json",
-  "name": "laravel/laravel",
-  "type": "project",
-  "description": "The Laravel Framework.",
-  "keywords": [
-    "framework",
-    "laravel"
-  ],
-  "license": "MIT",
-  "require": {
-    "php": "^8.2",
-    "bensampo/laravel-enum": "^6.0",
-    "bookin/composer-api": "dev-master",
-    "guzzlehttp/guzzle": "^7.9",
-    "intervention/image": "^3.0",
-    "laravel/framework": "^11.0",
-    "laravel/pint": "^1.19",
-    "laravel/sanctum": "^4.0",
-    "laravel/tinker": "^2.10",
-    "sters/regexp-trie": "^0.0.4",
-    "symfony/polyfill-intl-icu": "^1.31"
-  },
-  "require-dev": {
-    "barryvdh/laravel-debugbar": "^3.10",
-    "fakerphp/faker": "^1.23",
-    "laravel/sail": "^1.28",
-    "mockery/mockery": "^1.6",
-    "nunomaduro/collision": "^8.1",
-    "phpunit/phpunit": "^11.0"
-  },
-  "suggest": {
-    "ext-intl": "for page listing and process punycode etc.",
-    "ext-bz2": "If you migrate from PukiWiki Adv.",
-    "ext-pdo_mysql": "pdo_mysql or pdo_sqlite or pdo_pgsql is required for data store.",
-    "ext-pdo_sqlite": "pdo_mysql or pdo_sqlite or pdo_pgsql is required for data store.",
-    "ext-pdo_psql": "pdo_mysql or pdo_sqlite or pdo_pgsql is required for data store."
-  },
-  "autoload": {
-    "psr-4": {
-      "App\\": "app/",
-      "Database\\Factories\\": "database/factories/",
-      "Database\\Seeders\\": "database/seeders/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Tests\\": "tests/"
-    }
-  },
-  "scripts": {
-    "post-autoload-dump": [
-      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-      "@php artisan package:discover --ansi"
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The Laravel Framework.",
+    "keywords": [
+        "framework",
+        "laravel"
     ],
-    "post-update-cmd": [
-      "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
-    ],
-    "post-root-package-install": [
-      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-    ],
-    "post-create-project-cmd": [
-      "@php artisan key:generate --ansi"
-    ],
-    "pint": [
-      "./vendor/bin/pint -v"
-    ]
-  },
-  "extra": {
-    "laravel": {
-      "dont-discover": []
-    }
-  },
-  "config": {
-    "optimize-autoloader": true,
-    "preferred-install": "dist",
-    "sort-packages": true,
-    "allow-plugins": {
-      "pestphp/pest-plugin": true
-    }
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "bensampo/laravel-enum": "^6.12.2",
+        "bookin/composer-api": "dev-master",
+        "guzzlehttp/guzzle": "^7.10.0",
+        "intervention/image": "^3.11.6",
+        "laravel/framework": "^11.48.0",
+        "laravel/pint": "^1.27.0",
+        "laravel/sanctum": "^4.3.0",
+        "laravel/tinker": "^2.11.0",
+        "sters/regexp-trie": "^0.0.4",
+        "symfony/polyfill-intl-icu": "^1.33.0"
+    },
+    "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.16.5",
+        "fakerphp/faker": "^1.24.1",
+        "laravel/sail": "^1.52.0",
+        "mockery/mockery": "^1.6.12",
+        "nunomaduro/collision": "^8.8.3",
+        "phpunit/phpunit": "^12.5.8"
+    },
+    "suggest": {
+        "ext-intl": "for page listing and process punycode etc.",
+        "ext-bz2": "If you migrate from PukiWiki Adv.",
+        "ext-pdo_mysql": "pdo_mysql or pdo_sqlite or pdo_pgsql is required for data store.",
+        "ext-pdo_sqlite": "pdo_mysql or pdo_sqlite or pdo_pgsql is required for data store.",
+        "ext-pdo_psql": "pdo_mysql or pdo_sqlite or pdo_pgsql is required for data store."
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ],
+        "pint": [
+            "./vendor/bin/pint -v"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
